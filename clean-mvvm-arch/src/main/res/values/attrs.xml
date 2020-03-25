@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="ProgressBarAttr">
+        <attr name="text" format="string"/>
+        <attr name="backgroundColor"/>
+        <attr name="textColor"/>
+        <attr name="progressColor" format="reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="LocaleTextView">
+        <attr name="android:text"/>
+    </declare-styleable>
+
+    <declare-styleable name="LocaleButton">
+        <attr name="android:text"/>
+    </declare-styleable>
+
+    <declare-styleable name="LocaleSwitch">
+        <attr name="android:text"/>
+    </declare-styleable>
+
+    <declare-styleable name="LocaleEditText">
+        <attr name="android:text"/>
+        <attr name="android:hint"/>
+    </declare-styleable>
+
+    <declare-styleable name="LocaleTextInputLayout">
+        <attr name="android:hint"/>
+    </declare-styleable>
+
+</resources>

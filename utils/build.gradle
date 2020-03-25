@@ -1,0 +1,75 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-android-extensions'
+    id 'kotlin-kapt'
+    id 'kotlinx-serialization'
+    id 'com.github.dcendents.android-maven'
+}
+
+group='com.github.Merseyside'
+
+android {
+    compileSdkVersion rootProject.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
+        versionCode rootProject.versionCode
+        versionName rootProject.version
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            consumerProguardFiles 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    dataBinding {
+        enabled = true
+    }
+}
+
+ext {
+    material = '1.2.0-alpha05'
+
+    coroutines = '1.3.3'
+
+    playCore = '1.7.1'
+
+    billing = '2.2.0'
+    billing_ktx = '2.1.0'
+    publisher = 'v3-rev139-1.25.0'
+    auth = '0.20.0'
+}
+
+dependencies {
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "com.google.android.material:material:$material"
+    implementation "androidx.core:core-ktx:$core_ktx"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization"
+
+    implementation "com.google.android.play:core:$playCore"
+
+    implementation "com.android.billingclient:billing:$billing"
+    implementation "com.android.billingclient:billing-ktx:$billing_ktx"
+    implementation "com.google.apis:google-api-services-androidpublisher:$publisher"
+
+    implementation "com.google.auth:google-auth-library-oauth2-http:$auth"
+}
