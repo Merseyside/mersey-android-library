@@ -88,9 +88,7 @@ dependencies {
 afterEvaluate {
     generateReleaseBuildConfig.enabled = false
 
-    if (project.hasProperty(rootProject.jitpack_property)) {
-        assembleRelease.finalizedBy(removeBuildFiles)
-    }
+    kaptReleaseKotlin.finalizedBy(removeBuildFiles)
 }
 
 task removeBuildFiles {
