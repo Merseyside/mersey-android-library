@@ -1,15 +1,14 @@
 package com.merseyside.merseyLib.utils
 
 import android.util.Log
-import com.merseyside.merseyLib.BuildConfig
 
 object Logger {
 
     var isEnabled: Boolean = true
-    var isDebugOnly = true
+    var isDebug = true
 
     fun log(tag: Any? = null, msg: Any? = "Empty msg") {
-        if (isEnabled && (!isDebugOnly || BuildConfig.DEBUG)) {
+        if (isLogging()) {
             Log.d(adoptTag(tag), adoptMsg(msg))
         }
     }
@@ -19,7 +18,7 @@ object Logger {
     }
 
     fun logErr(tag: Any? = null, msg: Any? = "Empty error") {
-        if (isEnabled && (!isDebugOnly || BuildConfig.DEBUG)) {
+        if (isLogging()) {
             Log.e(adoptTag(tag), adoptMsg(msg))
         }
     }
@@ -29,7 +28,7 @@ object Logger {
     }
 
     fun logInfo(tag: Any? = null, msg: Any?) {
-        if (isEnabled && (!isDebugOnly || BuildConfig.DEBUG)) {
+        if (isLogging()) {
             Log.i(adoptTag(tag), adoptMsg(msg))
         }
     }
@@ -39,7 +38,7 @@ object Logger {
     }
 
     fun logWtf(tag: Any? = null, msg: Any? = "wtf?") {
-        if (isEnabled && (!isDebugOnly || BuildConfig.DEBUG)) {
+        if (isLogging()) {
             Log.wtf(adoptTag(tag), adoptMsg(msg))
         }
     }
@@ -49,9 +48,13 @@ object Logger {
     }
 
     fun logErr(throwable: Throwable) {
-        if (isEnabled && (!isDebugOnly || BuildConfig.DEBUG)) {
+        if (isLogging()) {
             throwable.printStackTrace()
         }
+    }
+
+    private fun isLogging(): Boolean {
+        return isEnabled && isDebug
     }
 
     private fun adoptTag(tag: Any?): String {

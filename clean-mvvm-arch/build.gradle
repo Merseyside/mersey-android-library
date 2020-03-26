@@ -87,4 +87,15 @@ dependencies {
 
 afterEvaluate {
     generateReleaseBuildConfig.enabled = false
+
+    if (project.hasProperty("assembleRelease")) {
+        assembleRelease.finalizedBy(removeBuildFiles)
+    }
+}
+
+task removeBuildFiles {
+    doLast {
+        file("$buildDir/generated/source/kapt/release/com/merseyside/merseyLib/DataBinderMapperImpl.java").delete()
+        println(file("$buildDir/generated/source/kapt/release/com/merseyside/merseyLib/BR.java").delete())
+    }
 }
