@@ -84,3 +84,7 @@ dependencies {
 
     implementation "net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:$keyboard"
 }
+
+afterEvaluate {
+    generateReleaseBuildConfig.enabled = false
+}

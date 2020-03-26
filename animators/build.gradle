@@ -57,3 +57,7 @@ dependencies {
 
     implementation "androidx.appcompat:appcompat:$appCompat"
 }
+
+afterEvaluate {
+    generateReleaseBuildConfig.enabled = false
+}

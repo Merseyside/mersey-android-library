@@ -60,3 +60,7 @@ dependencies {
 
     implementation "android.arch.paging:runtime:$pagingLibrary"
 }
+
+afterEvaluate {
+    generateReleaseBuildConfig.enabled = false
+}
