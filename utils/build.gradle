@@ -77,8 +77,8 @@ dependencies {
 afterEvaluate {
     generateReleaseBuildConfig.enabled = false
 
-    if (project.hasProperty("assembleRelease")) {
-        assembleRelease.finalizedBy(removeBuildFiles)
+    if (project.hasProperty(rootProject.jitpack_property)) {
+        install.finalizedBy(removeBuildFiles)
     }
 }
 

@@ -1,8 +1,8 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext {
-        version = "0.1.4"
-        versionCode = 14
+        version = "0.1.5"
+        versionCode = 15
         minSdkVersion = 17
         compileSdkVersion = 29
         targetSdkVersion = 29
@@ -14,6 +14,8 @@ buildscript {
         serialization = "0.20.0"
 
         maven_version = "2.1"
+
+        jitpack_property = "install"
     }
 
     repositories {
@@ -43,13 +45,4 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
-}
-
-task removeBuildFiles {
-    doLast {
-        println("kek")
-        file("$buildDir/generated/source/kapt/release/com/merseyside/merseyLib/DataBinderMapperImpl.java").delete()
-        println(file("$buildDir/generated/source/kapt/release/com/merseyside/merseyLib/BR.java").delete())
-        println("$buildDir")
-    }
 }
