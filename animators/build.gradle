@@ -49,7 +49,6 @@ dependencies {
     implementation project(":utils")
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "androidx.core:core-ktx:$core_ktx"
 
     implementation "androidx.appcompat:appcompat:$appCompat"
 }

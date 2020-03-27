@@ -36,8 +36,8 @@ android {
         jvmTarget = '1.8'
     }
 
-    dataBinding {
-        enabled = true
+    buildFeatures {
+        dataBinding = true
     }
 }
 
@@ -48,6 +48,8 @@ ext {
     appCompat = '1.1.0'
 
     lifecycleExtensions = '2.2.0'
+
+    workVersion = '2.3.4'
 
     dagger = '2.27'
     gson = '2.8.6'
@@ -63,10 +65,11 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "com.google.android.material:material:$material"
-    implementation "androidx.core:core-ktx:$core_ktx"
     implementation "androidx.appcompat:appcompat:$appCompat"
 
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleExtensions"
+
+    implementation "androidx.work:work-runtime-ktx:$workVersion"
 
     implementation "com.google.dagger:dagger:$dagger"
     kapt "com.google.dagger:dagger-compiler:$dagger"

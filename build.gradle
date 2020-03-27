@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext {
-        version = "0.1.6"
+        version = "0.1.7"
         versionCode = 16
         minSdkVersion = 17
         compileSdkVersion = 29
@@ -14,8 +14,6 @@ buildscript {
         serialization = "0.20.0"
 
         maven_version = "2.1"
-
-        jitpack_property = "install"
     }
 
     repositories {
