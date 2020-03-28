@@ -114,7 +114,7 @@ sealed class Subscription {
             if (sku != null) {
 
                 return subscriptionPurchase.let {
-                    if (subscriptionPurchase.paymentState == null) {
+                    if (subscriptionPurchase.cancelReason != null) {
                         CanceledSubscription(
                             sku = sku!!,
                             startTimeMillis = it.startTimeMillis,

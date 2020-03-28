@@ -31,7 +31,6 @@ abstract class FlowUseCase<T, Params> : CoroutineScope by CoroutineScope(applica
         }
 
         job = launch {
-            Logger.log(this@FlowUseCase)
             try {
                 flow.collect { data ->
                     onEmit.invoke(data)

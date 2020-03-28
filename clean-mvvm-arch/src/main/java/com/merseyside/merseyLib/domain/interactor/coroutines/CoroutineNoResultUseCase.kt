@@ -2,7 +2,6 @@ package com.merseyside.merseyLib.domain.interactor.coroutines
 
 import com.merseyside.merseyLib.utils.Logger
 import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
 
 abstract class CoroutineNoResultUseCase<Params> : BaseCoroutineUseCase<Unit, Params>() {
 
