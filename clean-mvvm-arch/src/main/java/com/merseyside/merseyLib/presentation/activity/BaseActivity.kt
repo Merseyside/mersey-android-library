@@ -51,7 +51,11 @@ abstract class BaseActivity : AppCompatActivity(),
         }
     }
 
+    protected abstract fun performInjection(bundle: Bundle?)
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        performInjection(savedInstanceState)
+
         super.onCreate(savedInstanceState)
 
         if (applicationContext is BaseApplication) {
@@ -60,7 +64,7 @@ abstract class BaseActivity : AppCompatActivity(),
 
         setOrientation(resources, savedInstanceState)
 
-        if (this !is BaseMvvmActivity<*, *>) {
+        if (this !is BaseVMActivity<*, *>) {
             setContentView(getLayoutId())
         }
 

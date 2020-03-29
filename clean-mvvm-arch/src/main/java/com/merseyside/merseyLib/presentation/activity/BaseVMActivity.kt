@@ -3,7 +3,6 @@ package com.merseyside.merseyLib.presentation.activity
 import android.content.Context
 
 import android.os.Bundle
-import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.Observer
@@ -11,9 +10,7 @@ import com.merseyside.merseyLib.presentation.model.BaseViewModel
 import com.merseyside.merseyLib.presentation.model.ParcelableViewModel
 import javax.inject.Inject
 
-abstract class BaseMvvmActivity<B : ViewDataBinding, M : BaseViewModel> : BaseActivity() {
-
-    protected lateinit var binding: B
+abstract class BaseVMActivity<B : ViewDataBinding, M : BaseViewModel> : BaseBindingActivity<B>() {
 
     @Inject
     protected lateinit var viewModel: M
@@ -37,19 +34,22 @@ abstract class BaseMvvmActivity<B : ViewDataBinding, M : BaseViewModel> : BaseAc
         }
     }
 
-    abstract fun getBindingVariable(): Int
-
-    protected abstract fun performInjection(bundle: Bundle?)
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        performInjection(savedInstanceState)
-        performDataBinding()
-
         super.onCreate(savedInstanceState)
+        setBindingVariable()
 
         viewModel.updateLanguage(this)
 
         observeViewModel()
+    }
+
+    abstract fun getBindingVariable(): Int
+
+    private fun setBindingVariable() {
+        binding.apply {
+            setVariable(getBindingVariable(), viewModel)
+            executePendingBindings()
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -60,20 +60,11 @@ abstract class BaseMvvmActivity<B : ViewDataBinding, M : BaseViewModel> : BaseAc
         }
     }
 
-    private fun performDataBinding() {
-        binding = DataBindingUtil.setContentView(this, getLayoutId())
-        binding.apply {
-            lifecycleOwner = this@BaseMvvmActivity
-            setVariable(getBindingVariable(), viewModel)
-            executePendingBindings()
-        }
-    }
-
     private fun observeViewModel() {
         viewModel.apply {
-            messageLiveEvent.observe(this@BaseMvvmActivity, messageObserver)
-            isInProgressLiveData.observe(this@BaseMvvmActivity, loadingObserver)
-            alertDialogLiveEvent.observe(this@BaseMvvmActivity, alertDialogModel)
+            messageLiveEvent.observe(this@BaseVMActivity, messageObserver)
+            isInProgressLiveData.observe(this@BaseVMActivity, loadingObserver)
+            alertDialogLiveEvent.observe(this@BaseVMActivity, alertDialogModel)
         }
     }
 
