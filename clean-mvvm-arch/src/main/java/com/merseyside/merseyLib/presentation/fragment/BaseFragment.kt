@@ -53,6 +53,13 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         return baseActivityView.getLanguage()
     }
 
+    protected abstract fun performInjection(bundle: Bundle?)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        performInjection(savedInstanceState)
+    }
+
     override fun onOrientationChanged(orientation: Orientation, savedInstanceState: Bundle?) {}
 
     @CallSuper

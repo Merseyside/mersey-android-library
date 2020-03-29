@@ -13,9 +13,7 @@ import com.merseyside.merseyLib.presentation.model.BaseViewModel
 import com.merseyside.merseyLib.presentation.model.ParcelableViewModel
 import javax.inject.Inject
 
-abstract class BaseMvvmFragment<B : ViewDataBinding, M : BaseViewModel> : BaseFragment() {
-
-    protected lateinit var binding: B
+abstract class BaseVMFragment<B : ViewDataBinding, M : BaseViewModel> : BaseBindingFragment<B>() {
 
     @Inject
     protected lateinit var viewModel: M
@@ -44,21 +42,9 @@ abstract class BaseMvvmFragment<B : ViewDataBinding, M : BaseViewModel> : BaseFr
 
     abstract fun getBindingVariable(): Int
 
-    protected abstract fun performInjection(bundle: Bundle?)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        performInjection(savedInstanceState)
         setHasOptionsMenu(false)
-    }
-
-    @CallSuper
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        super.onCreateView(inflater, container, savedInstanceState)
-
-        binding = DataBindingUtil.inflate(inflater, getLayoutId(), container, false)
-        binding.lifecycleOwner = this
-        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

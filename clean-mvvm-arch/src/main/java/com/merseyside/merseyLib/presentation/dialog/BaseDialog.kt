@@ -4,6 +4,10 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.view.Window
+import androidx.annotation.CallSuper
+import androidx.annotation.LayoutRes
+import androidx.annotation.StyleRes
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.merseyside.merseyLib.presentation.activity.BaseActivity
@@ -21,17 +25,48 @@ abstract class BaseDialog : DialogFragment() {
         }
     }
 
+    protected abstract fun performInjection(bundle: Bundle?)
+
+    @LayoutRes
+    abstract fun getLayoutId(): Int
+
     override fun onCreate(onSavedInstanceState: Bundle?) {
         super.onCreate(onSavedInstanceState)
         data = arguments
 
-        performInjection()
+        performInjection(onSavedInstanceState)
     }
 
-    protected abstract fun performInjection()
+    @CallSuper
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return Dialog(context!!, getStyle()).apply {
 
-    abstract override fun onCreateDialog(savedInstanceState: Bundle?): Dialog
+            val title = getTitle(context)
 
+            if (title.isNullOrEmpty()) {
+                requestWindowFeature(Window.FEATURE_NO_TITLE)
+            } else {
+                setTitle(title)
+            }
+
+            if (this@BaseDialog !is BaseVMDialog<*, *>) {
+                setContentView(getLayoutId())
+            }
+        }
+    }
+
+    @Deprecated("This method doesn't call in dialog classes. Use onCreateDialog()")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
+
+    open fun getTitle(context: Context): String? {
+        return null
+    }
+
+    @StyleRes open fun getStyle(): Int {
+        return 0
+    }
 
     override fun show(fragmentManager: FragmentManager, tag: String?) {
         val transaction = fragmentManager.beginTransaction()
