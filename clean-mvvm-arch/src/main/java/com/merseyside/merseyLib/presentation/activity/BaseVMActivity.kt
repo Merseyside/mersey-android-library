@@ -8,6 +8,7 @@ import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.Observer
 import com.merseyside.merseyLib.presentation.model.BaseViewModel
 import com.merseyside.merseyLib.presentation.model.ParcelableViewModel
+import com.merseyside.merseyLib.utils.PermissionManager
 import javax.inject.Inject
 
 abstract class BaseVMActivity<B : ViewDataBinding, M : BaseViewModel> : BaseBindingActivity<B>() {
@@ -32,6 +33,10 @@ abstract class BaseVMActivity<B : ViewDataBinding, M : BaseViewModel> : BaseBind
             
             viewModel.alertDialogLiveEvent.value = null
         }
+    }
+
+    private val permissionObserver = Observer<Pair<Array<String>, Int>> { pair ->
+        PermissionManager.requestPermissions(this, *pair.first, requestCode = pair.second)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,6 +70,7 @@ abstract class BaseVMActivity<B : ViewDataBinding, M : BaseViewModel> : BaseBind
             messageLiveEvent.observe(this@BaseVMActivity, messageObserver)
             isInProgressLiveData.observe(this@BaseVMActivity, loadingObserver)
             alertDialogLiveEvent.observe(this@BaseVMActivity, alertDialogModel)
+            grantPermissionLiveEvent.observe(this@BaseVMActivity, permissionObserver)
         }
     }
 

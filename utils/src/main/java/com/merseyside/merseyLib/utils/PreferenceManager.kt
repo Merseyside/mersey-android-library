@@ -3,6 +3,8 @@ package com.merseyside.merseyLib.utils
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import com.merseyside.merseyLib.utils.time.Millis
+import com.merseyside.merseyLib.utils.time.TimeUnit
 
 class PreferenceManager private constructor(
     context: Context,
@@ -75,6 +77,13 @@ class PreferenceManager private constructor(
         }
     }
 
+    fun put(preference: String?, value: TimeUnit) {
+        sharedPreferences.edit().apply {
+            putLong(preference, value.toMillisLong())
+            apply()
+        }
+    }
+
     fun getString(
         preference: String,
         default_value: String
@@ -95,15 +104,23 @@ class PreferenceManager private constructor(
         return sharedPreferences.getBoolean(preference, default_value)
     }
 
-    fun getInt(preference: String, default_value: Int): Int {
-        return sharedPreferences.getInt(preference, default_value)
+    fun getInt(preference: String, defaultValue: Int): Int {
+        return sharedPreferences.getInt(preference, defaultValue)
     }
 
-    fun getLong(preference: String, default_value: Long): Long {
-        return sharedPreferences.getLong(preference, default_value)
+    fun getLong(preference: String, defaultValue: Long): Long {
+        return sharedPreferences.getLong(preference, defaultValue)
     }
 
-    fun getFloat(preference: String, default_value: Float): Float {
-        return sharedPreferences.getFloat(preference, default_value)
+    fun getFloat(preference: String, defaultValue: Float): Float {
+        return sharedPreferences.getFloat(preference, defaultValue)
+    }
+
+    fun getTimeUnit(preference: String, defaultValue: TimeUnit): TimeUnit {
+        return getTimeUnit(preference, defaultValue.toMillisLong())
+    }
+
+    fun getTimeUnit(preference: String, defaultValue: Long): TimeUnit {
+        return Millis(sharedPreferences.getLong(preference, defaultValue))
     }
 }

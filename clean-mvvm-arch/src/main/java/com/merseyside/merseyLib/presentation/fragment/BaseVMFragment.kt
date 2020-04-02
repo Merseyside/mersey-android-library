@@ -2,15 +2,12 @@ package com.merseyside.merseyLib.presentation.fragment
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.annotation.CallSuper
-import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.Observer
 import com.merseyside.merseyLib.presentation.model.BaseViewModel
 import com.merseyside.merseyLib.presentation.model.ParcelableViewModel
+import com.merseyside.merseyLib.utils.PermissionManager
 import javax.inject.Inject
 
 abstract class BaseVMFragment<B : ViewDataBinding, M : BaseViewModel> : BaseBindingFragment<B>() {
@@ -31,13 +28,17 @@ abstract class BaseVMFragment<B : ViewDataBinding, M : BaseViewModel> : BaseBind
     }
 
     private val errorObserver = Observer<Throwable> { this.handleError(it!!) }
-    private val loadingObserver = Observer<Boolean> { this.loadingObserver(it!!) }
-    private val alertDialogModel = Observer<BaseViewModel.AlertDialogModel> {
+    private val progressObserver = Observer<Boolean> { this.loadingObserver(it!!) }
+    private val alertDialogModelObserver = Observer<BaseViewModel.AlertDialogModel> {
         it?.apply {
             showAlertDialog(title, message, positiveButtonText, negativeButtonText, onPositiveClick, onNegativeClick, isOneAction, isCancelable)
 
             viewModel.alertDialogLiveEvent.value = null
         }
+    }
+
+    private val permissionObserver = Observer<Pair<Array<String>, Int>> { pair ->
+        PermissionManager.requestPermissions(this, *pair.first, requestCode = pair.second)
     }
 
     abstract fun getBindingVariable(): Int
@@ -57,8 +58,9 @@ abstract class BaseVMFragment<B : ViewDataBinding, M : BaseViewModel> : BaseBind
         viewModel.apply {
             errorLiveEvent.observe(viewLifecycleOwner, errorObserver)
             messageLiveEvent.observe(viewLifecycleOwner, messageObserver)
-            isInProgressLiveData.observe(viewLifecycleOwner, loadingObserver)
-            alertDialogLiveEvent.observe(viewLifecycleOwner, alertDialogModel)
+            isInProgressLiveData.observe(viewLifecycleOwner, progressObserver)
+            alertDialogLiveEvent.observe(viewLifecycleOwner, alertDialogModelObserver)
+            grantPermissionLiveEvent.observe(viewLifecycleOwner, permissionObserver)
         }
 
         super.onViewCreated(view, savedInstanceState)
@@ -101,5 +103,17 @@ abstract class BaseVMFragment<B : ViewDataBinding, M : BaseViewModel> : BaseBind
 
     protected fun hideProgress() {
         viewModel.hideProgress()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        viewModel.apply {
+            errorLiveEvent.removeObserver(errorObserver)
+            messageLiveEvent.removeObserver(messageObserver)
+            isInProgressLiveData.removeObserver(progressObserver)
+            alertDialogLiveEvent.removeObserver(alertDialogModelObserver)
+            grantPermissionLiveEvent.removeObserver(permissionObserver)
+        }
     }
 }

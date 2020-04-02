@@ -1,4 +1,4 @@
-package com.merseyside.merseyLib.data.serialization
+package com.merseyside.merseyLib.utils.serialization
 
 import kotlinx.serialization.*
 import kotlinx.serialization.json.JsonArray
@@ -20,11 +20,8 @@ object JsonArrayToStringMapDeserializer : DeserializationStrategy<Map<String, St
             val firstKey = it.keys.first()
             firstKey to it[firstKey]!!.content
         }.toMap()
-
-
     }
 
     override fun patch(decoder: Decoder, old: Map<String, String>): Map<String, String> =
         throw UpdateNotSupportedException("Update not supported")
-
 }

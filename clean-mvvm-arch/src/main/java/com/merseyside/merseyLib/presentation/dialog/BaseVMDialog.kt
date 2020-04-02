@@ -2,11 +2,15 @@ package com.merseyside.merseyLib.presentation.dialog
 
 import android.app.Dialog
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.annotation.CallSuper
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.Observer
 import com.merseyside.merseyLib.presentation.model.BaseViewModel
+import com.merseyside.merseyLib.utils.Logger
 import javax.inject.Inject
 
 abstract class BaseVMDialog<B : ViewDataBinding, M : BaseViewModel> : BaseBindingDialog<B>() {
@@ -34,14 +38,21 @@ abstract class BaseVMDialog<B : ViewDataBinding, M : BaseViewModel> : BaseBindin
             executePendingBindings()
         }
 
-        viewModel.apply {
-            updateLanguage(context!!)
+        return dialog
+    }
 
-            errorLiveEvent.observe(viewLifecycleOwner, errorObserver)
-            messageLiveEvent.observe(viewLifecycleOwner, messageObserver)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+
+        viewModel.apply {
+            errorLiveEvent.observe(baseActivity, errorObserver)
+            messageLiveEvent.observe(baseActivity, messageObserver)
         }
 
-        return dialog
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     private fun showMsg(textMessage: BaseViewModel.TextMessage) {

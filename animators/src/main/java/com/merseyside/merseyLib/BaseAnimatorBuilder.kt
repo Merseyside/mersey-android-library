@@ -13,7 +13,7 @@ abstract class BaseAnimatorBuilder<T>(
     var isReverse: Boolean = false
         internal set
 
-    internal abstract fun build(): Animator
+    abstract fun build(): Animator
 
     abstract fun getCurrentValue(): Any
 

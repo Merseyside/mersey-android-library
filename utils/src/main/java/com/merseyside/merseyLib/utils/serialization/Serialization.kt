@@ -1,4 +1,4 @@
-package com.merseyside.merseyLib.data.serialization
+package com.merseyside.merseyLib.utils.serialization
 
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json

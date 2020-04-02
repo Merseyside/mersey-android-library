@@ -22,3 +22,31 @@ fun <T> ObservableField<T>.onChange(
 
     return callback
 }
+
+fun ObservableField<*>.isNull(): Boolean {
+    return get() == null
+}
+
+fun ObservableField<*>.isNotNull() = !isNull()
+
+inline fun <reified T : Any> ObservableField<T>.isNotNullAndEmpty() = isNotNull() && isNotEmpty()
+
+inline fun <reified T : Any> ObservableField<T>.isEmpty(): Boolean {
+    return if (isNotNull()) {
+
+        when {
+            String is T -> {
+                (get() as String).isEmpty()
+            }
+            T::class is Collection<*> -> {
+                (get() as Collection<*>).isEmpty()
+            }
+            else -> false
+        }
+
+    } else {
+        true
+    }
+}
+
+inline fun <reified T : Any> ObservableField<T>.isNotEmpty() = !isEmpty()

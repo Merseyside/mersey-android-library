@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.merseyside.merseyLib.presentation.interfaces.IStringHelper
 import com.merseyside.merseyLib.utils.Logger
+import com.merseyside.merseyLib.utils.PermissionManager
 import com.merseyside.merseyLib.utils.SingleLiveEvent
 
 abstract class BaseViewModel protected constructor() : ViewModel(), IStringHelper {
@@ -21,6 +22,7 @@ abstract class BaseViewModel protected constructor() : ViewModel(), IStringHelpe
     val messageLiveEvent: MutableLiveData<TextMessage> = SingleLiveEvent()
     val isInProgressLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val alertDialogLiveEvent: MutableLiveData<AlertDialogModel> = SingleLiveEvent()
+    val grantPermissionLiveEvent: MutableLiveData<Pair<Array<String>, Int>> = SingleLiveEvent()
 
     data class TextMessage(
         val isError: Boolean = false,
@@ -159,6 +161,14 @@ abstract class BaseViewModel protected constructor() : ViewModel(), IStringHelpe
 
     fun stopAllWorks() {
         dispose()
+    }
+
+    fun isPermissionsGranted(context: Context, vararg permissions: String): Boolean {
+        return PermissionManager.isPermissionsGranted(context, *permissions)
+    }
+
+    fun requestPermissions(permissions: Pair<Array<String>, Int>) {
+        grantPermissionLiveEvent.value = permissions
     }
 
     open fun updateLanguage(context: Context) {}

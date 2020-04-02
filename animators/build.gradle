@@ -55,4 +55,5 @@ dependencies {
 
 afterEvaluate {
     generateReleaseBuildConfig.enabled = false
+    generateDebugBuildConfig.enabled = false
 }

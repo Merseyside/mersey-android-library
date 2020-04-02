@@ -1,5 +1,6 @@
 package com.merseyside.merseyLib.presentation.activity
 
+import android.app.Activity
 import android.view.View
 import com.merseyside.merseyLib.utils.ext.getActivity
 import kotlinx.serialization.Serializable
@@ -12,10 +13,12 @@ enum class Orientation {
 }
 
 fun View.getOrientation(): Orientation {
-    val activity = this.getActivity()
+    return this.getActivity().getOrientation()
+}
 
-    return if (activity is BaseActivity) {
-        activity.orientation!!
+fun Activity.getOrientation(): Orientation {
+    return if (this is BaseActivity) {
+        this.orientation!!
     } else {
         throw IllegalStateException("Your activity has to extend BaseActivity")
     }

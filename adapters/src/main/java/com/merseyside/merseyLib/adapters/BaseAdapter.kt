@@ -7,7 +7,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.merseyLib.model.BaseAdapterViewModel
-import com.merseyside.merseyLib.presentation.view.BaseViewHolder
+import com.merseyside.merseyLib.view.BaseViewHolder
 import kotlin.IllegalArgumentException
 
 abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>> : RecyclerView.Adapter<BaseViewHolder>() {

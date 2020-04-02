@@ -36,6 +36,15 @@ fun isVisibleOrGone(view: View, obj: Any?) {
 }
 
 @BindingAdapter("app:isVisibleOrGone")
+fun isVisibleOrGone(view: View, obj: String?) {
+    view.visibility = if (obj.isNotNullAndEmpty()) {
+        VISIBLE
+    } else {
+        GONE
+    }
+}
+
+@BindingAdapter("app:isVisibleOrGone")
 fun isVisibleOrGone(view: View, collection: Collection<*>?) {
     view.visibility = if (collection.isNotNullAndEmpty()) {
         VISIBLE

@@ -3,7 +3,7 @@ package com.merseyside.merseyLib.adapters
 import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.SortedList
 import com.merseyside.merseyLib.presentation.model.BaseComparableAdapterViewModel
-import com.merseyside.merseyLib.presentation.view.BaseViewHolder
+import com.merseyside.merseyLib.view.BaseViewHolder
 import com.merseyside.merseyLib.utils.Logger
 import com.merseyside.merseyLib.utils.ext.isNotNullAndEmpty
 import com.merseyside.merseyLib.utils.isMainThread

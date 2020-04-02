@@ -26,7 +26,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
 
     final override var keyboardUnregistrar: Any? = null
 
-    protected lateinit var baseActivityView: BaseActivity
+    protected lateinit var baseActivity: BaseActivity
         private set
 
     private var requestCode: Int? = null
@@ -41,16 +41,16 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is BaseActivity) {
-            baseActivityView = context
+            baseActivity = context
         }
     }
 
     override fun getContext(): Context {
-        return baseActivityView.getContext()
+        return baseActivity.getContext()
     }
 
     fun getLanguage(): String {
-        return baseActivityView.getLanguage()
+        return baseActivity.getLanguage()
     }
 
     protected abstract fun performInjection(bundle: Bundle?)
@@ -84,7 +84,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
 
         setOrientation(resources, savedInstanceState)
 
-        snackbarManager = baseActivityView.snackbarManager
+        snackbarManager = baseActivity.snackbarManager
 
         return inflater.inflate(getLayoutId(), container, false)
     }
@@ -96,12 +96,12 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         super.onViewCreated(view, savedInstanceState)
 
         getToolbar()?.let {
-            baseActivityView.setFragmentToolbar(it)
+            baseActivity.setFragmentToolbar(it)
         }
 
-        baseActivityView.getLanguage().run {
+        baseActivity.getLanguage().run {
             if (currentLanguage.isNotNullAndEmpty() && this != currentLanguage) {
-                updateLanguage(baseActivityView.getContext())
+                updateLanguage(baseActivity.getContext())
             }
 
             currentLanguage = this
@@ -114,7 +114,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         setTitle()
 
         if (this is OnKeyboardStateListener) {
-            keyboardUnregistrar = baseActivityView.registerKeyboardListener(this)
+            keyboardUnregistrar = baseActivity.registerKeyboardListener(this)
         }
     }
 
@@ -149,16 +149,16 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         super.onDestroyView()
 
         getToolbar()?.let {
-            baseActivityView.setFragmentToolbar(null)
+            baseActivity.setFragmentToolbar(null)
         }
     }
 
     fun hideKeyboard(view: View) {
-        baseActivityView.hideKeyboard(context, view)
+        baseActivity.hideKeyboard(context, view)
     }
 
     override fun handleError(throwable: Throwable) {
-        baseActivityView.handleError(throwable)
+        baseActivity.handleError(throwable)
     }
 
     override fun showMsg(msg: String, actionMsg: String?, clickListener: View.OnClickListener?) {
@@ -197,7 +197,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
     }
 
     override fun setLanguage(lang: String?) {
-        baseActivityView.setLanguage(lang)
+        baseActivity.setLanguage(lang)
 
         setTitle()
     }
@@ -205,10 +205,10 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
     protected abstract fun getTitle(context: Context): String?
 
     fun setTitle(title: String? = null) {
-        val context = if (baseActivityView.applicationContext is BaseApplication) {
-            (baseActivityView.applicationContext as BaseApplication).context
+        val context = if (baseActivity.applicationContext is BaseApplication) {
+            (baseActivity.applicationContext as BaseApplication).context
         } else {
-            baseActivityView
+            baseActivity
         }
 
         val text = title ?: getTitle(context)
@@ -221,7 +221,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
     }
 
     protected open fun getActionBar(): ActionBar? {
-        return baseActivityView.supportActionBar
+        return baseActivity.supportActionBar
     }
 
     open fun getToolbar(): Toolbar? {
@@ -238,7 +238,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         isOneAction: Boolean?,
         isCancelable: Boolean?) {
         
-        baseActivityView.showAlertDialog(
+        baseActivity.showAlertDialog(
             title,
             message,
             positiveButtonText,
@@ -261,7 +261,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         isCancelable: Boolean?
     ) {
 
-        baseActivityView.showAlertDialog(
+        baseActivity.showAlertDialog(
             titleRes,
             messageRes,
             positiveButtonTextRes,
@@ -274,7 +274,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
     }
 
     override fun getActualString(@StringRes id: Int?, vararg args: String): String? {
-        return baseActivityView.getActualString(id, *args)
+        return baseActivity.getActualString(id, *args)
     }
 
     override fun onDetach() {
@@ -287,7 +287,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
                 fragmentResult!!
             }
 
-            baseActivityView.setFragmentResult(result)
+            baseActivity.setFragmentResult(result)
         }
     }
 

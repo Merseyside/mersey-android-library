@@ -1,6 +1,7 @@
 package com.merseyside.merseyLib.utils.time
 
 import android.content.Context
+import com.merseyside.merseyLib.utils.ext.log
 import kotlinx.serialization.Serializable
 
 object Conversions {
@@ -49,9 +50,7 @@ fun <T: TimeUnit> T.isEqual(other: T): Boolean {
     return this.toMillisLong() == other.toMillisLong()
 }
 
-fun <T: TimeUnit> T.isNotEqual(other: T) = isEqual(other)
-
-
+fun <T: TimeUnit> T.isNotEqual(other: T) = !isEqual(other)
 
 interface TimeUnit {
 
@@ -76,6 +75,17 @@ interface TimeUnit {
     fun toLong(): Long {
         return value
     }
+
+    override fun toString(): String
+
+    /**
+     * Returns true if value <= 0
+     */
+    fun isEmpty(): Boolean {
+        return value <= 0
+    }
+
+    fun isNotEmpty() = !isEmpty()
 
     fun convert(convertingUnit: TimeUnit): Long {
 
@@ -121,6 +131,10 @@ inline class Millis(override val value: Long): TimeUnit {
     override fun newInstance(value: Long): Millis {
         return Millis(value)
     }
+
+    override fun toString(): String {
+        return value.toString()
+    }
 }
 
 inline class Seconds(override val value: Long): TimeUnit {
@@ -151,6 +165,10 @@ inline class Seconds(override val value: Long): TimeUnit {
 
     override fun newInstance(value: Long): Seconds {
         return Seconds(value)
+    }
+
+    override fun toString(): String {
+        return value.toString()
     }
 }
 
@@ -183,6 +201,10 @@ inline class Minutes(override val value: Long): TimeUnit {
     override fun newInstance(value: Long): Minutes {
         return Minutes(value)
     }
+
+    override fun toString(): String {
+        return value.toString()
+    }
 }
 
 inline class Hours(override val value: Long): TimeUnit {
@@ -214,6 +236,10 @@ inline class Hours(override val value: Long): TimeUnit {
     override fun newInstance(value: Long): Hours {
         return Hours(value)
     }
+
+    override fun toString(): String {
+        return value.toString()
+    }
 }
 
 inline class Days(override val value: Long): TimeUnit {
@@ -244,5 +270,9 @@ inline class Days(override val value: Long): TimeUnit {
 
     override fun newInstance(value: Long): Days {
         return Days(value)
+    }
+
+    override fun toString(): String {
+        return value.toString()
     }
 }

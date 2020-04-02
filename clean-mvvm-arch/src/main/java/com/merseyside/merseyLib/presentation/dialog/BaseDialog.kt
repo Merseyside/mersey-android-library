@@ -39,6 +39,8 @@ abstract class BaseDialog : DialogFragment() {
 
     @CallSuper
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        isCancelable = getCancelable()
+
         return Dialog(context!!, getStyle()).apply {
 
             val title = getTitle(context)
@@ -49,10 +51,16 @@ abstract class BaseDialog : DialogFragment() {
                 setTitle(title)
             }
 
+            setCanceledOnTouchOutside(getCancelable())
+
             if (this@BaseDialog !is BaseVMDialog<*, *>) {
                 setContentView(getLayoutId())
             }
         }
+    }
+
+    open fun getCancelable(): Boolean {
+        return true
     }
 
     @Deprecated("This method doesn't call in dialog classes. Use onCreateDialog()")

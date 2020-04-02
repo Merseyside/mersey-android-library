@@ -15,6 +15,7 @@ import com.merseyside.merseyLib.utils.ext.log
 import com.merseyside.merseyLib.utils.getApplicationName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import kotlin.coroutines.CoroutineContext
@@ -57,8 +58,10 @@ class BillingManager(
 
     private suspend fun startConnection(): BillingClient? {
 
-        return suspendCoroutine { cont ->
-            if (billingClient == null) {
+        return if (billingClient == null) {
+
+            suspendCancellableCoroutine { cont ->
+
                 val client = BillingClient
                     .newBuilder(context)
                     .enablePendingPurchases()
@@ -67,13 +70,16 @@ class BillingManager(
 
                 client.startConnection(object : BillingClientStateListener {
                     override fun onBillingSetupFinished(billingResult: BillingResult) {
-                        if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                        if (cont.isActive) {
+                            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
 
-                            billingClient = client
-                            cont.resume(billingClient)
+                                billingClient = client
+                                cont.resume(billingClient)
 
-                        } else {
-                            throw IllegalArgumentException("Result code: ${billingResult.responseCode}")
+                            } else {
+                                cont.resume(null)
+                                //throw IllegalArgumentException("Result code: ${billingResult.responseCode}")
+                            }
                         }
                     }
 
@@ -81,9 +87,9 @@ class BillingManager(
                         billingClient = null
                     }
                 })
-            } else {
-                cont.resume(billingClient)
             }
+        } else {
+            billingClient
         }
     }
 
@@ -134,14 +140,14 @@ class BillingManager(
      */
     suspend fun getSkuDetails(skuList: List<String>? = null): List<SkuDetails>? {
 
-        val billingClient = startConnection().log()
+        billingClient = startConnection()
 
         if (billingClient != null) {
             val skuDetailsParams = SkuDetailsParams.newBuilder().setSkusList(skuList)
                 .setType(BillingClient.SkuType.SUBS).build()
 
             return suspendCoroutine { cont ->
-                billingClient.querySkuDetailsAsync(
+                billingClient!!.querySkuDetailsAsync(
                     skuDetailsParams
                 ) { result, responseSkuList ->
                     if (result.responseCode == BillingClient.BillingResponseCode.OK) {
@@ -157,6 +163,7 @@ class BillingManager(
     }
 
     fun startSubscription(activity: Activity, skuDetails: SkuDetails): BillingResult {
+
         if (billingClient != null) {
             val flowParams = BillingFlowParams.newBuilder()
                 .setSkuDetails(skuDetails)
@@ -190,7 +197,7 @@ class BillingManager(
                     ?.filter { skus.contains(it.sku) }
                     ?.map { getSubscriptionState(it.sku, it.purchaseToken) }
             } else {
-                throw IllegalStateException()
+                return null
             }
         } else throw IllegalArgumentException("Please, set credentials id by constructor")
     }
@@ -210,7 +217,7 @@ class BillingManager(
             .setApplicationName(getApplicationName(context))
             .build()
 
-        val request = publisher.Purchases().subscriptions().get(packageName, sku, token).also { Logger.log("", it.keys) }
+        val request = publisher.Purchases().subscriptions().get(packageName, sku, token).also { Logger.log(this, it.keys) }
 
         return withContext(Dispatchers.IO) {
             Subscription.Builder(request.execute().log()).setSku(sku).build()

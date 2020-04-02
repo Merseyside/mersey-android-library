@@ -6,7 +6,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
-import com.merseyside.merseyLib.presentation.view.BaseViewHolder
+import com.merseyside.merseyLib.view.BaseViewHolder
 
 abstract class BasePagedAdapter<T>(diffUtil: DiffUtil.ItemCallback<T>)
     : PagedListAdapter<T, BaseViewHolder>(diffUtil) {

@@ -4,39 +4,40 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
 import kotlin.math.pow
 
 /**
  * Created by ivan_ on 10.12.2017.
  */
-object PermissionsManager {
-    fun verifyStoragePermissions(
+object PermissionManager {
+    fun requestPermissions(
         activity: Activity?,
-        PERMISSIONS: Array<String>,
-        code: Int
+        vararg permissions: String,
+        requestCode: Int
     ) {
-        if (isRequestCodeValid(code)) {
-            if (!isPermissionsGranted(activity, PERMISSIONS)) {
+        if (isRequestCodeValid(requestCode)) {
+            if (!isPermissionsGranted(activity, *permissions)) {
                 ActivityCompat.requestPermissions(
                     activity!!,
-                    PERMISSIONS,
-                    code
+                    permissions,
+                    requestCode
                 )
             }
         } else throw IllegalArgumentException("Request code is not valid")
     }
 
-    fun verifyStoragePermissions(
+    fun requestPermissions(
         fragment: Fragment,
-        PERMISSIONS: Array<String>,
-        code: Int
+        vararg permissions: String,
+        requestCode: Int
     ) {
-        if (isRequestCodeValid(code)) {
-            if (!isPermissionsGranted(fragment.context, PERMISSIONS)) {
+        if (isRequestCodeValid(requestCode)) {
+            if (!isPermissionsGranted(fragment.context, *permissions)) {
                 fragment.requestPermissions(
-                    PERMISSIONS,
-                    code
+                    permissions,
+                    requestCode
                 )
             }
         } else throw IllegalArgumentException("Request code is not valid")
@@ -44,12 +45,13 @@ object PermissionsManager {
 
     fun isPermissionsGranted(
         context: Context?,
-        PERMISSIONS_STORAGE: Array<String>
+        vararg permissions: String
     ): Boolean {
-        for (permission in PERMISSIONS_STORAGE) {
-            val granted = ActivityCompat.checkSelfPermission(context!!, permission)
+        for (permission in permissions) {
+            val granted = checkSelfPermission(context!!, permission)
             if (granted != PackageManager.PERMISSION_GRANTED) return false
         }
+
         return true
     }
 

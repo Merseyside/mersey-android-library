@@ -20,6 +20,7 @@ class WorkerFactory @Inject constructor(
         workerClassName: String,
         workerParameters: WorkerParameters
     ): ListenableWorker? {
+
         val foundEntry =
             workerFactories.entries.find { Class.forName(workerClassName).isAssignableFrom(it.key) }
 

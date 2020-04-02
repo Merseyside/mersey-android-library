@@ -3,8 +3,8 @@ package com.merseyside.merseyLib.presentation.view
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Bundle
-import com.merseyside.merseyLib.data.serialization.deserialize
-import com.merseyside.merseyLib.data.serialization.serialize
+import com.merseyside.merseyLib.utils.serialization.deserialize
+import com.merseyside.merseyLib.utils.serialization.serialize
 import com.merseyside.merseyLib.presentation.activity.Orientation
 
 interface OrientationHandler {

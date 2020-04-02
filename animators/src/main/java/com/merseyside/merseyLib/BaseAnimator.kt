@@ -12,10 +12,13 @@ abstract class BaseAnimator {
 
     private var isLegacy = false
     private var isReverse = false
+
     set(value) {
         field = value
 
-        setReverse(value)
+        if (isLegacy) {
+            setReverse(value)
+        }
     }
 
     private val listenerList: MutableList<Animator.AnimatorListener> by lazy { ArrayList<Animator.AnimatorListener>() }
@@ -30,10 +33,10 @@ abstract class BaseAnimator {
 
     private var internalCallback: Animator.AnimatorListener? = null
 
-    private var onEndCallback: (animation: Animator?) -> Unit? = {}
-    private var onRepeatCallback: (animation: Animator?) -> Unit? = {}
-    private var onCancelCallback: (animation: Animator?) -> Unit? = {}
-    private var onStartCallback: (animation: Animator?) -> Unit? = {}
+    private var onEndCallback: (animation: Animator?, isReverse: Boolean) -> Unit? = { _, _ -> }
+    private var onRepeatCallback: (animation: Animator?, isReverse: Boolean) -> Unit? = { _, _ -> }
+    private var onCancelCallback: (animation: Animator?, isReverse: Boolean) -> Unit? = { _, _ -> }
+    private var onStartCallback: (animation: Animator?, isReverse: Boolean) -> Unit? = { _, _ -> }
 
     fun setLegacyReverse(isLegacy: Boolean) {
         if (!this.isLegacy) {
@@ -48,10 +51,7 @@ abstract class BaseAnimator {
     }
 
     fun start() {
-        if (isLegacy) {
-            isReverse = false
-        }
-
+        isReverse = false
         play()
     }
 
@@ -91,6 +91,7 @@ abstract class BaseAnimator {
 
     fun reverse() {
         val animator = getAnimator()
+        isReverse = true
 
         if (!isLegacy) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -104,8 +105,6 @@ abstract class BaseAnimator {
                 return
             } else throw IllegalStateException("Wtf?")
         } else {
-            isReverse = true
-
             play()
         }
     }
@@ -121,19 +120,19 @@ abstract class BaseAnimator {
         getAnimator().removeListener(listener)
     }
 
-    fun setOnEndCallback(onEnd: (animation: Animator?) -> Unit) {
+    fun setOnEndCallback(onEnd: (animation: Animator?, isReverse: Boolean) -> Unit) {
         this.onEndCallback = onEnd
     }
 
-    fun setOnStartCallback(onStart: (animation: Animator?) -> Unit) {
+    fun setOnStartCallback(onStart: (animation: Animator?, isReverse: Boolean) -> Unit) {
         this.onStartCallback = onStart
     }
 
-    fun setOnRepeatCallback(onRepeat: (animation: Animator?) -> Unit) {
+    fun setOnRepeatCallback(onRepeat: (animation: Animator?, isReverse: Boolean) -> Unit) {
         this.onRepeatCallback = onRepeat
     }
 
-    fun setOnCancelCallback(onCancel: (animation: Animator?) -> Unit) {
+    fun setOnCancelCallback(onCancel: (animation: Animator?, isReverse: Boolean) -> Unit) {
         this.onCancelCallback = onCancel
     }
 
@@ -146,19 +145,19 @@ abstract class BaseAnimator {
         if (internalCallback == null) {
             internalCallback = object: Animator.AnimatorListener {
                 override fun onAnimationRepeat(animation: Animator?) {
-                    onRepeatCallback.invoke(animation)
+                    onRepeatCallback.invoke(animation, isReverse)
                 }
 
                 override fun onAnimationEnd(animation: Animator?) {
-                    onEndCallback.invoke(animation)
+                    onEndCallback.invoke(animation, isReverse)
                 }
 
                 override fun onAnimationCancel(animation: Animator?) {
-                    onCancelCallback.invoke(animation)
+                    onCancelCallback.invoke(animation, isReverse)
                 }
 
                 override fun onAnimationStart(animation: Animator?) {
-                    onStartCallback.invoke(animation)
+                    onStartCallback.invoke(animation, isReverse)
                 }
 
             }
@@ -168,10 +167,10 @@ abstract class BaseAnimator {
     }
 
     fun removeAllCallbacks() {
-        onEndCallback = {}
-        onRepeatCallback  = {}
-        onCancelCallback = {}
-        onStartCallback = {}
+        onEndCallback = { _, _ -> }
+        onRepeatCallback  = { _, _ -> }
+        onCancelCallback = { _, _ -> }
+        onStartCallback = { _, _ -> }
     }
 
     fun log(tag: Any, msg: Any) {

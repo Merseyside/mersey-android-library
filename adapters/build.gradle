@@ -36,8 +36,8 @@ android {
         jvmTarget = '1.8'
     }
 
-    buildFeatures {
-        dataBinding = true
+    dataBinding {
+        enabled = true
     }
 }
 
@@ -62,13 +62,22 @@ dependencies {
 
 afterEvaluate {
     generateReleaseBuildConfig.enabled = false
+    generateDebugBuildConfig.enabled = false
 
-    kaptReleaseKotlin.finalizedBy(removeBuildFiles)
+    kaptReleaseKotlin.finalizedBy(removeReleaseBuildFiles)
+    kaptDebugKotlin.finalizedBy(removeDebugBuildFiles)
 }
 
-task removeBuildFiles {
+task removeReleaseBuildFiles {
     doLast {
         file("$buildDir/generated/source/kapt/release/com/merseyside/merseyLib/DataBinderMapperImpl.java").delete()
         println(file("$buildDir/generated/source/kapt/release/com/merseyside/merseyLib/BR.java").delete())
+    }
+}
+
+task removeDebugBuildFiles {
+    doLast {
+        file("$buildDir/generated/source/kapt/debug/com/merseyside/merseyLib/DataBinderMapperImpl.java").delete()
+        println(file("$buildDir/generated/source/kapt/debug/com/merseyside/merseyLib/BR.java").delete())
     }
 }

@@ -1,5 +1,6 @@
 package com.merseyside.merseyLib.model
 
+import androidx.annotation.CallSuper
 import androidx.databinding.BaseObservable
 import com.merseyside.merseyLib.adapters.BaseAdapter
 
@@ -28,7 +29,8 @@ abstract class BaseAdapterViewModel<M>(
         }
     }
 
-    fun onClick() {
+    @CallSuper
+    open fun onClick() {
         if (listeners.isNotEmpty()) {
             listeners.forEach { it.onItemClicked(obj) }
         }
