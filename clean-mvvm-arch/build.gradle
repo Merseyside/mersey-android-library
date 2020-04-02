@@ -4,7 +4,7 @@ plugins {
     id 'kotlin-android-extensions'
     id 'kotlin-kapt'
     id 'kotlinx-serialization'
-//    id 'com.github.dcendents.android-maven'
+    id 'com.github.dcendents.android-maven'
 }
 
 group='com.github.Merseyside'
