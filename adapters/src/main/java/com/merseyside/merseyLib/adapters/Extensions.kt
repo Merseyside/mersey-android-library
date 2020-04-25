@@ -1,7 +1,7 @@
 package com.merseyside.merseyLib.adapters
 
 import androidx.recyclerview.widget.SortedList
-import com.merseyside.merseyLib.presentation.model.BaseComparableAdapterViewModel
+import com.merseyside.merseyLib.model.BaseComparableAdapterViewModel
 
 @Throws(IllegalArgumentException::class)
 fun <T : BaseComparableAdapterViewModel<M>, M : Any> SortedList<T>.isEquals(list : MutableList<T>) : Boolean {

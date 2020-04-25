@@ -84,20 +84,19 @@ abstract class BaseVMActivity<B : ViewDataBinding, M : BaseViewModel> : BaseBind
 
     protected abstract fun loadingObserver(isLoading: Boolean)
 
-
-    protected fun showErrorMsg(textMessage: BaseViewModel.TextMessage) {
+    private fun showErrorMsg(textMessage: BaseViewModel.TextMessage) {
         if (textMessage.actionMsg.isNullOrEmpty()) {
             showErrorMsg(textMessage.msg)
         } else {
-            showErrorMsg(textMessage.msg, textMessage.actionMsg!!, textMessage.listener!!)
+            showErrorMsg(textMessage.msg, null, textMessage.actionMsg!!, textMessage.onClick)
         }
     }
 
-    protected fun showMsg(textMessage: BaseViewModel.TextMessage) {
+    private fun showMsg(textMessage: BaseViewModel.TextMessage) {
         if (textMessage.actionMsg.isNullOrEmpty()) {
             showMsg(textMessage.msg)
         } else {
-            showMsg(textMessage.msg, textMessage.actionMsg!!, textMessage.listener!!)
+            showMsg(textMessage.msg, null, textMessage.actionMsg!!, textMessage.onClick)
         }
     }
 }

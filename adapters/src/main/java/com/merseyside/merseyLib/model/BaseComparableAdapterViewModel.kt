@@ -1,6 +1,4 @@
-package com.merseyside.merseyLib.presentation.model
-
-import com.merseyside.merseyLib.model.BaseAdapterViewModel
+package com.merseyside.merseyLib.model
 
 abstract class BaseComparableAdapterViewModel<M>(obj: M) : BaseAdapterViewModel<M>(obj) {
 

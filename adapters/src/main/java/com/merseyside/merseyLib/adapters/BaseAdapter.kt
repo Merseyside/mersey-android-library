@@ -7,10 +7,12 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.merseyLib.model.BaseAdapterViewModel
+import com.merseyside.merseyLib.utils.ext.isZero
 import com.merseyside.merseyLib.view.BaseViewHolder
 import kotlin.IllegalArgumentException
 
-abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>> : RecyclerView.Adapter<BaseViewHolder>() {
+abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
+    : RecyclerView.Adapter<BaseViewHolder>(), ItemPositionInterface<BaseAdapterViewModel<M>> {
 
     protected var isRecyclable: Boolean? = null
 
@@ -26,16 +28,22 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>> : RecyclerView.Adapte
         return BaseViewHolder(binding)
     }
 
+    @CallSuper
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         val obj = getModelByPosition(position)
         bindItemList.add(obj)
 
         listener?.let { obj.setOnItemClickListener(listener!!) }
-        holder.bind(getBindingVariable(), obj)
+        bind(holder, obj)
 
         if (isRecyclable != null) {
             holder.setIsRecyclable(isRecyclable!!)
         }
+    }
+
+    @CallSuper
+    internal open fun bind(holder: BaseViewHolder, obj: Any) {
+        holder.bind(getBindingVariable(), obj)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -54,8 +62,22 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>> : RecyclerView.Adapte
 
     protected abstract fun getBindingVariable(): Int
 
-    fun setOnItemClickListener(listener: OnItemClickListener<M>) {
+    fun setOnItemClickListener(listener: OnItemClickListener<M>?) {
         this.listener = listener
+    }
+
+    fun getOnItemClickListener(): OnItemClickListener<M>? {
+        return listener
+    }
+
+    fun onItemClicked(onClick: (M) -> Unit): OnItemClickListener<M> {
+        this.listener = object: OnItemClickListener<M> {
+            override fun onItemClicked(obj: M) {
+                onClick.invoke(obj)
+            }
+        }
+
+        return this.listener!!
     }
 
     open fun removeOnItemClickListener(listener: OnItemClickListener<M>) {
@@ -73,19 +95,21 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>> : RecyclerView.Adapte
     }
 
     open fun add(obj: M) {
-        add(createItemViewModel(obj))
+        add(initItemViewModel(obj))
         notifyDataSetChanged()
     }
 
     open fun add(list: List<M>) {
-        for (obj in list) {
-            this.modelList.add(createItemViewModel(obj))
-        }
+        modelList.addAll(itemsToModels(list))
         notifyDataSetChanged()
     }
 
+    internal fun getModelByObj(obj: M): T? {
+        return modelList.firstOrNull { it.areItemsTheSame(obj) }
+    }
+
     open fun remove(obj: M) {
-        val foundObj = modelList.firstOrNull { it.areItemsTheSame(obj) }
+        val foundObj = getModelByObj(obj)
 
         if (foundObj != null) {
             remove(foundObj)
@@ -93,13 +117,48 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>> : RecyclerView.Adapte
     }
 
     open fun remove(list: List<M>) {
-        list.forEach {
-            remove(it)
+        val removeList = list.mapNotNull {
+            getModelByObj(it)
+        }
+
+        removeList(removeList)
+    }
+
+    private fun removeList(list: List<T>) {
+        if (list.isNotEmpty()) {
+            val smallestPosition = getSmallestPosition(list)
+
+            modelList.removeAll(list)
+
+            notifyPositionsChanged(smallestPosition)
         }
     }
 
     private fun remove(obj: T) {
+        val position = getPositionOfModel(obj)
         modelList.remove(obj)
+
+        notifyPositionsChanged(position)
+    }
+
+    protected fun getSmallestPosition(list: List<T>): Int {
+        return run minValue@{
+
+            list.minBy {
+                val position = getPositionOfModel(it)
+
+                if (position.isZero()) return@minValue position
+                else position
+            }!!.getPosition()
+        }
+    }
+
+    protected open fun notifyPositionsChanged(startWithPosition: Int) {
+        if (startWithPosition < itemCount - 1) {
+            (startWithPosition until itemCount).forEach { index ->
+                modelList[index].onPositionChanged(index)
+            }
+        }
     }
 
     open fun clear() {
@@ -111,6 +170,15 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>> : RecyclerView.Adapte
     open fun getPositionOfObj(obj: M): Int {
         modelList.forEachIndexed { index, t ->
             if (t.areItemsTheSame(obj)) return index
+        }
+
+        throw IllegalArgumentException("No data found")
+    }
+
+    @Throws(IllegalArgumentException::class)
+    open fun getPositionOfModel(model: T): Int {
+        modelList.forEachIndexed { index, t ->
+            if (t == model) return index
         }
 
         throw IllegalArgumentException("No data found")
@@ -201,9 +269,27 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>> : RecyclerView.Adapte
         }
     }
 
+    protected fun itemsToModels(list: List<M>): List<T> {
+        return list.map { initItemViewModel(it) }
+    }
+
+    internal fun initItemViewModel(obj: M): T {
+        return createItemViewModel(obj).apply {
+            setItemPositionInterface(this@BaseAdapter)
+        }
+    }
+
     protected abstract fun createItemViewModel(obj: M): T
 
-    companion object {
-        private const val TAG = "BaseAdapter"
+    override fun getPosition(model: BaseAdapterViewModel<M>): Int {
+        return getPositionOfModel(model as T)
+    }
+
+    override fun isLast(model: BaseAdapterViewModel<M>): Boolean {
+        return getPosition(model) == itemCount - 1
+    }
+
+    override fun isFirst(model: BaseAdapterViewModel<M>): Boolean {
+        return getPosition(model) == 0
     }
 }

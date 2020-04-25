@@ -1,0 +1,191 @@
+package com.merseyside.merseyLib.presentation.view.floatingListView
+
+import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Rect
+import android.os.Build
+import android.util.AttributeSet
+import android.view.View
+import android.view.ViewGroup
+import android.view.ViewTreeObserver
+import android.widget.RelativeLayout
+import androidx.annotation.IdRes
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.merseyside.merseyLib.R
+import com.merseyside.merseyLib.adapters.BaseAdapter
+
+
+class FloatingListView(context: Context, attrsSet: AttributeSet? = null): RelativeLayout(context, attrsSet) {
+
+    enum class Orientation {VERTICAL, HORIZONTAL, GRID}
+
+    private lateinit var recyclerView: RecyclerView
+
+    private var relativeView: View? = null
+
+    var orientation: Orientation = Orientation.VERTICAL
+
+    @IdRes var containerId: Int = 0
+
+    var adapter: BaseAdapter<*, *>? = null
+    set(value) {
+        field = value
+
+        recyclerView.adapter = value
+    }
+
+    init {
+        if (attrsSet != null) {
+            loadAttributes(attrsSet)
+        }
+
+        doLayout()
+    }
+
+    private fun loadAttributes(attrsSet: AttributeSet) {
+        //val array = context.theme.obtainStyledAttributes(attrsSet, R.styleable.FloatingListView, 0, 0)
+    }
+
+    private fun applyOrientation() {
+        recyclerView.apply {
+            layoutManager = when (orientation) {
+                Orientation.VERTICAL -> LinearLayoutManager(
+                    context,
+                    LinearLayoutManager.VERTICAL,
+                    false
+                )
+                Orientation.HORIZONTAL -> LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+                Orientation.GRID -> GridLayoutManager(context, 2)
+            }
+        }
+    }
+
+    private fun doLayout() {
+        inflate(context, R.layout.view_floating_list, this)
+
+        recyclerView = findViewById(R.id.floating_list)
+        applyOrientation()
+
+        if (relativeView != null) {
+            build()
+        }
+
+    }
+
+    @SuppressLint("ObsoleteSdkInt")
+    private fun build() {
+        visibility = GONE
+
+        relativeView?.viewTreeObserver?.addOnGlobalLayoutListener(layoutListener)
+    }
+
+    private fun removeListener() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            relativeView!!.viewTreeObserver.removeGlobalOnLayoutListener(layoutListener)
+        } else {
+            relativeView!!.viewTreeObserver.removeOnGlobalLayoutListener(layoutListener)
+        }
+    }
+
+    private val layoutListener = ViewTreeObserver.OnGlobalLayoutListener {
+        removeView()
+
+        // position
+        val rootView = if (containerId == 0) {
+            relativeView!!.rootView as ViewGroup
+        } else {
+            relativeView!!.rootView.findViewById(containerId) as ViewGroup
+        }
+
+        val layoutParams = LayoutParams(
+                rootView.measuredWidth,
+                rootView.measuredHeight
+            )
+
+        layoutParams.addRule(ALIGN_PARENT_TOP)
+        layoutParams.addRule(ALIGN_PARENT_LEFT)
+
+        rootView.addView(this, layoutParams)
+
+        removeListener()
+    }
+
+    fun setRelativeView(relativeView: View) {
+        this.relativeView = relativeView
+
+        build()
+    }
+
+    fun prepare() {
+
+        if (relativeView != null) {
+            if (visibility == View.VISIBLE) return
+
+            val relativeRootView = if (containerId == 0) {
+                rootView
+            } else {
+                rootView.findViewById(containerId)
+            }
+
+
+            val rootCoord: IntArray = calculateViewCoords(rootView, relativeRootView)
+            val globalRootCoords: IntArray = calculateViewCoords(rootView, relativeView!!)
+
+            val rootViewBottomPosition = relativeRootView.measuredHeight + rootCoord[1]
+            val relativeViewBottomPosition = globalRootCoords[1] + relativeView!!.measuredHeight
+
+            val rootViewCenter = (rootCoord[1] + relativeRootView.measuredHeight / 2)
+
+            val layoutParams =
+                recyclerView.layoutParams as MarginLayoutParams
+            if (globalRootCoords[1] < rootViewCenter) { // to bottom
+                val rect = Rect()
+                val coord: IntArray = calculateViewCoords(relativeRootView, relativeView!!, rect)
+
+                layoutParams.topMargin = coord[1] - rootCoord[1] + relativeView!!.height
+
+                if (containerId == 0) {
+                    layoutParams.bottomMargin = rootView.height - rect.bottom
+                }
+            } else { // to top
+
+                if (containerId == 0) {
+                    layoutParams.bottomMargin =
+                        rootView.height - globalRootCoords[1] - relativeView!!.height
+                } else {
+                    layoutParams.bottomMargin = relativeView!!.height + rootViewBottomPosition - relativeViewBottomPosition
+                }
+            }
+
+        } else {
+            throw IllegalArgumentException("Relative view is null")
+        }
+
+    }
+
+    fun removeView() {
+        if (parent != null) {
+            (parent as ViewGroup).removeView(this)
+        }
+    }
+
+    private fun calculateViewCoords(
+        rootView: View,
+        view: View
+    ): IntArray {
+        return calculateViewCoords(rootView, view, Rect())
+    }
+
+    private fun calculateViewCoords(
+        rootView: View,
+        view: View,
+        rect: Rect
+    ): IntArray {
+        rootView.getWindowVisibleDisplayFrame(rect)
+        val coords = IntArray(2)
+        view.getLocationInWindow(coords)
+        return coords
+    }
+}

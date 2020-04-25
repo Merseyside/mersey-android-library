@@ -3,6 +3,7 @@ package com.merseyside.merseyLib.view
 import android.content.Context
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
+import com.merseyside.merseyLib.utils.ext.getActivity
 
 class BaseViewHolder(val binding: ViewDataBinding)
     : RecyclerView.ViewHolder(binding.root) {
@@ -11,6 +12,8 @@ class BaseViewHolder(val binding: ViewDataBinding)
         binding.apply {
             setVariable(variable, obj)
             executePendingBindings()
+
+            lifecycleOwner = itemView.getActivity()
         }
     }
 

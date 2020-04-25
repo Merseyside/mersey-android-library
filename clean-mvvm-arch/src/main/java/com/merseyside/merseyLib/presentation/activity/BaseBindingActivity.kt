@@ -8,6 +8,8 @@ abstract class BaseBindingActivity<B: ViewDataBinding> : BaseActivity() {
 
     protected lateinit var binding: B
 
+    protected var isBindingInit = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         performDataBinding()
 
@@ -17,5 +19,13 @@ abstract class BaseBindingActivity<B: ViewDataBinding> : BaseActivity() {
     private fun performDataBinding() {
         binding = DataBindingUtil.setContentView(this, getLayoutId())
         binding.lifecycleOwner = this@BaseBindingActivity
+
+        isBindingInit = true
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        isBindingInit = false
     }
 }

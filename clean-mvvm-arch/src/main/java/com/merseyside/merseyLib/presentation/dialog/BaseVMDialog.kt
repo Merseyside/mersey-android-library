@@ -18,8 +18,18 @@ abstract class BaseVMDialog<B : ViewDataBinding, M : BaseViewModel> : BaseBindin
     @Inject
     protected lateinit var viewModel: M
 
-    private val errorObserver = Observer<Throwable> { this.showError(it) }
-    private val messageObserver = Observer<BaseViewModel.TextMessage> { this.showMsg(it) }
+    private val errorObserver = Observer<Throwable> { this.handleError(it) }
+    private val messageObserver = Observer<BaseViewModel.TextMessage?> { message ->
+        if (message != null) {
+            if (message.isError) {
+                showErrorMsg(message)
+            } else {
+                showMsg(message)
+            }
+
+            viewModel.messageLiveEvent.value = null
+        }
+    }
 
     abstract fun getBindingVariable(): Int
 
@@ -59,7 +69,15 @@ abstract class BaseVMDialog<B : ViewDataBinding, M : BaseViewModel> : BaseBindin
         if (textMessage.actionMsg.isNullOrEmpty()) {
             showMsg(textMessage.msg)
         } else {
-            showMsg(textMessage.msg, textMessage.actionMsg!!, textMessage.listener!!)
+            showMsg(textMessage.msg, null, textMessage.actionMsg!!, textMessage.onClick)
+        }
+    }
+
+    private fun showErrorMsg(textMessage: BaseViewModel.TextMessage) {
+        if (textMessage.actionMsg.isNullOrEmpty()) {
+            showErrorMsg(textMessage.msg)
+        } else {
+            showErrorMsg(textMessage.msg, null, textMessage.actionMsg!!, textMessage.onClick)
         }
     }
 }

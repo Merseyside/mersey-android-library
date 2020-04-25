@@ -1,14 +1,20 @@
 package com.merseyside.merseyLib.animator
 
 import android.animation.Animator
+import android.animation.ArgbEvaluator
+import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.view.View
+import androidx.annotation.ColorInt
 import com.merseyside.merseyLib.BaseAnimatorBuilder
 import com.merseyside.merseyLib.BaseSingleAnimator
+import com.merseyside.merseyLib.utils.Logger
+import com.merseyside.merseyLib.utils.ext.log
 import com.merseyside.merseyLib.utils.time.TimeUnit
 
 class ColorAnimator(
@@ -17,15 +23,22 @@ class ColorAnimator(
 
     class Builder(
         view: View,
-        duration: TimeUnit
+        duration: TimeUnit,
+        private val propertyName: String = "backgroundColor"
     ) : BaseAnimatorBuilder<ColorAnimator>(view, duration) {
 
-        var values: IntArray? = null
+        fun values(@ColorInt vararg colors: Int) {
+            this.values = colors
+        }
 
+        private var values: IntArray? = null
+
+        @SuppressLint("ObjectAnimatorBinding")
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-        fun rgbsAnimation(
+        private fun rgbsAnimation(
             ints: IntArray,
-            duration: TimeUnit
+            duration: TimeUnit,
+            propertyName: String
         ): Animator {
 
             ints.forEachIndexed { index, value ->
@@ -47,20 +60,25 @@ class ColorAnimator(
 
             values.also { if (isReverse) it.reverse() }
 
-            return ValueAnimator.ofArgb(*values).apply {
+            return ObjectAnimator.ofObject(view, propertyName, ArgbEvaluator(), *values.toTypedArray()).apply {
                 this.duration = duration.toMillisLong()
-
-                    addUpdateListener { valueAnimator ->
-                        val value = valueAnimator.animatedValue as Int
-
-                        view.setBackgroundColor(value)
-                    }
-                }
             }
+
+//            return ValueAnimator.ofArgb(*values).apply {
+//                Logger.log(this, "here")
+//                this.duration = duration.toMillisLong()
+//
+//                addUpdateListener { valueAnimator ->
+//                    val value = valueAnimator.animatedValue as Int
+//
+//                    view.setBackgroundColor(value)
+//                }
+//            }
+        }
 
         override fun build(): Animator {
             if (values != null) {
-                return rgbsAnimation(values!!.copyOf(), duration)
+                return rgbsAnimation(values!!.copyOf(), duration, propertyName)
             } else {
                 throw IllegalArgumentException("Points haven't been set")
             }

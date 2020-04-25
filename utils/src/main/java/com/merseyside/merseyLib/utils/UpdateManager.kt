@@ -5,6 +5,8 @@ import android.util.Log
 import com.google.android.play.core.appupdate.AppUpdateInfo
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.InstallState
+import com.google.android.play.core.install.InstallStateUpdatedListener
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
@@ -14,7 +16,10 @@ import kotlin.IllegalStateException
 class UpdateManager(private val activity: Activity) {
 
     interface OnAppUpdateListener {
-        fun updateAvailable()
+        fun immediateUpdateAvailable()
+
+        fun flexibleUpdateAvailable()
+
         fun updateDownloaded()
     }
 
@@ -32,16 +37,19 @@ class UpdateManager(private val activity: Activity) {
 
     private var requestCode: Int? = null
 
-    fun setOnAppUpdateListener(onAppUpdateListener: OnAppUpdateListener?) {
-        if (onAppUpdateListener != null) {
-            this.onAppUpdateListener = onAppUpdateListener
+    fun setOnAppUpdateListener(onAppUpdateListener: OnAppUpdateListener) {
 
-            val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+        this.onAppUpdateListener = onAppUpdateListener
 
-            appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+        appUpdateManager.appUpdateInfo.apply {
+
+            addOnFailureListener { Logger.log(TAG, "Fail to get updates") }
+
+            addOnSuccessListener { appUpdateInfo ->
+                Logger.log(TAG, "here")
                 Logger.log(TAG, "${appUpdateInfo.updateAvailability()}")
 
-                this.appUpdateInfo = appUpdateInfo
+                this@UpdateManager.appUpdateInfo = appUpdateInfo
 
                 if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
                     if (requestCode != null) {
@@ -51,17 +59,22 @@ class UpdateManager(private val activity: Activity) {
                     if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
                         onAppUpdateListener.updateDownloaded()
                     } else {
-                        if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-                            && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
-                        ) {
-                            Log.d(TAG, "Updating is available")
-                            this.onAppUpdateListener?.updateAvailable()
+                        if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
+                            if (appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {
+                                Log.d(TAG, "Immediate updating is available")
+                                this@UpdateManager.onAppUpdateListener?.immediateUpdateAvailable()
+                            }
+
+                            if (appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
+                                Log.d(TAG, "Flexible updating is available")
+                                this@UpdateManager.onAppUpdateListener?.flexibleUpdateAvailable()
+                            }
+                        } else {
+                            Logger.log(TAG, "No updates")
                         }
                     }
                 }
             }
-        } else {
-            this.onAppUpdateListener = null
         }
     }
 
@@ -96,7 +109,8 @@ class UpdateManager(private val activity: Activity) {
                     requestCode
                 )
 
-                appUpdateManager.registerListener { state ->
+                var installListener: InstallStateUpdatedListener? = null
+                installListener = InstallStateUpdatedListener { state ->
                     when (state.installStatus()) {
                         InstallStatus.DOWNLOADED -> {
                             onFlexibleUpdateStateListener.onDownloaded()
@@ -108,16 +122,21 @@ class UpdateManager(private val activity: Activity) {
 
                         InstallStatus.CANCELED -> {
                             onFlexibleUpdateStateListener.onCanceled()
+
                         }
 
                         InstallStatus.INSTALLED -> {
                             onFlexibleUpdateStateListener.onInstalled()
                         }
 
-                        else -> {
-                        }
+                        else -> {}
+                    }
+
+                    if (state.installStatus() != InstallStatus.DOWNLOADED) {
+                        appUpdateManager.unregisterListener(installListener)
                     }
                 }
+
             } else {
                 throw IllegalStateException("App is not available for updating")
             }
@@ -126,7 +145,6 @@ class UpdateManager(private val activity: Activity) {
 
     fun installDownloadedUpdate() {
         appUpdateManager.completeUpdate()
-        RESULT_IN_APP_UPDATE_FAILED
     }
 
     private fun isRequestCodeValid(requestCode: Int): Boolean {

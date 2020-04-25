@@ -2,6 +2,7 @@ package com.merseyside.merseyLib.utils.billing
 
 import com.google.api.services.androidpublisher.model.SubscriptionPurchase
 import com.merseyside.merseyLib.utils.time.Millis
+import com.merseyside.merseyLib.utils.time.getSystemTimeMillis
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -114,7 +115,7 @@ sealed class Subscription {
             if (sku != null) {
 
                 return subscriptionPurchase.let {
-                    if (subscriptionPurchase.cancelReason != null) {
+                    if (it.expiryTimeMillis < getSystemTimeMillis()) {
                         CanceledSubscription(
                             sku = sku!!,
                             startTimeMillis = it.startTimeMillis,
@@ -123,7 +124,7 @@ sealed class Subscription {
                             priceCode = it.priceCurrencyCode,
                             priceAmountMicros = it.priceAmountMicros,
                             countryCode = it.countryCode,
-                            cancelReason = it.cancelReason
+                            cancelReason = it.cancelReason ?: 0
                         )
                     } else {
                         ActiveSubscription(

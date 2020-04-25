@@ -1,11 +1,13 @@
 package com.merseyside.merseyLib.presentation.view
 
+import android.graphics.drawable.GradientDrawable
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.AttrRes
+import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
@@ -13,10 +15,8 @@ import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
 import com.google.android.material.textfield.TextInputLayout
-import com.merseyside.merseyLib.utils.ext.addTextChangeListener
-import com.merseyside.merseyLib.utils.ext.getColorFromAttr
-import com.merseyside.merseyLib.utils.ext.isNotNullAndEmpty
-import com.merseyside.merseyLib.utils.ext.setTextWithCursor
+import com.merseyside.merseyLib.utils.Logger
+import com.merseyside.merseyLib.utils.ext.*
 
 @BindingAdapter("app:isVisibleOrGone")
 fun isVisibleOrGone(view: View, isVisible: Boolean) {
@@ -79,7 +79,7 @@ fun isVisible(view: View, collection: Collection<*>?) {
     }
 }
 
-@BindingAdapter("bind:backgroundDrawable")
+@BindingAdapter("app:backgroundDrawable")
 fun setDrawableBackground(view: View, @DrawableRes res: Int?) {
     if (res != null) {
         view.background = ContextCompat.getDrawable(view.context, res)
@@ -89,7 +89,7 @@ fun setDrawableBackground(view: View, @DrawableRes res: Int?) {
 /**
  * It use only for setting cursor in right position
  */
-@BindingAdapter("bind:text")
+@BindingAdapter("app:text")
 fun setText(textView: TextView, text: String?) {
     if (textView is EditText) {
         textView.setTextWithCursor(text)
@@ -98,19 +98,19 @@ fun setText(textView: TextView, text: String?) {
     }
 }
 
-@BindingAdapter(value = ["textAttrChanged"]) // AttrChanged required postfix
+@BindingAdapter(value = ["app:textAttrChanged"]) // AttrChanged required postfix
 fun setTextListener(textView: TextView, listener: InverseBindingListener?) {
-    textView.addTextChangeListener { _, _, _, _ -> listener?.onChange() }
+    textView.addTextChangeListener { _, _, _, _, _ -> listener?.onChange() }
 }
 
-@InverseBindingAdapter(attribute = "bind:text")
+@InverseBindingAdapter(attribute = "app:text")
 fun getText(textView: TextView): String? {
     return textView.text.toString()
 }
 
 /**/
 
-@BindingAdapter("bind:vectorDrawable")
+@BindingAdapter("app:vectorDrawable")
 fun loadVectorDrawable(iv: ImageView, @DrawableRes resId: Int?) {
     if (resId != null) {
         iv.setImageResource(resId)
@@ -132,9 +132,16 @@ fun setViewGroupBackgroundColor(viewGroup: ViewGroup, @AttrRes attrId: Int?) {
 }
 
 @BindingAdapter("app:attrBackgroundColor")
-fun setViewBackgroundColor(view: View, @AttrRes attrId: Int?) {
+fun setViewAttrBackgroundColor(view: View, @AttrRes attrId: Int?) {
     if (attrId != null) {
         view.setBackgroundColor(view.getColorFromAttr(attrId))
+    }
+}
+
+@BindingAdapter("app:backgroundColorRes")
+fun setViewBackgroundColor(view: View, @ColorRes colorId: Int?) {
+    if (colorId.isNotNullAndZero()) {
+        view.setBackgroundColor(ContextCompat.getColor(view.context, colorId!!))
     }
 }
 
@@ -142,6 +149,24 @@ fun setViewBackgroundColor(view: View, @AttrRes attrId: Int?) {
 fun setCustomTextColor(view: TextView, @AttrRes attrId: Int?) {
     if (attrId != null) {
         view.setTextColor(view.getColorFromAttr(attrId))
+    }
+}
+
+@BindingAdapter("app:attrTint")
+fun setAttrTint(view: View, @AttrRes attrId: Int?) {
+    if (attrId != null) {
+        val drawable: GradientDrawable = view.background as GradientDrawable
+
+        drawable.setColor(view.getColorFromAttr(attrId))
+    }
+}
+
+@BindingAdapter("app:colorTint")
+fun setTint(view: View, @ColorRes colorRes: Int?) {
+    if (colorRes != null) {
+        val drawable: GradientDrawable = view.background as GradientDrawable
+
+        drawable.setColor(ContextCompat.getColor(view.context, colorRes))
     }
 }
 

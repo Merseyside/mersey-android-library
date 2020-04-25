@@ -18,7 +18,6 @@ import com.merseyside.merseyLib.presentation.view.IView
 import com.merseyside.merseyLib.presentation.view.OnKeyboardStateListener
 import com.merseyside.merseyLib.presentation.view.OrientationHandler
 import com.merseyside.merseyLib.presentation.view.localeViews.ILocaleManager
-import com.merseyside.merseyLib.utils.Logger
 import com.merseyside.merseyLib.utils.SnackbarManager
 import com.merseyside.merseyLib.utils.ext.isNotNullAndEmpty
 
@@ -34,7 +33,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
 
     private var currentLanguage: String = ""
 
-    var snackbarManager: SnackbarManager? = null
+    protected var snackbarManager: SnackbarManager? = null
 
     final override var orientation: Orientation? = null
 
@@ -53,14 +52,18 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         return baseActivity.getLanguage()
     }
 
+    override fun setLanguage(lang: String?) {
+        baseActivity.setLanguage(lang)
+
+        setTitle()
+    }
+
     protected abstract fun performInjection(bundle: Bundle?)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         performInjection(savedInstanceState)
     }
-
-    override fun onOrientationChanged(orientation: Orientation, savedInstanceState: Bundle?) {}
 
     @CallSuper
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -138,9 +141,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
     override fun onStop() {
         super.onStop()
 
-        if (snackbarManager?.isShowing() == true) {
-            snackbarManager!!.dismiss()
-        }
+        dismissMsg()
 
         unregisterKeyboardListener()
     }
@@ -161,24 +162,26 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         baseActivity.handleError(throwable)
     }
 
-    override fun showMsg(msg: String, actionMsg: String?, clickListener: View.OnClickListener?) {
+    override fun showMsg(msg: String, view: View?, actionMsg: String?, onClick: () -> Unit) {
 
        snackbarManager?.apply {
            showSnackbar(
+               view = view,
                message = msg,
                actionMsg = actionMsg,
-               clickListener = clickListener
+               onClick = onClick
            )
        }
     }
 
-    override fun showErrorMsg(msg: String, actionMsg: String?, clickListener: View.OnClickListener?) {
+    override fun showErrorMsg(msg: String, view: View?, actionMsg: String?, onClick: () -> Unit) {
 
        snackbarManager?.apply {
            showErrorSnackbar(
+               view = view,
                message = msg,
                actionMsg = actionMsg,
-               clickListener = clickListener
+               onClick = onClick
            )
        }
     }
@@ -186,20 +189,12 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
     override fun dismissMsg() {
         if (snackbarManager?.isShowing() == true) {
             snackbarManager!!.dismiss()
-        } else {
-            Logger.log(this, "Snackbar had not shown")
         }
     }
 
     @CallSuper
     open fun updateLanguage(context: Context) {
         updateLocale(context = context)
-    }
-
-    override fun setLanguage(lang: String?) {
-        baseActivity.setLanguage(lang)
-
-        setTitle()
     }
 
     protected abstract fun getTitle(context: Context): String?

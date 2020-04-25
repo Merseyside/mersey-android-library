@@ -11,24 +11,29 @@ import androidx.lifecycle.ViewModel
 import com.merseyside.merseyLib.presentation.interfaces.IStringHelper
 import com.merseyside.merseyLib.utils.Logger
 import com.merseyside.merseyLib.utils.PermissionManager
-import com.merseyside.merseyLib.utils.SingleLiveEvent
+import com.merseyside.merseyLib.utils.mvvm.SingleLiveEvent
+import com.merseyside.merseyLib.utils.mvvm.clear
 
 abstract class BaseViewModel protected constructor() : ViewModel(), IStringHelper {
 
     val isInProgress = ObservableBoolean(false)
     val progressText = ObservableField<String>()
 
-    val errorLiveEvent: MutableLiveData<Throwable> = SingleLiveEvent()
-    val messageLiveEvent: MutableLiveData<TextMessage> = SingleLiveEvent()
+    val errorLiveEvent: MutableLiveData<Throwable> =
+        SingleLiveEvent()
+    val messageLiveEvent: MutableLiveData<TextMessage> =
+        SingleLiveEvent()
     val isInProgressLiveData: MutableLiveData<Boolean> = MutableLiveData()
-    val alertDialogLiveEvent: MutableLiveData<AlertDialogModel> = SingleLiveEvent()
-    val grantPermissionLiveEvent: MutableLiveData<Pair<Array<String>, Int>> = SingleLiveEvent()
+    val alertDialogLiveEvent: MutableLiveData<AlertDialogModel> =
+        SingleLiveEvent()
+    val grantPermissionLiveEvent: MutableLiveData<Pair<Array<String>, Int>> =
+        SingleLiveEvent()
 
     data class TextMessage(
         val isError: Boolean = false,
         var msg: String = "",
         var actionMsg: String? = null,
-        var listener: View.OnClickListener? = null
+        val onClick: () -> Unit = {}
     )
 
     data class AlertDialogModel(
@@ -74,24 +79,25 @@ abstract class BaseViewModel protected constructor() : ViewModel(), IStringHelpe
         messageLiveEvent.value = textMessage
     }
 
-    protected fun showMsg(msg: String, actionMsg: String, listener: View.OnClickListener?) {
+    protected fun showMsg(msg: String, actionMsg: String, onClick: () -> Unit = {}) {
         Logger.log(this, msg)
         val textMessage = TextMessage(
             isError = false,
             msg = msg,
-            actionMsg = actionMsg
+            actionMsg = actionMsg,
+            onClick = onClick
         )
 
         messageLiveEvent.value = textMessage
     }
 
-    protected fun showErrorMsg(msg: String, actionMsg: String, listener: View.OnClickListener) {
+    protected fun showErrorMsg(msg: String, actionMsg: String, onClick: () -> Unit = {}) {
         Logger.logErr(this, msg)
         val textMessage = TextMessage(
             isError = true,
             msg = msg,
             actionMsg = actionMsg,
-            listener = listener
+            onClick = onClick
         )
 
         messageLiveEvent.value = textMessage
@@ -113,7 +119,7 @@ abstract class BaseViewModel protected constructor() : ViewModel(), IStringHelpe
     fun hideProgress() {
         if (isInProgressLiveData.value == true) {
             isInProgress.set(false)
-            progressText.set(null)
+            progressText.clear()
 
             isInProgressLiveData.value = false
         }
@@ -142,7 +148,7 @@ abstract class BaseViewModel protected constructor() : ViewModel(), IStringHelpe
         onPositiveClick: () -> Unit = {},
         onNegativeClick: () -> Unit = {},
         isOneAction: Boolean? = null,
-        isCancelable: Boolean = true
+        isCancelable: Boolean? = null
     ) {
 
         showAlertDialog(

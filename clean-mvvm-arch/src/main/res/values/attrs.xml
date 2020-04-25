@@ -29,4 +29,24 @@
         <attr name="android:hint"/>
     </declare-styleable>
 
+    <declare-styleable name="FloatingListView"/>
+
+    <declare-styleable name="MerseyRecyclerView">
+        <attr name="maxHeight" format="dimension" />
+        <attr name="saveScrollPosition" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="MaxWidthTabLayout">
+        <attr name="maxWidth" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="CircleTextView">
+        <attr name="сolor" format="color"/>
+        <attr name="text"/>
+        <attr name="textColor" format="color"/>
+        <attr name="android:textSize"/>
+        <attr name="font"/>
+
+        <attr name="image" format="reference"/>
+    </declare-styleable>
 </resources>

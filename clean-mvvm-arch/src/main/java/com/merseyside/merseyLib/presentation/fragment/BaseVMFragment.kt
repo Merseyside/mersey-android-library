@@ -29,6 +29,7 @@ abstract class BaseVMFragment<B : ViewDataBinding, M : BaseViewModel> : BaseBind
 
     private val errorObserver = Observer<Throwable> { this.handleError(it!!) }
     private val progressObserver = Observer<Boolean> { this.loadingObserver(it!!) }
+
     private val alertDialogModelObserver = Observer<BaseViewModel.AlertDialogModel> {
         it?.apply {
             showAlertDialog(title, message, positiveButtonText, negativeButtonText, onPositiveClick, onNegativeClick, isOneAction, isCancelable)
@@ -81,19 +82,19 @@ abstract class BaseVMFragment<B : ViewDataBinding, M : BaseViewModel> : BaseBind
 
     protected open fun loadingObserver(isLoading: Boolean) {}
 
-    protected fun showErrorMsg(textMessage: BaseViewModel.TextMessage) {
+    private fun showErrorMsg(textMessage: BaseViewModel.TextMessage) {
         if (textMessage.actionMsg.isNullOrEmpty()) {
             showErrorMsg(textMessage.msg)
         } else {
-            showErrorMsg(textMessage.msg, textMessage.actionMsg!!, textMessage.listener)
+            showErrorMsg(textMessage.msg, null, textMessage.actionMsg!!, textMessage.onClick)
         }
     }
 
-    protected fun showMsg(textMessage: BaseViewModel.TextMessage) {
+    private fun showMsg(textMessage: BaseViewModel.TextMessage) {
         if (textMessage.actionMsg.isNullOrEmpty()) {
             showMsg(textMessage.msg)
         } else {
-            showMsg(textMessage.msg, textMessage.actionMsg!!, textMessage.listener)
+            showMsg(textMessage.msg, null, textMessage.actionMsg!!, textMessage.onClick)
         }
     }
 

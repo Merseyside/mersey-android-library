@@ -13,3 +13,7 @@ fun <T> T.log(tag: Any = Logger.TAG, prefix: Any? = null): T {
 
     return this
 }
+
+fun <T> T.log(prefix: Any? = null): T {
+    return this.log(Logger.TAG, prefix)
+}

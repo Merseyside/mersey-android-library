@@ -12,12 +12,23 @@ abstract class BaseBindingFragment<B: ViewDataBinding> : BaseFragment() {
 
     protected lateinit var binding: B
 
+    protected var isBindingInit = false
+
     @CallSuper
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
 
         binding = DataBindingUtil.inflate(inflater, getLayoutId(), container, false)
         binding.lifecycleOwner = this
+
+        isBindingInit = true
+
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        isBindingInit = false
     }
 }

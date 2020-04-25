@@ -1,14 +1,24 @@
-package com.merseyside.merseyLib.utils.ext
+package com.merseyside.merseyLib.utils.mvvm
 
 import androidx.databinding.Observable
 import androidx.databinding.ObservableField
+
+fun <T> ObservableField<T>.clear() {
+    this.set(null)
+}
 
 fun <T> ObservableField<T>.onChange(
     onChange: (property: ObservableField<T>, value: T?, isInitial: Boolean) -> Unit
 ): Observable.OnPropertyChangedCallback {
     val callback = object: Observable.OnPropertyChangedCallback() {
         override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-            onChange.invoke(this@onChange, this@onChange.get(), false)
+            val value = this@onChange.get()
+
+            onChange.invoke(this@onChange, value, false)
+
+            if (this@onChange is SingleEventObservableField && value != null) {
+                this@onChange.clear()
+            }
         }
     }
 
@@ -48,5 +58,7 @@ inline fun <reified T : Any> ObservableField<T>.isEmpty(): Boolean {
         true
     }
 }
+
+inline fun <reified T : Any> ObservableField<T>.isNullOrEmpty() = isNull() || isEmpty()
 
 inline fun <reified T : Any> ObservableField<T>.isNotEmpty() = !isEmpty()

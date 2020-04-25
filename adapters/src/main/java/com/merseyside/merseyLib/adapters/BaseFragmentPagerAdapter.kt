@@ -1,5 +1,6 @@
 package com.merseyside.merseyLib.adapters
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.SparseArray
 import android.view.ViewGroup
@@ -7,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 
+@SuppressLint("WrongConstant")
 abstract class BaseFragmentPagerAdapter(
     private val fm: FragmentManager,
     behavior: Int = BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT

@@ -21,6 +21,7 @@ import com.merseyside.merseyLib.presentation.view.localeViews.ILocaleManager
 import com.merseyside.merseyLib.utils.LocaleManager
 import com.merseyside.merseyLib.utils.Logger
 import com.merseyside.merseyLib.utils.SnackbarManager
+import com.merseyside.merseyLib.utils.ext.log
 import com.merseyside.merseyLib.utils.getLocalizedContext
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.Unregistrar
@@ -86,9 +87,7 @@ abstract class BaseActivity : AppCompatActivity(),
     override fun onStop() {
         super.onStop()
 
-        if (snackbarManager.isShowing()) {
-            snackbarManager.dismiss()
-        }
+        dismissMsg()
 
         unregisterKeyboardListener()
     }
@@ -120,31 +119,35 @@ abstract class BaseActivity : AppCompatActivity(),
     @LayoutRes
     abstract fun getLayoutId(): Int
 
-    override fun showMsg(msg: String, actionMsg: String?, clickListener: View.OnClickListener?) {
+    override fun showMsg(
+        msg: String,
+        view: View?,
+        actionMsg: String?,
+        onClick: () -> Unit
+    ) {
         snackbarManager.apply {
             showSnackbar(
+                view = view,
                 message = msg,
                 actionMsg = actionMsg,
-                clickListener = clickListener
+                onClick = onClick
             )
         }
     }
 
-    override fun showErrorMsg(msg: String, actionMsg: String?, clickListener: View.OnClickListener?) {
+    override fun showErrorMsg(
+        msg: String,
+        view: View?,
+        actionMsg: String?,
+        onClick: () -> Unit
+    ) {
         snackbarManager.apply {
             showErrorSnackbar(
+                view = view,
                 message = msg,
                 actionMsg = actionMsg,
-                clickListener = clickListener
+                onClick = onClick
             )
-        }
-    }
-
-    override fun dismissMsg() {
-        if (snackbarManager.isShowing()) {
-            snackbarManager.dismiss()
-        } else {
-            Logger.log(this, "Snackbar had not shown")
         }
     }
 
@@ -154,7 +157,6 @@ abstract class BaseActivity : AppCompatActivity(),
     }
 
     override fun onBackPressed() {
-
         val fragment = getCurrentFragment()
 
         if (fragment != null && fragment is OnBackPressedListener) {
@@ -263,6 +265,14 @@ abstract class BaseActivity : AppCompatActivity(),
         ) { isVisible ->
             if (isVisible) listener.onKeyboardShown()
             else listener.onKeyboardHid()
+        }
+    }
+
+    override fun dismissMsg() {
+        if (snackbarManager.isShowing()) {
+            snackbarManager.dismiss()
+        } else {
+            Logger.log(this, "Snackbar had not shown")
         }
     }
 

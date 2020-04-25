@@ -1,16 +1,24 @@
 package com.merseyside.merseyLib.presentation.view
 
-import android.os.Bundle
 import android.view.View
 import androidx.annotation.StringRes
-import com.merseyside.merseyLib.presentation.activity.Orientation
 import net.yslibrary.android.keyboardvisibilityevent.Unregistrar
 
 interface IView {
 
-    fun showMsg(msg: String, actionMsg: String? = null, clickListener: View.OnClickListener? = null)
+    fun showMsg(
+        msg: String,
+        view: View? = null,
+        actionMsg: String? = null,
+        onClick: () -> Unit = {}
+    )
 
-    fun showErrorMsg(msg: String, actionMsg: String? = null, clickListener: View.OnClickListener? = null)
+    fun showErrorMsg(
+        msg: String,
+        view: View? = null,
+        actionMsg: String? = null,
+        onClick: () -> Unit = {}
+    )
 
     fun dismissMsg()
 
@@ -53,6 +61,4 @@ interface IView {
             (keyboardUnregistrar!! as Unregistrar).unregister()
         }
     }
-
-    fun onOrientationChanged(orientation: Orientation, savedInstanceState: Bundle?)
 }

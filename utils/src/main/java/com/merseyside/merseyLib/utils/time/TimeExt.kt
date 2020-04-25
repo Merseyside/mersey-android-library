@@ -1,8 +1,11 @@
 package com.merseyside.merseyLib.utils.time
 
 import com.merseyside.merseyLib.utils.ext.log
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
 
-fun <T: Number> T.toMillis(): Millis {
+fun <T: Number> T.toTimeUnit(): Millis {
     return Millis(this.toLong()).log()
 }
 
@@ -23,8 +26,8 @@ fun <T: Number> T.toDays(): Days {
 }
 
 @Throws(NumberFormatException::class)
-fun <T: CharSequence> T.toMillis(): Millis {
-    return this.toString().toLong().toMillis()
+fun <T: CharSequence> T.toTimeUnit(): Millis {
+    return this.toString().toLong().toTimeUnit()
 }
 
 @Throws(NumberFormatException::class)
@@ -45,4 +48,19 @@ fun <T: CharSequence> T.toHours(): Hours {
 @Throws(NumberFormatException::class)
 fun <T: CharSequence> T.toDays(): Days {
     return this.toString().toLong().toDays()
+}
+
+@Throws(ParseException::class, KotlinNullPointerException::class)
+fun String.toTimeUnit(dateFormat: String, locale: Locale = Locale.US): TimeUnit {
+    return try {
+        val date = SimpleDateFormat(dateFormat, locale).parse(this)
+
+        if (date != null) {
+            Millis(date.time)
+        } else {
+            throw KotlinNullPointerException("Date can not be parse within following format")
+        }
+    } catch (e: ParseException) {
+        throw e
+    }
 }

@@ -1,25 +1,52 @@
 package com.merseyside.merseyLib.adapters
 
-import com.merseyside.merseyLib.model.BaseAdapterViewModel
+import com.merseyside.merseyLib.model.BaseSelectableAdapterViewModel
 
-abstract class BaseSelectableAdapter<M: Any, T: BaseAdapterViewModel<M>> : BaseAdapter<M, T>() {
+abstract class BaseSelectableAdapter<M: Any, T: BaseSelectableAdapterViewModel<M>>(
+    selectableMode: SelectableMode = SelectableMode.SINGLE,
+    var isAllowToCancelSelection: Boolean = false
+) : BaseSortedAdapter<M, T>() {
 
     interface OnItemSelectedListener<M> {
         fun onSelected(item: M, isSelected: Boolean, isSelectedByUser: Boolean)
     }
 
-    private val listeners: MutableList<OnItemSelectedListener<M>> by lazy { ArrayList<OnItemSelectedListener<M>>() }
+    enum class SelectableMode { SINGLE, MULTIPLE }
 
-    private var selectedItem: T? = null
+    var selectableMode: SelectableMode = selectableMode
+        set(value) {
+            if (field != value) {
+                field = value
+
+                if (value == SelectableMode.SINGLE) {
+                    if (selectedList.isNotEmpty()) {
+                        if (selectedList.size > 1) {
+                            (1 until selectedList.size).forEach { index ->
+                                selectedList[index].setSelected(
+                                    isSelected = false,
+                                    isNotifyItem = true
+                                )
+                            }
+
+                            selectedList = mutableListOf(selectedList.first())
+                        }
+                    }
+                }
+            }
+        }
+
+    private val listeners: MutableList<OnItemSelectedListener<M>> = ArrayList()
+
+    private var selectedList: MutableList<T> = ArrayList()
 
     fun setOnItemSelectedListener(listener: OnItemSelectedListener<M>) {
         listeners.add(listener)
 
-        if (selectedItem != null) {
+        selectedList.forEach { item ->
             listener.onSelected(
                 isSelected = true,
                 isSelectedByUser = false,
-                item = selectedItem!!.getItem()
+                item = item.getItem()
             )
         }
     }
@@ -28,118 +55,155 @@ abstract class BaseSelectableAdapter<M: Any, T: BaseAdapterViewModel<M>> : BaseA
         listeners.remove(listener)
     }
 
-    override fun add(model: T) {
-        addItemToGroup(model)
-
-        super.add(model)
-    }
-
     override fun add(obj: M) {
         val isNoData = isEmpty()
-        val item = createItemViewModel(obj)
+        val model = initItemViewModel(obj)
 
-        add(item)
+        add(model)
+
+        addItemToGroup(model)
 
         if (isNoData) {
-            selectFirstSelectableItem()
+            if (findSelectedItems().isEmpty()) {
+                selectFirstSelectableItem()
+            }
         }
-        notifyDataSetChanged()
     }
 
     override fun add(list: List<M>) {
         val isNoData = isEmpty()
 
-        for (obj in list) {
-            val item = createItemViewModel(obj)
-            add(item)
-        }
+        val models = itemsToModels(list)
+        addModels(models)
+
+        addItemsToGroup(models)
 
         if (isNoData) {
-            selectFirstSelectableItem()
+            if (findSelectedItems().isEmpty()) {
+                selectFirstSelectableItem()
+            }
         }
-        notifyDataSetChanged()
     }
 
     private fun selectFirstSelectableItem() {
-        if (!isAllowToCancelSelection()) {
+        if (!isAllowToCancelSelection) {
 
             getAllModels().forEach { item ->
-                if (item is SelectableItemInterface) {
-                    setItemSelected(item)
-                    return
-                }
+                setItemSelected(item)
+                return
             }
+        }
+    }
+
+    private fun addItemsToGroup(list: List<T>) {
+        list.forEach {
+            addItemToGroup(it)
         }
     }
 
     private fun addItemToGroup(item: T) {
-        if (item is SelectableItemInterface) {
-            item.setOnItemClickListener(object : OnItemClickListener<M> {
-                override fun onItemClicked(obj: M) {
-                    setItemSelected(item, true)
-                }
-            })
-        }
+        item.setOnItemClickListener(object : OnItemClickListener<M> {
+            override fun onItemClicked(obj: M) {
+                setItemSelected(item, true)
+            }
+        })
     }
 
     fun selectItem(item: M) {
-        if (selectedItem == null || !selectedItem!!.areItemsTheSame(item)) {
-            val found = find(item)
-
-            if (found != null && found is SelectableItemInterface) {
-                setItemSelected(found)
-            }
-        }
+        val found = find(item)
+        setItemSelected(found!!)
     }
 
+    @Throws(IndexOutOfBoundsException::class)
     fun selectItem(position: Int) {
         val item = getModelByPosition(position)
-        if (item is SelectableItemInterface) {
+        setItemSelected(item)
+    }
 
-            if (selectedItem == null || !selectedItem!!.areItemsTheSame(item.obj)) {
-                setItemSelected(item)
-            }
+    fun selectItems(items: List<M>) {
+        if (selectableMode == SelectableMode.MULTIPLE) {
+            items.forEach { selectItem(it) }
+        } else {
+            throw IllegalStateException("Selectable mode is Single")
         }
     }
 
     fun getSelectedItem(): M? {
-        return selectedItem?.getItem()
+        return if (selectedList.isNotEmpty()) {
+            selectedList.first().getItem()
+        } else {
+            null
+        }
     }
 
-    private fun setItemSelected(item: T, isSelectedByUser: Boolean = false) {
+    fun getSelectedItems(): List<M> {
+        return selectedList.map { it.obj }
+    }
 
-        item as SelectableItemInterface
+    private fun isCanItemBeSelected(item: T?): Boolean {
+        return (item != null && item.isSelectable())
+    }
 
-        if (!item.isSelected) {
+    private fun setItemSelected(item: T?, isSelectedByUser: Boolean = false) {
+        if (item != null && isCanItemBeSelected(item)) {
+            if (!item.isSelected()) {
+                if (selectableMode == SelectableMode.SINGLE) {
+                    if (selectedList.isEmpty() || selectedList.first().areItemsNotTheSame(item.obj)) {
+                        if (selectedList.isNotEmpty()) {
+                            selectedList.first().setSelected(
+                                isSelected = false,
+                                isNotifyItem = true
+                            )
+                            selectedList.clear()
+                        }
 
-            if (selectedItem != null) {
-                (selectedItem as SelectableItemInterface).isSelected = false
+                        selectedList.add(item)
+                    }
+                } else {
+                    selectedList.add(item)
+                }
+
+                item.setSelected(isSelected = true, isNotifyItem = true)
+                notifyItemSelected(item, isSelectedByUser)
+            } else if (isAllowToCancelSelection) {
+                item.setSelected(isSelected = false, isNotifyItem = true)
+                selectedList.remove(item)
+
+                notifyItemSelected(item, isSelectedByUser)
             }
-
-            item.isSelected = true
-            selectedItem = item
-
-            notifyItemSelected(item, isSelectedByUser)
-        } else if (isAllowToCancelSelection()) {
-            item.isSelected = false
-
-            notifyItemSelected(item, isSelectedByUser)
-            selectedItem = null
         }
     }
 
     private fun notifyItemSelected(item: T, isSelectedByUser: Boolean) {
-        item as SelectableItemInterface
-
         listeners.forEach { listener ->
-            listener.onSelected(item.getItem(), item.isSelected, isSelectedByUser)
+            listener.onSelected(item.getItem(), item.isSelected(), isSelectedByUser)
         }
     }
 
-
-    abstract fun isAllowToCancelSelection(): Boolean
-
-    companion object {
-        private const val TAG = "BaseSelectableAdapter"
+    private fun findSelectedItems(): List<T> {
+        return if (selectedList.isEmpty()) {
+            modelList.filter { model ->
+                 isItemSelected(model)
+            }.also {
+                selectedList = it.toMutableList()
+            }
+        } else {
+            selectedList
+        }
     }
+
+    private fun isItemSelected(model: T): Boolean {
+        return if (isCanItemBeSelected(model)) {
+            model.isSelected()
+        } else {
+            false
+        }
+    }
+
+    override fun clear() {
+        super.clear()
+
+        selectedList.clear()
+    }
+
 }

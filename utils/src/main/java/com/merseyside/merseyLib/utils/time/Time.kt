@@ -9,6 +9,9 @@ fun getSystemTimeMillis(): Long {
     return System.currentTimeMillis()
 }
 
+/**
+ * If set return type to Millis
+ */
 fun getTimestamp(): TimeUnit {
     return Millis(getSystemTimeMillis())
 }
@@ -22,7 +25,7 @@ fun getHoursMinutes(timestamp: TimeUnit, context: Context? = null): String {
 }
 
 fun getDate(timestamp: Long, context: Context?): String {
-    return getFormattedDate(timestamp, "dd-MM-YYYY", context)
+    return getFormattedDate(timestamp, "dd.MM.YYYY", context)
 }
 
 fun getDate(timestamp: TimeUnit, context: Context?): String {

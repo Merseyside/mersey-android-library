@@ -3,10 +3,10 @@ package com.merseyside.merseyLib.adapters
 class UpdateRequest<T>(val list: List<T>) {
 
     var isAddNew = true
-    private set
+        private set
 
     var isDeleteOld = false
-    private set
+        private set
 
     class Builder<T>(list: List<T>) {
 

@@ -1,11 +1,11 @@
 package com.merseyside.merseyLib.utils
 
 import android.app.Activity
-import android.graphics.Typeface
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.ColorInt
+import androidx.core.content.res.ResourcesCompat
 import com.google.android.material.snackbar.Snackbar
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.utils.ext.getColorFromAttr
@@ -27,36 +27,39 @@ open class SnackbarManager(private val activity: Activity) {
     }
 
     fun showSnackbar(
+        view: View?,
         message: String,
         actionMsg: String?,
-        clickListener: View.OnClickListener?
+        onClick: () -> Unit
     ) {
         val backgroundColor = getMsgBackgroundColor()
         val textColor = getMsgTextColor()
         val actionColor = getActionMsgTextColor()
 
-        showSnackbarDefault(message, backgroundColor, textColor, actionColor, actionMsg, clickListener)
+        showSnackbarDefault(view, message, backgroundColor, textColor, actionColor, actionMsg, onClick)
     }
 
     fun showErrorSnackbar(
+        view: View?,
         message: String,
         actionMsg: String?,
-        clickListener: View.OnClickListener?
+        onClick: () -> Unit
     ) {
         val backgroundColor = getErrorMsgBackgroundColor()
         val textColor = getErrorMsgTextColor()
         val actionColor = getActionErrorMsgTextColor()
 
-        showSnackbarDefault(message, backgroundColor, textColor, actionColor, actionMsg, clickListener)
+        showSnackbarDefault(view, message, backgroundColor, textColor, actionColor, actionMsg, onClick)
     }
 
     private fun showSnackbarDefault(
+        view: View?,
         message: String,
         @ColorInt backgroundColor: Int,
         @ColorInt textColor: Int,
         @ColorInt actionColor: Int,
         actionMsg: String?,
-        clickListener: View.OnClickListener?
+        onClick: () -> Unit
     ) {
         val length = if (!actionMsg.isNullOrEmpty()) {
             Snackbar.LENGTH_INDEFINITE
@@ -64,12 +67,10 @@ open class SnackbarManager(private val activity: Activity) {
             Snackbar.LENGTH_LONG
         }
 
-        createSnackbar(message, length, backgroundColor, textColor).apply {
+        createSnackbar(view, message, length, backgroundColor, textColor).apply {
 
             if (!actionMsg.isNullOrEmpty()) {
-                var listener = clickListener
-
-                if (listener == null) listener = View.OnClickListener {}
+                val listener = View.OnClickListener { onClick.invoke() }
 
                 setAction(actionMsg, listener)
                 setActionTextColor(actionColor)
@@ -79,10 +80,15 @@ open class SnackbarManager(private val activity: Activity) {
         }
     }
 
-    private fun createSnackbar(message: String, length: Int, @ColorInt backgroundColor: Int, @ColorInt textColor: Int): Snackbar {
+    private fun createSnackbar(
+        view: View?,
+        message: String, length: Int,
+        @ColorInt backgroundColor: Int,
+        @ColorInt textColor: Int
+    ): Snackbar {
+        val resultView = view ?: (activity.findViewById<View>(android.R.id.content) as ViewGroup).getChildAt(0)
 
-        val viewGroup = (activity.findViewById<View>(android.R.id.content) as ViewGroup).getChildAt(0) as ViewGroup
-        snackbar = Snackbar.make(viewGroup, message, length)
+        snackbar = Snackbar.make(resultView, message, length)
         val snackbarView = snackbar!!.view
 
         snackbarView.setBackgroundColor(backgroundColor)
@@ -90,7 +96,7 @@ open class SnackbarManager(private val activity: Activity) {
         val snackTextView = snackbarView.findViewById<TextView>(R.id.snackbar_text)
         snackTextView.setTextColor(textColor)
 
-        val font = Typeface.createFromAsset(activity.assets, "fonts/Roboto-Regular.ttf")
+        val font = ResourcesCompat.getFont(activity, R.font.roboto)
         var tv = snackbar!!.view.findViewById<TextView>(R.id.snackbar_text)
         tv.typeface = font
         tv = snackbar!!.view.findViewById(R.id.snackbar_action)

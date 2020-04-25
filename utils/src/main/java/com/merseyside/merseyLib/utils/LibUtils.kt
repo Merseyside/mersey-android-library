@@ -2,16 +2,20 @@
 package com.merseyside.merseyLib.utils
 
 import android.content.Context
+import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.view.KeyCharacterMap
 import android.view.KeyEvent
 import android.view.ViewConfiguration
+import androidx.core.content.ContextCompat.startActivity
 import com.merseyside.merseyLib.utils.time.TimeUnit
 import java.util.*
+
 
 fun getLocalizedContext(localeManager: LocaleManager): Context {
     return if (localeManager.language.isNotEmpty()) {
@@ -125,4 +129,28 @@ fun isMainThread(): Boolean {
 fun isExternalStorageReadable(): Boolean {
     val state = Environment.getExternalStorageState()
     return Environment.MEDIA_MOUNTED == state || Environment.MEDIA_MOUNTED_READ_ONLY == state
+}
+
+@Throws(NumberFormatException::class)
+fun getNumberOfDigits(number: Number): Int {
+    val str = number.toLong().toString()
+
+    return str.length
+}
+
+fun shrinkNumber(number: Number): String {
+    val long = number.toLong()
+
+    return if (long < 1000) {
+        long.toString()
+    } else if (long < 1_000_000) {
+        "${long / 1000}K+"
+    } else {
+        "${long / 1_000_000}M+"
+    }
+}
+
+fun openUrl(context: Context, url: String) {
+    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+    startActivity(context, browserIntent, null)
 }

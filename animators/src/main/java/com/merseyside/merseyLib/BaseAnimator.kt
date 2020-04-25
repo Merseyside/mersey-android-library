@@ -95,12 +95,13 @@ abstract class BaseAnimator {
 
         if (!isLegacy) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
-                if (animator is AnimatorSet) {
-                    animator.reverse()
-                } else if (animator is ValueAnimator) {
-                    animator.reverse()
-                }
+                try {
+                    if (animator is AnimatorSet) {
+                        animator.reverse()
+                    } else if (animator is ValueAnimator) {
+                        animator.reverse()
+                    }
+                } catch (e: IllegalStateException) {}
 
                 return
             } else throw IllegalStateException("Wtf?")

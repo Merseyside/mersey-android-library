@@ -1,5 +1,6 @@
 package com.merseyside.merseyLib.utils.serialization
 
+import android.os.Bundle
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
 
@@ -38,6 +39,14 @@ inline fun <reified T : Any> Any.deserialize(): T {
 
 fun <T> Any.deserialize(deserializationStrategy: DeserializationStrategy<T>): T {
     return this.toString().deserialize(deserializationStrategy)
+}
+
+inline fun <reified T : Any> Bundle.putSerialize(key: String, value: T) {
+    this.putString(key, value.serialize())
+}
+
+inline fun <reified T : Any> Bundle.getSerialize(key: String): T? {
+    return this.getString(key)?.deserialize<T>()
 }
 
 

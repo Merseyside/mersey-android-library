@@ -34,9 +34,21 @@ class PreferenceManager private constructor(
         return sharedPreferences.contains(preference)
     }
 
+
     fun setOnSharedPreferenceChangeListener(listener: OnSharedPreferenceChangeListener?) {
         sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
     }
+
+//    fun setOnSharedPreferenceChangeListener(onChange: (key: String) -> Unit): OnSharedPreferenceChangeListener {
+//        val listener = OnSharedPreferenceChangeListener { _, key ->
+//            if (key != null) {
+//                onChange.invoke(key)
+//            }
+//        }
+//
+//        sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+//        return listener
+//    }
 
     fun removeOnSharedPreferenceChangeListener(listener: OnSharedPreferenceChangeListener?) {
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
