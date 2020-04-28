@@ -63,17 +63,6 @@ class ColorAnimator(
             return ObjectAnimator.ofObject(view, propertyName, ArgbEvaluator(), *values.toTypedArray()).apply {
                 this.duration = duration.toMillisLong()
             }
-
-//            return ValueAnimator.ofArgb(*values).apply {
-//                Logger.log(this, "here")
-//                this.duration = duration.toMillisLong()
-//
-//                addUpdateListener { valueAnimator ->
-//                    val value = valueAnimator.animatedValue as Int
-//
-//                    view.setBackgroundColor(value)
-//                }
-//            }
         }
 
         override fun build(): Animator {

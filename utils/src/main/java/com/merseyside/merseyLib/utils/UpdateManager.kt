@@ -46,7 +46,6 @@ class UpdateManager(private val activity: Activity) {
             addOnFailureListener { Logger.log(TAG, "Fail to get updates") }
 
             addOnSuccessListener { appUpdateInfo ->
-                Logger.log(TAG, "here")
                 Logger.log(TAG, "${appUpdateInfo.updateAvailability()}")
 
                 this@UpdateManager.appUpdateInfo = appUpdateInfo

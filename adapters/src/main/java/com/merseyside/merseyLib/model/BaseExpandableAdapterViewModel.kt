@@ -1,10 +1,8 @@
 package com.merseyside.merseyLib.model
 
 import androidx.annotation.CallSuper
-import androidx.databinding.Bindable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.merseyside.merseyLib.utils.Logger
 import com.merseyside.merseyLib.utils.ext.log
 
 abstract class BaseExpandableAdapterViewModel<M, T: Any>(
@@ -49,7 +47,6 @@ abstract class BaseExpandableAdapterViewModel<M, T: Any>(
 
     @CallSuper
     override fun onSelectedChanged(isSelected: Boolean) {
-        Logger.log(this, isSelected)
         if (isExpandable()) {
             setExpanded(isSelected)
         }

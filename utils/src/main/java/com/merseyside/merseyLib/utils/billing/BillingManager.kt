@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import androidx.annotation.RawRes
 import com.android.billingclient.api.*
+import com.google.api.client.googleapis.json.GoogleJsonResponseException
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.androidpublisher.AndroidPublisher
@@ -195,7 +196,7 @@ class BillingManager(
 
                 return historyList
                     ?.filter { skus.contains(it.sku) }
-                    ?.map { getSubscriptionState(it.sku, it.purchaseToken) }
+                    ?.mapNotNull { getSubscriptionState(it.sku, it.purchaseToken) }
             } else {
                 return null
             }
@@ -206,7 +207,7 @@ class BillingManager(
         return queryAllSubscriptionsAsync(*skus)?.filterIsInstance<Subscription.ActiveSubscription>()
     }
 
-    private suspend fun getSubscriptionState(sku: String, token: String): Subscription {
+    private suspend fun getSubscriptionState(sku: String, token: String): Subscription? {
 
         val httpTransport = NetHttpTransport()
         val jacksonJsonFactory = JacksonFactory.getDefaultInstance()
@@ -217,10 +218,10 @@ class BillingManager(
             .setApplicationName(getApplicationName(context))
             .build()
 
-        val request = publisher.Purchases().subscriptions().get(packageName, sku, token).also { Logger.log(this, it.keys) }
+        val request = publisher.Purchases().subscriptions().get(packageName, sku, token)
 
         return withContext(Dispatchers.IO) {
-            Subscription.Builder(request.execute().log()).setSku(sku).build()
+            Subscription.Builder(try { request.execute() } catch (e: GoogleJsonResponseException) { null }).setSku(sku).build()
         }
     }
 

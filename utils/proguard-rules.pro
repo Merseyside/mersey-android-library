@@ -23,6 +23,7 @@
 
 -keepnames class kotlinx.** { *; }
 
+
 -keepattributes SourceFile,LineNumberTable
 -keep public class * extends java.lang.Exception
 
@@ -33,3 +34,21 @@
 -verbose
 -optimizations !code/simplification/arithmetic,!field
 -ignorewarnings
+
+#
+# For Kotlin reflection
+#
+
+-keep class kotlin.reflect.jvm.internal.impl.** { *; }
+-keep interface com.merseyside.merseyLib.utils.reflection.ReflectionHelper
+
+-keep interface kotlin.reflect.jvm.internal.impl.builtins.BuiltInsLoader
+
+-keep class kotlin.Metadata { *; }
+
+-keepclassmembers class kotlin.Metadata {
+    public <methods>;
+}
+
+-keep class com.google.api.client.googleapis.** { *; }
+-keep class com.google.api.services.** { *; }

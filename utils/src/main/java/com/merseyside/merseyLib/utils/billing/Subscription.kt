@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class Subscription {
+    abstract val isExists: Boolean
     abstract val sku: String
     internal abstract val startTimeMillis: Long
     internal abstract val expiryTimeMillis: Long
@@ -43,15 +44,16 @@ sealed class Subscription {
 
     @Serializable
     data class CanceledSubscription(
+        override val isExists: Boolean,
         override val sku: String,
-        override val startTimeMillis: Long,
-        override val expiryTimeMillis: Long,
-        override val autoRenewing: Boolean,
-        override val priceCode: String,
-        override val priceAmountMicros: Long,
-        override val countryCode: String,
+        override val startTimeMillis: Long = 0,
+        override val expiryTimeMillis: Long = 0,
+        override val autoRenewing: Boolean = false,
+        override val priceCode: String = "",
+        override val priceAmountMicros: Long= 0,
+        override val countryCode: String = "",
 
-        internal val cancelReason: Int
+        internal val cancelReason: Int = 0
     ) : Subscription() {
         override fun equals(other: Any?): Boolean {
             return this === other
@@ -76,6 +78,7 @@ sealed class Subscription {
 
     @Serializable
     data class ActiveSubscription(
+        override val isExists: Boolean = true,
         override val sku: String,
         override val startTimeMillis: Long,
         override val expiryTimeMillis: Long,
@@ -101,7 +104,7 @@ sealed class Subscription {
 
     }
 
-    internal class Builder(private val subscriptionPurchase: SubscriptionPurchase) {
+    internal class Builder(private val subscriptionPurchase: SubscriptionPurchase?) {
 
         private var sku: String? = null
 
@@ -114,30 +117,39 @@ sealed class Subscription {
         fun build(): Subscription {
             if (sku != null) {
 
-                return subscriptionPurchase.let {
-                    if (it.expiryTimeMillis < getSystemTimeMillis()) {
-                        CanceledSubscription(
-                            sku = sku!!,
-                            startTimeMillis = it.startTimeMillis,
-                            expiryTimeMillis = it.expiryTimeMillis,
-                            autoRenewing = it.autoRenewing,
-                            priceCode = it.priceCurrencyCode,
-                            priceAmountMicros = it.priceAmountMicros,
-                            countryCode = it.countryCode,
-                            cancelReason = it.cancelReason ?: 0
-                        )
-                    } else {
-                        ActiveSubscription(
-                            sku = sku!!,
-                            startTimeMillis = it.startTimeMillis,
-                            expiryTimeMillis = it.expiryTimeMillis,
-                            autoRenewing = it.autoRenewing,
-                            priceCode = it.priceCurrencyCode,
-                            priceAmountMicros = it.priceAmountMicros,
-                            countryCode = it.countryCode,
-                            paymentState = it.paymentState
-                        )
+                if (subscriptionPurchase != null) {
+
+                    return subscriptionPurchase.let {
+                        if (it.expiryTimeMillis < getSystemTimeMillis()) {
+                            CanceledSubscription(
+                                isExists = true,
+                                sku = sku!!,
+                                startTimeMillis = it.startTimeMillis,
+                                expiryTimeMillis = it.expiryTimeMillis,
+                                autoRenewing = it.autoRenewing,
+                                priceCode = it.priceCurrencyCode,
+                                priceAmountMicros = it.priceAmountMicros,
+                                countryCode = it.countryCode,
+                                cancelReason = it.cancelReason ?: 0
+                            )
+                        } else {
+                            ActiveSubscription(
+                                sku = sku!!,
+                                startTimeMillis = it.startTimeMillis,
+                                expiryTimeMillis = it.expiryTimeMillis,
+                                autoRenewing = it.autoRenewing,
+                                priceCode = it.priceCurrencyCode,
+                                priceAmountMicros = it.priceAmountMicros,
+                                countryCode = it.countryCode,
+                                paymentState = it.paymentState
+                            )
+                        }
                     }
+                } else {
+                    return CanceledSubscription(
+                        sku = sku!!,
+                        isExists = false
+                    )
                 }
             } else throw IllegalArgumentException("Sku is null")
         }

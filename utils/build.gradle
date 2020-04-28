@@ -4,7 +4,7 @@ plugins {
     id 'kotlin-android-extensions'
     id 'kotlin-kapt'
     id 'kotlinx-serialization'
-    id 'com.github.dcendents.android-maven'
+//    id 'com.github.dcendents.android-maven'
 }
 
 group='com.github.Merseyside'
@@ -21,7 +21,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             consumerProguardFiles 'proguard-rules.pro'
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -49,10 +49,10 @@ ext {
     playCore = '1.7.2'
 
     billing = '2.2.0'
-    publisher = 'v3-rev139-1.25.0'
+    publisher = 'v3-rev142-1.25.0'
     auth = '0.20.0'
 
-    firebase_firestore = '21.4.2'
+    firebase_firestore = '21.4.3'
 }
 
 dependencies {
@@ -89,6 +89,7 @@ task removeReleaseBuildFiles {
     doLast {
         file("$buildDir/generated/source/kapt/release/com/merseyside/merseyLib/DataBinderMapperImpl.java").delete()
         println(file("$buildDir/generated/source/kapt/release/com/merseyside/merseyLib/BR.java").delete())
+        println("delete trigger = " + file("$buildDir/generated/data_binding_trigger/release/com/merseyside/merseyLib/DataBindingTriggerClass.java").delete())
     }
 }
 

@@ -4,7 +4,7 @@ plugins {
     id 'kotlin-android-extensions'
     id 'kotlin-kapt'
     id 'kotlinx-serialization'
-    id 'com.github.dcendents.android-maven'
+//    id 'com.github.dcendents.android-maven'
 }
 
 group='com.github.Merseyside'
@@ -72,6 +72,7 @@ task removeReleaseBuildFiles {
     doLast {
         file("$buildDir/generated/source/kapt/release/com/merseyside/merseyLib/DataBinderMapperImpl.java").delete()
         println(file("$buildDir/generated/source/kapt/release/com/merseyside/merseyLib/BR.java").delete())
+        println("delete trigger = " + file("$buildDir/generated/data_binding_trigger/release/com/merseyside/merseyLib/DataBindingTriggerClass.java").delete())
     }
 }
 

@@ -65,9 +65,7 @@ abstract class BaseAdapterViewModel<M>(
         return itemPosition.getPosition(this)
     }
 
-    open fun onPositionChanged(position: Int) {
-        Logger.log(this, "on position changed $position")
-    }
+    open fun onPositionChanged(position: Int) {}
 
     open fun isDeletable(): Boolean {
         return true
