@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.annotation.RawRes
 import com.android.billingclient.api.*
 import com.google.api.client.googleapis.json.GoogleJsonResponseException
+import com.google.api.client.http.HttpResponseException
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.androidpublisher.AndroidPublisher
@@ -137,13 +138,15 @@ class BillingManager(
     }
 
     /**
+     * Get subscriptions from Google Play
+     *
      * Returns null if something went wrong
      */
     suspend fun getSkuDetails(skuList: List<String>? = null): List<SkuDetails>? {
 
         billingClient = startConnection()
 
-        if (billingClient != null) {
+        return if (billingClient != null) {
             val skuDetailsParams = SkuDetailsParams.newBuilder().setSkusList(skuList)
                 .setType(BillingClient.SkuType.SUBS).build()
 
@@ -159,7 +162,7 @@ class BillingManager(
                 }
             }
         } else {
-            throw IllegalStateException("Something went wrong")
+            null
         }
     }
 
@@ -176,7 +179,7 @@ class BillingManager(
         }
     }
 
-    suspend fun queryAllSubscriptionsAsync(vararg skus: String): List<Subscription>? {
+    suspend fun queryAllSubscriptionsAsync(vararg skus: String, isKeepActiveOnError: Boolean = false): List<Subscription>? {
 
         if (credentialsId != null) {
 
@@ -196,18 +199,18 @@ class BillingManager(
 
                 return historyList
                     ?.filter { skus.contains(it.sku) }
-                    ?.mapNotNull { getSubscriptionState(it.sku, it.purchaseToken) }
+                    ?.mapNotNull { getSubscriptionState(it.sku, it.purchaseToken, isKeepActiveOnError) }
             } else {
                 return null
             }
         } else throw IllegalArgumentException("Please, set credentials id by constructor")
     }
 
-    suspend fun queryActiveSubscriptionsAsync(vararg skus: String): List<Subscription>? {
-        return queryAllSubscriptionsAsync(*skus)?.filterIsInstance<Subscription.ActiveSubscription>()
+    suspend fun queryActiveSubscriptionsAsync(vararg skus: String, isKeepActiveOnError: Boolean = false): List<Subscription>? {
+        return queryAllSubscriptionsAsync(*skus, isKeepActiveOnError = isKeepActiveOnError)?.filterIsInstance<Subscription.ActiveSubscription>()
     }
 
-    private suspend fun getSubscriptionState(sku: String, token: String): Subscription? {
+    private suspend fun getSubscriptionState(sku: String, token: String, isKeepActiveOnError: Boolean): Subscription? {
 
         val httpTransport = NetHttpTransport()
         val jacksonJsonFactory = JacksonFactory.getDefaultInstance()
@@ -220,8 +223,18 @@ class BillingManager(
 
         val request = publisher.Purchases().subscriptions().get(packageName, sku, token)
 
+        var isKeepActiveOnErrorMut = isKeepActiveOnError
+
         return withContext(Dispatchers.IO) {
-            Subscription.Builder(try { request.execute() } catch (e: GoogleJsonResponseException) { null }).setSku(sku).build()
+            Subscription.Builder(
+                try { request.execute() }
+                catch (e: GoogleJsonResponseException) {
+                    isKeepActiveOnErrorMut = false
+                    null
+                }
+                catch (e: HttpResponseException) { null },
+                isKeepActiveOnError = isKeepActiveOnErrorMut
+            ).setSku(sku).build()
         }
     }
 

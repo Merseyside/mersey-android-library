@@ -52,14 +52,19 @@ class LocaleManager(var context: Context) {
     }
 
     fun getCurrentLocale(): Locale {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            context.resources.configuration.locales[0]
-        } else {
-            context.resources.configuration.locale
-        }
+        return Companion.getCurrentLocale(context)
     }
 
     companion object {
         private const val LANGUAGE_KEY = "language_key"
+
+        fun getCurrentLocale(context: Context): Locale {
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                context.resources.configuration.locales[0]
+            } else {
+                context.resources.configuration.locale
+            }
+        }
+
     }
 }

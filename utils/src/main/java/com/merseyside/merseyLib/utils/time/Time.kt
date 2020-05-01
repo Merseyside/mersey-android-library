@@ -1,19 +1,50 @@
 package com.merseyside.merseyLib.utils.time
 
+import android.annotation.SuppressLint
 import android.content.Context
 import com.merseyside.merseyLib.utils.LocaleManager
 import java.text.SimpleDateFormat
 import java.util.*
 
-fun getSystemTimeMillis(): Long {
-    return System.currentTimeMillis()
+enum class TimeZone { SYSTEM, GMT }
+
+fun getCurrentTimeMillis(timeZone: TimeZone = TimeZone.GMT): Long {
+    return getCurrentTimeMillis(timeZone.name)
+}
+
+fun getCurrentTimeMillis(timeZone: String): Long {
+    val value = when (timeZone) {
+        TimeZone.SYSTEM.name -> {
+            null
+        }
+
+        TimeZone.GMT.name -> {
+            java.util.TimeZone.getTimeZone("GMT")
+        }
+
+        else -> {
+            java.util.TimeZone.getTimeZone(timeZone)
+        }
+    }
+
+    return if (value != null) {
+        Calendar.getInstance(java.util.TimeZone.getTimeZone("GMT")).timeInMillis
+    } else {
+        val offset: Int = java.util.TimeZone.getDefault().rawOffset +
+                java.util.TimeZone.getDefault().dstSavings
+        return (System.currentTimeMillis() + offset)
+    }
 }
 
 /**
  * If set return type to Millis
  */
-fun getTimestamp(): TimeUnit {
-    return Millis(getSystemTimeMillis())
+fun getCurrentTimeUnit(timeZone: TimeZone = TimeZone.GMT): TimeUnit {
+    return getCurrentTimeUnit(timeZone.name)
+}
+
+fun getCurrentTimeUnit(timeZone: String): TimeUnit {
+    return Millis(getCurrentTimeMillis(timeZone))
 }
 
 fun getHoursMinutes(timestamp: Long, context: Context? = null): String {
@@ -44,6 +75,7 @@ fun getFormattedDate(timestamp: TimeUnit, pattern: String, context: Context? = n
     return getFormattedDate(timestamp.toMillisLong(), pattern, context)
 }
 
+@SuppressLint("SimpleDateFormat")
 fun getFormattedDate(timestamp: Long, pattern: String, context: Context? = null): String {
     var locale: Locale? = null
 

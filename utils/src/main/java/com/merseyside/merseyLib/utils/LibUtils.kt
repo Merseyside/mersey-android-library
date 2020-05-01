@@ -1,9 +1,14 @@
 @file:JvmName("LibUtils")
 package com.merseyside.merseyLib.utils
 
+import android.R.attr.label
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Environment
@@ -12,6 +17,7 @@ import android.os.Looper
 import android.view.KeyCharacterMap
 import android.view.KeyEvent
 import android.view.ViewConfiguration
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.ContextCompat.startActivity
 import com.merseyside.merseyLib.utils.time.TimeUnit
 import java.util.*
@@ -110,6 +116,16 @@ fun getApplicationName(context: Context): String? {
     )
 }
 
+fun getVersion(context: Context): String? {
+    return try {
+        val pInfo: PackageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        pInfo.versionName
+    } catch (e: PackageManager.NameNotFoundException) {
+        e.printStackTrace()
+        null
+    }
+}
+
 fun mainThread(onMain: () -> Unit): Handler {
     val handler = Handler(Looper.getMainLooper())
     handler.post(onMain)
@@ -153,4 +169,11 @@ fun shrinkNumber(number: Number): String {
 fun openUrl(context: Context, url: String) {
     val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
     startActivity(context, browserIntent, null)
+}
+
+fun copyToClipboard(context: Context, text: String, label: String = "Copied text") {
+    val clipboard: ClipboardManager? =
+        context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+    val clip: ClipData = ClipData.newPlainText(label, text)
+    clipboard?.setPrimaryClip(clip)
 }

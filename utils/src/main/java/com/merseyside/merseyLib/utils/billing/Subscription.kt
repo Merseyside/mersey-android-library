@@ -2,7 +2,7 @@ package com.merseyside.merseyLib.utils.billing
 
 import com.google.api.services.androidpublisher.model.SubscriptionPurchase
 import com.merseyside.merseyLib.utils.time.Millis
-import com.merseyside.merseyLib.utils.time.getSystemTimeMillis
+import com.merseyside.merseyLib.utils.time.getCurrentTimeMillis
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -80,14 +80,14 @@ sealed class Subscription {
     data class ActiveSubscription(
         override val isExists: Boolean = true,
         override val sku: String,
-        override val startTimeMillis: Long,
-        override val expiryTimeMillis: Long,
-        override val autoRenewing: Boolean,
-        override val priceCode: String,
-        override val priceAmountMicros: Long,
-        override val countryCode: String,
+        override val startTimeMillis: Long = 0,
+        override val expiryTimeMillis: Long = 0,
+        override val autoRenewing: Boolean = false,
+        override val priceCode: String = "",
+        override val priceAmountMicros: Long = 0,
+        override val countryCode: String = "",
 
-        private val paymentState: Int
+        private val paymentState: Int = 0
 
     ) : Subscription() {
         override fun equals(other: Any?): Boolean {
@@ -104,7 +104,10 @@ sealed class Subscription {
 
     }
 
-    internal class Builder(private val subscriptionPurchase: SubscriptionPurchase?) {
+    internal class Builder(
+        private val subscriptionPurchase: SubscriptionPurchase?,
+        private val isKeepActiveOnError: Boolean = false
+    ) {
 
         private var sku: String? = null
 
@@ -120,7 +123,7 @@ sealed class Subscription {
                 if (subscriptionPurchase != null) {
 
                     return subscriptionPurchase.let {
-                        if (it.expiryTimeMillis < getSystemTimeMillis()) {
+                        if (it.expiryTimeMillis < getCurrentTimeMillis()) {
                             CanceledSubscription(
                                 isExists = true,
                                 sku = sku!!,
@@ -146,10 +149,18 @@ sealed class Subscription {
                         }
                     }
                 } else {
-                    return CanceledSubscription(
-                        sku = sku!!,
-                        isExists = false
-                    )
+
+                    return if (isKeepActiveOnError) {
+                        ActiveSubscription(
+                            sku = sku!!,
+                            isExists = false
+                        )
+                    } else {
+                        CanceledSubscription(
+                            sku = sku!!,
+                            isExists = false
+                        )
+                    }
                 }
             } else throw IllegalArgumentException("Sku is null")
         }

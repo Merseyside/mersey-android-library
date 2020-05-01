@@ -65,17 +65,24 @@ class MerseyRecyclerView(context: Context, attrSet: AttributeSet) : RecyclerView
     }
 
     override fun onRestoreInstanceState(state: Parcelable?) {
-        if (state != null && state is SavedState) {
-            super.onRestoreInstanceState(state.superState)
+        if (state != null) {
 
-            val mScrollPosition = state.mScrollPosition
-            val layoutManager = layoutManager
-            if (layoutManager != null) {
-                val count = layoutManager.itemCount
-                if (mScrollPosition != NO_POSITION && mScrollPosition < count) {
-                    layoutManager.scrollToPosition(mScrollPosition)
+            if (state is SavedState) {
+                super.onRestoreInstanceState(state.superState)
+
+                val mScrollPosition = state.mScrollPosition
+                val layoutManager = layoutManager
+                if (layoutManager != null) {
+                    val count = layoutManager.itemCount
+                    if (mScrollPosition != NO_POSITION && mScrollPosition < count) {
+                        layoutManager.scrollToPosition(mScrollPosition)
+                    }
                 }
+            } else {
+                super.onRestoreInstanceState(state)
             }
+        } else {
+            super.onRestoreInstanceState(state)
         }
     }
 

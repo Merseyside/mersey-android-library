@@ -4,6 +4,7 @@ import com.merseyside.merseyLib.utils.ext.log
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.TimeZone
 
 fun <T: Number> T.toTimeUnit(): Millis {
     return Millis(this.toLong()).log()
@@ -53,7 +54,10 @@ fun <T: CharSequence> T.toDays(): Days {
 @Throws(ParseException::class, KotlinNullPointerException::class)
 fun String.toTimeUnit(dateFormat: String, locale: Locale = Locale.US): TimeUnit {
     return try {
-        val date = SimpleDateFormat(dateFormat, locale).parse(this)
+        val date = SimpleDateFormat(dateFormat, locale).apply {
+            isLenient = false
+            timeZone = TimeZone.getTimeZone("GMT")
+        }.parse(this)
 
         if (date != null) {
             Millis(date.time)

@@ -16,7 +16,7 @@ android {
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
         versionCode rootProject.versionCode
-        versionName rootProject.version
+        versionName rootProject.versionName
     }
 
     buildTypes {
