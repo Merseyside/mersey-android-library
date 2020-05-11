@@ -43,6 +43,8 @@ class TextProgressBar(context: Context, attributeSet: AttributeSet)
         bgColor = array.getColor(R.styleable.ProgressBarAttr_backgroundColor, ContextCompat.getColor(context, R.color.default_progress_bg_color))
         textColor = array.getColor(R.styleable.ProgressBarAttr_android_textColor, ContextCompat.getColor(context, R.color.default_progress_text_color))
         progressColor = array.getColor(R.styleable.ProgressBarAttr_progressColor, ContextCompat.getColor(context, R.color.default_progress_color))
+
+        array.recycle()
     }
 
     private fun doLayout() {

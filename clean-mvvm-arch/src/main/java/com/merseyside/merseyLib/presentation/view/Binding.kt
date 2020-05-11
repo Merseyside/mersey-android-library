@@ -19,10 +19,10 @@ import com.merseyside.merseyLib.utils.Logger
 import com.merseyside.merseyLib.utils.ext.*
 
 @BindingAdapter("app:isVisibleOrGone")
-fun isVisibleOrGone(view: View, isVisible: Boolean) {
+fun isVisibleOrGone(view: View, isVisible: Boolean?) {
     when(isVisible) {
         true -> view.visibility = VISIBLE
-        false -> view.visibility = GONE
+        else -> view.visibility = GONE
     }
 }
 
@@ -155,7 +155,7 @@ fun setCustomTextColor(view: TextView, @AttrRes attrId: Int?) {
 @BindingAdapter("app:attrTint")
 fun setAttrTint(view: View, @AttrRes attrId: Int?) {
     if (attrId != null) {
-        val drawable: GradientDrawable = view.background as GradientDrawable
+        val drawable = view.background
 
         drawable.setColor(view.getColorFromAttr(attrId))
     }
@@ -164,7 +164,7 @@ fun setAttrTint(view: View, @AttrRes attrId: Int?) {
 @BindingAdapter("app:colorTint")
 fun setTint(view: View, @ColorRes colorRes: Int?) {
     if (colorRes != null) {
-        val drawable: GradientDrawable = view.background as GradientDrawable
+        val drawable = view.background
 
         drawable.setColor(ContextCompat.getColor(view.context, colorRes))
     }

@@ -1,23 +1,23 @@
 package com.merseyside.merseyLib
 
 import android.animation.Animator
+import android.graphics.drawable.Drawable
 import android.view.View
 import com.merseyside.merseyLib.utils.Logger
 import com.merseyside.merseyLib.utils.time.TimeUnit
 
 abstract class BaseAnimatorBuilder<T>(
-    val view: View,
     val duration: TimeUnit
 ) {
 
     var isReverse: Boolean = false
         internal set
 
-    abstract fun build(): Animator
+    internal abstract fun build(): Animator
 
-    abstract fun getCurrentValue(): Any
+    internal abstract fun getCurrentValue(): Any
 
-    abstract fun calculateCurrentValue(): Any
+    internal abstract fun calculateCurrentValue(): Any
 
     companion object {
         internal const val CURRENT_FLOAT = 9999F

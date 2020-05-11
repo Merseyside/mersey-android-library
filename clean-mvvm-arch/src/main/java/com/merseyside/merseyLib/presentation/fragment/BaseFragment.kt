@@ -230,7 +230,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         negativeButtonText: String?,
         onPositiveClick: () -> Unit,
         onNegativeClick: () -> Unit,
-        isOneAction: Boolean?,
+        isSingleAction: Boolean?,
         isCancelable: Boolean?) {
         
         baseActivity.showAlertDialog(
@@ -240,7 +240,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
             negativeButtonText,
             onPositiveClick,
             onNegativeClick,
-            isOneAction,
+            isSingleAction,
             isCancelable
         )
     }
@@ -252,7 +252,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         @StringRes negativeButtonTextRes: Int?,
         onPositiveClick: () -> Unit,
         onNegativeClick: () -> Unit,
-        isOneAction: Boolean?,
+        isSingleAction: Boolean?,
         isCancelable: Boolean?
     ) {
 
@@ -263,7 +263,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
             negativeButtonTextRes,
             onPositiveClick,
             onNegativeClick,
-            isOneAction,
+            isSingleAction,
             isCancelable
         )
     }

@@ -1,7 +1,6 @@
 @file:JvmName("LibUtils")
 package com.merseyside.merseyLib.utils
 
-import android.R.attr.label
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -17,7 +16,6 @@ import android.os.Looper
 import android.view.KeyCharacterMap
 import android.view.KeyEvent
 import android.view.ViewConfiguration
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.ContextCompat.startActivity
 import com.merseyside.merseyLib.utils.time.TimeUnit
 import java.util.*
@@ -70,6 +68,11 @@ fun generateRandomString(length: Int): String {
 fun getWindowWidth(context: Context): Int {
     val metrics = context.resources.displayMetrics
     return metrics.widthPixels
+}
+
+fun getWindowHeight(context: Context): Int {
+    val metrics = context.resources.displayMetrics
+    return metrics.heightPixels
 }
 
 fun getNavigationBarHeight(context: Context): Int {
@@ -132,10 +135,33 @@ fun mainThread(onMain: () -> Unit): Handler {
     return handler
 }
 
-fun delayedMainThread(delay: TimeUnit, onMain: () -> Unit): Handler {
+fun mainThreadIfNeeds(onMain: () -> Unit): Handler? {
+    return if (!isMainThread()) {
+        mainThread(onMain)
+    } else {
+        onMain.invoke()
+        null
+    }
+}
+
+fun delayedMainThread(delay: TimeUnit, runnable: Runnable): Handler {
     val handler = Handler(Looper.getMainLooper())
-    handler.postDelayed(onMain, delay.toMillisLong())
+    handler.postDelayed(runnable, delay.toMillisLong())
     return handler
+}
+
+fun delayedMainThread(delay: TimeUnit, onMain: () -> Unit): Handler {
+    return delayedMainThread(delay, Runnable { onMain.invoke() })
+}
+
+fun delayedThread(delay: TimeUnit, runnable: Runnable): Handler {
+    val handler = Handler()
+    handler.postDelayed(runnable, delay.toMillisLong())
+    return handler
+}
+
+fun delayedThread(delay: TimeUnit, onThread: () -> Unit): Handler {
+    return delayedThread(delay, Runnable { onThread.invoke() })
 }
 
 fun isMainThread(): Boolean {

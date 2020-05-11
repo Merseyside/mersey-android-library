@@ -8,11 +8,11 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.merseyLib.model.BaseAdapterViewModel
 import com.merseyside.merseyLib.utils.ext.isZero
-import com.merseyside.merseyLib.view.BaseViewHolder
-import kotlin.IllegalArgumentException
+import com.merseyside.merseyLib.utils.ext.minByNullable
+import com.merseyside.merseyLib.view.BaseBindingHolder
 
 abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
-    : RecyclerView.Adapter<BaseViewHolder>(), ItemPositionInterface<BaseAdapterViewModel<M>> {
+    : RecyclerView.Adapter<BaseBindingHolder<T>>(), ItemPositionInterface<BaseAdapterViewModel<M>> {
 
     protected var isRecyclable: Boolean? = null
 
@@ -21,15 +21,19 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
     protected open val modelList: MutableList<T> = ArrayList()
     private val bindItemList: MutableList<T> = ArrayList()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseBindingHolder<T> {
         val layoutInflater : LayoutInflater = LayoutInflater.from(parent.context)
         val binding : ViewDataBinding = DataBindingUtil.inflate(layoutInflater, viewType, parent, false)
 
-        return BaseViewHolder(binding)
+        return getBindingHolder(binding)
+    }
+
+    open fun getBindingHolder(binding: ViewDataBinding): BaseBindingHolder<T> {
+        return BaseBindingHolder(binding)
     }
 
     @CallSuper
-    override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: BaseBindingHolder<T>, position: Int) {
         val obj = getModelByPosition(position)
         bindItemList.add(obj)
 
@@ -42,7 +46,7 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
     }
 
     @CallSuper
-    internal open fun bind(holder: BaseViewHolder, obj: Any) {
+    internal open fun bind(holder: BaseBindingHolder<T>, obj: T) {
         holder.bind(getBindingVariable(), obj)
     }
 
@@ -100,8 +104,14 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
     }
 
     open fun add(list: List<M>) {
-        modelList.addAll(itemsToModels(list))
+        val models = itemsToModels(list)
+
+        addModels(models)
         notifyDataSetChanged()
+    }
+
+    internal open fun addModels(list: List<T>) {
+        modelList.addAll(list)
     }
 
     internal fun getModelByObj(obj: M): T? {
@@ -144,12 +154,16 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
     protected fun getSmallestPosition(list: List<T>): Int {
         return run minValue@{
 
-            list.minBy {
-                val position = getPositionOfModel(it)
+            list.minByNullable {
+                try {
+                    val position = getPositionOfModel(it)
 
-                if (position.isZero()) return@minValue position
-                else position
-            }!!.getPosition()
+                    if (position.isZero()) return@minByNullable position
+                    else position
+                } catch (e: IllegalArgumentException) {
+                    null
+                }
+            }?.getPosition() ?: 0
         }
     }
 
@@ -255,7 +269,7 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
     }
 
     @CallSuper
-    override fun onViewRecycled(holder: BaseViewHolder) {
+    override fun onViewRecycled(holder: BaseBindingHolder<T>) {
         super.onViewRecycled(holder)
         if (holder.adapterPosition != RecyclerView.NO_POSITION && holder.adapterPosition < itemCount) {
 
@@ -273,7 +287,7 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
         return list.map { initItemViewModel(it) }
     }
 
-    internal fun initItemViewModel(obj: M): T {
+    internal open fun initItemViewModel(obj: M): T {
         return createItemViewModel(obj).apply {
             setItemPositionInterface(this@BaseAdapter)
         }

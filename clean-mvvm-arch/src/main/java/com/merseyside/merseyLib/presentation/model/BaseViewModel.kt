@@ -1,7 +1,6 @@
 package com.merseyside.merseyLib.presentation.model
 
 import android.content.Context
-import android.view.View
 import androidx.annotation.CallSuper
 import androidx.annotation.StringRes
 import androidx.databinding.ObservableBoolean
@@ -12,7 +11,7 @@ import com.merseyside.merseyLib.presentation.interfaces.IStringHelper
 import com.merseyside.merseyLib.utils.Logger
 import com.merseyside.merseyLib.utils.PermissionManager
 import com.merseyside.merseyLib.utils.mvvm.SingleLiveEvent
-import com.merseyside.merseyLib.utils.mvvm.clear
+import com.merseyside.merseyLib.utils.ext.clear
 
 abstract class BaseViewModel protected constructor() : ViewModel(), IStringHelper {
 
@@ -43,7 +42,7 @@ abstract class BaseViewModel protected constructor() : ViewModel(), IStringHelpe
         val negativeButtonText: String? = null,
         val onPositiveClick: () -> Unit = {},
         val onNegativeClick: () -> Unit = {},
-        val isOneAction: Boolean? = null,
+        val isSingleAction: Boolean? = null,
         val isCancelable: Boolean? = null
     )
 
@@ -132,11 +131,11 @@ abstract class BaseViewModel protected constructor() : ViewModel(), IStringHelpe
         negativeButtonText: String? = null,
         onPositiveClick: () -> Unit = {},
         onNegativeClick: () -> Unit = {},
-        isOneAction: Boolean? = null,
+        isSingleAction: Boolean? = null,
         isCancelable: Boolean? = null
     ) {
         alertDialogLiveEvent.value = AlertDialogModel(
-            title, message, positiveButtonText, negativeButtonText, onPositiveClick, onNegativeClick, isOneAction, isCancelable
+            title, message, positiveButtonText, negativeButtonText, onPositiveClick, onNegativeClick, isSingleAction, isCancelable
         )
     }
 
@@ -147,7 +146,7 @@ abstract class BaseViewModel protected constructor() : ViewModel(), IStringHelpe
         @StringRes negativeButtonTextRes: Int? = null,
         onPositiveClick: () -> Unit = {},
         onNegativeClick: () -> Unit = {},
-        isOneAction: Boolean? = null,
+        isSingleAction: Boolean? = null,
         isCancelable: Boolean? = null
     ) {
 
@@ -158,7 +157,7 @@ abstract class BaseViewModel protected constructor() : ViewModel(), IStringHelpe
             getString(negativeButtonTextRes),
             onPositiveClick,
             onNegativeClick,
-            isOneAction,
+            isSingleAction,
             isCancelable
         )
     }

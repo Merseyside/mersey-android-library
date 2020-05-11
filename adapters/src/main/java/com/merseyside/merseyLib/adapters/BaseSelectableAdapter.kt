@@ -4,11 +4,16 @@ import com.merseyside.merseyLib.model.BaseSelectableAdapterViewModel
 
 abstract class BaseSelectableAdapter<M: Any, T: BaseSelectableAdapterViewModel<M>>(
     selectableMode: SelectableMode = SelectableMode.SINGLE,
-    var isAllowToCancelSelection: Boolean = false
+    var isAllowToCancelSelection: Boolean = selectableMode == SelectableMode.MULTIPLE,
+    isSelectEnabled: Boolean = true
 ) : BaseSortedAdapter<M, T>() {
 
     interface OnItemSelectedListener<M> {
         fun onSelected(item: M, isSelected: Boolean, isSelectedByUser: Boolean)
+    }
+
+    interface OnSelectEnabledListener {
+        fun onEnabled(isEnabled: Boolean)
     }
 
     enum class SelectableMode { SINGLE, MULTIPLE }
@@ -19,25 +24,45 @@ abstract class BaseSelectableAdapter<M: Any, T: BaseSelectableAdapterViewModel<M
                 field = value
 
                 if (value == SelectableMode.SINGLE) {
-                    if (selectedList.isNotEmpty()) {
-                        if (selectedList.size > 1) {
-                            (1 until selectedList.size).forEach { index ->
-                                selectedList[index].setSelected(
-                                    isSelected = false,
-                                    isNotifyItem = true
-                                )
-                            }
-
-                            selectedList = mutableListOf(selectedList.first())
+                    if (selectedList.size > 1) {
+                        (1 until selectedList.size).forEach { index ->
+                            selectedList[index].setSelected(
+                                isSelected = false,
+                                isNotifyItem = true
+                            )
                         }
+
+                        selectedList = mutableListOf(selectedList.first())
+                    }
+                }
+            }
+        }
+
+    var isSelectEnabled: Boolean = isSelectEnabled
+        set(value) {
+            if (value != field) {
+                field = value
+
+                onSelectEnableListener?.onEnabled(value)
+
+                if (modelList.isNotEmpty()) {
+                    modelList.forEach { model ->
+                        model.setSelectEnabled(value)
                     }
                 }
             }
         }
 
     private val listeners: MutableList<OnItemSelectedListener<M>> = ArrayList()
+    private var onSelectEnableListener: OnSelectEnabledListener? = null
 
     private var selectedList: MutableList<T> = ArrayList()
+
+    override fun initItemViewModel(obj: M): T {
+        return super.initItemViewModel(obj).apply {
+            setSelectEnabled(isSelectEnabled)
+        }
+    }
 
     fun setOnItemSelectedListener(listener: OnItemSelectedListener<M>) {
         listeners.add(listener)
@@ -55,6 +80,10 @@ abstract class BaseSelectableAdapter<M: Any, T: BaseSelectableAdapterViewModel<M
         listeners.remove(listener)
     }
 
+    fun setOnSelectEnableListener(listener: OnSelectEnabledListener) {
+        this.onSelectEnableListener = listener
+    }
+
     override fun add(obj: M) {
         val isNoData = isEmpty()
         val model = initItemViewModel(obj)
@@ -64,7 +93,7 @@ abstract class BaseSelectableAdapter<M: Any, T: BaseSelectableAdapterViewModel<M
         addItemToGroup(model)
 
         if (isNoData) {
-            if (findSelectedItems().isEmpty()) {
+            if (isSelectEnabled && findSelectedItems().isEmpty()) {
                 selectFirstSelectableItem()
             }
         }
@@ -79,7 +108,7 @@ abstract class BaseSelectableAdapter<M: Any, T: BaseSelectableAdapterViewModel<M
         addItemsToGroup(models)
 
         if (isNoData) {
-            if (findSelectedItems().isEmpty()) {
+            if (isSelectEnabled && findSelectedItems().isEmpty()) {
                 selectFirstSelectableItem()
             }
         }
@@ -104,7 +133,9 @@ abstract class BaseSelectableAdapter<M: Any, T: BaseSelectableAdapterViewModel<M
     private fun addItemToGroup(item: T) {
         item.setOnItemClickListener(object : OnItemClickListener<M> {
             override fun onItemClicked(obj: M) {
-                setItemSelected(item, true)
+                if (isSelectEnabled) {
+                    setItemSelected(item, true)
+                }
             }
         })
     }
@@ -200,10 +231,21 @@ abstract class BaseSelectableAdapter<M: Any, T: BaseSelectableAdapterViewModel<M
         }
     }
 
-    override fun clear() {
-        super.clear()
+    fun clearSelections() {
+        selectedList.forEach { model ->
+            model.setSelected(false)
+        }
 
         selectedList.clear()
     }
 
+    fun getSelectedItemsCount(): Int {
+        return selectedList.size
+    }
+
+    override fun clear() {
+        super.clear()
+
+        clearSelections()
+    }
 }

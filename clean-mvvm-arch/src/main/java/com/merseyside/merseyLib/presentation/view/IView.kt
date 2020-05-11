@@ -33,7 +33,7 @@ interface IView {
         negativeButtonText: String? = null,
         onPositiveClick: () -> Unit = {},
         onNegativeClick: () -> Unit = {},
-        isOneAction: Boolean? = null,
+        isSingleAction: Boolean? = null,
         isCancelable: Boolean? = null
     )
 
@@ -44,7 +44,7 @@ interface IView {
         @StringRes negativeButtonTextRes: Int? = null,
         onPositiveClick: () -> Unit = {},
         onNegativeClick: () -> Unit = {},
-        isOneAction: Boolean? = null,
+        isSingleAction: Boolean? = null,
         isCancelable: Boolean? = null
     )
 

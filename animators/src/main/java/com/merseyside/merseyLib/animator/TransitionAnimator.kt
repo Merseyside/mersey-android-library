@@ -3,11 +3,13 @@ package com.merseyside.merseyLib.animator
 import android.animation.Animator
 import android.animation.ValueAnimator
 import android.view.View
+import android.view.ViewTreeObserver
 import com.merseyside.merseyLib.Axis
 import com.merseyside.merseyLib.BaseAnimatorBuilder
 import com.merseyside.merseyLib.BaseSingleAnimator
 import com.merseyside.merseyLib.MainPoint
 import com.merseyside.merseyLib.utils.Logger
+import com.merseyside.merseyLib.utils.ext.log
 import com.merseyside.merseyLib.utils.time.TimeUnit
 
 class TransitionAnimator (
@@ -15,9 +17,34 @@ class TransitionAnimator (
 ): BaseSingleAnimator(builder) {
 
     class Builder(
-        view: View,
+        private val view: View,
         duration: TimeUnit
-    ): BaseAnimatorBuilder<TransitionAnimator>(view, duration) {
+    ): BaseAnimatorBuilder<TransitionAnimator>(duration) {
+
+        private var viewWidth: Float = -1F
+        private var viewHeight: Float = -1f
+
+        init {
+            if (view.visibility == View.GONE) {
+                view.visibility = View.INVISIBLE
+
+                view.viewTreeObserver.addOnGlobalLayoutListener(
+                    object: ViewTreeObserver.OnGlobalLayoutListener {
+
+                        override fun onGlobalLayout() {
+                            viewHeight = view.height.toFloat()
+                            viewWidth = view.width.toFloat()
+
+                            view.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                            view.visibility = View.GONE
+                        }
+
+                    })
+            } else {
+                viewWidth = view.width.toFloat()
+                viewHeight = view.height.toFloat()
+            }
+        }
 
         private val current by lazy { CURRENT_FLOAT to MainPoint.TOP_LEFT }
 
@@ -35,35 +62,6 @@ class TransitionAnimator (
             this.axis = axis
 
             pointList = pointPixels.toList()
-        }
-
-        private fun getPixelsFromPercents(
-            pointPercents: List<Pair<Float, MainPoint>>
-        ): List<Pair<Float, MainPoint>> {
-
-            val viewSize = when (axis!!) {
-                Axis.X -> {
-                    (view.parent as View).width
-                }
-                Axis.Y -> {
-                    (view.parent as View).height
-                }
-            }
-
-            return pointPercents.toMutableList().let { list ->
-                var i = 0
-
-                while (i < pointPercents.size) {
-
-                    if (list[i] != getCurrentValue()) {
-                        list[i] = (viewSize * list[i].first) to list[i].second
-                    }
-
-                    i++
-                }
-
-                list
-            }
         }
 
         private fun translateAnimation(
@@ -115,14 +113,43 @@ class TransitionAnimator (
             }
         }
 
+        private fun getPixelsFromPercents(
+            pointPercents: List<Pair<Float, MainPoint>>
+        ): List<Pair<Float, MainPoint>> {
+
+            val parentViewSize = when (axis!!) {
+                Axis.X -> {
+                    (view.parent as View).width
+                }
+                Axis.Y -> {
+                    (view.parent as View).height
+                }
+            }
+
+            return pointPercents.toMutableList().let { list ->
+                var i = 0
+
+                while (i < pointPercents.size) {
+
+                    if (list[i] != getCurrentValue()) {
+                        list[i] = (parentViewSize * list[i].first) to list[i].second
+                    }
+
+                    i++
+                }
+
+                list
+            }
+        }
+
         private fun recalculateValues(values: MutableList<Pair<Float, MainPoint>>, axis: Axis) : FloatArray {
 
             val viewSize = when (axis) {
                 Axis.X -> {
-                    view.width
+                    viewWidth
                 }
                 Axis.Y -> {
-                    view.height
+                    viewHeight
                 }
             }
 
@@ -151,7 +178,9 @@ class TransitionAnimator (
                             Axis.X -> {}
 
                             Axis.Y -> {
+                                Logger.log(null, "value = ${value} viewSize = $viewSize")
                                 floatArray[i] = value - viewSize
+                                floatArray[i].log(prefix = "bottom left =")
                             }
                         }
                     }

@@ -32,7 +32,7 @@ abstract class BaseVMFragment<B : ViewDataBinding, M : BaseViewModel> : BaseBind
 
     private val alertDialogModelObserver = Observer<BaseViewModel.AlertDialogModel> {
         it?.apply {
-            showAlertDialog(title, message, positiveButtonText, negativeButtonText, onPositiveClick, onNegativeClick, isOneAction, isCancelable)
+            showAlertDialog(title, message, positiveButtonText, negativeButtonText, onPositiveClick, onNegativeClick, isSingleAction, isCancelable)
 
             viewModel.alertDialogLiveEvent.value = null
         }

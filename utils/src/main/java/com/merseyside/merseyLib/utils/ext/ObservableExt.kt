@@ -1,7 +1,8 @@
-package com.merseyside.merseyLib.utils.mvvm
+package com.merseyside.merseyLib.utils.ext
 
 import androidx.databinding.Observable
 import androidx.databinding.ObservableField
+import com.merseyside.merseyLib.utils.mvvm.SingleEventObservableField
 
 fun <T> ObservableField<T>.clear() {
     this.set(null)

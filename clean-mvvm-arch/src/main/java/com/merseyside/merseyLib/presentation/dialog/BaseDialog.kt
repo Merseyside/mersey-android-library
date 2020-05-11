@@ -68,7 +68,7 @@ abstract class BaseDialog : DialogFragment(), IView, OrientationHandler, ILocale
         negativeButtonText: String?,
         onPositiveClick: () -> Unit,
         onNegativeClick: () -> Unit,
-        isOneAction: Boolean?,
+        isSingleAction: Boolean?,
         isCancelable: Boolean?
     ) {
         throw UnsupportedOperationException()
@@ -81,7 +81,7 @@ abstract class BaseDialog : DialogFragment(), IView, OrientationHandler, ILocale
         negativeButtonTextRes: Int?,
         onPositiveClick: () -> Unit,
         onNegativeClick: () -> Unit,
-        isOneAction: Boolean?,
+        isSingleAction: Boolean?,
         isCancelable: Boolean?
     ) {
         throw UnsupportedOperationException()

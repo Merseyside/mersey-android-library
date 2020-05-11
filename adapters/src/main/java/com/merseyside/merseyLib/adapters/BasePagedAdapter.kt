@@ -6,25 +6,25 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
-import com.merseyside.merseyLib.view.BaseViewHolder
+import com.merseyside.merseyLib.view.BaseBindingHolder
 
-abstract class BasePagedAdapter<T>(diffUtil: DiffUtil.ItemCallback<T>)
-    : PagedListAdapter<T, BaseViewHolder>(diffUtil) {
+abstract class BasePagedAdapter<T: Any>(diffUtil: DiffUtil.ItemCallback<T>)
+    : PagedListAdapter<T, BaseBindingHolder<T>>(diffUtil) {
 
     private var listener: BaseAdapter.OnItemClickListener<T>? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseBindingHolder<T> {
         val layoutInflater: LayoutInflater = LayoutInflater.from(parent.context)
         val binding: ViewDataBinding = DataBindingUtil.inflate(layoutInflater, viewType, parent, false)
 
-        return BaseViewHolder(binding)
+        return getViewHolder(binding)
     }
 
     override fun getItemViewType(position: Int): Int {
         return getLayoutIdForPosition(position)
     }
 
-    override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: BaseBindingHolder<T>, position: Int) {
         val obj = getItem(position)
 
         holder.bind(getBindingVariable(), obj!!)
@@ -32,6 +32,10 @@ abstract class BasePagedAdapter<T>(diffUtil: DiffUtil.ItemCallback<T>)
         holder.itemView.setOnClickListener{
             listener?.onItemClicked(obj)
         }
+    }
+
+    open fun getViewHolder(binding: ViewDataBinding): BaseBindingHolder<T> {
+        return BaseBindingHolder(binding)
     }
 
     fun addOnItemClickListener(listener : BaseAdapter.OnItemClickListener<T>) {

@@ -49,4 +49,28 @@
 
         <attr name="image" format="reference"/>
     </declare-styleable>
+
+    <declare-styleable name="AnimatedCheckButton">
+        <attr name="android:checkable"/>
+        <attr name="color" format="color"/>
+        <attr name="middleColor" format="color"/>
+        <attr name="checkedColor" format="color"/>
+        <attr name="duration" format="integer"/>
+        <attr name="android:checked"/>
+        <attr name="defaultTextColor" format="color"/>
+        <attr name="checkedTextColor" format="color"/>
+        <attr name="defaultText" format="string"/>
+        <attr name="checkedText" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="AnimatedCheckImageButton">
+        <attr name="android:checkable"/>
+        <attr name="color"/>
+        <attr name="middleColor"/>
+        <attr name="checkedColor"/>
+        <attr name="duration"/>
+        <attr name="android:checked"/>
+        <attr name="defaultImageColor" format="color"/>
+        <attr name="checkedImageColor" format="color"/>
+    </declare-styleable>
 </resources>

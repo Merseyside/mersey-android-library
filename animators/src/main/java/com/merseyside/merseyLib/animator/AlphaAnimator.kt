@@ -5,6 +5,7 @@ import android.animation.ValueAnimator
 import android.view.View
 import com.merseyside.merseyLib.BaseAnimatorBuilder
 import com.merseyside.merseyLib.BaseSingleAnimator
+import com.merseyside.merseyLib.utils.ext.log
 import com.merseyside.merseyLib.utils.time.TimeUnit
 
 class AlphaAnimator(
@@ -12,9 +13,10 @@ class AlphaAnimator(
 ) : BaseSingleAnimator(builder) {
 
     class Builder(
-        view: View,
-        duration: TimeUnit
-    ): BaseAnimatorBuilder<AlphaAnimator>(view, duration) {
+        private val view: View,
+        duration: TimeUnit,
+        private val endVisibilityState: Int = View.INVISIBLE
+    ): BaseAnimatorBuilder<AlphaAnimator>(duration) {
 
         private var values: FloatArray? = null
 
@@ -51,7 +53,7 @@ class AlphaAnimator(
             return ValueAnimator.ofFloat(*values).apply {
                 this.duration = duration.toMillisLong()
 
-                var previousValue: Float? = values[0]
+                var previousValue: Float = values[0]
 
                 addUpdateListener { valueAnimator ->
                     val value = valueAnimator.animatedValue as Float
@@ -59,18 +61,17 @@ class AlphaAnimator(
 
                     if (previousValue != value) {
 
-                        if (previousValue == 0f && previousValue?.compareTo(value) == -1) {
+                        if (previousValue > 0f && previousValue.compareTo(value) == -1 && view.visibility != View.VISIBLE) {
                             view.visibility = View.VISIBLE
-                        } else if (previousValue?.compareTo(value) == 1 && value == 0f) {
-                            view.visibility = View.INVISIBLE
+                        } else if (previousValue.compareTo(value) == 1 && value == 0f) {
+                            view.visibility = endVisibilityState
                         }
                     }
 
-                    previousValue = value
+                    previousValue = value.log()
                 }
             }
         }
-
 
         override fun build(): Animator {
             if (values != null) {

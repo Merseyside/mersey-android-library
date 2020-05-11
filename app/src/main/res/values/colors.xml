@@ -1,0 +1,17 @@
+<resources>
+    <color name="transparent">#00000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="light_dark">#C6C6C6</color>
+    <color name="black">#000000</color>
+
+    <color name="grey">#808080</color>
+    <color name="grey_light">#FAFAFA</color>
+    <color name="grey_dark">#F1F1F1</color>
+
+    <color name="dark">#1F222C</color>
+    <color name="dark_light">#242930</color>
+
+    <color name="pink">#D81B60</color>
+    <color name="blue_primary">#03A9F4</color>
+    <color name="blue_primary_variant">#C1E7F8</color>
+</resources>

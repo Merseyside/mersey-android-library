@@ -44,6 +44,16 @@ abstract class BaseAdapterViewModel<M>(
         }
     }
 
+    /**
+     * Use this method with custom lambda databinding methods.
+     * https://discuss.kotlinlang.org/t/using-lambda-in-custom-bindingadapter-using-android-databinding-and-kotlin/4229
+     */
+    @CallSuper
+    open fun onClickVoid(): Void? {
+        onClick()
+        return null as Void?
+    }
+
     open fun setItem(item: M) {
         this.obj = item
         notifyUpdate()

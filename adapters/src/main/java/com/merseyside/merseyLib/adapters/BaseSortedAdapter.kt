@@ -4,11 +4,11 @@ import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.SortedList
 import com.merseyside.merseyLib.model.BaseAdapterViewModel
 import com.merseyside.merseyLib.model.BaseComparableAdapterViewModel
-import com.merseyside.merseyLib.view.BaseViewHolder
+import com.merseyside.merseyLib.view.BaseBindingHolder
 import com.merseyside.merseyLib.utils.Logger
 import com.merseyside.merseyLib.utils.ext.isNotNullAndEmpty
 import com.merseyside.merseyLib.utils.isMainThread
-import com.merseyside.merseyLib.utils.mainThread
+import com.merseyside.merseyLib.utils.mainThreadIfNeeds
 import java.lang.reflect.ParameterizedType
 import kotlin.collections.set
 
@@ -42,15 +42,15 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
 
         sortedList = SortedList(persistentClass, object : SortedList.Callback<T>() {
             override fun onInserted(position: Int, count: Int) {
-                runOnRightThread { notifyItemRangeInserted(position, count) }
+                mainThreadIfNeeds { notifyItemRangeInserted(position, count) }
             }
 
             override fun onRemoved(position: Int, count: Int) {
-                runOnRightThread { notifyItemRangeRemoved(position, count) }
+                mainThreadIfNeeds { notifyItemRangeRemoved(position, count) }
             }
 
             override fun onMoved(fromPosition: Int, toPosition: Int) {
-                runOnRightThread { notifyItemMoved(fromPosition, toPosition) }
+                mainThreadIfNeeds { notifyItemMoved(fromPosition, toPosition) }
             }
 
             override fun compare(o1: T, o2: T): Int {
@@ -58,7 +58,7 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
             }
 
             override fun onChanged(position: Int, count: Int) {
-                runOnRightThread { notifyItemRangeChanged(position, count) }
+                mainThreadIfNeeds { notifyItemRangeChanged(position, count) }
             }
 
             override fun areContentsTheSame(obj1: T, obj2: T): Boolean {
@@ -154,25 +154,23 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
         }
     }
 
-    protected fun addModels(list: List<T>) {
-        modelList.addAll(list)
+    override fun add(model: T) {
+        super.add(model)
 
         if (!isFiltered) {
-            runOnRightThread {
-                addList(list)
-            }
-        } else {
-            applyFilterToNewModels(list)
+            sortedList.add(model)
         }
     }
 
-    private fun runOnRightThread(func: () -> Unit) {
-        if (!isMainThread()) {
-            mainThread {
-                func()
-            }
+    override fun addModels(list: List<T>) {
+        super.addModels(list)
+
+        if (!isFiltered) {
+            //mainThreadIfNeeds {
+                addList(list)
+            //}
         } else {
-            func()
+            applyFilterToNewModels(list)
         }
     }
 
@@ -236,7 +234,7 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
 
                 if (model.areItemsTheSame(obj)) {
                     if (!model.areContentsTheSame(obj)) {
-                        runOnRightThread {
+                        mainThreadIfNeeds {
                             model.setItem(obj)
                             recalculatePositionOfItemAt(index)
                         }
@@ -330,7 +328,7 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
                     filtersMap.putAll(notAppliedFiltersMap)
                     notAppliedFiltersMap.clear()
 
-                    return filteredList
+                    return filteredList as List<T>
                 }
             }
 
@@ -373,6 +371,7 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
             synchronized(lock) {
                 applyFilters()
 
+                interruptThread(filterThread)
                 filterThread = null
             }
         }.also { it.start() }
@@ -429,12 +428,14 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
                     setFilter(query)
                 } catch (ignored: ConcurrentModificationException) {}
 
-                filterThread = null
+                interruptThread(filterThread)
 
                 func.invoke()
             }.apply { start() }
         } else {
-            filterThread!!.interrupt()
+            interruptThread(filterThread)
+            filterThread = null
+
             setFilterAsync(query, func)
         }
     }
@@ -549,7 +550,7 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
         }
     }
 
-    override fun onBindViewHolder(holder: BaseViewHolder, position: Int, payloads: MutableList<Any>) {
+    override fun onBindViewHolder(holder: BaseBindingHolder<T>, position: Int, payloads: MutableList<Any>) {
         if (payloads.isNotEmpty()) {
             sortedList.get(position).setItem(payloads[0] as M)
         } else {

@@ -194,7 +194,7 @@ abstract class BaseActivity : AppCompatActivity(),
         negativeButtonText: String?,
         onPositiveClick: () -> Unit,
         onNegativeClick: () -> Unit,
-        isOneAction: Boolean?,
+        isSingleAction: Boolean?,
         isCancelable: Boolean?
     ) {
         val dialog = MaterialAlertDialog.Builder(this)
@@ -204,7 +204,7 @@ abstract class BaseActivity : AppCompatActivity(),
             .setNegativeButtonText(negativeButtonText)
             .setOnPositiveClick(onPositiveClick)
             .setOnNegativeClick(onNegativeClick)
-            .isOneAction(isOneAction)
+            .isSingleAction(isSingleAction)
             .isCancelable(isCancelable)
             .build()
         
@@ -218,7 +218,7 @@ abstract class BaseActivity : AppCompatActivity(),
         @StringRes negativeButtonTextRes: Int?,
         onPositiveClick: () -> Unit,
         onNegativeClick: () -> Unit,
-        isOneAction: Boolean?,
+        isSingleAction: Boolean?,
         isCancelable: Boolean?
     ) {
 
@@ -229,7 +229,7 @@ abstract class BaseActivity : AppCompatActivity(),
             getActualString(negativeButtonTextRes),
             onPositiveClick,
             onNegativeClick,
-            isOneAction,
+            isSingleAction,
             isCancelable
         )
     }

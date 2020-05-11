@@ -14,9 +14,9 @@ class SizeAnimator(
 ) : BaseSingleAnimator(builder) {
 
     class Builder(
-        view: View,
+        private val view: View,
         duration: TimeUnit
-    ) : BaseAnimatorBuilder<SizeAnimator>(view, duration) {
+    ) : BaseAnimatorBuilder<SizeAnimator>(duration) {
 
         var values: IntArray? = null
         var axis: Axis? = null

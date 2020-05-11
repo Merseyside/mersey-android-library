@@ -28,3 +28,31 @@ fun <T: Any> List<T>.unique(predicate: (T, T) -> Boolean): List<T> {
         this
     }
 }
+
+fun <T: Any, R : Comparable<R>> List<T>.minByNullable(selector: (T) -> R?): T? {
+
+    var minValue: R? = null
+    var minElement: T? = null
+
+    forEach { value ->
+        val selectorValue = selector(value)
+
+        if (selectorValue != null) {
+            if (minElement == null) {
+                minElement = value
+                minValue = selectorValue
+            } else {
+                if (minValue!!.compareTo(selectorValue) == 1) {
+                    minElement = value
+                    minValue = selectorValue
+                }
+            }
+        }
+    }
+
+    return minElement
+}
+
+fun <T: Any> List<T?>.forEachNotNull(action: (T) -> Unit): Unit {
+    return this.filterNotNull().forEach(action)
+}

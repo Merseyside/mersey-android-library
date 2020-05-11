@@ -5,6 +5,8 @@ import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.os.Build
 import com.merseyside.merseyLib.utils.Logger
+import com.merseyside.merseyLib.utils.delayedMainThread
+import com.merseyside.merseyLib.utils.time.Millis
 
 abstract class BaseAnimator {
 
@@ -52,7 +54,10 @@ abstract class BaseAnimator {
 
     fun start() {
         isReverse = false
-        play()
+
+        delayedMainThread(Millis(10)) {
+            play()
+        }
     }
 
     private fun play() {
