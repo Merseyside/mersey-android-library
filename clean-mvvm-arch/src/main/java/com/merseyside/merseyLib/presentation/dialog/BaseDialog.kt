@@ -100,7 +100,7 @@ abstract class BaseDialog : DialogFragment(), IView, OrientationHandler, ILocale
 
         setOrientation(resources, savedInstanceState)
 
-        val dialog = object: Dialog(context!!, getStyle()) {
+        return object: Dialog(context!!, getStyle()) {
 
             override fun onBackPressed() {
                 if (this@BaseDialog.onBackPressed()) {
@@ -108,7 +108,7 @@ abstract class BaseDialog : DialogFragment(), IView, OrientationHandler, ILocale
                 }
             }
 
-        }.apply {
+        }.apply<Dialog> {
 
             val title = getTitle(context)
 
@@ -120,13 +120,10 @@ abstract class BaseDialog : DialogFragment(), IView, OrientationHandler, ILocale
 
             setCanceledOnTouchOutside(getCancelable())
 
-            if (this@BaseDialog !is BaseVMDialog<*, *>) {
-                Logger.log(this, this)
+            if (view == null) {
                 setContentView(getLayoutId())
             }
         }
-
-        return dialog
 
     }
 

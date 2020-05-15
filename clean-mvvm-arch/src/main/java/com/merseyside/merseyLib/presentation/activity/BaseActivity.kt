@@ -65,7 +65,7 @@ abstract class BaseActivity : AppCompatActivity(),
 
         setOrientation(resources, savedInstanceState)
 
-        if (this !is BaseVMActivity<*, *>) {
+        if (getRootView() == null) {
             setContentView(getLayoutId())
         }
 

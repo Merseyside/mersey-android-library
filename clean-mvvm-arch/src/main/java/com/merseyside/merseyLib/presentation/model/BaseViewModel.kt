@@ -20,11 +20,15 @@ abstract class BaseViewModel protected constructor() : ViewModel(), IStringHelpe
 
     val errorLiveEvent: MutableLiveData<Throwable> =
         SingleLiveEvent()
+
     val messageLiveEvent: MutableLiveData<TextMessage> =
         SingleLiveEvent()
+
     val isInProgressLiveData: MutableLiveData<Boolean> = MutableLiveData()
+
     val alertDialogLiveEvent: MutableLiveData<AlertDialogModel> =
         SingleLiveEvent()
+
     val grantPermissionLiveEvent: MutableLiveData<Pair<Array<String>, Int>> =
         SingleLiveEvent()
 
@@ -104,7 +108,6 @@ abstract class BaseViewModel protected constructor() : ViewModel(), IStringHelpe
 
     open fun onError(throwable: Throwable) {}
 
-    @CallSuper
     fun showProgress(text: String? = null) {
         Logger.log(this, text ?: "Empty")
 
@@ -114,7 +117,6 @@ abstract class BaseViewModel protected constructor() : ViewModel(), IStringHelpe
         isInProgressLiveData.value = true
     }
 
-    @CallSuper
     fun hideProgress() {
         if (isInProgressLiveData.value == true) {
             isInProgress.set(false)

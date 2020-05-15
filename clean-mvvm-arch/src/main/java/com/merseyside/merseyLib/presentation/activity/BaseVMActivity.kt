@@ -1,9 +1,7 @@
 package com.merseyside.merseyLib.presentation.activity
 
 import android.content.Context
-
 import android.os.Bundle
-import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.Observer
 import com.merseyside.merseyLib.presentation.model.BaseViewModel
