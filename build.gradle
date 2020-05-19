@@ -1,7 +1,7 @@
 buildscript {
     ext {
-        versionName = "1.1.8"
-        versionCode = 118
+        versionName = "1.1.9"
+        versionCode = 119
         minSdkVersion = 17
         compileSdkVersion = 29
         targetSdkVersion = 29

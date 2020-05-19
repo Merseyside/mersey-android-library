@@ -20,6 +20,7 @@ import com.merseyside.merseyLib.presentation.view.OrientationHandler
 import com.merseyside.merseyLib.presentation.view.localeViews.ILocaleManager
 import com.merseyside.merseyLib.utils.SnackbarManager
 import com.merseyside.merseyLib.utils.ext.isNotNullAndEmpty
+import java.util.zip.Inflater
 
 abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandler, ILocaleManager {
 
@@ -89,7 +90,15 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
 
         snackbarManager = baseActivity.snackbarManager
 
-        return inflater.inflate(getLayoutId(), container, false)
+        return inflateView(inflater, container)
+    }
+    
+    open protected fun inflateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        @LayoutRes layoutId: Int = getLayoutId()
+    ): View? {
+        return inflater.inflate(layoutId, container, false)
     }
 
     @LayoutRes

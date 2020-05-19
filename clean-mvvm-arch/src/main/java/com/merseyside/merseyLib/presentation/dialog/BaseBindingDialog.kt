@@ -13,19 +13,13 @@ abstract class BaseBindingDialog<B: ViewDataBinding> : BaseDialog() {
 
     protected var isBindingInit = false
 
-    @CallSuper
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-
-        val dialog = super.onCreateDialog(savedInstanceState)
-
+    override fun setView(dialog: Dialog, layoutId: Int) {
         binding = DataBindingUtil.inflate(LayoutInflater.from(context), getLayoutId(), null, false)
         binding.lifecycleOwner = this
 
         dialog.setContentView(binding.root)
 
         isBindingInit = true
-
-        return dialog
     }
 
     override fun onDestroyView() {

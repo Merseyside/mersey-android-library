@@ -53,8 +53,6 @@ abstract class BaseActivity : NavigationBaseActivity(),
     protected abstract fun performInjection(bundle: Bundle?)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        performInjection(savedInstanceState)
-
         super.onCreate(savedInstanceState)
 
         if (applicationContext is BaseApplication) {
@@ -63,15 +61,19 @@ abstract class BaseActivity : NavigationBaseActivity(),
 
         setOrientation(resources, savedInstanceState)
 
-        if (getRootView() == null) {
-            setContentView(getLayoutId())
-        }
+        performInjection(savedInstanceState)
+
+        setView()
 
         getToolbar()?.let {
             setSupportActionBar(it)
         }
 
         snackbarManager = SnackbarManager(this)
+    }
+
+    open fun setView(@LayoutRes layoutId: Int = getLayoutId()) {
+        setContentView(layoutId)
     }
 
     override fun onStart() {
