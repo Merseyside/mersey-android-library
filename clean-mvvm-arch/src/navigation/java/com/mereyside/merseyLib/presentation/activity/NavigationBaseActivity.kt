@@ -3,16 +3,13 @@ package com.mereyside.merseyLib.presentation.activity
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.findNavController
 
 abstract class NavigationBaseActivity : AppCompatActivity() {
 
     protected val navController: NavController
         get() {
-            val host = supportFragmentManager
-                .findFragmentById(getFragmentContainer()) as NavHostFragment
-
-            return host.navController
+            return findNavController(getFragmentContainer())
         }
 
     @IdRes

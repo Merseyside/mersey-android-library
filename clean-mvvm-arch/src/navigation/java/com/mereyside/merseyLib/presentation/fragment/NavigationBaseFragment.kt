@@ -1,9 +1,16 @@
 package com.mereyside.merseyLib.presentation.fragment
 
 import androidx.annotation.IdRes
-import androidx.navigation.fragment.NavHostFragment
+import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 
-abstract class NavigationBaseFragment : NavHostFragment() {
+abstract class NavigationBaseFragment : Fragment() {
+
+    protected val navController: NavController
+        get() {
+            return findNavController()
+        }
 
     fun navigate(@IdRes fragmentId: Int) {
         navController.navigate(fragmentId)
