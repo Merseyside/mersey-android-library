@@ -18,4 +18,8 @@ class MainActivity : BaseActivity() {
     override fun getToolbar(): Toolbar? {
         return null
     }
+
+    override fun getFragmentContainer(): Int {
+        TODO("Not yet implemented")
+    }
 }

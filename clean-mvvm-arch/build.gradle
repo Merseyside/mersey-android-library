@@ -5,6 +5,7 @@ plugins {
     id 'kotlin-kapt'
     id 'kotlinx-serialization'
     id 'com.github.dcendents.android-maven'
+    id 'androidx.navigation.safeargs.kotlin'
 }
 
 group='com.github.Merseyside'
