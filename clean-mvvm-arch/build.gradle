@@ -20,6 +20,7 @@ android {
     }
 
     flavorDimensions "nav"
+    defaultPublishConfig "standartRelease"
 
     buildTypes {
 
@@ -112,6 +113,26 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization"
 
     implementation "net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:$keyboard"
+}
+
+if (android.productFlavors.size() > 0) {
+    android.libraryVariants.all { variant ->
+
+        if (variant.name.toLowerCase().contains("debug")) {
+            return
+        }
+
+        def bundleTask = tasks["bundle${variant.name.capitalize()}Aar"]
+
+        artifacts {
+            archives(bundleTask.archivePath) {
+                classifier variant.flavorName
+                builtBy bundleTask
+                name = project.name
+            }
+        }
+
+    }
 }
 
 afterEvaluate {
