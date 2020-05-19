@@ -1,13 +1,13 @@
 <resources>
 
-    <style name="Theme.LangApp.21" parent="Theme.LangApp.Base">
+    <style name="Theme.Sample.21" parent="Theme.Sample.Base">
         <item name="android:navigationBarColor">@color/dark</item>
         <item name="android:statusBarColor">@color/dark</item>
     </style>
 
-    <style name="Theme.LangApp" parent="Theme.LangApp.21"/>
+    <style name="Theme.Sample" parent="Theme.Sample.21"/>
 
-    <style name="Theme.LangApp.Light.OppositeStatusBar" parent="Theme.LangApp">
+    <style name="Theme.Sample.Light.OppositeStatusBar" parent="Theme.Sample">
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowActionBarOverlay">true</item>
         <item name="android:windowContentOverlay">@null</item>

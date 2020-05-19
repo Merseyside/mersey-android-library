@@ -1,14 +1,15 @@
 buildscript {
     ext {
-        versionName = "1.1.6"
-        versionCode = 116
+        versionName = "1.1.7"
+        versionCode = 117
         minSdkVersion = 17
         compileSdkVersion = 29
         targetSdkVersion = 29
 
         kotlin_version = "1.3.72"
-        gradle_version = '3.5.3'
+        gradle_version = '3.6.3'
         core_ktx = "1.2.0"
+        navigationSafeArgs = '1.0.0'
 
         serialization = "0.20.0"
 
@@ -25,6 +26,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
         classpath "com.github.dcendents:android-maven-gradle-plugin:$maven_version"
+        classpath "android.arch.navigation:navigation-safe-args-gradle-plugin:$navigationSafeArgs"
     }
 }
 

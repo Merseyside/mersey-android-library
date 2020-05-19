@@ -19,11 +19,31 @@ android {
         versionName rootProject.versionName
     }
 
+    flavorDimensions "nav"
+
     buildTypes {
+
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
         release {
             minifyEnabled false
             consumerProguardFiles 'proguard-rules.pro'
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    productFlavors {
+        navigation {
+            dimension "nav"
+            matchingFallbacks = ["navigation"]
+        }
+
+        standart {
+            dimension "nav"
+            matchingFallbacks = ["standart"]
         }
     }
 
@@ -46,6 +66,7 @@ ext {
 
     coroutines = '1.3.3'
     appCompat = '1.1.0'
+    navigation = '2.3.0-alpha06'
 
     lifecycleExtensions = '2.2.0'
 
@@ -69,6 +90,9 @@ dependencies {
     implementation "com.google.android.material:material:$material"
     implementation "androidx.appcompat:appcompat:$appCompat"
 
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigation"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigation"
+
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleExtensions"
 
     implementation "androidx.work:work-runtime-ktx:$workVersion"
@@ -91,11 +115,15 @@ dependencies {
 }
 
 afterEvaluate {
-    generateReleaseBuildConfig.enabled = false
-    generateDebugBuildConfig.enabled = false
+    generateNavigationReleaseBuildConfig.enabled = false
+    generateStandartReleaseBuildConfig.enabled = false
+    generateNavigationDebugBuildConfig.enabled = false
+    generateStandartDebugBuildConfig.enabled = false
 
-    kaptReleaseKotlin.finalizedBy(removeReleaseBuildFiles)
-    kaptDebugKotlin.finalizedBy(removeDebugBuildFiles)
+    kaptNavigationReleaseKotlin.finalizedBy(removeReleaseBuildFiles)
+    kaptStandartReleaseKotlin.finalizedBy(removeReleaseBuildFiles)
+    kaptNavigationDebugKotlin.finalizedBy(removeDebugBuildFiles)
+    kaptStandartDebugKotlin.finalizedBy(removeDebugBuildFiles)
 }
 
 task removeReleaseBuildFiles {

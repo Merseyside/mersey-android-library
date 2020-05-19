@@ -10,7 +10,7 @@ import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.Fragment
+import com.mereyside.merseyLib.presentation.fragment.NavigationBaseFragment
 import com.merseyside.merseyLib.BaseApplication
 import com.merseyside.merseyLib.presentation.activity.BaseActivity
 import com.merseyside.merseyLib.presentation.activity.Orientation
@@ -21,7 +21,7 @@ import com.merseyside.merseyLib.presentation.view.localeViews.ILocaleManager
 import com.merseyside.merseyLib.utils.SnackbarManager
 import com.merseyside.merseyLib.utils.ext.isNotNullAndEmpty
 
-abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleManager {
+abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandler, ILocaleManager {
 
     final override var keyboardUnregistrar: Any? = null
 

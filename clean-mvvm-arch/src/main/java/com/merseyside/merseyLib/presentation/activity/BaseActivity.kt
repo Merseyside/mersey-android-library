@@ -5,11 +5,10 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.mereyside.merseyLib.presentation.activity.NavigationBaseActivity
 import com.merseyside.merseyLib.BaseApplication
 import com.merseyside.merseyLib.presentation.dialog.MaterialAlertDialog
 import com.merseyside.merseyLib.presentation.ext.getActualString
@@ -21,12 +20,11 @@ import com.merseyside.merseyLib.presentation.view.localeViews.ILocaleManager
 import com.merseyside.merseyLib.utils.LocaleManager
 import com.merseyside.merseyLib.utils.Logger
 import com.merseyside.merseyLib.utils.SnackbarManager
-import com.merseyside.merseyLib.utils.ext.log
 import com.merseyside.merseyLib.utils.getLocalizedContext
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.Unregistrar
 
-abstract class BaseActivity : AppCompatActivity(),
+abstract class BaseActivity : NavigationBaseActivity(),
     IActivityView, OrientationHandler, ILocaleManager {
 
     override var keyboardUnregistrar: Any? = null
@@ -169,11 +167,6 @@ abstract class BaseActivity : AppCompatActivity(),
     }
 
     override fun handleError(throwable: Throwable) {}
-
-    @IdRes
-    open fun getFragmentContainer(): Int? {
-        return null
-    }
 
     protected fun getCurrentFragment(res: Int? = getFragmentContainer()): BaseFragment? {
 

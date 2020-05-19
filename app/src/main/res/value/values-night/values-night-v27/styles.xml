@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.LangApp.27" parent="Theme.LangApp.23">
+    <style name="Theme.Sample.27" parent="Theme.Sample.23">
         <item name="android:windowLightNavigationBar">false</item>
     </style>
 
-    <style name="Theme.LangApp" parent="Theme.LangApp.27"/>
+    <style name="Theme.Sample" parent="Theme.Sample.27"/>
 </resources>

@@ -1,5 +1,6 @@
 package com.merseyside.merseyLib.presentation.features.main
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
@@ -8,14 +9,15 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.fragment.NavHostFragment
+import androidx.appcompat.widget.Toolbar
 import com.merseyside.merseyLib.R
+import com.merseyside.merseyLib.presentation.fragment.BaseFragment
 
 /**
  * An example full-screen fragment that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-class FullscreenFragment : NavHostFragment() {
+class FullscreenFragment : BaseFragment() {
     private val hideHandler = Handler()
 
     @Suppress("InlinedApi")
@@ -63,6 +65,7 @@ class FullscreenFragment : NavHostFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
         return inflater.inflate(R.layout.fragment_fullscreen, container, false)
     }
 
@@ -83,6 +86,10 @@ class FullscreenFragment : NavHostFragment() {
         dummyButton?.setOnTouchListener(delayHideTouchListener)
     }
 
+    override fun getTitle(context: Context): String? {
+        TODO("Not yet implemented")
+    }
+
     override fun onResume() {
         super.onResume()
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
@@ -91,6 +98,18 @@ class FullscreenFragment : NavHostFragment() {
         // created, to briefly hint to the user that UI controls
         // are available.
         delayedHide(100)
+    }
+
+    override fun performInjection(bundle: Bundle?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getLayoutId(): Int {
+        TODO("Not yet implemented")
+    }
+
+    override fun getToolbar(): Toolbar? {
+        TODO("Not yet implemented")
     }
 
     override fun onPause() {
