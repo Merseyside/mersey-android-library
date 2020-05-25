@@ -77,11 +77,11 @@ abstract class BaseSelectableAdapterViewModel<M>(
     }
 
     private fun isSelectableObservable(): Boolean {
-        return selectableObservable.get() ?: IS_SELECTED_DEFAULT
+        return selectableObservable.get()
     }
 
     private fun isSelectEnabledObservable(): Boolean {
-        return selectEnabledObservable.get() ?: IS_SELECT_ENABLE_DEFAULT
+        return selectEnabledObservable.get()
     }
 
     fun isSelected(): Boolean {

@@ -121,9 +121,8 @@ class AnimatedCheckButton(context: Context, attributeSet: AttributeSet)
                             view = this@AnimatedCheckButton,
                             duration = duration
                         ).apply {
-                            Logger.log(this@AnimatedCheckButton, "$middleColor")
                             values(
-                                *listOf(color, middleColor, checkedColor).filterNotNull()
+                                *listOfNotNull(color, middleColor, checkedColor)
                                     .toIntArray()
                             )
                         })

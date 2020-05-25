@@ -43,8 +43,8 @@ abstract class BaseFragmentPagerAdapter(
         if (outState != null) {
             outState.putInt(FRAGMENT_COUNT_KEY, registeredFragmentsCount)
 
-            for (i in 0 until registeredFragmentsCount) {
-                fm.putFragment(outState, "pager_fragment_$i", registeredFragments[i])
+            (0 until registeredFragmentsCount).forEach { index ->
+                fm.putFragment(outState, "pager_fragment_$index", registeredFragments[index])
             }
         }
     }
@@ -53,11 +53,11 @@ abstract class BaseFragmentPagerAdapter(
         if (savedInstanceState != null) {
             val count = savedInstanceState.getInt(FRAGMENT_COUNT_KEY)
 
-            for (i in 0 until count) {
-                val fragment = fm.getFragment(savedInstanceState, "pager_fragment_$i")
+            (0 until count).forEach { index -> 
+                val fragment = fm.getFragment(savedInstanceState, "pager_fragment_$index")
 
                 if (fragment != null) {
-                    registeredFragments.put(i, fragment)
+                    registeredFragments.put(index, fragment)
                 }
             }
         }

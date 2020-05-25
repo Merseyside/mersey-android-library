@@ -9,6 +9,8 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.content.res.Resources
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Environment
 import android.os.Handler
@@ -16,6 +18,8 @@ import android.os.Looper
 import android.view.KeyCharacterMap
 import android.view.KeyEvent
 import android.view.ViewConfiguration
+import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
 import com.merseyside.merseyLib.utils.time.TimeUnit
 import java.util.*
@@ -202,4 +206,17 @@ fun copyToClipboard(context: Context, text: String, label: String = "Copied text
         context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
     val clip: ClipData = ClipData.newPlainText(label, text)
     clipboard?.setPrimaryClip(clip)
+}
+
+fun getDrawableByName(context: Context, name: String): Drawable? {
+    return ContextCompat.getDrawable(context, getDrawableResourceIdByName(context, name))
+}
+
+@DrawableRes
+fun getDrawableResourceIdByName(context: Context, name: String): Int {
+    val resources: Resources = context.resources
+    return resources.getIdentifier(
+        name, "drawable",
+        context.packageName
+    )
 }

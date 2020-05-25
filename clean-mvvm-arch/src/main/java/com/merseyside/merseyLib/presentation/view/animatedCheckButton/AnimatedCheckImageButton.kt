@@ -6,13 +6,11 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
-import androidx.annotation.DrawableRes
 import androidx.appcompat.widget.AppCompatImageButton
 import com.merseyside.merseyLib.AnimatorList
 import com.merseyside.merseyLib.Approach
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.animator.ColorAnimator
-import com.merseyside.merseyLib.presentation.view.setTint
 import com.merseyside.merseyLib.utils.Logger
 import com.merseyside.merseyLib.utils.ext.log
 import com.merseyside.merseyLib.utils.ext.onClick
@@ -98,7 +96,6 @@ class AnimatedCheckImageButton(context: Context, attributeSet: AttributeSet)
     }
 
     private fun setBackground(@ColorInt color: Int) {
-        Logger.log(this, "color = $color")
         if (color != NO_VALUE) {
             val drawable = background.mutate()
             Logger.log(this, drawable)

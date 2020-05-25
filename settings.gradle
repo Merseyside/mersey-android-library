@@ -1,6 +1,0 @@
-include ':animators'
-include ':clean-mvvm-arch'
-include ':adapters'
-include ':utils'
-include ':app'
-rootProject.name = "mersey-library"

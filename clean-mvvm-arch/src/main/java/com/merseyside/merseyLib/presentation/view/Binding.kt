@@ -1,6 +1,6 @@
 package com.merseyside.merseyLib.presentation.view
 
-import android.graphics.drawable.GradientDrawable
+import android.graphics.Bitmap
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
@@ -15,8 +15,8 @@ import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
 import com.google.android.material.textfield.TextInputLayout
-import com.merseyside.merseyLib.utils.Logger
 import com.merseyside.merseyLib.utils.ext.*
+import com.merseyside.merseyLib.utils.getDrawableResourceIdByName
 
 @BindingAdapter("app:isVisibleOrGone")
 fun isVisibleOrGone(view: View, isVisible: Boolean?) {
@@ -109,6 +109,32 @@ fun getText(textView: TextView): String? {
 }
 
 /**/
+
+@BindingAdapter("app:drawableName")
+fun loadDrawableByName(iv: ImageView, name: String) {
+    val drawableRes = getDrawableResourceIdByName(iv.context, name)
+
+    loadImageDrawable(iv, drawableRes)
+}
+
+@BindingAdapter("app:vectorDrawableName")
+fun loadVectorDrawableByName(iv: ImageView, name: String) {
+    val drawableRes = getDrawableResourceIdByName(iv.context, name)
+
+    loadImageDrawable(iv, drawableRes)
+}
+
+@BindingAdapter("app:bitmap")
+fun loadImageBitmap(iv: ImageView, bitmap: Bitmap) {
+    iv.setImageBitmap(bitmap)
+}
+
+@BindingAdapter("app:drawableRes")
+fun loadImageDrawable(iv: ImageView, @DrawableRes drawableRes: Int?) {
+    if (drawableRes != null) {
+        iv.setImageDrawable(ContextCompat.getDrawable(iv.context, drawableRes))
+    }
+}
 
 @BindingAdapter("app:vectorDrawable")
 fun loadVectorDrawable(iv: ImageView, @DrawableRes resId: Int?) {
