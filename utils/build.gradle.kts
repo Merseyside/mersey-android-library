@@ -7,8 +7,6 @@ plugins {
     id("com.github.dcendents.android-maven")
 }
 
-apply("../common-gradle.gradle")
-
 group = "com.github.Merseyside"
 version = LibraryVersions.Android.version
 
@@ -35,14 +33,14 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = "1.8"
-        }
-    }
-
     dataBinding {
         isEnabled = true
+    }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 }
 
@@ -66,3 +64,5 @@ dependencies {
 
     androidLibs.forEach { lib -> implementation(lib)}
 }
+
+apply("../common-gradle.gradle")
