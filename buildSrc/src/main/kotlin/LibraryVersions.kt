@@ -1,7 +1,3 @@
-/*
- * Copyright 2019 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
- */
-
 object LibraryVersions {
 
     object Android {
@@ -9,8 +5,8 @@ object LibraryVersions {
         const val targetSdk = 29
         const val minSdk = 17
 
-        const val version = "1.2.2"
-        const val versionCode = 122
+        const val version = "1.2.4"
+        const val versionCode = 124
     }
 
     const val kotlin = "1.3.72"

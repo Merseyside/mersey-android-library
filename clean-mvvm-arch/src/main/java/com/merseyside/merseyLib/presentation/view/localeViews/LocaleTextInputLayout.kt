@@ -5,7 +5,9 @@ import android.util.AttributeSet
 import androidx.annotation.StringRes
 import com.google.android.material.textfield.TextInputLayout
 import com.merseyside.merseyLib.R
+import com.merseyside.merseyLib.presentation.activity.BaseActivity
 import com.merseyside.merseyLib.utils.Logger
+import com.merseyside.merseyLib.utils.ext.getActivity
 import com.merseyside.merseyLib.utils.ext.log
 
 class LocaleTextInputLayout(
@@ -19,6 +21,7 @@ class LocaleTextInputLayout(
 
     init {
         loadAttrs(attributeSet)
+        updateLocale()
     }
 
     private fun loadAttrs(attributeSet: AttributeSet) {
@@ -26,6 +29,7 @@ class LocaleTextInputLayout(
             attributeSet, R.styleable.LocaleTextInputLayout, 0, 0)
 
         hintId = array.getResourceId(R.styleable.LocaleTextInputLayout_android_hint, 0).log()
+        array.recycle()
     }
 
     override fun getView(): TextInputLayout {
@@ -33,6 +37,6 @@ class LocaleTextInputLayout(
     }
 
     override fun getLocaleContext(): Context {
-        return context
+        return (getActivity() as BaseActivity).getContext()
     }
 }

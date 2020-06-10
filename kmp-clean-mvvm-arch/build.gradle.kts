@@ -36,17 +36,18 @@ android {
             matchingFallbacks = listOf("navigation")
         }
 
-        create("standart") {
-            dimension = "nav"
-            matchingFallbacks = listOf("standart")
-        }
+//        create("standart") {
+//            dimension = "nav"
+//            matchingFallbacks = listOf("standart")
+//        }
     }
 }
 
 kotlin {
     android {
         publishLibraryVariantsGroupedByFlavor = true
-        publishLibraryVariants = listOf("navigationRelease", "standartRelease")
+        //publishLibraryVariants = listOf("navigationRelease", "standartRelease")
+        publishLibraryVariants = listOf<String>()
     }
 }
 
@@ -107,4 +108,9 @@ publishing {
             password = System.getProperty("BINTRAY_KEY")
         }
     }
+}
+
+apply("common-gradle.gradle")
+repositories {
+    mavenCentral()
 }

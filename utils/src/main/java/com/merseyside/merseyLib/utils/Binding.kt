@@ -1,7 +1,8 @@
-package com.merseyside.merseyLib.presentation.view
+package com.merseyside.merseyLib.utils
 
 import android.graphics.Bitmap
 import android.view.View
+import android.view.View.*
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
@@ -16,7 +17,6 @@ import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
 import com.google.android.material.textfield.TextInputLayout
 import com.merseyside.merseyLib.utils.ext.*
-import com.merseyside.merseyLib.utils.getDrawableResourceIdByName
 
 @BindingAdapter("app:isVisibleOrGone")
 fun isVisibleOrGone(view: View, isVisible: Boolean?) {
@@ -111,22 +111,28 @@ fun getText(textView: TextView): String? {
 /**/
 
 @BindingAdapter("app:drawableName")
-fun loadDrawableByName(iv: ImageView, name: String) {
-    val drawableRes = getDrawableResourceIdByName(iv.context, name)
+fun loadDrawableByName(iv: ImageView, name: String?) {
+    if (name != null) {
+        val drawableRes = getDrawableResourceIdByName(iv.context, name)
 
-    loadImageDrawable(iv, drawableRes)
+        loadImageDrawable(iv, drawableRes)
+    }
 }
 
 @BindingAdapter("app:vectorDrawableName")
-fun loadVectorDrawableByName(iv: ImageView, name: String) {
-    val drawableRes = getDrawableResourceIdByName(iv.context, name)
+fun loadVectorDrawableByName(iv: ImageView, name: String?) {
+    if (name != null) {
+        val drawableRes = getDrawableResourceIdByName(iv.context, name)
 
-    loadImageDrawable(iv, drawableRes)
+        loadImageDrawable(iv, drawableRes)
+    }
 }
 
 @BindingAdapter("app:bitmap")
-fun loadImageBitmap(iv: ImageView, bitmap: Bitmap) {
-    iv.setImageBitmap(bitmap)
+fun loadImageBitmap(iv: ImageView, bitmap: Bitmap?) {
+    if (bitmap != null) {
+        iv.setImageBitmap(bitmap)
+    }
 }
 
 @BindingAdapter("app:drawableRes")
@@ -168,6 +174,13 @@ fun setViewAttrBackgroundColor(view: View, @AttrRes attrId: Int?) {
 fun setViewBackgroundColor(view: View, @ColorRes colorId: Int?) {
     if (colorId.isNotNullAndZero()) {
         view.setBackgroundColor(ContextCompat.getColor(view.context, colorId!!))
+    }
+}
+
+@BindingAdapter("app:resTextColor")
+fun setTextColor(view: TextView, @ColorRes colorRes: Int?) {
+    if (colorRes != null) {
+        view.setTextColor(ContextCompat.getColor(view.context, colorRes))
     }
 }
 

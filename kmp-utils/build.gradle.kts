@@ -1,3 +1,4 @@
+val kotlin_version: String by extra
 plugins {
     id("com.android.library")
     kotlin("multiplatform")
@@ -48,7 +49,8 @@ val mppLibs = listOf(
     LibraryDeps.Libs.MultiPlatform.serialization,
     LibraryDeps.Libs.MultiPlatform.kodein,
     LibraryDeps.Libs.MultiPlatform.kodeinErased,
-    LibraryDeps.Libs.MultiPlatform.mokoResources
+    LibraryDeps.Libs.MultiPlatform.mokoResources,
+    LibraryDeps.Libs.MultiPlatform.ktorClient
 )
 
 val androidLibraries = listOf(
@@ -84,4 +86,9 @@ publishing {
             password = System.getProperty("BINTRAY_KEY")
         }
     }
+}
+
+apply("common-gradle.gradle")
+repositories {
+    mavenCentral()
 }

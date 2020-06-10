@@ -7,6 +7,7 @@ plugins {
     id("com.github.dcendents.android-maven")
 }
 
+
 group = "com.github.Merseyside"
 version = LibraryVersions.Android.version
 
@@ -66,3 +67,6 @@ dependencies {
 }
 
 apply("../common-gradle.gradle")
+repositories {
+    mavenCentral()
+}

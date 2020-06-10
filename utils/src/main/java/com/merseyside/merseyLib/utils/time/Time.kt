@@ -3,94 +3,96 @@ package com.merseyside.merseyLib.utils.time
 import android.annotation.SuppressLint
 import android.content.Context
 import com.merseyside.merseyLib.utils.LocaleManager
+import com.merseyside.merseyLib.utils.Logger
 import java.text.SimpleDateFormat
 import java.util.*
 
-enum class TimeZone { SYSTEM, GMT }
+val GMT = TimeZone.getTimeZone("GMT")
+val SYSTEM = TimeZone.getTimeZone("GMT0")
 
-fun getCurrentTimeMillis(timeZone: TimeZone = TimeZone.GMT): Long {
-    return getCurrentTimeMillis(timeZone.name)
-}
-
-fun getCurrentTimeMillis(timeZone: String): Long {
-    val value = when (timeZone) {
-        TimeZone.SYSTEM.name -> {
-            null
-        }
-
-        TimeZone.GMT.name -> {
-            java.util.TimeZone.getTimeZone("GMT")
+fun getCurrentTimeMillis(timeZone: TimeZone = GMT): Long {
+    return when (timeZone) {
+        SYSTEM -> {
+            val offset: Int = TimeZone.getDefault().rawOffset +
+                    TimeZone.getDefault().dstSavings
+            return System.currentTimeMillis() + offset
         }
 
         else -> {
-            java.util.TimeZone.getTimeZone(timeZone)
+            Calendar.getInstance(timeZone).timeInMillis
         }
-    }
-
-    return if (value != null) {
-        Calendar.getInstance(java.util.TimeZone.getTimeZone("GMT")).timeInMillis
-    } else {
-        val offset: Int = java.util.TimeZone.getDefault().rawOffset +
-                java.util.TimeZone.getDefault().dstSavings
-        return (System.currentTimeMillis() + offset)
     }
 }
 
 /**
  * If set return type to Millis
  */
-fun getCurrentTimeUnit(timeZone: TimeZone = TimeZone.GMT): TimeUnit {
-    return getCurrentTimeUnit(timeZone.name)
-}
-
-fun getCurrentTimeUnit(timeZone: String): TimeUnit {
+fun getCurrentTimeUnit(timeZone: TimeZone = GMT): TimeUnit {
     return Millis(getCurrentTimeMillis(timeZone))
 }
 
 fun getHoursMinutes(timestamp: Long, context: Context? = null): String {
-    return getFormattedDate(timestamp, "hh:mm", context)
+    return getFormattedDate(timestamp, "HH:mm", context)
 }
 
 fun getHoursMinutes(timestamp: TimeUnit, context: Context? = null): String {
     return getHoursMinutes(timestamp.toMillisLong(), context)
 }
 
-fun getDate(timestamp: Long, context: Context?): String {
+fun getDate(
+    timestamp: Long,
+    context: Context?
+): String {
     return getFormattedDate(timestamp, "dd.MM.YYYY", context)
 }
 
-fun getDate(timestamp: TimeUnit, context: Context?): String {
+fun getDate(
+    timestamp: TimeUnit,
+    context: Context?
+): String {
     return getDate(timestamp.toMillisLong(), context)
 }
 
-fun getDateWithTime(timestamp: Long, context: Context?): String {
-    return getFormattedDate(timestamp, "dd-MM-YYYY hh:mm", context)
+fun getDateWithTime(
+    timestamp: Long,
+    context: Context? = null
+): String {
+    return getFormattedDate(timestamp, "dd-MM-YYYY HH:mm", context)
 }
 
-fun getDateWithTime(timestamp: TimeUnit, context: Context?): String {
+fun getDateWithTime(
+    timestamp: TimeUnit,
+    context: Context? = null): String {
     return getDateWithTime(timestamp.toMillisLong(), context)
 }
 
-fun getFormattedDate(timestamp: TimeUnit, pattern: String, context: Context? = null): String {
+fun getFormattedDate(
+    timestamp: TimeUnit,
+    pattern: String,
+    context: Context? = null
+): String {
     return getFormattedDate(timestamp.toMillisLong(), pattern, context)
 }
 
 @SuppressLint("SimpleDateFormat")
-fun getFormattedDate(timestamp: Long, pattern: String, context: Context? = null): String {
-    var locale: Locale? = null
-
-    if (context != null) {
-        locale = LocaleManager(context).getCurrentLocale()
+fun getFormattedDate(
+    timestamp: Long,
+    pattern: String,
+    context: Context? = null
+): String {
+    val locale = if (context != null) {
+        LocaleManager(context).getCurrentLocale()
+    } else {
+        Locale.getDefault()
     }
 
     return try {
 
-        val sdf = if (locale != null) {
-            SimpleDateFormat(pattern, locale)
-        } else {
-            SimpleDateFormat(pattern)
-        }
+        val sdf =  SimpleDateFormat(pattern, locale)
+        sdf.timeZone = GMT
+
         val netDate = Date(timestamp)
+
         sdf.format(netDate)
     } catch (e: Exception) {
         e.toString()

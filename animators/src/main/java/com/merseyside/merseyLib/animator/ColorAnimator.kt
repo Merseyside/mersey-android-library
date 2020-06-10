@@ -12,11 +12,16 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.view.View
+import android.widget.TextView
 import androidx.annotation.ColorInt
 import com.merseyside.merseyLib.BaseAnimatorBuilder
 import com.merseyside.merseyLib.BaseSingleAnimator
+import com.merseyside.merseyLib.utils.Logger
+import com.merseyside.merseyLib.utils.ext.getColor
 import com.merseyside.merseyLib.utils.ext.setColor
+import com.merseyside.merseyLib.utils.reflection.callMethodByName
 import com.merseyside.merseyLib.utils.time.TimeUnit
+import java.lang.UnsupportedOperationException
 
 class ColorAnimator(
     builder: Builder
@@ -113,12 +118,37 @@ class ColorAnimator(
         }
 
         override fun calculateCurrentValue(): Int {
-            getMutableDrawable().let { drawable ->
-                if (drawable is ColorDrawable) {
-                    return drawable.color
-                } else {
-                    throw IllegalArgumentException("Background is not ColorDrawable")
+            if (view != null) {
+
+                val value = when {
+                    propertyName.contains("background") -> {
+                        view.background
+                    }
+                    propertyName.contains("text") -> {
+                        (view as TextView).currentTextColor
+                    }
+                    else -> {
+                        throw UnsupportedOperationException()
+                    }
                 }
+
+                when (value) {
+                    is Drawable -> {
+                        val color = value.getColor()
+
+                        return color ?: 0
+                    }
+
+                    is Int -> {
+                        return value
+                    }
+                    else -> {
+                        throw Exception()
+                    }
+                }
+            } else {
+                return drawable!!.getColor() ?: 0
+
             }
         }
 

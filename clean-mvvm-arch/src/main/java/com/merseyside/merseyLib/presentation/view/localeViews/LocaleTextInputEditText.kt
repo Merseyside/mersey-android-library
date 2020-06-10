@@ -6,6 +6,8 @@ import android.widget.EditText
 import androidx.annotation.StringRes
 import com.google.android.material.textfield.TextInputEditText
 import com.merseyside.merseyLib.R
+import com.merseyside.merseyLib.presentation.activity.BaseActivity
+import com.merseyside.merseyLib.utils.ext.getActivity
 
 class LocaleTextInputEditText(
     context: Context,
@@ -22,6 +24,7 @@ class LocaleTextInputEditText(
 
     init {
         loadAttrs(attributeSet)
+        updateLocale()
     }
 
     private fun loadAttrs(attributeSet: AttributeSet) {
@@ -30,6 +33,8 @@ class LocaleTextInputEditText(
 
         textId = array.getResourceId(R.styleable.LocaleEditText_android_text, 0)
         hintId = array.getResourceId(R.styleable.LocaleEditText_android_hint, 0)
+
+        array.recycle()
     }
 
     override fun getView(): EditText {
@@ -37,6 +42,6 @@ class LocaleTextInputEditText(
     }
 
     override fun getLocaleContext(): Context {
-        return context
+        return (getActivity() as BaseActivity).getContext()
     }
 }

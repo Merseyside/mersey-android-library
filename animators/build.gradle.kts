@@ -1,3 +1,4 @@
+val kotlin_version: String by extra
 plugins {
     id ("com.android.library")
     kotlin("android")
@@ -6,6 +7,7 @@ plugins {
     id("kotlinx-serialization")
     id("com.github.dcendents.android-maven")
 }
+
 
 group = "com.github.Merseyside"
 version = LibraryVersions.Android.version
@@ -53,6 +55,10 @@ dependencies {
 
     implementation(project(":utils"))
     androidLibs.forEach { lib -> implementation(lib)}
+    implementation("androidx.core:core-ktx:+")
 }
 
 apply("../common-gradle.gradle")
+repositories {
+    mavenCentral()
+}

@@ -51,6 +51,10 @@ val androidLibs = listOf(
 dependencies {
     androidLibs.forEach { lib -> implementation(lib)}
     implementation(project(":utils"))
+    implementation("androidx.core:core-ktx:+")
 }
 
 apply("../common-gradle.gradle")
+repositories {
+    mavenCentral()
+}

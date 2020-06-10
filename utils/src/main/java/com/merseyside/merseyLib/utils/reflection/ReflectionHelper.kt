@@ -1,6 +1,7 @@
 package com.merseyside.merseyLib.utils.reflection
 
 import kotlin.reflect.KCallable
+import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.declaredMemberProperties

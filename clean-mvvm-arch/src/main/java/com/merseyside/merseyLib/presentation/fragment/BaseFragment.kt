@@ -10,7 +10,6 @@ import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
-import com.mereyside.merseyLib.presentation.fragment.NavigationBaseFragment
 import com.merseyside.merseyLib.BaseApplication
 import com.merseyside.merseyLib.presentation.activity.BaseActivity
 import com.merseyside.merseyLib.presentation.activity.Orientation
@@ -18,9 +17,9 @@ import com.merseyside.merseyLib.presentation.view.IView
 import com.merseyside.merseyLib.presentation.view.OnKeyboardStateListener
 import com.merseyside.merseyLib.presentation.view.OrientationHandler
 import com.merseyside.merseyLib.presentation.view.localeViews.ILocaleManager
+import com.merseyside.merseyLib.utils.Logger
 import com.merseyside.merseyLib.utils.SnackbarManager
 import com.merseyside.merseyLib.utils.ext.isNotNullAndEmpty
-import java.util.zip.Inflater
 
 abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandler, ILocaleManager {
 
@@ -153,14 +152,6 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
         dismissMsg()
 
         unregisterKeyboardListener()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-
-        getToolbar()?.let {
-            baseActivity.setFragmentToolbar(null)
-        }
     }
 
     fun hideKeyboard(view: View) {

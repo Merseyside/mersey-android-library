@@ -1,6 +1,5 @@
 package com.merseyside.merseyLib.utils.ext
 
-import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.text.Editable

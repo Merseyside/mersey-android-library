@@ -6,6 +6,8 @@ import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.AppCompatTextView
 import com.merseyside.merseyLib.R
+import com.merseyside.merseyLib.presentation.activity.BaseActivity
+import com.merseyside.merseyLib.utils.ext.getActivity
 
 class LocaleTextView(
     context: Context,
@@ -18,12 +20,14 @@ class LocaleTextView(
 
     init {
         loadAttrs(attributeSet)
+        updateLocale()
     }
 
     private fun loadAttrs(attributeSet: AttributeSet) {
         val array = context.theme.obtainStyledAttributes(attributeSet, R.styleable.LocaleTextView, 0, 0)
 
         textId = array.getResourceId(R.styleable.LocaleTextView_android_text, 0)
+        array.recycle()
     }
 
     override fun getView(): TextView {
@@ -31,7 +35,7 @@ class LocaleTextView(
     }
 
     override fun getLocaleContext(): Context {
-        return context
+        return (getActivity() as BaseActivity).getContext()
     }
 
 }

@@ -1,4 +1,4 @@
-package com.mereyside.merseyLib.presentation.fragment
+package com.merseyside.merseyLib.presentation.fragment
 
 import androidx.fragment.app.Fragment
 

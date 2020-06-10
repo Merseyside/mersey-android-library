@@ -63,15 +63,13 @@ class AnimatedCheckImageButton(context: Context, attributeSet: AttributeSet)
         val array = context.theme.obtainStyledAttributes(attributeSet, R.styleable.AnimatedCheckImageButton, 0, 0)
 
         isCheckable = array.getBoolean(R.styleable.AnimatedCheckImageButton_android_checkable, isCheckable)
-        color = array.getColor(R.styleable.AnimatedCheckImageButton_color, Color.WHITE).log(this, "color1 =")
+        color = array.getColor(R.styleable.AnimatedCheckImageButton_color, Color.WHITE)
         middleColor = array.getColor(R.styleable.AnimatedCheckImageButton_middleColor, NO_VALUE)
         checkedColor = array.getColor(R.styleable.AnimatedCheckImageButton_checkedColor, NO_VALUE)
         duration = Millis(array.getInteger(R.styleable.AnimatedCheckImageButton_duration, 400).toLong())
         isChecked = array.getBoolean(R.styleable.AnimatedCheckImageButton_android_checked, false)
         checkedImageColor = array.getColor(R.styleable.AnimatedCheckImageButton_checkedImageColor, NO_VALUE)
         defaultImageColor = array.getColor(R.styleable.AnimatedCheckImageButton_defaultImageColor, NO_VALUE)
-
-        //array.getResourceId(R.styleable.)
 
         array.recycle()
     }

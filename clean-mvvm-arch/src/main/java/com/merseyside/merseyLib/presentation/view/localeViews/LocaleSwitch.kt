@@ -6,6 +6,8 @@ import android.widget.Switch
 import android.widget.TextView
 import androidx.annotation.StringRes
 import com.merseyside.merseyLib.R
+import com.merseyside.merseyLib.presentation.activity.BaseActivity
+import com.merseyside.merseyLib.utils.ext.getActivity
 
 class LocaleSwitch(
     context: Context,
@@ -18,12 +20,14 @@ class LocaleSwitch(
 
     init {
         loadAttrs(attributeSet)
+        updateLocale()
     }
 
     private fun loadAttrs(attributeSet: AttributeSet) {
         val array = context.theme.obtainStyledAttributes(attributeSet, R.styleable.LocaleSwitch, 0, 0)
 
         textId = array.getResourceId(R.styleable.LocaleSwitch_android_text, 0)
+        array.recycle()
     }
 
     override fun getView(): TextView {
@@ -31,6 +35,6 @@ class LocaleSwitch(
     }
 
     override fun getLocaleContext(): Context {
-        return context
+        return (getActivity() as BaseActivity).getContext()
     }
 }

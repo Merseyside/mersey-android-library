@@ -1,4 +1,4 @@
-package com.mereyside.merseyLib.presentation.activity
+package com.merseyside.merseyLib.presentation.activity
 
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity

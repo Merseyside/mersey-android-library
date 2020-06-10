@@ -8,7 +8,6 @@ import android.view.inputmethod.InputMethodManager
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.Toolbar
-import com.mereyside.merseyLib.presentation.activity.NavigationBaseActivity
 import com.merseyside.merseyLib.BaseApplication
 import com.merseyside.merseyLib.presentation.dialog.MaterialAlertDialog
 import com.merseyside.merseyLib.presentation.ext.getActualString
@@ -165,6 +164,10 @@ abstract class BaseActivity : NavigationBaseActivity(),
             }
         } else {
             super.onBackPressed()
+        }
+
+        if (fragment?.getToolbar() != null) {
+            setFragmentToolbar(null)
         }
     }
 

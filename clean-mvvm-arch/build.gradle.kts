@@ -7,6 +7,7 @@ plugins {
     id("com.github.dcendents.android-maven")
 }
 
+
 group = "com.github.Merseyside"
 version = LibraryVersions.Android.version
 
@@ -42,10 +43,10 @@ android {
             matchingFallbacks = listOf("navigation")
         }
 
-        create("standart") {
-            dimension = "nav"
-            matchingFallbacks = listOf("standart")
-        }
+//        create("standart") {
+//            dimension = "nav"
+//            matchingFallbacks = listOf("standart")
+//        }
     }
 
     compileOptions {
@@ -96,3 +97,6 @@ dependencies {
 }
 
 apply("common-gradle.gradle")
+repositories {
+    mavenCentral()
+}

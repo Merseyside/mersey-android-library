@@ -68,7 +68,7 @@ class AlphaAnimator(
                         }
                     }
 
-                    previousValue = value.log()
+                    previousValue = value
                 }
             }
         }

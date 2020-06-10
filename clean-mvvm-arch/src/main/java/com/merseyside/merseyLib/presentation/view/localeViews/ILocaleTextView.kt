@@ -3,6 +3,7 @@ package com.merseyside.merseyLib.presentation.view.localeViews
 import android.content.Context
 import android.widget.TextView
 import androidx.annotation.StringRes
+import com.merseyside.merseyLib.utils.Logger
 
 interface ILocaleTextView : ILocaleView {
 
