@@ -26,7 +26,7 @@ fun HttpRequestBuilder.setFormData(vararg pairs: Pair<String, String>) {
         })
 }
 
-@OptIn(ImplicitReflectionSerializer::class)
+@kotlinx.serialization.ImplicitReflectionSerializer
 suspend inline fun <reified T: Any> KtorRouter.post(
     method: String,
     vararg queryParams: Pair<String, String>,
@@ -43,7 +43,7 @@ suspend inline fun <reified T: Any> KtorRouter.post(
     return json.parse(call)
 }
 
-@OptIn(ImplicitReflectionSerializer::class)
+@kotlinx.serialization.ImplicitReflectionSerializer
 suspend inline fun <reified T: Any> KtorRouter.get(
 
     method: String,

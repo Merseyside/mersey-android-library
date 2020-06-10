@@ -13,26 +13,25 @@ val json: Json by lazy {
     }
 }
 
-@OptIn(ImplicitReflectionSerializer::class, UnstableDefault::class)
+@kotlinx.serialization.ImplicitReflectionSerializer
 inline fun <reified T : Any> T.serialize(): String {
     return json.stringify(this)
 }
 
-@OptIn(ImplicitReflectionSerializer::class, UnstableDefault::class)
+@kotlinx.serialization.ImplicitReflectionSerializer
 inline fun <reified T : Any> String.deserialize(): T {
     return json.parse(this)
 }
 
-@OptIn(UnstableDefault::class)
 fun <T : Any> T.serialize(serializationStrategy: SerializationStrategy<T>): String {
     return json.stringify(serializationStrategy, this)
 }
 
-@OptIn(UnstableDefault::class)
 fun <T> String.deserialize(deserializationStrategy: DeserializationStrategy<T>): T {
     return json.parse(deserializationStrategy, this)
 }
 
+@kotlinx.serialization.ImplicitReflectionSerializer
 inline fun <reified T : Any> Any.deserialize(): T {
     return this.toString().deserialize()
 }
@@ -41,12 +40,14 @@ fun <T> Any.deserialize(deserializationStrategy: DeserializationStrategy<T>): T 
     return this.toString().deserialize(deserializationStrategy)
 }
 
+@kotlinx.serialization.ImplicitReflectionSerializer
 inline fun <reified T : Any> Bundle.putSerialize(key: String, value: T) {
     this.putString(key, value.serialize())
 }
 
+@kotlinx.serialization.ImplicitReflectionSerializer
 inline fun <reified T : Any> Bundle.getSerialize(key: String): T? {
-    return this.getString(key)?.deserialize<T>()
+    return this.getString(key)?.deserialize()
 }
 
 inline fun <reified T : Any> Bundle.putSerialize(key: String, value: T, serializationStrategy: SerializationStrategy<T>) {

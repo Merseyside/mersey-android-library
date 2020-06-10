@@ -13,13 +13,11 @@ abstract class KtorRouter(
     httpClientEngine: HttpClientEngine
 ) {
 
-    @OptIn(UnstableDefault::class)
     val json = createJson()
     val client: HttpClient = createHttpClient(httpClientEngine)
 
     var isEncoding = false
 
-    @OptIn(UnstableDefault::class)
     open fun createJson(): Json {
         return Json {
             isLenient = false

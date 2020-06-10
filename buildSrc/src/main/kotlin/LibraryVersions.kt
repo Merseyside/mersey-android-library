@@ -56,6 +56,7 @@ object LibraryVersions {
             const val serialization = "0.20.0"
             const val mokoMvvm = "0.6.0"
             const val mokoResources = LibraryVersions.mokoResources
+            const val ktor = "1.3.2"
 
             const val kodein = "6.5.5"
             const val sqlDelight = "1.3.0"
