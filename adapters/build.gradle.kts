@@ -1,10 +1,10 @@
 plugins {
-    id("com.android.library")
-    kotlin("android")
-    kotlin("android.extensions")
-    kotlin("kapt")
-    id("kotlinx-serialization")
-    id("com.github.dcendents.android-maven")
+    plugin(LibraryDeps.Plugins.androidLibrary)
+    plugin(LibraryDeps.Plugins.kotlinAndroid)
+    plugin(LibraryDeps.Plugins.kotlinAndroidExtensions)
+    plugin(LibraryDeps.Plugins.kotlinKapt)
+    plugin(LibraryDeps.Plugins.kotlinSerialization)
+    plugin(LibraryDeps.Plugins.androidMaven)
 }
 
 group = "com.github.Merseyside"
@@ -49,9 +49,9 @@ val androidLibs = listOf(
 )
 
 dependencies {
-    androidLibs.forEach { lib -> implementation(lib)}
-    implementation(project(":utils"))
-    implementation("androidx.core:core-ktx:+")
+    androidLibs.forEach { lib -> implementation(lib) }
+
+    implementation(project(LibraryModules.Android.utils))
 }
 
 apply("../common-gradle.gradle")

@@ -6,6 +6,7 @@ import android.os.Bundle
 import com.merseyside.merseyLib.utils.serialization.deserialize
 import com.merseyside.merseyLib.utils.serialization.serialize
 import com.merseyside.merseyLib.presentation.activity.Orientation
+import kotlinx.serialization.ImplicitReflectionSerializer
 
 interface OrientationHandler {
 
@@ -36,12 +37,14 @@ interface OrientationHandler {
         }
     }
 
+    @OptIn(ImplicitReflectionSerializer::class)
     fun saveOrientation(outState: Bundle) {
         if (orientation != null) {
             outState.putString(ORIENTATION_TAG, orientation!!.serialize())
         }
     }
 
+    @OptIn(ImplicitReflectionSerializer::class)
     fun restoreOrientation(savedInstanceState: Bundle?) {
         orientation = savedInstanceState?.getString(ORIENTATION_TAG)?.deserialize()
     }

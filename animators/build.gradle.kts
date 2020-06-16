@@ -1,13 +1,11 @@
-val kotlin_version: String by extra
 plugins {
-    id ("com.android.library")
-    kotlin("android")
-    kotlin("android.extensions")
-    kotlin("kapt")
-    id("kotlinx-serialization")
-    id("com.github.dcendents.android-maven")
+    plugin(LibraryDeps.Plugins.androidLibrary)
+    plugin(LibraryDeps.Plugins.kotlinAndroid)
+    plugin(LibraryDeps.Plugins.kotlinAndroidExtensions)
+    plugin(LibraryDeps.Plugins.kotlinKapt)
+    plugin(LibraryDeps.Plugins.kotlinSerialization)
+    plugin(LibraryDeps.Plugins.androidMaven)
 }
-
 
 group = "com.github.Merseyside"
 version = LibraryVersions.Android.version
@@ -35,9 +33,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    dataBinding {
-        isEnabled = true
-    }
+    buildFeatures.dataBinding = true
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
@@ -52,10 +48,9 @@ val androidLibs = listOf(
 )
 
 dependencies {
+    implementation(project(LibraryModules.Android.utils))
 
-    implementation(project(":utils"))
     androidLibs.forEach { lib -> implementation(lib)}
-    implementation("androidx.core:core-ktx:+")
 }
 
 apply("../common-gradle.gradle")

@@ -1,11 +1,30 @@
 object LibraryDeps {
     object Plugins {
-        const val kotlinSerialization =
-            "org.jetbrains.kotlin:kotlin-serialization:${LibraryVersions.Plugins.serialization}"
-        const val androidExtensions =
-            "org.jetbrains.kotlin:kotlin-android-extensions:${LibraryVersions.Plugins.androidExtensions}"
-        const val mokoResources =
-            "dev.icerock.moko:resources-generator:${LibraryVersions.Plugins.mokoResources}"
+        val androidApplication = PluginDesc(id = "com.android.application")
+        val kotlinKapt = PluginDesc(id = "kotlin-kapt")
+        val kotlinAndroid = PluginDesc(id = "kotlin-android")
+        val kotlinAndroidExtensions = PluginDesc(id = "kotlin-android-extensions")
+        val mobileMultiplatform = PluginDesc(id = "dev.icerock.mobile.multiplatform")
+
+        val androidLibrary = PluginDesc(
+            id = "com.android.library",
+            module = "com.android.tools.build:gradle:${LibraryVersions.Plugins.android}"
+        )
+
+        val kotlinMultiplatform = PluginDesc(
+            id = "org.jetbrains.kotlin.multiplatform",
+            module = "org.jetbrains.kotlin:kotlin-gradle-plugin:${LibraryVersions.Plugins.kotlin}"
+        )
+
+        val kotlinSerialization = PluginDesc(
+            id = "kotlinx-serialization",
+            module = "org.jetbrains.kotlin:kotlin-serialization:${LibraryVersions.Plugins.serialization}"
+        )
+
+        val androidMaven = PluginDesc(
+            id = "com.github.dcendents.android-maven",
+            module = "com.github.dcendents:android-maven-gradle-plugin:${LibraryVersions.Plugins.maven}"
+        )
     }
 
     object Libs {
@@ -144,9 +163,9 @@ object LibraryDeps {
         }
     }
 
-    val plugins: Map<String, String> = mapOf(
-        "kotlin-android-extensions" to Plugins.androidExtensions,
-        "kotlinx-serialization" to Plugins.kotlinSerialization,
-        "dev.icerock.mobile.multiplatform-resources" to Plugins.mokoResources
-    )
+//    val plugins: Map<String, String> = mapOf(
+//        "kotlin-android-extensions" to Plugins.androidExtensions,
+//        "kotlinx-serialization" to Plugins.kotlinSerialization,
+//        "dev.icerock.mobile.multiplatform-resources" to Plugins.mokoResources
+//    )
 }

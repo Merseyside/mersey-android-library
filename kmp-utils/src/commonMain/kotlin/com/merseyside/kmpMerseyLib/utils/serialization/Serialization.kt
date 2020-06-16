@@ -17,7 +17,8 @@ inline fun <reified T : Any> T.serialize(): String {
     return json.stringify(this)
 }
 
-@kotlinx.serialization.ImplicitReflectionSerializer
+
+@OptIn(ImplicitReflectionSerializer::class)
 inline fun <reified T : Any> String.deserialize(): T {
     return json.parse(this)
 }

@@ -1,10 +1,11 @@
 plugins {
-    id("com.android.library")
-    kotlin("multiplatform")
-    id("kotlin-android-extensions")
-    kotlin("kapt")
-    id("dev.icerock.mobile.multiplatform")
-    id("dev.icerock.mobile.multiplatform-resources")
+    plugin(LibraryDeps.Plugins.kotlinMultiplatform)
+    plugin(LibraryDeps.Plugins.androidLibrary)
+    plugin(LibraryDeps.Plugins.kotlinAndroidExtensions)
+    plugin(LibraryDeps.Plugins.kotlinKapt)
+    plugin(LibraryDeps.Plugins.kotlinSerialization)
+    plugin(LibraryDeps.Plugins.mobileMultiplatform)
+    plugin(LibraryDeps.Plugins.androidMaven)
     id("maven-publish")
 }
 
@@ -94,9 +95,9 @@ dependencies {
     compileOnly("javax.annotation:jsr250-api:1.0")
 }
 
-multiplatformResources {
-    multiplatformResourcesPackage = "com.merseyside.merseyLib"
-}
+//multiplatformResources {
+//    multiplatformResourcesPackage = "com.merseyside.merseyLib"
+//}
 
 
 publishing {

@@ -1,7 +1,7 @@
 plugins {
-    id ("com.android.application")
-    kotlin("android")
-    kotlin("android.extensions")
+    plugin(LibraryDeps.Plugins.androidApplication)
+    plugin(LibraryDeps.Plugins.kotlinAndroid)
+    plugin(LibraryDeps.Plugins.kotlinAndroidExtensions)
 }
 
 android {
@@ -64,9 +64,7 @@ android {
         }
     }
 
-    dataBinding {
-        isEnabled = true
-    }
+    buildFeatures.dataBinding = true
 
     sourceSets.getByName("main") {
 
@@ -95,10 +93,10 @@ val androidLibs = listOf(
 )
 
 val modulez = listOf(
-        ":utils",
-        ":clean-mvvm-arch",
-        ":adapters",
-        ":animators"
+    LibraryModules.Android.utils,
+    LibraryModules.Android.cleanMvvmArch,
+    LibraryModules.Android.adapters,
+    LibraryModules.Android.animators
 )
 
 dependencies {

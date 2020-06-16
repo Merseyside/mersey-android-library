@@ -1,12 +1,11 @@
 plugins {
-    id ("com.android.library")
-    kotlin("android")
-    kotlin("android.extensions")
-    kotlin("kapt")
-    id("kotlinx-serialization")
-    id("com.github.dcendents.android-maven")
+    plugin(LibraryDeps.Plugins.androidLibrary)
+    plugin(LibraryDeps.Plugins.kotlinAndroid)
+    plugin(LibraryDeps.Plugins.kotlinAndroidExtensions)
+    plugin(LibraryDeps.Plugins.kotlinKapt)
+    plugin(LibraryDeps.Plugins.kotlinSerialization)
+    plugin(LibraryDeps.Plugins.androidMaven)
 }
-
 
 group = "com.github.Merseyside"
 version = LibraryVersions.Android.version
@@ -54,9 +53,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    dataBinding {
-        isEnabled = true
-    }
+    buildFeatures.dataBinding = true
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
@@ -83,11 +80,15 @@ val androidLibs = listOf(
     LibraryDeps.Libs.MultiPlatform.serialization.android!!
 )
 
+val modulez = listOf(
+    LibraryModules.Android.utils,
+    LibraryModules.Android.adapters,
+    LibraryModules.Android.animators
+)
+
 dependencies {
 
-    implementation(project(":utils"))
-    implementation(project(":adapters"))
-    implementation(project(":animators"))
+    modulez.forEach { module -> implementation(project(module)) }
 
     androidLibs.forEach { lib -> implementation(lib)}
 

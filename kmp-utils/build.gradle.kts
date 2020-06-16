@@ -1,11 +1,11 @@
-val kotlin_version: String by extra
 plugins {
-    id("com.android.library")
-    kotlin("multiplatform")
-    id("kotlin-android-extensions")
-    kotlin("kapt")
-    id("dev.icerock.mobile.multiplatform")
-    id("dev.icerock.mobile.multiplatform-resources")
+    plugin(LibraryDeps.Plugins.kotlinMultiplatform)
+    plugin(LibraryDeps.Plugins.androidLibrary)
+    plugin(LibraryDeps.Plugins.kotlinAndroidExtensions)
+    plugin(LibraryDeps.Plugins.kotlinKapt)
+    plugin(LibraryDeps.Plugins.kotlinSerialization)
+    plugin(LibraryDeps.Plugins.mobileMultiplatform)
+    plugin(LibraryDeps.Plugins.androidMaven)
     id("maven-publish")
 }
 
@@ -73,9 +73,9 @@ dependencies {
     kaptLibrary(LibraryDeps.Libs.Android.daggerCompiler)
 }
 
-multiplatformResources {
-    multiplatformResourcesPackage = "com.merseyside.kmpMerseyLib"
-}
+//multiplatformResources {
+//    multiplatformResourcesPackage = "com.merseyside.kmpMerseyLib"
+//}
 
 publishing {
     repositories.maven("https://api.bintray.com/maven/merseysoftware/mersey-library/kmp-utils/;publish=1") {

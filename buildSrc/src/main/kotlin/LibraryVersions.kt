@@ -14,10 +14,13 @@ object LibraryVersions {
     private const val mokoResources = "0.9.0"
 
     object Plugins {
+        const val android = "4.0.0"
+
         const val kotlin = LibraryVersions.kotlin
         const val serialization = LibraryVersions.kotlin
         const val androidExtensions = LibraryVersions.kotlin
         const val mokoResources = LibraryVersions.mokoResources
+        const val maven = "2.1"
     }
 
     object Libs {

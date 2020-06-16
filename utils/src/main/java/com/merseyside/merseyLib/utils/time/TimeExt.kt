@@ -7,7 +7,7 @@ import java.util.*
 import java.util.TimeZone
 
 fun <T: Number> T.toTimeUnit(): Millis {
-    return Millis(this.toLong()).log()
+    return Millis(this.toLong())
 }
 
 fun <T: Number> T.toSeconds(): Seconds {
