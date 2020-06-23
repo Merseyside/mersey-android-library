@@ -1,77 +1,79 @@
 package com.merseyside.merseyLib.utils.billing
 
+import com.merseyside.merseyLib.utils.time.TimeUnit
+
 sealed class Period {
 
-    abstract val count: String
+    abstract val count: Int
     abstract val unit: String
 
     fun getHumanReadablePeriod(): String {
         return "$count $unit"
     }
 
-    object ThreeDays : Period() {
-        override val count: String
-            get() = "3"
-        override val unit: String
-            get() = "Days"
+    abstract fun toTimeUnit(): TimeUnit
 
+    abstract class Days(override val count: Int) : Period() {
+        override val unit: String
+            get() {
+                var str = "Day"
+                if (count > 1) str += "s"
+
+                return str
+            }
+
+        override fun toTimeUnit(): TimeUnit {
+            return com.merseyside.merseyLib.utils.time.Days(count)
+        }
     }
 
-    object OneWeek : Period() {
-        override val count: String
-            get() = "1"
+    abstract class Weeks(override val count: Int) : Period() {
         override val unit: String
-            get() = "Week"
+            get() {
+                var str = "Week"
+                if (count > 1) str += "s"
 
+                return str
+            }
+
+        override fun toTimeUnit(): TimeUnit {
+            return com.merseyside.merseyLib.utils.time.Days(count * 7)
+        }
     }
 
-    object FourteenDays : Period() {
-        override val count: String
-            get() = "14"
+    abstract class Month(override val count: Int) : Period() {
         override val unit: String
-            get() = "Days"
+            get() {
+                return "Month"
+            }
 
+        override fun toTimeUnit(): TimeUnit {
+            return com.merseyside.merseyLib.utils.time.Days(count * 30)
+        }
     }
 
-    object FourWeeks : Period() {
-        override val count: String
-            get() = "4"
+    abstract class Years(override val count: Int) : Period() {
         override val unit: String
-            get() = "Weeks"
+            get() {
+                var str = "Year"
+                if (count > 1) str += "s"
 
+                return str
+            }
+
+        override fun toTimeUnit(): TimeUnit {
+            return com.merseyside.merseyLib.utils.time.Days(count * 365)
+        }
     }
 
-    object OneMonth : Period() {
-        override val count: String
-            get() = "1"
-        override val unit: String
-            get() = "Month"
-
-    }
-
-    object ThreeMonth : Period() {
-        override val count: String
-            get() = "3"
-        override val unit: String
-            get() = "Month"
-
-    }
-
-    object SixMonth : Period() {
-        override val count: String
-            get() = "6"
-        override val unit: String
-            get() = "Month"
-
-    }
-
-    object OneYear : Period() {
-        override val count: String
-            get() = "1"
-        override val unit: String
-            get() = "Year"
-
-    }
+    object ThreeDays : Days(3)
+    object OneWeek : Weeks(1)
+    object FourteenDays : Days(14)
+    object FourWeeks : Weeks(4)
+    object OneMonth : Month(1)
+    object ThreeMonth : Month(3)
+    object SixMonth : Month(6)
+    object OneYear : Years(1)
 
     companion object {
         fun stringToPeriod(period: String): Period {

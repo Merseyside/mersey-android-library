@@ -3,7 +3,7 @@ package com.merseyside.merseyLib.data.cache;
 import android.content.Context;
 import com.merseyside.merseyLib.data.cache.serializer.Serializer;
 import com.merseyside.merseyLib.domain.executor.ThreadExecutor;
-import com.merseyside.merseyLib.utils.PreferenceManager;
+import com.merseyside.merseyLib.utils.preferences.PreferenceManager;
 
 public abstract class BaseCachePreference<T> extends BaseCache<T> {
 

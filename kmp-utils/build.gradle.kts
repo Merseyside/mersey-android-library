@@ -54,7 +54,11 @@ val mppLibs = listOf(
 )
 
 val androidLibraries = listOf(
-    LibraryDeps.Libs.Android.appCompat
+    LibraryDeps.Libs.Android.appCompat,
+    LibraryDeps.Libs.Android.publisher,
+    LibraryDeps.Libs.Android.oauth2,
+    LibraryDeps.Libs.Android.billing,
+    LibraryDeps.Libs.Android.billingKtx
 )
 
 val merseyModules = listOf(

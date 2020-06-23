@@ -1,4 +1,4 @@
-package com.merseyside.merseyLib.utils
+package com.merseyside.merseyLib.utils.preferences
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -21,22 +21,23 @@ class PreferenceManager private constructor(
 
         @Throws(IllegalArgumentException::class)
         fun build(): PreferenceManager {
-            return PreferenceManager(context,
-                filename ?: "${context.packageName}.prefs"
+            return PreferenceManager(
+                context,
+                filename ?: "${context.packageName}.preferences"
             )
         }
     }
 
-    private var sharedPreferences: SharedPreferences =
+    private var prefs: SharedPreferences =
         context.getSharedPreferences(preference_filename, Context.MODE_PRIVATE)
 
     operator fun contains(preference: String?): Boolean {
-        return sharedPreferences.contains(preference)
+        return prefs.contains(preference)
     }
 
 
     fun setOnSharedPreferenceChangeListener(listener: OnSharedPreferenceChangeListener?) {
-        sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+        prefs.registerOnSharedPreferenceChangeListener(listener)
     }
 
 //    fun setOnSharedPreferenceChangeListener(onChange: (key: String) -> Unit): OnSharedPreferenceChangeListener {
@@ -51,46 +52,46 @@ class PreferenceManager private constructor(
 //    }
 
     fun removeOnSharedPreferenceChangeListener(listener: OnSharedPreferenceChangeListener?) {
-        sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
+        prefs.unregisterOnSharedPreferenceChangeListener(listener)
     }
 
     fun put(preference: String?, value: Int) {
-        sharedPreferences.edit().apply {
+        prefs.edit().apply {
             putInt(preference, value)
             apply()
         }
     }
 
     fun put(preference: String?, value: String?) {
-        sharedPreferences.edit().apply {
+        prefs.edit().apply {
             putString(preference, value)
             apply()
         }
     }
 
     fun put(preference: String?, value: Boolean) {
-        sharedPreferences.edit().apply {
+        prefs.edit().apply {
             putBoolean(preference, value)
             apply()
         }
     }
 
     fun put(preference: String?, value: Float) {
-        sharedPreferences.edit().apply {
+        prefs.edit().apply {
             putFloat(preference, value)
             apply()
         }
     }
 
     fun put(preference: String?, value: Long) {
-        sharedPreferences.edit().apply {
+        prefs.edit().apply {
             putLong(preference, value)
             apply()
         }
     }
 
     fun put(preference: String?, value: TimeUnit) {
-        sharedPreferences.edit().apply {
+        prefs.edit().apply {
             putLong(preference, value.toMillisLong())
             apply()
         }
@@ -100,32 +101,33 @@ class PreferenceManager private constructor(
         preference: String,
         default_value: String
     ): String {
-        return sharedPreferences.getString(preference, default_value)!!
+        return prefs.getString(preference, default_value)!!
     }
 
-    fun getString(
-        preference: String
+    fun getNullableString(
+        preference: String,
+        defaultValue: String? = null
     ): String? {
-        return sharedPreferences.getString(preference, null)
+        return prefs.getString(preference, defaultValue)
     }
 
     fun getBool(
         preference: String,
         default_value: Boolean
     ): Boolean {
-        return sharedPreferences.getBoolean(preference, default_value)
+        return prefs.getBoolean(preference, default_value)
     }
 
     fun getInt(preference: String, defaultValue: Int): Int {
-        return sharedPreferences.getInt(preference, defaultValue)
+        return prefs.getInt(preference, defaultValue)
     }
 
     fun getLong(preference: String, defaultValue: Long): Long {
-        return sharedPreferences.getLong(preference, defaultValue)
+        return prefs.getLong(preference, defaultValue)
     }
 
     fun getFloat(preference: String, defaultValue: Float): Float {
-        return sharedPreferences.getFloat(preference, defaultValue)
+        return prefs.getFloat(preference, defaultValue)
     }
 
     fun getTimeUnit(preference: String, defaultValue: TimeUnit): TimeUnit {
@@ -133,6 +135,6 @@ class PreferenceManager private constructor(
     }
 
     fun getTimeUnit(preference: String, defaultValue: Long): TimeUnit {
-        return Millis(sharedPreferences.getLong(preference, defaultValue))
+        return Millis(prefs.getLong(preference, defaultValue))
     }
 }

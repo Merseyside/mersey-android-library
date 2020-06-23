@@ -13,6 +13,7 @@ import com.google.auth.http.HttpCredentialsAdapter
 import com.google.auth.oauth2.GoogleCredentials
 import com.merseyside.merseyLib.utils.Logger
 import com.merseyside.merseyLib.utils.billing.Security.verifyPurchase
+import com.merseyside.merseyLib.utils.ext.isNotNullAndEmpty
 import com.merseyside.merseyLib.utils.ext.log
 import com.merseyside.merseyLib.utils.getApplicationName
 import kotlinx.coroutines.CoroutineScope
@@ -144,30 +145,33 @@ class BillingManager(
      */
     suspend fun getSkuDetails(skuList: List<String>? = null): List<SkuDetails>? {
 
-        billingClient = startConnection()
+        if (skuList.isNotNullAndEmpty()) {
+            Logger.log(this, this)
+            billingClient = startConnection()
 
-        return if (billingClient != null) {
-            val skuDetailsParams = SkuDetailsParams.newBuilder().setSkusList(skuList)
-                .setType(BillingClient.SkuType.SUBS).build()
+            return if (billingClient != null) {
+                val skuDetailsParams = SkuDetailsParams.newBuilder().setSkusList(skuList)
+                    .setType(BillingClient.SkuType.SUBS).build()
 
-            return suspendCoroutine { cont ->
-                billingClient!!.querySkuDetailsAsync(
-                    skuDetailsParams
-                ) { result, responseSkuList ->
-                    if (result.responseCode == BillingClient.BillingResponseCode.OK) {
-                        cont.resume(responseSkuList)
-                    } else {
-                        cont.resume(null)
+                return suspendCoroutine { cont ->
+                    billingClient!!.querySkuDetailsAsync(
+                        skuDetailsParams
+                    ) { result, responseSkuList ->
+                        if (result.responseCode == BillingClient.BillingResponseCode.OK) {
+                            cont.resume(responseSkuList)
+                        } else {
+                            cont.resume(null)
+                        }
                     }
                 }
+            } else {
+                null
             }
-        } else {
-            null
-        }
+        } else throw IllegalArgumentException("Sku list can not be empty")
     }
 
     fun startSubscription(activity: Activity, skuDetails: SkuDetails): BillingResult {
-
+        Logger.log(this, this)
         if (billingClient != null) {
             val flowParams = BillingFlowParams.newBuilder()
                 .setSkuDetails(skuDetails)

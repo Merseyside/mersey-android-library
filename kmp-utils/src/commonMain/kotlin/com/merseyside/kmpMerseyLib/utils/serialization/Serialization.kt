@@ -12,11 +12,10 @@ val json: Json by lazy {
     }
 }
 
-@kotlinx.serialization.ImplicitReflectionSerializer
+@OptIn(ImplicitReflectionSerializer::class)
 inline fun <reified T : Any> T.serialize(): String {
     return json.stringify(this)
 }
-
 
 @OptIn(ImplicitReflectionSerializer::class)
 inline fun <reified T : Any> String.deserialize(): T {
@@ -31,7 +30,6 @@ fun <T> String.deserialize(deserializationStrategy: DeserializationStrategy<T>):
     return json.parse(deserializationStrategy, this)
 }
 
-@kotlinx.serialization.ImplicitReflectionSerializer
 inline fun <reified T : Any> Any.deserialize(): T {
     return this.toString().deserialize()
 }

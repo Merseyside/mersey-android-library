@@ -7,6 +7,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class Subscription {
+    abstract val orderId: String
+    abstract val purchaseToken: String
     abstract val isExists: Boolean
     abstract val sku: String
     internal abstract val startTimeMillis: Long
@@ -44,13 +46,15 @@ sealed class Subscription {
 
     @Serializable
     data class CanceledSubscription(
+        override val orderId: String = "",
+        override val purchaseToken: String = "",
         override val isExists: Boolean,
         override val sku: String,
         override val startTimeMillis: Long = 0,
         override val expiryTimeMillis: Long = 0,
         override val autoRenewing: Boolean = false,
         override val priceCode: String = "",
-        override val priceAmountMicros: Long= 0,
+        override val priceAmountMicros: Long = 0,
         override val countryCode: String = "",
 
         internal val cancelReason: Int = 0
@@ -78,6 +82,8 @@ sealed class Subscription {
 
     @Serializable
     data class ActiveSubscription(
+        override val orderId: String = "",
+        override val purchaseToken: String = "",
         override val isExists: Boolean = true,
         override val sku: String,
         override val startTimeMillis: Long = 0,
@@ -123,8 +129,12 @@ sealed class Subscription {
                 if (subscriptionPurchase != null) {
 
                     return subscriptionPurchase.let {
+
+
                         if (it.expiryTimeMillis < getCurrentTimeMillis()) {
                             CanceledSubscription(
+                                orderId = it.orderId,
+                                purchaseToken = it.linkedPurchaseToken,
                                 isExists = true,
                                 sku = sku!!,
                                 startTimeMillis = it.startTimeMillis,
@@ -137,6 +147,8 @@ sealed class Subscription {
                             )
                         } else {
                             ActiveSubscription(
+                                orderId = it.orderId,
+                                purchaseToken = it.linkedPurchaseToken,
                                 sku = sku!!,
                                 startTimeMillis = it.startTimeMillis,
                                 expiryTimeMillis = it.expiryTimeMillis,

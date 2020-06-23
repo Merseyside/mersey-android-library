@@ -100,6 +100,12 @@ interface TimeUnit {
 
         return value.toLong()
     }
+
+    companion object {
+        fun getEmpty(): TimeUnit {
+            return Millis(0)
+        }
+    }
 }
 
 inline class Millis(override val value: Long): TimeUnit {
@@ -107,6 +113,7 @@ inline class Millis(override val value: Long): TimeUnit {
     internal constructor(unit: TimeUnit): this(unit.value)
 
     constructor(string: String): this(string.toLong())
+    constructor(int: Int): this(int.toString())
 
     override fun toMillis(): Millis {
         return this
@@ -142,6 +149,7 @@ inline class Seconds(override val value: Long): TimeUnit {
     internal constructor(unit: TimeUnit): this(unit.value)
 
     constructor(string: String): this(string.toLong())
+    constructor(int: Int): this(int.toString())
 
     override fun toMillis(): Millis {
         return Millis(value * Conversions.MILLIS_CONST)
@@ -177,6 +185,7 @@ inline class Minutes(override val value: Long): TimeUnit {
     internal constructor(unit: TimeUnit): this(unit.value)
 
     constructor(string: String): this(string.toLong())
+    constructor(int: Int): this(int.toString())
 
     override fun toMillis(): Millis {
         return Millis(toSeconds() * Conversions.MILLIS_CONST)
@@ -212,6 +221,7 @@ inline class Hours(override val value: Long): TimeUnit {
     internal constructor(unit: TimeUnit): this(unit.value)
 
     constructor(string: String): this(string.toLong())
+    constructor(int: Int): this(int.toString())
 
     override fun toMillis(): Millis {
         return Millis(toSeconds() * Conversions.MILLIS_CONST)
@@ -247,6 +257,7 @@ inline class Days(override val value: Long): TimeUnit {
     internal constructor(unit: TimeUnit): this(unit.value)
 
     constructor(string: String): this(string.toLong())
+    constructor(int: Int): this(int.toString())
 
     override fun toMillis(): Millis {
         return Millis(toSeconds() * Conversions.MILLIS_CONST)
