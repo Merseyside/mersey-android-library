@@ -5,8 +5,7 @@ plugins {
     plugin(LibraryDeps.Plugins.kotlinKapt)
     plugin(LibraryDeps.Plugins.kotlinSerialization)
     plugin(LibraryDeps.Plugins.mobileMultiplatform)
-    plugin(LibraryDeps.Plugins.androidMaven)
-    id("maven-publish")
+    plugin(LibraryDeps.Plugins.mavenPublish)
 }
 
 group = "com.merseyside.merseyLib"
@@ -29,26 +28,12 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-
-    flavorDimensions("nav")
-    productFlavors {
-        create("navigation") {
-            dimension = "nav"
-            matchingFallbacks = listOf("navigation")
-        }
-
-//        create("standart") {
-//            dimension = "nav"
-//            matchingFallbacks = listOf("standart")
-//        }
-    }
 }
 
 kotlin {
     android {
         publishLibraryVariantsGroupedByFlavor = true
-        //publishLibraryVariants = listOf("navigationRelease", "standartRelease")
-        publishLibraryVariants = listOf<String>()
+        publishLibraryVariants = listOf("release")
     }
 }
 
@@ -111,7 +96,6 @@ publishing {
     }
 }
 
-apply("common-gradle.gradle")
 repositories {
     mavenCentral()
 }

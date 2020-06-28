@@ -21,9 +21,13 @@ object LibraryDeps {
             module = "org.jetbrains.kotlin:kotlin-serialization:${LibraryVersions.Plugins.serialization}"
         )
 
-        val androidMaven = PluginDesc(
+        val jitpack = PluginDesc(
             id = "com.github.dcendents.android-maven",
             module = "com.github.dcendents:android-maven-gradle-plugin:${LibraryVersions.Plugins.maven}"
+        )
+
+        val mavenPublish = PluginDesc(
+            id = "maven-publish"
         )
     }
 

@@ -5,8 +5,8 @@ plugins {
     plugin(LibraryDeps.Plugins.kotlinKapt)
     plugin(LibraryDeps.Plugins.kotlinSerialization)
     plugin(LibraryDeps.Plugins.mobileMultiplatform)
-    plugin(LibraryDeps.Plugins.androidMaven)
-    id("maven-publish")
+    plugin(LibraryDeps.Plugins.jitpack)
+    plugin(LibraryDeps.Plugins.mavenPublish)
 }
 
 group = "com.merseyside.merseyLib"

@@ -1,7 +1,0 @@
-package com.merseyside.merseyLib.presentation.di.qualifiers
-
-import javax.inject.Qualifier
-
-@Qualifier
-@kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
-annotation class ApplicationContext

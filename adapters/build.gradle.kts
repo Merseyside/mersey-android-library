@@ -4,7 +4,7 @@ plugins {
     plugin(LibraryDeps.Plugins.kotlinAndroidExtensions)
     plugin(LibraryDeps.Plugins.kotlinKapt)
     plugin(LibraryDeps.Plugins.kotlinSerialization)
-    plugin(LibraryDeps.Plugins.androidMaven)
+    plugin(LibraryDeps.Plugins.jitpack)
 }
 
 group = "com.github.Merseyside"
