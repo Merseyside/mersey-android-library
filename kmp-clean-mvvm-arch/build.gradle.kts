@@ -76,7 +76,7 @@ val androidLibraries = listOf(
 )
 
 val merseyModules = listOf(
-    LibraryModules.Android.cleanMvvmArch,
+    LibraryModules.Android.arch,
     LibraryModules.Android.utils
 )
 

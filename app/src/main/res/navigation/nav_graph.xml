@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/fullscreenFragment"
-        android:name="com.merseyside.merseyLib.presentation.features.main.FullscreenFragment"
+        android:name="com.merseyside.merseyLib.features.main.FullscreenFragment"
         android:label="fragment_fullscreen"
         tools:layout="@layout/fragment_fullscreen"
         app:navGraph="@navigation/nav_graph"/>

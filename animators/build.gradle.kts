@@ -53,7 +53,7 @@ dependencies {
     androidLibs.forEach { lib -> implementation(lib)}
 }
 
-apply("../common-gradle.gradle")
+//apply("../common-gradle.gradle")
 repositories {
     mavenCentral()
 }

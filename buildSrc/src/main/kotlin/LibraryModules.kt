@@ -18,7 +18,7 @@ object LibraryModules {
 
     object Android {
 
-        const val cleanMvvmArch = ":clean-mvvm-arch"
+        const val arch = ":archy"
         const val adapters = ":adapters"
         const val animators = ":animators"
         const val utils = ":utils"

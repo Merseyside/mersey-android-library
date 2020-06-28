@@ -40,7 +40,7 @@
 #
 
 -keep class kotlin.reflect.jvm.internal.impl.** { *; }
--keep interface com.merseyside.merseyLib.utils.reflection.ReflectionHelper
+-keep interface com.merseyside.utils.reflection.ReflectionHelper
 
 -keep interface kotlin.reflect.jvm.internal.impl.builtins.BuiltInsLoader
 

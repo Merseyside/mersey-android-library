@@ -3,6 +3,7 @@
  */
 
 buildscript {
+    val kotlin_version by extra("1.3.72")
     repositories {
         mavenLocal()
 
@@ -14,17 +15,9 @@ buildscript {
         maven { url = uri("https://plugins.gradle.org/m2/") }
         maven { url = uri("https://dl.bintray.com/icerockdev/plugins") }
     }
-
-//    dependencies {
-//        with(LibraryDeps.Plugins) {
-//            listOfNotNull(
-//                androidLibrary,
-//                kotlinMultiplatform,
-//                kotlinKapt,
-//                kotlinAndroid
-//            )
-//        }.let { plugins(it) }
-//    }
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
+    }
 }
 
 allprojects {

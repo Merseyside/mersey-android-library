@@ -1,0 +1,61 @@
+if (android.productFlavors.size() > 0) {
+    android.libraryVariants.all { variant ->
+
+        if (variant.name.toLowerCase().contains("debug")) {
+            return
+        }
+
+        def bundleTask = tasks["bundle${variant.name.capitalize()}Aar"]
+
+        artifacts {
+            archives(bundleTask.archivePath) {
+                classifier variant.flavorName
+                builtBy bundleTask
+                name = project.name
+            }
+        }
+
+    }
+}
+
+afterEvaluate {
+    generateNavigationDebugBuildConfig.enabled = false
+    //generateStandartDebugBuildConfig.enabled = false
+    generateNavigationReleaseBuildConfig.enabled = false
+    //generateStandartReleaseBuildConfig.enabled = false
+
+    kaptNavigationDebugKotlin.finalizedBy(removeNavigationDebugBuildFiles)
+    //kaptStandartDebugKotlin.finalizedBy(removeStandartDebugBuildFiles)
+    kaptNavigationReleaseKotlin.finalizedBy(removeNavigationReleaseBuildFiles)
+    //kaptStandartReleaseKotlin.finalizedBy(removeStandartReleaseBuildFiles)
+}
+
+task removeNavigationReleaseBuildFiles {
+    doLast {
+        println("delete mapper = " + file("$buildDir/generated/source/kapt/navigationRelease/com/merseyside/merseyLib/DataBinderMapperImpl.java").delete())
+        println(file("$buildDir/generated/source/kapt/navigationRelease/com/merseyside/merseyLib/BR.java").delete())
+        println("delete trigger = " + file("$buildDir/generated/data_binding_trigger/navigationRelease/com/merseyside/merseyLib/DataBindingTriggerClass.java").delete())
+    }
+}
+
+task removeStandartReleaseBuildFiles {
+    doLast {
+        file("$buildDir/generated/source/kapt/standartRelease/com/merseyside/merseyLib/DataBinderMapperImpl.java").delete()
+        println(file("$buildDir/generated/source/kapt/standartRelease/com/merseyside/merseyLib/BR.java").delete())
+        println("delete trigger1 = " + file("$buildDir/generated/data_binding_trigger/standartRelease/com/merseyside/merseyLib/DataBindingTriggerClass.java").delete())
+    }
+}
+
+task removeNavigationDebugBuildFiles {
+    doLast {
+        file("$buildDir/generated/source/kapt/navigationDebug/com/merseyside/merseyLib/DataBinderMapperImpl.java").delete()
+        println(file("$buildDir/generated/source/kapt/navigationDebug/com/merseyside/merseyLib/BR.java").delete())
+    }
+}
+
+task removeStandartDebugBuildFiles {
+    doLast {
+        file("$buildDir/generated/source/kapt/standartDebug/com/merseyside/merseyLib/DataBinderMapperImpl.java").delete()
+        println(file("$buildDir/generated/source/kapt/standartDebug/com/merseyside/merseyLib/BR.java").delete())
+    }
+}
