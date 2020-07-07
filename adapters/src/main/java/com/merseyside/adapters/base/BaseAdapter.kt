@@ -9,10 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.model.BaseAdapterViewModel
 import com.merseyside.utils.ext.isZero
 import com.merseyside.utils.ext.minByNullable
-import com.merseyside.adapters.view.BaseBindingHolder
+import com.merseyside.adapters.view.TypedBindingHolder
 
 abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
-    : RecyclerView.Adapter<BaseBindingHolder<T>>(),
+    : RecyclerView.Adapter<TypedBindingHolder<T>>(),
     ItemPositionInterface<BaseAdapterViewModel<M>> {
 
     protected var isRecyclable: Boolean? = null
@@ -22,19 +22,19 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
     protected open val modelList: MutableList<T> = ArrayList()
     private val bindItemList: MutableList<T> = ArrayList()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseBindingHolder<T> {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TypedBindingHolder<T> {
         val layoutInflater : LayoutInflater = LayoutInflater.from(parent.context)
         val binding : ViewDataBinding = DataBindingUtil.inflate(layoutInflater, viewType, parent, false)
 
         return getBindingHolder(binding)
     }
 
-    open fun getBindingHolder(binding: ViewDataBinding): BaseBindingHolder<T> {
-        return BaseBindingHolder(binding)
+    open fun getBindingHolder(binding: ViewDataBinding): TypedBindingHolder<T> {
+        return TypedBindingHolder(binding)
     }
 
     @CallSuper
-    override fun onBindViewHolder(holder: BaseBindingHolder<T>, position: Int) {
+    override fun onBindViewHolder(holder: TypedBindingHolder<T>, position: Int) {
         val obj = getModelByPosition(position)
         bindItemList.add(obj)
 
@@ -47,7 +47,7 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
     }
 
     @CallSuper
-    internal open fun bind(holder: BaseBindingHolder<T>, obj: T) {
+    internal open fun bind(holder: TypedBindingHolder<T>, obj: T) {
         holder.bind(getBindingVariable(), obj)
     }
 
@@ -271,7 +271,7 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
     }
 
     @CallSuper
-    override fun onViewRecycled(holder: BaseBindingHolder<T>) {
+    override fun onViewRecycled(holder: TypedBindingHolder<T>) {
         super.onViewRecycled(holder)
         if (holder.adapterPosition != RecyclerView.NO_POSITION && holder.adapterPosition < itemCount) {
 

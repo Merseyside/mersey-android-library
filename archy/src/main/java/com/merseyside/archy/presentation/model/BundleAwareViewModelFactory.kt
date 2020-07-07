@@ -1,7 +1,8 @@
-package com.merseyside.archy.model
+package com.merseyside.archy.presentation.model
 
 import android.os.Bundle
 import androidx.lifecycle.ViewModel
+import com.merseyside.archy.presentation.model.ParcelableViewModel
 
 abstract class BundleAwareViewModelFactory<T: ParcelableViewModel> (
     private val bundle: Bundle? = null

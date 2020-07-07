@@ -1,4 +1,4 @@
-package com.merseyside.archy.interfaces
+package com.merseyside.archy.presentation.interfaces
 
 import android.content.Context
 import androidx.annotation.StringRes

@@ -1,4 +1,4 @@
-package com.merseyside.archy.model
+package com.merseyside.archy.presentation.model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

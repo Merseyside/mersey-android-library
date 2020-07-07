@@ -6,13 +6,13 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.utils.ext.getActivity
 
-open class BaseBindingHolder<T: Any>(val binding: ViewDataBinding)
+open class BaseBindingHolder(val binding: ViewDataBinding)
     : RecyclerView.ViewHolder(binding.root) {
 
-    lateinit var model: T
+    lateinit var model: Any
 
     @CallSuper
-    fun bind(variable: Int, obj: T) {
+    fun bind(variable: Int, obj: Any) {
         model = obj
 
         binding.apply {
@@ -25,5 +25,4 @@ open class BaseBindingHolder<T: Any>(val binding: ViewDataBinding)
 
     val context: Context
         get() = itemView.context
-
 }

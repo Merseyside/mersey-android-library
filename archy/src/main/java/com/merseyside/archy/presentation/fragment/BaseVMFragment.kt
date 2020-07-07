@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.Observer
-import com.merseyside.archy.model.BaseViewModel
-import com.merseyside.archy.model.ParcelableViewModel
+import com.merseyside.archy.presentation.model.BaseViewModel
+import com.merseyside.archy.presentation.model.ParcelableViewModel
 import com.merseyside.utils.PermissionManager
 import javax.inject.Inject
 

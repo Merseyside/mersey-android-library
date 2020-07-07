@@ -4,7 +4,7 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.model.BaseExpandableAdapterViewModel
 import com.merseyside.utils.ext.isNotNullAndEmpty
-import com.merseyside.adapters.view.BaseBindingHolder
+import com.merseyside.adapters.view.TypedBindingHolder
 
 abstract class BaseExpandableAdapter<M: Any, T: BaseExpandableAdapterViewModel<M, L>, L: Any> (
     selectableMode: SelectableMode = SelectableMode.MULTIPLE,
@@ -15,7 +15,7 @@ abstract class BaseExpandableAdapter<M: Any, T: BaseExpandableAdapterViewModel<M
 
     private var updateRequest: UpdateRequest<M>? = null
 
-    override fun onBindViewHolder(holder: BaseBindingHolder<T>, position: Int) {
+    override fun onBindViewHolder(holder: TypedBindingHolder<T>, position: Int) {
         super.onBindViewHolder(holder, position)
         val model = getModelByPosition(position)
         val data = model.getData()

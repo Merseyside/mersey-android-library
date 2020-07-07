@@ -4,7 +4,7 @@ import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.SortedList
 import com.merseyside.adapters.model.BaseAdapterViewModel
 import com.merseyside.adapters.model.BaseComparableAdapterViewModel
-import com.merseyside.adapters.view.BaseBindingHolder
+import com.merseyside.adapters.view.TypedBindingHolder
 import com.merseyside.utils.Logger
 import com.merseyside.utils.ext.isNotNullAndEmpty
 import com.merseyside.utils.isMainThread
@@ -550,7 +550,7 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
         }
     }
 
-    override fun onBindViewHolder(holder: BaseBindingHolder<T>, position: Int, payloads: MutableList<Any>) {
+    override fun onBindViewHolder(holder: TypedBindingHolder<T>, position: Int, payloads: MutableList<Any>) {
         if (payloads.isNotEmpty()) {
             sortedList.get(position).setItem(payloads[0] as M)
         } else {

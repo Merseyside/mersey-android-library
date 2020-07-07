@@ -1,4 +1,4 @@
-package com.merseyside.archy.model
+package com.merseyside.archy.presentation.model
 
 import android.content.Context
 import androidx.annotation.StringRes
@@ -6,7 +6,7 @@ import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.merseyside.archy.interfaces.IStringHelper
+import com.merseyside.archy.presentation.interfaces.IStringHelper
 import com.merseyside.utils.Logger
 import com.merseyside.utils.PermissionManager
 import com.merseyside.utils.mvvm.SingleLiveEvent

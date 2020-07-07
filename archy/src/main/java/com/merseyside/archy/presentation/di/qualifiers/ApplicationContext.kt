@@ -1,4 +1,4 @@
-package com.merseyside.archy.di.qualifiers
+package com.merseyside.archy.presentation.di.qualifiers
 
 import javax.inject.Qualifier
 

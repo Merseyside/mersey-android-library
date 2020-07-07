@@ -1,4 +1,4 @@
-package com.merseyside.archy.dialog
+package com.merseyside.archy.presentation.dialog
 
 import android.app.Dialog
 import android.content.Context

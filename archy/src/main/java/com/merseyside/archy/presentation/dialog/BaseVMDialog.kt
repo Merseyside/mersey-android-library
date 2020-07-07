@@ -1,4 +1,4 @@
-package com.merseyside.archy.dialog
+package com.merseyside.archy.presentation.dialog
 
 import android.app.Dialog
 import android.os.Bundle
@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.Observer
-import com.merseyside.archy.model.BaseViewModel
+import com.merseyside.archy.presentation.model.BaseViewModel
 import javax.inject.Inject
 
 abstract class BaseVMDialog<B : ViewDataBinding, M : BaseViewModel> : BaseBindingDialog<B>() {

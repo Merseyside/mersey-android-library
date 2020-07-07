@@ -1,4 +1,4 @@
-package com.merseyside.archy.di
+package com.merseyside.archy.presentation.di
 
 import androidx.lifecycle.ViewModel
 import dagger.MapKey

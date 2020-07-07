@@ -44,12 +44,12 @@ val androidLibs = listOf(
         LibraryDeps.Libs.Android.kotlinStdLib.name,
         LibraryDeps.Libs.Android.appCompat.name,
         LibraryDeps.Libs.Android.material.name,
-        LibraryDeps.Libs.Android.recyclerView.name,
-        LibraryDeps.Libs.Android.paging.name
+        LibraryDeps.Libs.Android.recyclerView.name
 )
 
 dependencies {
     androidLibs.forEach { lib -> implementation(lib) }
+    api(LibraryDeps.Libs.Android.paging.name)
 
     implementation(project(LibraryModules.Android.utils))
 }
