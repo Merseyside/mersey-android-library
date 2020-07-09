@@ -55,7 +55,8 @@ val androidLibs = listOf(
     LibraryDeps.Libs.Android.oauth2.name,
     LibraryDeps.Libs.MultiPlatform.serialization.android!!,
     LibraryDeps.Libs.Android.firebaseFirestore.name,
-    LibraryDeps.Libs.Android.playCore.name
+    LibraryDeps.Libs.Android.playCore.name,
+    LibraryDeps.Libs.Android.coil.name
 )
 
 dependencies {

@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.merseyside.archy.view.localeViews.LocaleTextView
+        <com.merseyside.archy.presentation.view.localeViews.LocaleTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"

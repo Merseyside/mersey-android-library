@@ -21,6 +21,7 @@ import android.view.ViewConfiguration
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
+import com.merseyside.utils.ext.toHandlerCanceller
 import com.merseyside.utils.time.TimeUnit
 import java.util.*
 
@@ -148,23 +149,23 @@ fun mainThreadIfNeeds(onMain: () -> Unit): Handler? {
     }
 }
 
-fun delayedMainThread(delay: TimeUnit, runnable: Runnable): Handler {
+fun delayedMainThread(delay: TimeUnit, runnable: Runnable): HandlerCanceller {
     val handler = Handler(Looper.getMainLooper())
     handler.postDelayed(runnable, delay.toMillisLong())
-    return handler
+    return handler.toHandlerCanceller(runnable)
 }
 
-fun delayedMainThread(delay: TimeUnit, onMain: () -> Unit): Handler {
+fun delayedMainThread(delay: TimeUnit, onMain: () -> Unit): HandlerCanceller {
     return delayedMainThread(delay, Runnable { onMain.invoke() })
 }
 
-fun delayedThread(delay: TimeUnit, runnable: Runnable): Handler {
+fun delayedThread(delay: TimeUnit, runnable: Runnable): HandlerCanceller {
     val handler = Handler()
     handler.postDelayed(runnable, delay.toMillisLong())
-    return handler
+    return handler.toHandlerCanceller(runnable)
 }
 
-fun delayedThread(delay: TimeUnit, onThread: () -> Unit): Handler {
+fun delayedThread(delay: TimeUnit, onThread: () -> Unit): HandlerCanceller {
     return delayedThread(delay, Runnable { onThread.invoke() })
 }
 

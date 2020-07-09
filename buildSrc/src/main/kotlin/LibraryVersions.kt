@@ -5,8 +5,8 @@ object LibraryVersions {
         const val targetSdk = 29
         const val minSdk = 17
 
-        const val version = "1.2.4"
-        const val versionCode = 124
+        const val version = "1.2.5"
+        const val versionCode = 125
     }
 
     const val kotlin = "1.3.72"
@@ -28,7 +28,7 @@ object LibraryVersions {
             const val kotlinStdLib = LibraryVersions.kotlin
             const val coroutines = "1.3.7"
             const val appCompat = "1.1.0"
-            const val material = "1.2.0-alpha05"
+            const val material = "1.3.0-alpha01"
             const val fragment = "1.2.4"
             const val constraintLayout = "1.1.3"
             const val lifecycle = "2.0.0"
@@ -46,6 +46,7 @@ object LibraryVersions {
             const val gson = "2.8.6"
             const val worker = "2.3.4"
             const val room = "2.0.0"
+            const val coil = "0.8.0"
 
             object MerseyLibs {
                 const val version = "1.2.1"

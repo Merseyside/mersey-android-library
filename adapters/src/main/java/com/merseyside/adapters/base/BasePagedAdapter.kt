@@ -9,23 +9,27 @@ import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import com.merseyside.adapters.model.BaseAdapterViewModel
 import com.merseyside.adapters.view.BaseBindingHolder
+import com.merseyside.utils.Logger
 
 abstract class BasePagedAdapter<M, T : BaseAdapterViewModel<M>>(diffUtil: DiffUtil.ItemCallback<M>)
-    : PagedListAdapter<M, BaseBindingHolder>(diffUtil) {
+    : PagedListAdapter<M, BaseBindingHolder>(diffUtil),
+    HasOnItemClickListener<M> {
 
-    enum class NetworkState { NO_CONNECTION, CONNECTED, LOADING }
+    override var listener: OnItemClickListener<M>? = null
+
+    enum class NetworkState { ERROR, NO_CONNECTION, CONNECTED, LOADING }
     private var networkState: INetworkState? = null
 
-    interface OnItemClickListener<M> {
-        fun onItemClicked(obj: M)
-    }
-
     interface INetworkState {
+
+        interface OnRetryListener {
+            fun onRetry()
+        }
+
+        fun setMessage(msg: String)
         fun onStateChanged(state: NetworkState)
         fun getNetworkState(): NetworkState
     }
-
-    private var listener: OnItemClickListener<M>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseBindingHolder {
         val layoutInflater: LayoutInflater = LayoutInflater.from(parent.context)
@@ -56,7 +60,7 @@ abstract class BasePagedAdapter<M, T : BaseAdapterViewModel<M>>(diffUtil: DiffUt
     override fun onBindViewHolder(holder: BaseBindingHolder, position: Int) {
 
         if (hasExtraRow() && position == itemCount - 1) {
-            holder.bind(getBindingVariable(), getNetworkConnectionModel())
+            holder.bind(getBindingVariable(), networkState!!)
         } else {
             val obj = getItem(position)
 
@@ -75,14 +79,6 @@ abstract class BasePagedAdapter<M, T : BaseAdapterViewModel<M>>(diffUtil: DiffUt
         return BaseBindingHolder(binding)
     }
 
-    fun addOnItemClickListener(listener : OnItemClickListener<M>) {
-        this.listener = listener
-    }
-
-    fun getOnItemClickListener() : OnItemClickListener<M>? {
-        return listener
-    }
-
     private fun hasExtraRow() = networkState != null && networkState!!.getNetworkState() != NetworkState.CONNECTED
 
     @LayoutRes
@@ -94,7 +90,8 @@ abstract class BasePagedAdapter<M, T : BaseAdapterViewModel<M>>(diffUtil: DiffUt
         return super.getItemCount() + if (hasExtraRow()) 1 else 0
     }
 
-    fun setNetworkState(newNetworkState: NetworkState) {
+    fun setNetworkState(newNetworkState: NetworkState, msg: String? = null) {
+        Logger.log(this, "set network state $newNetworkState")
         if (networkState == null) {
             networkState = getNetworkConnectionModel()
         }
@@ -102,7 +99,7 @@ abstract class BasePagedAdapter<M, T : BaseAdapterViewModel<M>>(diffUtil: DiffUt
         val previousState = this.networkState!!.getNetworkState()
         val hadExtraRow = hasExtraRow()
 
-        this.networkState!!.onStateChanged(newNetworkState)
+        setupNetworkItem(newNetworkState, msg)
 
         val hasExtraRow = hasExtraRow()
         if (hadExtraRow != hasExtraRow) {
@@ -113,6 +110,13 @@ abstract class BasePagedAdapter<M, T : BaseAdapterViewModel<M>>(diffUtil: DiffUt
             }
         } else if (hasExtraRow && previousState != newNetworkState) {
             notifyItemChanged(itemCount - 1)
+        }
+    }
+
+    private fun setupNetworkItem(networkState: NetworkState, msg: String? = null) {
+        this.networkState?.apply {
+            onStateChanged(networkState)
+            if (msg != null) setMessage(msg)
         }
     }
 }

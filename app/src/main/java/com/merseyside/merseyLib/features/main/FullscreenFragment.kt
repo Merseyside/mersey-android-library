@@ -10,8 +10,8 @@ import android.view.WindowManager
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.merseyside.archy.presentation.fragment.BaseFragment
 import com.merseyside.merseyLib.R
-import com.merseyside.archy.fragment.BaseFragment
 
 /**
  * An example full-screen fragment that shows and hides the system UI (i.e.

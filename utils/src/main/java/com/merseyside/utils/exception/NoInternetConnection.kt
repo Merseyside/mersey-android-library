@@ -1,3 +1,5 @@
 package com.merseyside.utils.exception
 
-class NoInternetConnection(msg: String? = null) : Exception(msg)
+import java.io.IOException
+
+class NoInternetConnection(msg: String? = null) : IOException(msg)

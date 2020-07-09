@@ -13,11 +13,12 @@ import com.merseyside.adapters.view.TypedBindingHolder
 
 abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
     : RecyclerView.Adapter<TypedBindingHolder<T>>(),
-    ItemPositionInterface<BaseAdapterViewModel<M>> {
+    ItemPositionInterface<BaseAdapterViewModel<M>>,
+    HasOnItemClickListener<M> {
 
     protected var isRecyclable: Boolean? = null
 
-    private var listener: OnItemClickListener<M>? = null
+    override var listener: OnItemClickListener<M>? = null
 
     protected open val modelList: MutableList<T> = ArrayList()
     private val bindItemList: MutableList<T> = ArrayList()
@@ -67,31 +68,8 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
 
     protected abstract fun getBindingVariable(): Int
 
-    fun setOnItemClickListener(listener: OnItemClickListener<M>?) {
-        this.listener = listener
-    }
-
-    fun getOnItemClickListener(): OnItemClickListener<M>? {
-        return listener
-    }
-
-    fun onItemClicked(onClick: (M) -> Unit): OnItemClickListener<M> {
-        this.listener = object:
-            OnItemClickListener<M> {
-            override fun onItemClicked(obj: M) {
-                onClick.invoke(obj)
-            }
-        }
-
-        return this.listener!!
-    }
-
     open fun removeOnItemClickListener(listener: OnItemClickListener<M>) {
         bindItemList.forEach { model -> model.removeOnItemClickListener(listener) }
-    }
-
-    interface OnItemClickListener<M> {
-        fun onItemClicked(obj: M)
     }
 
     override fun getItemCount() = modelList.size

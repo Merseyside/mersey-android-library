@@ -119,7 +119,9 @@ object LibraryDeps {
             val gson = AndroidLibrary(
                 name = "com.google.code.gson:gson:${LibraryVersions.Libs.Android.gson}"
             )
-
+            val coil = AndroidLibrary(
+                name = "io.coil-kt:coil:${LibraryVersions.Libs.Android.coil}"
+            )
         }
 
         object MultiPlatform {

@@ -2,8 +2,8 @@ package com.merseyside.adapters.model
 
 import androidx.annotation.CallSuper
 import androidx.databinding.BaseObservable
-import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.base.ItemPositionInterface
+import com.merseyside.adapters.base.OnItemClickListener
 
 abstract class BaseAdapterViewModel<M>(
     obj: M
@@ -21,16 +21,16 @@ abstract class BaseAdapterViewModel<M>(
         this.obj = obj
     }
 
-    private val listeners: ArrayList<BaseAdapter.OnItemClickListener<M>>
-            by lazy { ArrayList<BaseAdapter.OnItemClickListener<M>>() }
+    private val listeners: ArrayList<OnItemClickListener<M>>
+            by lazy { ArrayList<OnItemClickListener<M>>() }
 
-    fun setOnItemClickListener(listener: BaseAdapter.OnItemClickListener<M>) {
+    fun setOnItemClickListener(listener: OnItemClickListener<M>) {
         if (!this.listeners.contains(listener)) {
             this.listeners.add(listener)
         }
     }
 
-    fun removeOnItemClickListener(listener: BaseAdapter.OnItemClickListener<M>) {
+    fun removeOnItemClickListener(listener: OnItemClickListener<M>) {
         if (listeners.isNotEmpty()) {
             listeners.remove(listener).toString()
         }

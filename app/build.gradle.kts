@@ -94,7 +94,7 @@ val androidLibs = listOf(
 
 val modulez = listOf(
     LibraryModules.Android.utils,
-    LibraryModules.Android.arch,
+    LibraryModules.Android.archy,
     LibraryModules.Android.adapters,
     LibraryModules.Android.animators
 )
