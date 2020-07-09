@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="ProgressBarAttr">
+        <attr name="text" format="string"/>
+        <attr name="backgroundColor"/>
+        <attr name="android:textColor"/>
+        <attr name="progressColor" format="reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="LocaleTextView">
+        <attr name="android:text"/>
+    </declare-styleable>
+
+    <declare-styleable name="LocaleButton">
+        <attr name="android:text"/>
+    </declare-styleable>
+
+    <declare-styleable name="LocaleSwitch">
+        <attr name="android:text"/>
+    </declare-styleable>
+
+    <declare-styleable name="LocaleEditText">
+        <attr name="android:text"/>
+        <attr name="android:hint"/>
+    </declare-styleable>
+
+    <declare-styleable name="LocaleTextInputLayout">
+        <attr name="android:hint"/>
+    </declare-styleable>
+
+    <declare-styleable name="FloatingListView"/>
+
+    <declare-styleable name="MerseyRecyclerView">
+        <attr name="maxHeight" format="dimension" />
+        <attr name="saveScrollPosition" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="MaxWidthTabLayout">
+        <attr name="maxWidth" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="CircleTextView">
+        <attr name="сolor" format="color"/>
+        <attr name="text"/>
+        <attr name="textColor" format="color"/>
+        <attr name="android:textSize"/>
+        <attr name="font"/>
+
+        <attr name="image" format="reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="AnimatedCheckButton">
+        <attr name="android:checkable"/>
+        <attr name="color" format="color"/>
+        <attr name="middleColor" format="color"/>
+        <attr name="checkedColor" format="color"/>
+        <attr name="duration" format="integer"/>
+        <attr name="android:checked"/>
+        <attr name="defaultTextColor" format="color"/>
+        <attr name="checkedTextColor" format="color"/>
+        <attr name="defaultText" format="string"/>
+        <attr name="checkedText" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="AnimatedCheckImageButton">
+        <attr name="android:checkable"/>
+        <attr name="color"/>
+        <attr name="middleColor"/>
+        <attr name="checkedColor"/>
+        <attr name="duration"/>
+        <attr name="android:checked"/>
+        <attr name="defaultImageColor" format="color"/>
+        <attr name="checkedImageColor" format="color"/>
+    </declare-styleable>
+</resources>

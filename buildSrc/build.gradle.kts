@@ -15,15 +15,15 @@ repositories {
 
 val multiplatform = "0.6.1"
 val kotlin = "1.3.72"
-val gradle = "3.6.3"
-val maven_version = "2.1"
+val gradle = "4.0.0"
+val mavenVersion = "2.1"
 
 dependencies {
     implementation("dev.icerock:mobile-multiplatform:$multiplatform")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin")
     implementation("com.android.tools.build:gradle:$gradle")
     implementation("org.jetbrains.kotlin:kotlin-serialization:$kotlin")
-    implementation("com.github.dcendents:android-maven-gradle-plugin:$maven_version")
+    implementation("com.github.dcendents:android-maven-gradle-plugin:$mavenVersion")
 }
 
 kotlinDslPluginOptions {

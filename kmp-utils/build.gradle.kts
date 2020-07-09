@@ -1,11 +1,12 @@
 plugins {
-    id("com.android.library")
-    kotlin("multiplatform")
-    id("kotlin-android-extensions")
-    kotlin("kapt")
-    id("dev.icerock.mobile.multiplatform")
-    id("dev.icerock.mobile.multiplatform-resources")
-    id("maven-publish")
+    plugin(LibraryDeps.Plugins.kotlinMultiplatform)
+    plugin(LibraryDeps.Plugins.androidLibrary)
+    plugin(LibraryDeps.Plugins.kotlinAndroidExtensions)
+    plugin(LibraryDeps.Plugins.kotlinKapt)
+    plugin(LibraryDeps.Plugins.kotlinSerialization)
+    plugin(LibraryDeps.Plugins.mobileMultiplatform)
+    plugin(LibraryDeps.Plugins.jitpack)
+    plugin(LibraryDeps.Plugins.mavenPublish)
 }
 
 group = "com.merseyside.merseyLib"
@@ -48,11 +49,16 @@ val mppLibs = listOf(
     LibraryDeps.Libs.MultiPlatform.serialization,
     LibraryDeps.Libs.MultiPlatform.kodein,
     LibraryDeps.Libs.MultiPlatform.kodeinErased,
-    LibraryDeps.Libs.MultiPlatform.mokoResources
+    LibraryDeps.Libs.MultiPlatform.mokoResources,
+    LibraryDeps.Libs.MultiPlatform.ktorClient
 )
 
 val androidLibraries = listOf(
-    LibraryDeps.Libs.Android.appCompat
+    LibraryDeps.Libs.Android.appCompat,
+    LibraryDeps.Libs.Android.publisher,
+    LibraryDeps.Libs.Android.oauth2,
+    LibraryDeps.Libs.Android.billing,
+    LibraryDeps.Libs.Android.billingKtx
 )
 
 val merseyModules = listOf(
@@ -71,9 +77,9 @@ dependencies {
     kaptLibrary(LibraryDeps.Libs.Android.daggerCompiler)
 }
 
-multiplatformResources {
-    multiplatformResourcesPackage = "com.merseyside.kmpMerseyLib"
-}
+//multiplatformResources {
+//    multiplatformResourcesPackage = "com.merseyside.kmpMerseyLib"
+//}
 
 publishing {
     repositories.maven("https://api.bintray.com/maven/merseysoftware/mersey-library/kmp-utils/;publish=1") {
@@ -84,4 +90,9 @@ publishing {
             password = System.getProperty("BINTRAY_KEY")
         }
     }
+}
+
+apply("common-gradle.gradle")
+repositories {
+    mavenCentral()
 }

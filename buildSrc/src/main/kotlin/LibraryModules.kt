@@ -1,7 +1,3 @@
-/*
- * Copyright 2019 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
- */
-
 object LibraryModules {
 
     const val isLocalDependencies = true
@@ -22,7 +18,7 @@ object LibraryModules {
 
     object Android {
 
-        const val cleanMvvmArch = ":clean-mvvm-arch"
+        const val archy = ":archy"
         const val adapters = ":adapters"
         const val animators = ":animators"
         const val utils = ":utils"

@@ -1,15 +1,34 @@
-/*
- * Copyright 2019 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
- */
-
 object LibraryDeps {
     object Plugins {
-        const val kotlinSerialization =
-            "org.jetbrains.kotlin:kotlin-serialization:${LibraryVersions.Plugins.serialization}"
-        const val androidExtensions =
-            "org.jetbrains.kotlin:kotlin-android-extensions:${LibraryVersions.Plugins.androidExtensions}"
-        const val mokoResources =
-            "dev.icerock.moko:resources-generator:${LibraryVersions.Plugins.mokoResources}"
+        val androidApplication = PluginDesc(id = "com.android.application")
+        val kotlinKapt = PluginDesc(id = "kotlin-kapt")
+        val kotlinAndroid = PluginDesc(id = "kotlin-android")
+        val kotlinAndroidExtensions = PluginDesc(id = "kotlin-android-extensions")
+        val mobileMultiplatform = PluginDesc(id = "dev.icerock.mobile.multiplatform")
+
+        val androidLibrary = PluginDesc(
+            id = "com.android.library",
+            module = "com.android.tools.build:gradle:${LibraryVersions.Plugins.android}"
+        )
+
+        val kotlinMultiplatform = PluginDesc(
+            id = "org.jetbrains.kotlin.multiplatform",
+            module = "org.jetbrains.kotlin:kotlin-gradle-plugin:${LibraryVersions.Plugins.kotlin}"
+        )
+
+        val kotlinSerialization = PluginDesc(
+            id = "kotlinx-serialization",
+            module = "org.jetbrains.kotlin:kotlin-serialization:${LibraryVersions.Plugins.serialization}"
+        )
+
+        val jitpack = PluginDesc(
+            id = "com.github.dcendents.android-maven",
+            module = "com.github.dcendents:android-maven-gradle-plugin:${LibraryVersions.Plugins.maven}"
+        )
+
+        val mavenPublish = PluginDesc(
+            id = "maven-publish"
+        )
     }
 
     object Libs {
@@ -100,7 +119,9 @@ object LibraryDeps {
             val gson = AndroidLibrary(
                 name = "com.google.code.gson:gson:${LibraryVersions.Libs.Android.gson}"
             )
-
+            val coil = AndroidLibrary(
+                name = "io.coil-kt:coil:${LibraryVersions.Libs.Android.coil}"
+            )
         }
 
         object MultiPlatform {
@@ -117,6 +138,11 @@ object LibraryDeps {
                 android = "org.jetbrains.kotlinx:kotlinx-serialization-runtime:${LibraryVersions.Libs.MultiPlatform.serialization}",
                 common = "org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:${LibraryVersions.Libs.MultiPlatform.serialization}",
                 ios = "org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:${LibraryVersions.Libs.MultiPlatform.serialization}"
+            )
+            val ktorClient = MultiPlatformLibrary(
+                android = "io.ktor:ktor-client-android:${LibraryVersions.Libs.MultiPlatform.ktor}",
+                common = "io.ktor:ktor-client-core:${LibraryVersions.Libs.MultiPlatform.ktor}",
+                ios = "io.ktor:ktor-client-ios:${LibraryVersions.Libs.MultiPlatform.ktor}"
             )
 
             val mokoMvvm = MultiPlatformLibrary(
@@ -143,9 +169,9 @@ object LibraryDeps {
         }
     }
 
-    val plugins: Map<String, String> = mapOf(
-        "kotlin-android-extensions" to Plugins.androidExtensions,
-        "kotlinx-serialization" to Plugins.kotlinSerialization,
-        "dev.icerock.mobile.multiplatform-resources" to Plugins.mokoResources
-    )
+//    val plugins: Map<String, String> = mapOf(
+//        "kotlin-android-extensions" to Plugins.androidExtensions,
+//        "kotlinx-serialization" to Plugins.kotlinSerialization,
+//        "dev.icerock.mobile.multiplatform-resources" to Plugins.mokoResources
+//    )
 }

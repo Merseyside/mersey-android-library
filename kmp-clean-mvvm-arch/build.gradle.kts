@@ -1,11 +1,11 @@
 plugins {
-    id("com.android.library")
-    kotlin("multiplatform")
-    id("kotlin-android-extensions")
-    kotlin("kapt")
-    id("dev.icerock.mobile.multiplatform")
-    id("dev.icerock.mobile.multiplatform-resources")
-    id("maven-publish")
+    plugin(LibraryDeps.Plugins.kotlinMultiplatform)
+    plugin(LibraryDeps.Plugins.androidLibrary)
+    plugin(LibraryDeps.Plugins.kotlinAndroidExtensions)
+    plugin(LibraryDeps.Plugins.kotlinKapt)
+    plugin(LibraryDeps.Plugins.kotlinSerialization)
+    plugin(LibraryDeps.Plugins.mobileMultiplatform)
+    plugin(LibraryDeps.Plugins.mavenPublish)
 }
 
 group = "com.merseyside.merseyLib"
@@ -28,25 +28,12 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-
-    flavorDimensions("nav")
-    productFlavors {
-        create("navigation") {
-            dimension = "nav"
-            matchingFallbacks = listOf("navigation")
-        }
-
-        create("standart") {
-            dimension = "nav"
-            matchingFallbacks = listOf("standart")
-        }
-    }
 }
 
 kotlin {
     android {
         publishLibraryVariantsGroupedByFlavor = true
-        publishLibraryVariants = listOf("navigationRelease", "standartRelease")
+        publishLibraryVariants = listOf("release")
     }
 }
 
@@ -74,7 +61,7 @@ val androidLibraries = listOf(
 )
 
 val merseyModules = listOf(
-    LibraryModules.Android.cleanMvvmArch,
+    LibraryModules.Android.archy,
     LibraryModules.Android.utils
 )
 
@@ -93,9 +80,9 @@ dependencies {
     compileOnly("javax.annotation:jsr250-api:1.0")
 }
 
-multiplatformResources {
-    multiplatformResourcesPackage = "com.merseyside.merseyLib"
-}
+//multiplatformResources {
+//    multiplatformResourcesPackage = "com.merseyside.merseyLib"
+//}
 
 
 publishing {
@@ -107,4 +94,8 @@ publishing {
             password = System.getProperty("BINTRAY_KEY")
         }
     }
+}
+
+repositories {
+    mavenCentral()
 }

@@ -6,8 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
+import com.merseyside.archy.presentation.dialog.BaseBindingDialog
 import com.merseyside.kmpMerseyLib.presentation.model.BaseViewModel
-import com.merseyside.merseyLib.presentation.dialog.BaseBindingDialog
 import javax.inject.Inject
 
 abstract class BaseVMDialog<B : ViewDataBinding, M : BaseViewModel> : BaseBindingDialog<B>() {

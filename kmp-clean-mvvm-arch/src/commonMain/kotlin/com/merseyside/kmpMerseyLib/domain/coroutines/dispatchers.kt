@@ -3,5 +3,5 @@ package com.merseyside.kmpMerseyLib.domain.coroutines
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
-internal val computationContext: CoroutineDispatcher = Dispatchers.Default
-internal val applicationContext: CoroutineDispatcher = Dispatchers.Main
+val computationContext: CoroutineDispatcher = Dispatchers.Default
+val applicationContext: CoroutineDispatcher = Dispatchers.Main

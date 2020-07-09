@@ -1,10 +1,10 @@
 plugins {
-    id("com.android.library")
-    kotlin("android")
-    kotlin("android.extensions")
-    kotlin("kapt")
-    id("kotlinx-serialization")
-    id("com.github.dcendents.android-maven")
+    plugin(LibraryDeps.Plugins.androidLibrary)
+    plugin(LibraryDeps.Plugins.kotlinAndroid)
+    plugin(LibraryDeps.Plugins.kotlinAndroidExtensions)
+    plugin(LibraryDeps.Plugins.kotlinKapt)
+    plugin(LibraryDeps.Plugins.kotlinSerialization)
+    plugin(LibraryDeps.Plugins.jitpack)
 }
 
 group = "com.github.Merseyside"
@@ -44,13 +44,17 @@ val androidLibs = listOf(
         LibraryDeps.Libs.Android.kotlinStdLib.name,
         LibraryDeps.Libs.Android.appCompat.name,
         LibraryDeps.Libs.Android.material.name,
-        LibraryDeps.Libs.Android.recyclerView.name,
-        LibraryDeps.Libs.Android.paging.name
+        LibraryDeps.Libs.Android.recyclerView.name
 )
 
 dependencies {
-    androidLibs.forEach { lib -> implementation(lib)}
-    implementation(project(":utils"))
+    androidLibs.forEach { lib -> implementation(lib) }
+    api(LibraryDeps.Libs.Android.paging.name)
+
+    implementation(project(LibraryModules.Android.utils))
 }
 
-apply("../common-gradle.gradle")
+//apply("../common-gradle.gradle")
+repositories {
+    mavenCentral()
+}

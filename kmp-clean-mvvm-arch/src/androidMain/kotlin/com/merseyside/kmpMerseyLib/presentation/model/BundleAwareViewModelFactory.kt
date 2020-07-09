@@ -3,7 +3,7 @@ package com.merseyside.kmpMerseyLib.presentation.model
 import android.os.Bundle
 import androidx.lifecycle.ViewModel
 import com.merseyside.kmpMerseyLib.presentation.BaseVMFragment
-import com.merseyside.merseyLib.utils.serialization.getSerialize
+import com.merseyside.utils.serialization.getSerialize
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 

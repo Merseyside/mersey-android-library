@@ -5,9 +5,9 @@ import android.os.Bundle
 import androidx.databinding.ViewDataBinding
 import com.merseyside.kmpMerseyLib.presentation.model.BaseViewModel
 import com.merseyside.kmpMerseyLib.presentation.model.ParcelableViewModel
-import com.merseyside.merseyLib.presentation.activity.BaseBindingActivity
-import com.merseyside.merseyLib.utils.PermissionManager
-import com.merseyside.merseyLib.utils.serialization.putSerialize
+import com.merseyside.archy.presentation.activity.BaseBindingActivity
+import com.merseyside.utils.PermissionManager
+import com.merseyside.utils.serialization.putSerialize
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 import javax.inject.Inject
