@@ -25,7 +25,7 @@ object LibraryVersions {
 
     object Libs {
         object Android {
-            const val kotlinStdLib = LibraryVersions.kotlin
+            const val kotlinStdLib = kotlin
             const val coroutines = "1.3.7"
             const val appCompat = "1.1.0"
             const val material = "1.3.0-alpha01"
@@ -47,14 +47,10 @@ object LibraryVersions {
             const val worker = "2.3.4"
             const val room = "2.0.0"
             const val coil = "0.8.0"
-
-            object MerseyLibs {
-                const val version = "1.2.1"
-            }
         }
 
         object MultiPlatform {
-            const val kotlinStdLib = LibraryVersions.kotlin
+            const val kotlinStdLib = kotlin
 
             const val coroutines = "1.3.5"
             const val serialization = "0.20.0"

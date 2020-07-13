@@ -80,13 +80,8 @@ dependencies {
     compileOnly("javax.annotation:jsr250-api:1.0")
 }
 
-//multiplatformResources {
-//    multiplatformResourcesPackage = "com.merseyside.merseyLib"
-//}
-
-
 publishing {
-    repositories.maven("https://api.bintray.com/maven/merseysoftware/mersey-library/kmp-clean-mvvm-arch/;publish=1") {
+    repositories.maven("https://api.bintray.com/maven/merseysoft/mersey-library/kmp-clean-mvvm-arch/;publish=1") {
         name = "bintray"
 
         credentials {

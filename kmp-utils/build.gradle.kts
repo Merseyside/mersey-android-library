@@ -77,12 +77,8 @@ dependencies {
     kaptLibrary(LibraryDeps.Libs.Android.daggerCompiler)
 }
 
-//multiplatformResources {
-//    multiplatformResourcesPackage = "com.merseyside.kmpMerseyLib"
-//}
-
 publishing {
-    repositories.maven("https://api.bintray.com/maven/merseysoftware/mersey-library/kmp-utils/;publish=1") {
+    repositories.maven("https://api.bintray.com/maven/merseysoft/mersey-library/kmp-utils/;publish=1") {
         name = "bintray"
 
         credentials {
@@ -91,7 +87,6 @@ publishing {
         }
     }
 }
-
 apply("common-gradle.gradle")
 repositories {
     mavenCentral()
