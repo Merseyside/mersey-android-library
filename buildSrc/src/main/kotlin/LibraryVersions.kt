@@ -5,11 +5,11 @@ object LibraryVersions {
         const val targetSdk = 29
         const val minSdk = 17
 
-        const val version = "1.2.5"
-        const val versionCode = 125
+        const val version = "1.2.6"
+        const val versionCode = 126
     }
 
-    const val kotlin = "1.3.72"
+    const val kotlin = "1.4.10"
 
     private const val mokoResources = "0.9.0"
 
@@ -21,6 +21,7 @@ object LibraryVersions {
         const val androidExtensions = LibraryVersions.kotlin
         const val mokoResources = LibraryVersions.mokoResources
         const val maven = "2.1"
+        const val sqlDelight = "1.3.0"
     }
 
     object Libs {
@@ -53,7 +54,7 @@ object LibraryVersions {
             const val kotlinStdLib = kotlin
 
             const val coroutines = "1.3.5"
-            const val serialization = "0.20.0"
+            const val serialization = "1.0.0"
             const val mokoMvvm = "0.6.0"
             const val mokoResources = LibraryVersions.mokoResources
             const val ktor = "1.3.2"

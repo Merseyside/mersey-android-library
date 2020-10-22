@@ -4,7 +4,6 @@ import android.os.Bundle
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
 
-@UnstableDefault
 val json: Json by lazy {
     Json {
         isLenient = true
@@ -13,22 +12,20 @@ val json: Json by lazy {
     }
 }
 
-@OptIn(ImplicitReflectionSerializer::class)
 inline fun <reified T : Any> T.serialize(): String {
-    return json.stringify(this)
+    return json.encodeToString(this)
 }
 
-@OptIn(ImplicitReflectionSerializer::class)
 inline fun <reified T : Any> String.deserialize(): T {
-    return json.parse(this)
+    return json.decodeFromString(this)
 }
 
 fun <T : Any> T.serialize(serializationStrategy: SerializationStrategy<T>): String {
-    return json.stringify(serializationStrategy, this)
+    return json.encodeToString(serializationStrategy, this)
 }
 
 fun <T> String.deserialize(deserializationStrategy: DeserializationStrategy<T>): T {
-    return json.parse(deserializationStrategy, this)
+    return json.decodeFromString(deserializationStrategy, this)
 }
 
 inline fun <reified T : Any> Any.deserialize(): T {

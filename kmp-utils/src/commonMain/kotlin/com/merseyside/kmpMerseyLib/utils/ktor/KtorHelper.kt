@@ -9,8 +9,7 @@ import io.ktor.client.request.post
 import io.ktor.http.Parameters
 import io.ktor.http.takeFrom
 import kotlinx.serialization.DeserializationStrategy
-import kotlinx.serialization.ImplicitReflectionSerializer
-import kotlinx.serialization.parse
+import kotlinx.serialization.decodeFromString
 
 fun HttpRequestBuilder.addHeader(key: String, value: String) {
     header(key, value)
@@ -27,7 +26,6 @@ fun HttpRequestBuilder.setFormData(vararg pairs: Pair<String, String>) {
         })
 }
 
-@OptIn(ImplicitReflectionSerializer::class)
 suspend inline fun <reified T: Any> KtorRouter.post(
     method: String,
     vararg queryParams: Pair<String, String>,
@@ -45,7 +43,6 @@ suspend inline fun <reified T: Any> KtorRouter.post(
     return deserialize(call, deserializationStrategy)
 }
 
-@OptIn(ImplicitReflectionSerializer::class)
 suspend inline fun <reified T: Any> KtorRouter.get(
     method: String,
     vararg queryParams: Pair<String, String>,
@@ -63,7 +60,6 @@ suspend inline fun <reified T: Any> KtorRouter.get(
     return deserialize(call, deserializationStrategy)
 }
 
-@OptIn(ImplicitReflectionSerializer::class)
 inline fun <reified T: Any> KtorRouter.deserialize(
     data: String,
     deserializationStrategy: DeserializationStrategy<T>? = null
@@ -72,6 +68,6 @@ inline fun <reified T: Any> KtorRouter.deserialize(
     return if (deserializationStrategy != null) {
         data.deserialize(deserializationStrategy)
     } else {
-        json.parse(data)
+        json.decodeFromString(data)
     }
 }

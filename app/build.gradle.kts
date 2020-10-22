@@ -21,13 +21,19 @@ android {
     buildTypes {
         getByName("debug") {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
 
         getByName("release") {
             isMinifyEnabled = false
             consumerProguardFiles("proguard-rules.pro")
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
@@ -64,7 +70,9 @@ android {
         }
     }
 
-    buildFeatures.dataBinding = true
+    buildFeatures {
+        dataBinding = true
+    }
 
     sourceSets.getByName("main") {
 
@@ -76,6 +84,7 @@ android {
         res.srcDir("src/main/res/value/values-light")
         res.srcDir("src/main/res/value/values-night")
     }
+
 }
 
 val androidLibs = listOf(
@@ -101,9 +110,9 @@ val modulez = listOf(
 
 dependencies {
 
-    modulez.forEach { module -> implementation(project(module))}
+    modulez.forEach { module -> implementation(project(module)) }
 
-    androidLibs.forEach { lib -> implementation(lib)}
+    androidLibs.forEach { lib -> implementation(lib) }
 
     compileOnly("javax.annotation:jsr250-api:1.0")
 }

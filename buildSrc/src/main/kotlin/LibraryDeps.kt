@@ -135,9 +135,9 @@ object LibraryDeps {
                 ios = "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:${LibraryVersions.Libs.MultiPlatform.coroutines}"
             )
             val serialization = MultiPlatformLibrary(
-                android = "org.jetbrains.kotlinx:kotlinx-serialization-runtime:${LibraryVersions.Libs.MultiPlatform.serialization}",
-                common = "org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:${LibraryVersions.Libs.MultiPlatform.serialization}",
-                ios = "org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:${LibraryVersions.Libs.MultiPlatform.serialization}"
+                android = "org.jetbrains.kotlinx:kotlinx-serialization-json:${LibraryVersions.Libs.MultiPlatform.serialization}",
+                common = "org.jetbrains.kotlinx:kotlinx-serialization-json:${LibraryVersions.Libs.MultiPlatform.serialization}",
+                ios = "org.jetbrains.kotlinx:kotlinx-serialization-json:${LibraryVersions.Libs.MultiPlatform.serialization}"
             )
             val ktorClient = MultiPlatformLibrary(
                 android = "io.ktor:ktor-client-android:${LibraryVersions.Libs.MultiPlatform.ktor}",
@@ -156,22 +156,16 @@ object LibraryDeps {
                 iosArm64 = "dev.icerock.moko:resources-iosarm64:${LibraryVersions.Libs.MultiPlatform.mokoResources}"
             )
             val kodein = MultiPlatformLibrary(
-                    common = "org.kodein.di:kodein-di-core:${LibraryVersions.Libs.MultiPlatform.kodein}"
+                common = "org.kodein.di:kodein-di-core:${LibraryVersions.Libs.MultiPlatform.kodein}"
             )
             val kodeinErased = MultiPlatformLibrary(
-                    common = "org.kodein.di:kodein-di-erased:${LibraryVersions.Libs.MultiPlatform.kodein}"
+                common = "org.kodein.di:kodein-di-erased:${LibraryVersions.Libs.MultiPlatform.kodein}"
             )
 
             val sqlDelight = MultiPlatformLibrary(
-                    common = "com.squareup.sqldelight:runtime:${LibraryVersions.Libs.MultiPlatform.sqlDelight}",
-                    android = "com.squareup.sqldelight:android-driver:${LibraryVersions.Libs.MultiPlatform.sqlDelight}"
+                common = "com.squareup.sqldelight:runtime:${LibraryVersions.Libs.MultiPlatform.sqlDelight}",
+                android = "com.squareup.sqldelight:android-driver:${LibraryVersions.Libs.MultiPlatform.sqlDelight}"
             )
         }
     }
-
-//    val plugins: Map<String, String> = mapOf(
-//        "kotlin-android-extensions" to Plugins.androidExtensions,
-//        "kotlinx-serialization" to Plugins.kotlinSerialization,
-//        "dev.icerock.mobile.multiplatform-resources" to Plugins.mokoResources
-//    )
 }

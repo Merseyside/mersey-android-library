@@ -54,7 +54,6 @@ dependencies {
     implementation(project(LibraryModules.Android.utils))
 }
 
-//apply("../common-gradle.gradle")
 repositories {
     mavenCentral()
 }

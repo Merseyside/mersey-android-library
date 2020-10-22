@@ -3,7 +3,6 @@ plugins {
     plugin(LibraryDeps.Plugins.androidLibrary)
     plugin(LibraryDeps.Plugins.kotlinAndroidExtensions)
     plugin(LibraryDeps.Plugins.kotlinKapt)
-    plugin(LibraryDeps.Plugins.kotlinSerialization)
     plugin(LibraryDeps.Plugins.mobileMultiplatform)
     plugin(LibraryDeps.Plugins.mavenPublish)
 }
@@ -32,8 +31,9 @@ android {
 
 kotlin {
     android {
+        publishAllLibraryVariants()
         publishLibraryVariantsGroupedByFlavor = true
-        publishLibraryVariants = listOf("release")
+        //publishLibraryVariants = listOf("release")
     }
 }
 
@@ -63,10 +63,6 @@ val androidLibraries = listOf(
 val merseyModules = listOf(
     LibraryModules.Android.archy,
     LibraryModules.Android.utils
-)
-
-setupFramework(
-    exports = mppLibs
 )
 
 dependencies {
