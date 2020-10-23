@@ -1,8 +1,8 @@
 object LibraryVersions {
 
     object Application {
-        val packageName = "com.merseyside.template"
-        val applicationId = "com.merseyside.template"
+        val packageName = "com.merseyside.merseyLib"
+        val applicationId = "com.merseyside.merseyLib"
     }
 
     object Android {

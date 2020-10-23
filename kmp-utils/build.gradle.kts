@@ -8,7 +8,7 @@ plugins {
     plugin(LibraryDeps.Plugins.mavenPublish)
 }
 
-group = "com.merseyside.merseyLib"
+group = LibraryVersions.Application.applicationId
 version = LibraryVersions.Android.version
 
 android {
