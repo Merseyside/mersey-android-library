@@ -5,9 +5,10 @@ plugins {
     plugin(LibraryDeps.Plugins.kotlinKapt)
     plugin(LibraryDeps.Plugins.mobileMultiplatform)
     plugin(LibraryDeps.Plugins.mavenPublish)
+    plugin(LibraryDeps.Plugins.resources)
 }
 
-group = "com.merseyside.merseyLib"
+group = LibraryVersions.Application.applicationId
 version = LibraryVersions.Android.version
 
 android {
@@ -41,6 +42,10 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+}
+
+multiplatformResources {
+    multiplatformResourcesPackage = LibraryVersions.Application.packageName // required
 }
 
 val mppLibs = listOf(

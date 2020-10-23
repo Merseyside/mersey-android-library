@@ -1,5 +1,10 @@
 object LibraryVersions {
 
+    object Application {
+        val packageName = "com.merseyside.template"
+        val applicationId = "com.merseyside.template"
+    }
+
     object Android {
         const val compileSdk = 28
         const val targetSdk = 29
@@ -11,7 +16,7 @@ object LibraryVersions {
 
     const val kotlin = "1.4.10"
 
-    private const val mokoResources = "0.9.0"
+    private const val mokoResources = "0.13.1"
 
     object Plugins {
         const val android = "4.0.0"

@@ -1,8 +1,5 @@
 object LibraryModules {
 
-    const val isLocalDependencies = true
-    const val library = "mersey-library"
-
     object MultiPlatform {
 
         val cleanMvvmArch = MultiPlatformModule(

@@ -26,6 +26,11 @@ object LibraryDeps {
             module = "com.github.dcendents:android-maven-gradle-plugin:${LibraryVersions.Plugins.maven}"
         )
 
+        val resources = PluginDesc(
+            id = "dev.icerock.mobile.multiplatform-resources",
+            module = "dev.icerock.moko:resources-generator:${LibraryVersions.Plugins.mokoResources}"
+        )
+
         val mavenPublish = PluginDesc(
             id = "maven-publish"
         )
