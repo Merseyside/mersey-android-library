@@ -3,7 +3,6 @@ package com.merseyside.archy.data.cache.serializer
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import kotlinx.serialization.UnstableDefault
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -11,7 +10,6 @@ import javax.inject.Singleton
 /**
  * Json Serializer/Deserializer.
  */
-@UnstableDefault
 @Singleton
 class Serializer @Inject constructor() {
 

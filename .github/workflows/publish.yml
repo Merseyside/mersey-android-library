@@ -17,3 +17,6 @@ jobs:
 
       - name: Publish library
         run: ./gradlew -PlibraryPublish :kmp-clean-mvvm-arch:publishAllPublicationsToBintrayRepository -DBINTRAY_USER=${{ secrets.BINTRAY_USER }} -DBINTRAY_KEY=${{ secrets.BINTRAY_KEY }}
+
+      - name: Publish library
+        run: ./gradlew -PlibraryPublish :kmp-utils:publishAllPublicationsToBintrayRepository -DBINTRAY_USER=${{ secrets.BINTRAY_USER }} -DBINTRAY_KEY=${{ secrets.BINTRAY_KEY }}

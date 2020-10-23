@@ -1,16 +1,15 @@
 enableFeaturePreview("GRADLE_METADATA")
 
 val properties = startParameter.projectProperties
-// ./gradlew -PlibraryPublish :mvvm:publishToMavenLocal
 val libraryPublish: Boolean = properties.containsKey("libraryPublish")
 
-//if (!libraryPublish) {
+if (!libraryPublish) {
     include(":animators")
     include(":adapters")
     include(":utils")
     include(":app")
     include(":archy")
-//}
+}
 
 include(":kmp-clean-mvvm-arch")
 include(":kmp-utils")

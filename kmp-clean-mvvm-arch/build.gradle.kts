@@ -3,7 +3,6 @@ plugins {
     plugin(LibraryDeps.Plugins.androidLibrary)
     plugin(LibraryDeps.Plugins.kotlinAndroidExtensions)
     plugin(LibraryDeps.Plugins.kotlinKapt)
-    plugin(LibraryDeps.Plugins.kotlinSerialization)
     plugin(LibraryDeps.Plugins.mobileMultiplatform)
     plugin(LibraryDeps.Plugins.mavenPublish)
 }
@@ -32,8 +31,9 @@ android {
 
 kotlin {
     android {
+        publishAllLibraryVariants()
         publishLibraryVariantsGroupedByFlavor = true
-        publishLibraryVariants = listOf("release")
+        //publishLibraryVariants = listOf("release")
     }
 }
 
@@ -65,10 +65,6 @@ val merseyModules = listOf(
     LibraryModules.Android.utils
 )
 
-setupFramework(
-    exports = mppLibs
-)
-
 dependencies {
     mppLibs.forEach { mppLibrary(it) }
     androidLibraries.forEach { lib -> androidLibrary(lib) }
@@ -80,13 +76,8 @@ dependencies {
     compileOnly("javax.annotation:jsr250-api:1.0")
 }
 
-//multiplatformResources {
-//    multiplatformResourcesPackage = "com.merseyside.merseyLib"
-//}
-
-
 publishing {
-    repositories.maven("https://api.bintray.com/maven/merseysoftware/mersey-library/kmp-clean-mvvm-arch/;publish=1") {
+    repositories.maven("https://api.bintray.com/maven/merseysoft/mersey-library/kmp-clean-mvvm-arch/;publish=1") {
         name = "bintray"
 
         credentials {

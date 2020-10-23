@@ -33,7 +33,9 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    buildFeatures.dataBinding = true
+    buildFeatures {
+        dataBinding = true
+    }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
@@ -60,11 +62,9 @@ val androidLibs = listOf(
 )
 
 dependencies {
-
     androidLibs.forEach { lib -> implementation(lib)}
 }
 
-//apply("../common-gradle.gradle")
 repositories {
     mavenCentral()
 }
