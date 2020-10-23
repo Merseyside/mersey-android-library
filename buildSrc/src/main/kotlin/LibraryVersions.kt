@@ -1,8 +1,8 @@
 object LibraryVersions {
 
     object Application {
-        val packageName = "com.merseyside.merseyLib"
-        val applicationId = "com.merseyside.merseyLib"
+        const val packageName = "com.merseyside.merseyLib"
+        const val applicationId = "com.merseyside.merseyLib"
     }
 
     object Android {
@@ -15,7 +15,6 @@ object LibraryVersions {
     }
 
     const val kotlin = "1.4.10"
-
     private const val mokoResources = "0.13.1"
 
     object Plugins {

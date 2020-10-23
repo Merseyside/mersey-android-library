@@ -4,7 +4,6 @@ plugins {
     plugin(LibraryDeps.Plugins.kotlinAndroidExtensions)
     plugin(LibraryDeps.Plugins.kotlinKapt)
     plugin(LibraryDeps.Plugins.mobileMultiplatform)
-    plugin(LibraryDeps.Plugins.jitpack)
     plugin(LibraryDeps.Plugins.mavenPublish)
 }
 
