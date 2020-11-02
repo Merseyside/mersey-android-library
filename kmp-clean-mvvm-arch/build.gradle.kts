@@ -54,7 +54,6 @@ val mppLibs = listOf(
     LibraryDeps.Libs.MultiPlatform.serialization,
     LibraryDeps.Libs.MultiPlatform.mokoMvvm,
     LibraryDeps.Libs.MultiPlatform.kodein,
-    LibraryDeps.Libs.MultiPlatform.kodeinErased,
     LibraryDeps.Libs.MultiPlatform.sqlDelight
 )
 
