@@ -37,6 +37,7 @@ object LibraryVersions {
     object Libs {
         object Android {
             const val appCompat = "1.2.0"
+            const val annotation = "1.1.0"
             const val material = "1.2.1"
             const val fragment = "1.2.5"
             const val constraintLayout = "2.0.4"

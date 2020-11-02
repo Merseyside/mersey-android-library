@@ -69,7 +69,7 @@ object LibraryDeps {
                 name = "androidx.cardview:cardview:${LibraryVersions.Libs.Android.cardView}"
             )
             val annotation = AndroidLibrary(
-                name = "androidx.annotation:annotation:${LibraryVersions.Libs.Android.appCompat}"
+                name = "androidx.annotation:annotation:${LibraryVersions.Libs.Android.annotation}"
             )
             val paging = AndroidLibrary(
                 name = "androidx.paging:paging-runtime:${LibraryVersions.Libs.Android.paging}"
