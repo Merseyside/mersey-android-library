@@ -2,7 +2,7 @@ package com.merseyside.utils.billing
 
 import android.text.TextUtils
 import android.util.Base64
-import com.android.billingclient.util.BillingHelper
+import com.merseyside.utils.Logger
 import java.io.IOException
 import java.security.*
 import java.security.spec.InvalidKeySpecException
@@ -10,9 +10,6 @@ import java.security.spec.X509EncodedKeySpec
 
 
 object Security {
-    private const val TAG = "IABUtil/Security"
-    private const val KEY_FACTORY_ALGORITHM = "RSA"
-    private const val SIGNATURE_ALGORITHM = "SHA1withRSA"
 
     /**
      * Verifies that the data was signed with the given signature, and returns the verified
@@ -31,7 +28,7 @@ object Security {
         if (TextUtils.isEmpty(signedData) || TextUtils.isEmpty(base64PublicKey)
             || TextUtils.isEmpty(signature)
         ) {
-            BillingHelper.logWarn(TAG, "Purchase verification failed: missing data.")
+            Logger.logErr(TAG, "Purchase verification failed: missing data.")
             return false
         }
         val key: PublicKey =
@@ -63,7 +60,7 @@ object Security {
             throw RuntimeException(e)
         } catch (e: InvalidKeySpecException) {
             val msg = "Invalid key specification: $e"
-            BillingHelper.logWarn(TAG, msg)
+            Logger.logErr(TAG, msg)
             throw IOException(msg)
         }
     }
@@ -85,7 +82,7 @@ object Security {
         val signatureBytes: ByteArray = try {
             Base64.decode(signature, Base64.DEFAULT)
         } catch (e: IllegalArgumentException) {
-            BillingHelper.logWarn(TAG, "Base64 decoding failed.")
+            Logger.logErr(TAG, "Base64 decoding failed.")
             return false
         }
         try {
@@ -93,7 +90,7 @@ object Security {
             signatureAlgorithm.initVerify(publicKey)
             signatureAlgorithm.update(signedData.toByteArray())
             if (!signatureAlgorithm.verify(signatureBytes)) {
-                BillingHelper.logWarn(TAG, "Signature verification failed.")
+                Logger.logErr(TAG, "Signature verification failed.")
                 return false
             }
             return true
@@ -101,10 +98,14 @@ object Security {
             // "RSA" is guaranteed to be available.
             throw RuntimeException(e)
         } catch (e: InvalidKeyException) {
-            BillingHelper.logWarn(TAG, "Invalid key specification.")
+            Logger.logErr(TAG, "Invalid key specification.")
         } catch (e: SignatureException) {
-            BillingHelper.logWarn(TAG, "Signature exception.")
+            Logger.logErr(TAG, "Signature exception.")
         }
         return false
     }
+
+    private const val TAG = "IABUtil/Security"
+    private const val KEY_FACTORY_ALGORITHM = "RSA"
+    private const val SIGNATURE_ALGORITHM = "SHA1withRSA"
 }

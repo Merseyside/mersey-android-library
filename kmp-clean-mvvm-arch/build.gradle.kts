@@ -6,6 +6,7 @@ plugins {
     plugin(LibraryDeps.Plugins.mobileMultiplatform)
     plugin(LibraryDeps.Plugins.mavenPublish)
     plugin(LibraryDeps.Plugins.resources)
+    plugin(LibraryDeps.Plugins.sqldelight)
 }
 
 group = LibraryVersions.Application.applicationId

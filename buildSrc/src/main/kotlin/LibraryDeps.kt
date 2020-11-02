@@ -34,6 +34,11 @@ object LibraryDeps {
         val mavenPublish = PluginDesc(
             id = "maven-publish"
         )
+
+        val sqldelight = PluginDesc(
+            id = "com.squareup.sqldelight",
+            module = "com.squareup.sqldelight:gradle-plugin:${LibraryVersions.Plugins.sqlDelight}"
+        )
     }
 
     object Libs {
@@ -70,6 +75,9 @@ object LibraryDeps {
             )
             val annotation = AndroidLibrary(
                 name = "androidx.annotation:annotation:${LibraryVersions.Libs.Android.annotation}"
+            )
+            val rxjava2 = AndroidLibrary(
+                name = "io.reactivex.rxjava2:rxjava:${LibraryVersions.Libs.Android.rxjava2}"
             )
             val paging = AndroidLibrary(
                 name = "androidx.paging:paging-runtime:${LibraryVersions.Libs.Android.paging}"

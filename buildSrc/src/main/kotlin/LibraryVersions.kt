@@ -31,13 +31,13 @@ object LibraryVersions {
         const val androidExtensions = LibraryVersions.kotlin
         const val mokoResources = LibraryVersions.mokoResources
         const val maven = "2.1"
-        const val sqlDelight = "1.3.0"
+        const val sqlDelight = "1.4.3"
     }
 
     object Libs {
         object Android {
             const val appCompat = "1.2.0"
-            const val annotation = "1.1.0"
+            const val annotation = "1.2.0-alpha01"
             const val material = "1.2.1"
             const val fragment = "1.2.5"
             const val constraintLayout = "2.0.4"
@@ -56,6 +56,7 @@ object LibraryVersions {
             const val gson = "2.8.6"
             const val worker = "2.4.0"
             const val room = "2.2.5"
+            const val rxjava2 = "2.2.20"
             const val coil = "1.0.0"
         }
 

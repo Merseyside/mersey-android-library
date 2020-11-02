@@ -1,8 +1,6 @@
 package com.merseyside.utils
 
 import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
@@ -17,10 +15,9 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
-import coil.api.load
+import coil.load
 import com.google.android.material.textfield.TextInputLayout
 import com.merseyside.utils.ext.*
-import kotlin.random.Random
 
 @BindingAdapter("app:isVisibleOrGone")
 fun isVisibleOrGone(view: View, isVisible: Boolean?) {

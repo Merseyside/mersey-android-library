@@ -30,7 +30,7 @@ class BillingManager(
     private val context: Context,
     private val base64Key: String,
     @RawRes private val credentialsId: Int? = null
-): PurchasesUpdatedListener, CoroutineScope {
+) : PurchasesUpdatedListener, CoroutineScope {
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main
@@ -96,29 +96,25 @@ class BillingManager(
         }
     }
 
-    override fun onPurchasesUpdated(result: BillingResult?, purchases: MutableList<Purchase>?) {
-        if (result != null) {
-            if (result.responseCode == BillingClient.BillingResponseCode.OK) {
-                if (purchases != null) {
-                    purchases.forEach { purchase ->
-                        if (verifyValidSignature(
-                                purchase.originalJson,
-                                purchase.signature
-                            )
-                        ) {
-                            onPurchaseListener?.onPurchase(purchase)
-                        } else {
-                            onPurchaseListener?.onError(result)
-                        }
+    override fun onPurchasesUpdated(result: BillingResult, purchases: MutableList<Purchase>?) {
+        if (result.responseCode == BillingClient.BillingResponseCode.OK) {
+            if (purchases != null) {
+                purchases.forEach { purchase ->
+                    if (verifyValidSignature(
+                            purchase.originalJson,
+                            purchase.signature
+                        )
+                    ) {
+                        onPurchaseListener?.onPurchase(purchase)
+                    } else {
+                        onPurchaseListener?.onError(result)
                     }
-                } else {
-                    onPurchaseListener?.onError(result)
                 }
             } else {
                 onPurchaseListener?.onError(result)
             }
         } else {
-            throw IllegalArgumentException("Result is null")
+            onPurchaseListener?.onError(result)
         }
     }
 
@@ -150,7 +146,7 @@ class BillingManager(
             billingClient = startConnection()
 
             return if (billingClient != null) {
-                val skuDetailsParams = SkuDetailsParams.newBuilder().setSkusList(skuList)
+                val skuDetailsParams = SkuDetailsParams.newBuilder().setSkusList(skuList!!)
                     .setType(BillingClient.SkuType.SUBS).build()
 
                 return suspendCoroutine { cont ->
@@ -183,7 +179,10 @@ class BillingManager(
         }
     }
 
-    suspend fun queryAllSubscriptionsAsync(vararg skus: String, isKeepActiveOnError: Boolean = false): List<Subscription>? {
+    suspend fun queryAllSubscriptionsAsync(
+        vararg skus: String,
+        isKeepActiveOnError: Boolean = false
+    ): List<Subscription>? {
 
         if (credentialsId != null) {
 
@@ -203,25 +202,45 @@ class BillingManager(
 
                 return historyList
                     ?.filter { skus.contains(it.sku) }
-                    ?.mapNotNull { getSubscriptionState(it.sku, it.purchaseToken, isKeepActiveOnError) }
+                    ?.mapNotNull {
+                        getSubscriptionState(
+                            it.sku,
+                            it.purchaseToken,
+                            isKeepActiveOnError
+                        )
+                    }
             } else {
                 return null
             }
         } else throw IllegalArgumentException("Please, set credentials id by constructor")
     }
 
-    suspend fun queryActiveSubscriptionsAsync(vararg skus: String, isKeepActiveOnError: Boolean = false): List<Subscription>? {
-        return queryAllSubscriptionsAsync(*skus, isKeepActiveOnError = isKeepActiveOnError)?.filterIsInstance<Subscription.ActiveSubscription>()
+    suspend fun queryActiveSubscriptionsAsync(
+        vararg skus: String,
+        isKeepActiveOnError: Boolean = false
+    ): List<Subscription>? {
+        return queryAllSubscriptionsAsync(
+            *skus,
+            isKeepActiveOnError = isKeepActiveOnError
+        )?.filterIsInstance<Subscription.ActiveSubscription>()
     }
 
-    private suspend fun getSubscriptionState(sku: String, token: String, isKeepActiveOnError: Boolean): Subscription? {
+    private suspend fun getSubscriptionState(
+        sku: String,
+        token: String,
+        isKeepActiveOnError: Boolean
+    ): Subscription? {
 
         val httpTransport = NetHttpTransport()
         val jacksonJsonFactory = JacksonFactory.getDefaultInstance()
 
         val packageName = context.packageName
 
-        val publisher = AndroidPublisher.Builder(httpTransport, jacksonJsonFactory, HttpCredentialsAdapter(getGoogleCredentials()))
+        val publisher = AndroidPublisher.Builder(
+            httpTransport,
+            jacksonJsonFactory,
+            HttpCredentialsAdapter(getGoogleCredentials())
+        )
             .setApplicationName(getApplicationName(context))
             .build()
 
@@ -231,12 +250,14 @@ class BillingManager(
 
         return withContext(Dispatchers.IO) {
             Subscription.Builder(
-                try { request.execute() }
-                catch (e: GoogleJsonResponseException) {
+                try {
+                    request.execute()
+                } catch (e: GoogleJsonResponseException) {
                     isKeepActiveOnErrorMut = false
                     null
-                }
-                catch (e: HttpResponseException) { null },
+                } catch (e: HttpResponseException) {
+                    null
+                },
                 isKeepActiveOnError = isKeepActiveOnErrorMut
             ).setSku(sku).build()
         }
