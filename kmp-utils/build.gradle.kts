@@ -76,7 +76,7 @@ publishing {
         name = "bintray"
 
         credentials {
-            username = System.getProperty("BINTRAY_USERNAME")
+            username = System.getProperty("BINTRAY_USER")
             password = System.getProperty("BINTRAY_KEY")
         }
     }
