@@ -1,22 +1,20 @@
 package com.merseyside.archy.domain.interactor.coroutines
 
 import com.merseyside.utils.Logger
+import com.merseyside.utils.Logger.log
 import kotlinx.coroutines.*
 
-abstract class CoroutineNoResultUseCase<Params> : BaseCoroutineUseCase<Unit, Params>() {
+abstract class CoroutineNoResultUseCase<Params>: BaseCoroutineUseCase<Unit, Params>() {
 
     fun execute(
+        coroutineScope: CoroutineScope = mainScope,
         onPreExecute: () -> Unit = {},
         onComplete: () -> Unit = {},
         onError: (Throwable) -> Unit = {},
         onPostExecute: () -> Unit = {},
         params: Params? = null
     ) {
-        if (job != null) {
-            job!!.cancel()
-        }
-
-        launch {
+        coroutineScope.launch {
             onPreExecute()
 
             val deferred = doWorkAsync(params)

@@ -29,8 +29,8 @@ fun <VM : ViewModel> Fragment.viewModel(
     }
 
     return if (key != null) {
-        ViewModelProviders.of(this, viewModelProviderFactory).get(key, factoryViewModel::class.java)
+        ViewModelProvider(this, viewModelProviderFactory).get(key, factoryViewModel::class.java)
     } else {
-        ViewModelProviders.of(this, viewModelProviderFactory).get(factoryViewModel::class.java)
+        ViewModelProvider(this, viewModelProviderFactory).get(factoryViewModel::class.java)
     }
 }
