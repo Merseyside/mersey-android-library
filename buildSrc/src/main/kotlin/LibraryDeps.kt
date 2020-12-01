@@ -3,7 +3,6 @@ object LibraryDeps {
         val androidApplication = PluginDesc(id = "com.android.application")
         val kotlinKapt = PluginDesc(id = "kotlin-kapt")
         val kotlinAndroid = PluginDesc(id = "kotlin-android")
-        val kotlinAndroidExtensions = PluginDesc(id = "kotlin-android-extensions")
         val mobileMultiplatform = PluginDesc(id = "dev.icerock.mobile.multiplatform")
 
         val androidLibrary = PluginDesc(
@@ -39,6 +38,10 @@ object LibraryDeps {
             id = "com.squareup.sqldelight",
             module = "com.squareup.sqldelight:gradle-plugin:${LibraryVersions.Plugins.sqlDelight}"
         )
+
+        val kotlinParcelize = PluginDesc(
+            id = "kotlin-parcelize"
+        )
     }
 
     object Libs {
@@ -46,11 +49,8 @@ object LibraryDeps {
             val kotlinStdLib = AndroidLibrary(
                 name = "org.jetbrains.kotlin:kotlin-stdlib:${LibraryVersions.Common.kotlinStdLib}"
             )
-            val coroutinesCore = AndroidLibrary(
-                name = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${LibraryVersions.Common.coroutines}"
-            )
             val coroutines = AndroidLibrary(
-                name = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${LibraryVersions.Common.coroutines}"
+                name = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${LibraryVersions.Libs.Android.coroutines}"
             )
             val appCompat = AndroidLibrary(
                 name = "androidx.appcompat:appcompat:${LibraryVersions.Libs.Android.appCompat}"
@@ -69,6 +69,9 @@ object LibraryDeps {
             )
             val lifecycle = AndroidLibrary(
                 name = "androidx.lifecycle:lifecycle-extensions:${LibraryVersions.Libs.Android.lifecycle}"
+            )
+            val lifecycleViewModel = AndroidLibrary(
+                name = "androidx.lifecycle:lifecycle-viewmodel-ktx:${LibraryVersions.Libs.Android.lifecycle}"
             )
             val cardView = AndroidLibrary(
                 name = "androidx.cardview:cardview:${LibraryVersions.Libs.Android.cardView}"
@@ -140,7 +143,7 @@ object LibraryDeps {
 
         object MultiPlatform {
             val kotlinStdLib = MultiPlatformLibrary(
-                android = Android.kotlinStdLib.name,
+                android = "org.jetbrains.kotlin:kotlin-stdlib:${LibraryVersions.Common.kotlinStdLib}",
                 common = "org.jetbrains.kotlin:kotlin-stdlib-common:${LibraryVersions.Common.kotlinStdLib}"
             )
             val coroutines = MultiPlatformLibrary(

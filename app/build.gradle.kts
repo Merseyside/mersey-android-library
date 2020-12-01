@@ -1,7 +1,6 @@
 plugins {
     plugin(LibraryDeps.Plugins.androidApplication)
     plugin(LibraryDeps.Plugins.kotlinAndroid)
-    plugin(LibraryDeps.Plugins.kotlinAndroidExtensions)
 }
 
 android {
@@ -91,7 +90,6 @@ val androidLibs = listOf(
     LibraryDeps.Libs.Android.kotlinStdLib.name,
     LibraryDeps.Libs.Android.recyclerView.name,
     LibraryDeps.Libs.Android.coroutines.name,
-    LibraryDeps.Libs.Android.coroutinesCore.name,
     LibraryDeps.Libs.Android.constraintLayout.name,
     LibraryDeps.Libs.Android.appCompat.name,
     LibraryDeps.Libs.Android.material.name,

@@ -1,7 +1,6 @@
 plugins {
     plugin(LibraryDeps.Plugins.androidLibrary)
     plugin(LibraryDeps.Plugins.kotlinAndroid)
-    plugin(LibraryDeps.Plugins.kotlinAndroidExtensions)
     plugin(LibraryDeps.Plugins.kotlinKapt)
     plugin(LibraryDeps.Plugins.kotlinSerialization)
     plugin(LibraryDeps.Plugins.jitpack)
@@ -50,7 +49,6 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 val androidLibs = listOf(
     LibraryDeps.Libs.Android.kotlinStdLib.name,
     LibraryDeps.Libs.Android.coroutines.name,
-    LibraryDeps.Libs.Android.coroutinesCore.name,
     LibraryDeps.Libs.Android.appCompat.name,
     LibraryDeps.Libs.Android.material.name,
     LibraryDeps.Libs.Android.navigation.name,

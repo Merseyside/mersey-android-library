@@ -1,43 +1,36 @@
 package com.merseyside.archy.domain.interactor.coroutines
 
-import com.merseyside.utils.time.TimeUnit
 import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
 
-abstract class BaseCoroutineUseCase<T, Params> : CoroutineScope by CoroutineScope(applicationContext) {
+abstract class BaseCoroutineUseCase<T, Params> {
+
+    protected val mainScope: CoroutineScope by lazy { CoroutineScope(applicationContext) }
+
+    private val asyncJob = SupervisorJob()
+    private val scope = CoroutineScope(asyncJob)
 
     var job: Job? = null
+        set(value) {
+            field?.let {
+                if (it.isActive) {
+                    it.cancel()
+                }
+            }
 
-    var delay: TimeUnit? = null
+            field = value
+        }
 
     val isActive: Boolean
         get() { return job?.isActive ?: false }
 
-    protected val backgroundContext: CoroutineContext
-        get() = computationContext
-
-    private val asyncJob = SupervisorJob()
-    private val scope = CoroutineScope(backgroundContext + asyncJob)
-
     protected abstract suspend fun executeOnBackground(params: Params?): T
 
-    protected suspend fun doWorkAsync(params: Params?): Deferred<T> = scope.async(backgroundContext) {
-        if (delay != null) {
-            delay(delay!!.toMillisLong())
-        }
-
+    protected suspend fun doWorkAsync(params: Params?): Deferred<T> = scope.backgroundAsync {
         executeOnBackground(params)
     }.also { job = it }
-
-    protected suspend fun <X> background(context: CoroutineContext = backgroundContext, block: suspend () -> X): Deferred<X> {
-        return async(context) {
-            block.invoke()
-        }
-    }
 
     fun cancel(cause: CancellationException? = null) {
         job?.cancel(cause)
         job = null
     }
-
 }
