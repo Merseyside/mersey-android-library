@@ -1,4 +1,4 @@
-package com.merseyside.kmpMerseyLib.presentation
+package com.merseyside.kmpMerseyLib.presentation.dialog
 
 import android.app.Dialog
 import android.os.Bundle
