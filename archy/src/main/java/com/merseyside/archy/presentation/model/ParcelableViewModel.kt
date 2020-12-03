@@ -1,8 +1,9 @@
 package com.merseyside.archy.presentation.model
 
+import android.app.Application
 import android.os.Bundle
 
-abstract class ParcelableViewModel: BaseViewModel() {
+abstract class ParcelableViewModel(application: Application): AndroidViewModel(application) {
 
     abstract fun readFrom(bundle: Bundle)
 

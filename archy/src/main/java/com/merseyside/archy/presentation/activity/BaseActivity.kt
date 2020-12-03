@@ -18,7 +18,7 @@ import com.merseyside.archy.presentation.view.OrientationHandler
 import com.merseyside.archy.presentation.view.localeViews.ILocaleManager
 import com.merseyside.utils.LocaleManager
 import com.merseyside.utils.Logger
-import com.merseyside.utils.SnackbarManager
+import com.merseyside.archy.utils.SnackbarManager
 import com.merseyside.utils.getLocalizedContext
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.Unregistrar
@@ -53,17 +53,13 @@ abstract class BaseActivity : NavigationBaseActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         if (applicationContext is BaseApplication) {
             application = applicationContext as BaseApplication
         }
 
         setOrientation(resources, savedInstanceState)
-
         performInjection(savedInstanceState)
-
         setView()
-
         getToolbar()?.let {
             setSupportActionBar(it)
         }
@@ -85,15 +81,12 @@ abstract class BaseActivity : NavigationBaseActivity(),
 
     override fun onStop() {
         super.onStop()
-
         dismissMsg()
-
         unregisterKeyboardListener()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-
         saveOrientation(outState)
     }
 
@@ -101,9 +94,7 @@ abstract class BaseActivity : NavigationBaseActivity(),
 
     override fun setLanguage(lang: String?) {
         if (application != null) {
-
             val language = lang ?: getLanguage()
-
             mainContext = application!!.setLanguage(language)
 
             getCurrentFragment()?.updateLanguage(mainContext)

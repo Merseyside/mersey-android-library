@@ -7,6 +7,7 @@ import com.merseyside.utils.LocaleManager
 import com.merseyside.utils.getLocalizedContext
 import java.lang.Exception
 import java.util.*
+import kotlin.jvm.Throws
 
 abstract class BaseApplication : Application() {
 
@@ -38,9 +39,5 @@ abstract class BaseApplication : Application() {
 
     fun getLocale(): Locale {
         return localeManager.getCurrentLocale()
-    }
-
-    companion object {
-        private const val TAG = "BaseApplication"
     }
 }

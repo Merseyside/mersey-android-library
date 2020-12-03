@@ -1,4 +1,4 @@
-package com.merseyside.utils
+package com.merseyside.archy.utils
 
 import android.app.Activity
 import android.view.View

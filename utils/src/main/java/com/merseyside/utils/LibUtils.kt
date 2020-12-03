@@ -24,6 +24,7 @@ import androidx.core.content.ContextCompat.startActivity
 import com.merseyside.utils.ext.toHandlerCanceller
 import com.merseyside.utils.time.TimeUnit
 import java.util.*
+import kotlin.jvm.Throws
 
 
 fun getLocalizedContext(localeManager: LocaleManager): Context {
@@ -188,12 +189,16 @@ fun getNumberOfDigits(number: Number): Int {
 fun shrinkNumber(number: Number): String {
     val long = number.toLong()
 
-    return if (long < 1000) {
-        long.toString()
-    } else if (long < 1_000_000) {
-        "${long / 1000}K+"
-    } else {
-        "${long / 1_000_000}M+"
+    return when {
+        long < 1000 -> {
+            long.toString()
+        }
+        long < 1_000_000 -> {
+            "${long / 1000}K+"
+        }
+        else -> {
+            "${long / 1_000_000}M+"
+        }
     }
 }
 

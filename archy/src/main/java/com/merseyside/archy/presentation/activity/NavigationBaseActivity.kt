@@ -9,9 +9,7 @@ abstract class NavigationBaseActivity : AppCompatActivity() {
 
     protected val navController: NavController?
         get() {
-
             val container = getFragmentContainer()
-
             return if (container != null) {
                 findNavController(container)
             } else {

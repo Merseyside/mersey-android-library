@@ -24,7 +24,7 @@ object LibraryVersions {
     private const val mokoResources = "0.13.1"
 
     object Plugins {
-        const val android = "4.0.1"
+        const val android = "4.1.1"
 
         const val kotlin = LibraryVersions.kotlin
         const val serialization = LibraryVersions.kotlin

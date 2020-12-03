@@ -19,5 +19,4 @@ abstract class NavigationBaseFragment : Fragment() {
     fun navigateUp() {
         navController.navigateUp()
     }
-
 }

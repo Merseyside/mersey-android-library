@@ -1,4 +1,13 @@
-package com.merseyside.utils.singletons
+package com.merseyside.archy.utils.singletons
+
+/**
+ * Example:
+ * class Manager private constructor(context: Context) {
+ *   init {
+ *     // Init using context argument
+ *   }
+ *   companion object : SingletonHolder<Manager, Context>(::Manager)
+ */
 
 open class SingletonHolder<out T: Any, in A>(creator: (A) -> T) {
     private var creator: ((A) -> T)? = creator
