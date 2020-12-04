@@ -26,7 +26,6 @@ import com.merseyside.utils.time.TimeUnit
 import java.util.*
 import kotlin.jvm.Throws
 
-
 fun getLocalizedContext(localeManager: LocaleManager): Context {
     return if (localeManager.language.isNotEmpty()) {
         localeManager.setLocale()
@@ -150,6 +149,10 @@ fun mainThreadIfNeeds(onMain: () -> Unit): Handler? {
     }
 }
 
+fun runThread(onThread: () -> Unit): Thread {
+    return Thread { onThread() }.apply { start() }
+}
+
 fun delayedMainThread(delay: TimeUnit, runnable: Runnable): HandlerCanceller {
     val handler = Handler(Looper.getMainLooper())
     handler.postDelayed(runnable, delay.toMillisLong())
@@ -211,7 +214,7 @@ fun copyToClipboard(context: Context, text: String, label: String = "Copied text
     val clipboard: ClipboardManager? =
         context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
     val clip: ClipData = ClipData.newPlainText(label, text)
-    clipboard?.setPrimaryClip(clip)
+    clipboard?.primaryClip = clip
 }
 
 fun getDrawableByName(context: Context, name: String): Drawable? {

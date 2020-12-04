@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     plugin(LibraryDeps.Plugins.androidLibrary)
     plugin(LibraryDeps.Plugins.kotlinAndroid)
@@ -37,9 +39,10 @@ android {
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = "1.8"
+        freeCompilerArgs = listOf("-XXLanguage:+InlineClasses")
     }
 }
 
