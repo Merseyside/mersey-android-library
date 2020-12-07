@@ -40,10 +40,10 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 }
 
 val androidLibs = listOf(
-        LibraryDeps.Libs.Android.kotlinStdLib.name,
-        LibraryDeps.Libs.Android.appCompat.name,
-        LibraryDeps.Libs.Android.material.name,
-        LibraryDeps.Libs.Android.recyclerView.name
+    LibraryDeps.Libs.Android.appCompat.name,
+    LibraryDeps.Libs.Android.material.name,
+    LibraryDeps.Libs.Android.recyclerView.name,
+    LibraryDeps.Libs.Android.coroutines.name
 )
 
 dependencies {

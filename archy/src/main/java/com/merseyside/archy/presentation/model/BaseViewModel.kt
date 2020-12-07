@@ -163,7 +163,7 @@ abstract class BaseViewModel protected constructor() : ViewModel(), IStringHelpe
         )
     }
 
-    protected abstract fun dispose()
+    protected open fun dispose() {}
 
     fun stopAllWorks() {
         dispose()

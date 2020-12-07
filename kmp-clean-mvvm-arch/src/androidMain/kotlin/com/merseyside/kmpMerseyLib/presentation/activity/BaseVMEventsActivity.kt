@@ -1,9 +1,10 @@
-package com.merseyside.archy.presentation.activity
+package com.merseyside.kmpMerseyLib.presentation.activity
 
 import android.os.Bundle
 import androidx.databinding.ViewDataBinding
+import com.merseyside.archy.presentation.activity.BaseVMActivity
 import com.merseyside.archy.presentation.model.BaseViewModel
-import com.merseyside.archy.presentation.dispatcher.EventsDispatcherOwner
+import com.merseyside.kmpMerseyLib.presentation.dispatcher.EventsDispatcherOwner
 
 abstract class BaseVMEventsActivity<B: ViewDataBinding, M, Listener : Any>
     : BaseVMActivity<B, M>() where M : BaseViewModel, M: EventsDispatcherOwner<Listener> {

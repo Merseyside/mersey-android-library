@@ -50,8 +50,4 @@ interface IFocusManager {
     }
 
     fun getRootView(): View
-
-    companion object {
-        private const val TAG = "IFocusManager"
-    }
 }

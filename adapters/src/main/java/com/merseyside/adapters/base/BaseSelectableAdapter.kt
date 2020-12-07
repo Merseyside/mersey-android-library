@@ -1,6 +1,7 @@
 package com.merseyside.adapters.base
 
 import com.merseyside.adapters.model.BaseSelectableAdapterViewModel
+import kotlin.jvm.Throws
 
 abstract class BaseSelectableAdapter<M: Any, T: BaseSelectableAdapterViewModel<M>>(
     selectableMode: SelectableMode = SelectableMode.SINGLE,
@@ -116,7 +117,6 @@ abstract class BaseSelectableAdapter<M: Any, T: BaseSelectableAdapterViewModel<M
 
     private fun selectFirstSelectableItem() {
         if (!isAllowToCancelSelection) {
-
             getAllModels().forEach { item ->
                 setItemSelected(item)
                 return

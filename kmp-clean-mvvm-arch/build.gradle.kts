@@ -34,13 +34,13 @@ kotlin {
     android {
         publishAllLibraryVariants()
         publishLibraryVariantsGroupedByFlavor = true
-        //publishLibraryVariants = listOf("release")
     }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
         jvmTarget = "1.8"
+        freeCompilerArgs = listOf("-Xopt-in=kotlin.RequiresOptIn")
     }
 }
 

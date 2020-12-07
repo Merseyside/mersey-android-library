@@ -4,7 +4,9 @@ import com.merseyside.kmpMerseyLib.utils.time.TimeUnit
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-abstract class BaseCoroutineUseCase<T, Params> : CoroutineScope by CoroutineScope(applicationContext) {
+abstract class BaseCoroutineUseCase<T, Params> {
+
+    protected val mainScope: CoroutineScope by lazy { CoroutineScope(applicationContext) }
 
     var job: Job? = null
 
@@ -30,7 +32,7 @@ abstract class BaseCoroutineUseCase<T, Params> : CoroutineScope by CoroutineScop
     }.also { job = it }
 
     protected suspend fun <X> background(context: CoroutineContext = backgroundContext, block: suspend () -> X): Deferred<X> {
-        return async(context) {
+        return scope.async(context) {
             block.invoke()
         }
     }

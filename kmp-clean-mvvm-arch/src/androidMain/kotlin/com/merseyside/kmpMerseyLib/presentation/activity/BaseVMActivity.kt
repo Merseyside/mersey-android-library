@@ -1,4 +1,4 @@
-package com.merseyside.kmpMerseyLib.presentation
+package com.merseyside.kmpMerseyLib.presentation.activity
 
 import android.content.Context
 import android.os.Bundle
@@ -6,6 +6,7 @@ import androidx.databinding.ViewDataBinding
 import com.merseyside.kmpMerseyLib.presentation.model.BaseViewModel
 import com.merseyside.kmpMerseyLib.presentation.model.ParcelableViewModel
 import com.merseyside.archy.presentation.activity.BaseBindingActivity
+import com.merseyside.kmpMerseyLib.presentation.fragment.BaseVMFragment
 import com.merseyside.utils.PermissionManager
 import com.merseyside.utils.serialization.putSerialize
 import kotlinx.serialization.builtins.MapSerializer
@@ -82,8 +83,6 @@ abstract class BaseVMActivity<B : ViewDataBinding, M : BaseViewModel> : BaseBind
             alertDialogLiveEvent.addObserver(alertDialogModel)
             grantPermissionLiveEvent.addObserver(permissionObserver)
         }
-
-
     }
 
     override fun handleError(throwable: Throwable) {

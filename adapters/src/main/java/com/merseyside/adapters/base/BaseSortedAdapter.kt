@@ -9,8 +9,10 @@ import com.merseyside.utils.Logger
 import com.merseyside.utils.ext.isNotNullAndEmpty
 import com.merseyside.utils.isMainThread
 import com.merseyside.utils.mainThreadIfNeeds
+import com.merseyside.utils.runThread
 import java.lang.reflect.ParameterizedType
 import kotlin.collections.set
+import kotlin.jvm.Throws
 
 @Suppress("UNCHECKED_CAST")
 abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> : BaseAdapter<M, T>() {
@@ -84,37 +86,28 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
         return getModelByPosition(position).getItem()
     }
 
-    @Throws(IllegalArgumentException::class)
+    @Throws(NoSuchElementException::class)
     override fun getPositionOfObj(obj: M): Int {
-
-        for (i in 0 until sortedList.size()) {
-            if (sortedList.get(i).areItemsTheSame(obj)) return i
+        try {
+            return sortedList.indexOf { item -> item.areItemsTheSame(obj) }
+        } catch (e: NoSuchElementException) {
+            throw e
         }
-
-        throw IllegalArgumentException("No data found")
     }
 
     @Throws(IllegalArgumentException::class)
     override fun getPositionOfModel(model: T): Int {
-
-        for (i in 0 until sortedList.size()) {
-            if (sortedList.get(i) == model) return i
+        sortedList.forEachIndexed {index, item ->
+            if (item == model) return index
         }
 
         throw IllegalArgumentException("No data found")
     }
 
     override fun find(obj: M): T? {
-
-        for (i in 0 until sortedList.size()) {
-            sortedList.get(i).let {
-                if (it.areItemsTheSame(obj)) {
-                    return it
-                }
-            }
+        return sortedList.find {
+            it.areItemsTheSame(obj)
         }
-
-        return null
     }
 
     @Throws(IllegalArgumentException::class)
@@ -166,23 +159,21 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
         super.addModels(list)
 
         if (!isFiltered) {
-            //mainThreadIfNeeds {
-                addList(list)
-            //}
+            addList(list)
         } else {
             applyFilterToNewModels(list)
         }
     }
 
     fun addAsync(list: List<M>, func: () -> Unit = {}) {
-        addThread = Thread {
+        addThread = runThread {
             synchronized(lock) {
                 add(list)
 
                 func.invoke()
                 addThread = null
             }
-        }.apply { start() }
+        }
     }
 
     open fun update(updateRequest: UpdateRequest<M>) {
@@ -222,12 +213,10 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
             } else if (isRemoved) {
                 notifyPositionsChanged(0)
             }
-
         }
     }
 
     internal open fun update(obj: M): Boolean {
-
         return run found@{
             (0 until modelList.size).forEach { index ->
                 val model = modelList[index]
@@ -250,18 +239,18 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
 
     fun updateAsync(
         updateRequest: UpdateRequest<M>,
-        func: () -> Unit = {}
+        onUpdated: () -> Unit = {}
     ) {
-        updateThread = Thread {
+        updateThread = runThread {
             synchronized(lock) {
                 update(updateRequest)
 
-                func.invoke()
+                onUpdated.invoke()
 
                 interruptThread(updateThread)
                 updateThread = null
             }
-        }.apply { start() }
+        }
     }
 
     private fun replaceAll(models: List<T>) {
@@ -269,7 +258,7 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
             sortedList.beginBatchedUpdates()
 
             for (i in sortedList.size() - 1 downTo 0) {
-                val model = sortedList.get(i)
+                val model = sortedList[i]
                 if (!models.contains(model)) {
                     sortedList.remove(model)
                 }
@@ -308,7 +297,6 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
     }
 
     private fun applyFilters(models: List<T>): List<T>? {
-
         try {
             if (notAppliedFiltersMap.isNotEmpty()) {
 
@@ -367,14 +355,14 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
     }
 
     fun applyFiltersAsync() {
-        filterThread = Thread {
+        filterThread = runThread {
             synchronized(lock) {
                 applyFilters()
 
                 interruptThread(filterThread)
                 filterThread = null
             }
-        }.also { it.start() }
+        }
     }
 
     private fun swapFilters() {
@@ -384,18 +372,13 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
 
     @CallSuper
     fun setFilter(models: List<T>): List<T>? {
-
-        isFiltered = true
-        val filteredList = ArrayList<T>()
-        for (obj in models) {
-            if (filterThread != null && filterThread!!.isInterrupted) {
-                return null
-            } else {
-                if (filter(obj, filterPattern)) filteredList.add(obj)
-            }
+        filterThread?.let {
+            if (it.isInterrupted) return null
         }
 
-        return filteredList
+        return models.filter {
+            filter(it, filterPattern)
+        }.also { isFiltered = true }
     }
 
     /**
@@ -423,7 +406,7 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
 
     override fun setFilterAsync(query: String, func: () -> Unit) {
         if (filterThread == null) {
-            filterThread = Thread {
+            filterThread = runThread {
                 try {
                     setFilter(query)
                 } catch (ignored: ConcurrentModificationException) {}
@@ -431,7 +414,7 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
                 interruptThread(filterThread)
 
                 func.invoke()
-            }.apply { start() }
+            }
         } else {
             interruptThread(filterThread)
             filterThread = null
@@ -504,7 +487,6 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
     }
 
     override fun remove(obj: M) {
-
         val model = getModelByObj(obj)
 
         if (model != null) {
@@ -513,7 +495,6 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
     }
 
     override fun remove(list: List<M>) {
-
         val modelList = list.mapNotNull { getModelByObj(it) }
         removeList(modelList)
     }
@@ -526,7 +507,7 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
             filteredList.removeAll(list)
 
             sortedList.beginBatchedUpdates()
-            list.forEach { sortedList.remove(it) }
+            sortedList.removeAll(list)
             sortedList.endBatchedUpdates()
 
             if (isNotifyPositionChanged) notifyPositionsChanged(smallestPosition)
@@ -534,7 +515,6 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
     }
 
     private fun remove(model: T, isNotifyPositionChanged: Boolean = true) {
-
         val position = getPositionOfModel(model)
 
         sortedList.remove(model)
@@ -552,7 +532,7 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
 
     override fun onBindViewHolder(holder: TypedBindingHolder<T>, position: Int, payloads: MutableList<Any>) {
         if (payloads.isNotEmpty()) {
-            sortedList.get(position).setItem(payloads[0] as M)
+            sortedList[position].setItem(payloads[0] as M)
         } else {
             super.onBindViewHolder(holder, position, payloads)
         }
@@ -587,5 +567,4 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
     override fun isFirst(model: BaseAdapterViewModel<M>): Boolean {
         return getPosition(model) == 0
     }
-
 }

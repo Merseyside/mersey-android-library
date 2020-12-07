@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     plugin(LibraryDeps.Plugins.androidLibrary)
     plugin(LibraryDeps.Plugins.kotlinAndroid)
@@ -37,14 +39,14 @@ android {
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = "1.8"
+        freeCompilerArgs = listOf("-XXLanguage:+InlineClasses", "-Xopt-in=kotlin.RequiresOptIn")
     }
 }
 
 val androidLibs = listOf(
-    LibraryDeps.Libs.Android.kotlinStdLib.name,
     LibraryDeps.Libs.Android.appCompat.name,
     LibraryDeps.Libs.Android.material.name,
     LibraryDeps.Libs.Android.coroutines.name,
@@ -55,7 +57,6 @@ val androidLibs = listOf(
     LibraryDeps.Libs.Android.publisher.name,
     LibraryDeps.Libs.Android.oauth2.name,
     LibraryDeps.Libs.MultiPlatform.serialization.android!!,
-    LibraryDeps.Libs.Android.firebaseFirestore.name,
     LibraryDeps.Libs.Android.playCore.name,
     LibraryDeps.Libs.Android.coil.name
 )

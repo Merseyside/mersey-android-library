@@ -19,6 +19,7 @@ abstract class FlowUseCase<T, Params> : CoroutineScope by CoroutineScope(applica
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun observe(
+        coroutineScope: CoroutineScope = this,
         params: Params? = null,
         onEmit: (T) -> Unit,
         onError: (Throwable) -> Unit = {}
@@ -30,7 +31,7 @@ abstract class FlowUseCase<T, Params> : CoroutineScope by CoroutineScope(applica
             cancel()
         }
 
-        job = launch {
+        job = coroutineScope.launch {
             try {
                 flow.collect { data ->
                     onEmit.invoke(data)

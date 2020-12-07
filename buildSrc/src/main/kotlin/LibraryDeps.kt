@@ -46,11 +46,8 @@ object LibraryDeps {
 
     object Libs {
         object Android {
-            val kotlinStdLib = AndroidLibrary(
-                name = "org.jetbrains.kotlin:kotlin-stdlib:${LibraryVersions.Common.kotlinStdLib}"
-            )
             val coroutines = AndroidLibrary(
-                name = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${LibraryVersions.Libs.Android.coroutines}"
+                name = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${LibraryVersions.Common.coroutines}"
             )
             val appCompat = AndroidLibrary(
                 name = "androidx.appcompat:appcompat:${LibraryVersions.Libs.Android.appCompat}"
@@ -86,7 +83,7 @@ object LibraryDeps {
                 name = "androidx.paging:paging-runtime:${LibraryVersions.Libs.Android.paging}"
             )
             val reflect = AndroidLibrary(
-                name = "org.jetbrains.kotlin:kotlin-reflect:${LibraryVersions.Common.kotlinStdLib}"
+                name = "org.jetbrains.kotlin:kotlin-reflect:${LibraryVersions.kotlin}"
             )
             val playCore = AndroidLibrary(
                 name = "com.google.android.play:core:${LibraryVersions.Libs.Android.playCore}"
@@ -148,8 +145,8 @@ object LibraryDeps {
             )
             val coroutines = MultiPlatformLibrary(
                 android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${LibraryVersions.Common.coroutines}",
-                common = "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:${LibraryVersions.Common.coroutines}",
-                ios = "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:${LibraryVersions.Common.coroutines}"
+                common = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${LibraryVersions.Common.coroutines}"
+                //ios = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${LibraryVersions.Common.coroutines}"
             )
             val serialization = MultiPlatformLibrary(
                 android = "org.jetbrains.kotlinx:kotlinx-serialization-json:${LibraryVersions.Common.serialization}",

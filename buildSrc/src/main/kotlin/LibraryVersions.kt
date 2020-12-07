@@ -10,13 +10,13 @@ object LibraryVersions {
         const val targetSdk = 29
         const val minSdk = 17
 
-        const val version = "1.2.7"
-        const val versionCode = 127
+        const val version = "1.2.8"
+        const val versionCode = 128
     }
 
     object Common {
         const val kotlinStdLib = kotlin
-        const val coroutines = "1.3.8"
+        const val coroutines = "1.4.2"
         const val serialization = "1.0.1"
     }
 
@@ -24,7 +24,7 @@ object LibraryVersions {
     private const val mokoResources = "0.13.1"
 
     object Plugins {
-        const val android = "4.0.1"
+        const val android = "4.1.1"
 
         const val kotlin = LibraryVersions.kotlin
         const val serialization = LibraryVersions.kotlin

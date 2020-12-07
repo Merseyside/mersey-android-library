@@ -1,4 +1,4 @@
-package com.merseyside.utils.singletons
+package com.merseyside.archy.utils.singletons
 
 open class ThirdSingletonHolder<out T: Any, in A, in B, in C>(creator: (A, B, C) -> T) {
     private var creator: ((A, B, C) -> T)? = creator

@@ -1,7 +1,3 @@
-/*
- * Copyright 2019 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
- */
-
 plugins {
     `kotlin-dsl`
     kotlin("jvm") version "1.4.20"
@@ -19,7 +15,7 @@ repositories {
 
 val multiplatform = "0.8.0"
 val kotlin = "1.4.20"
-val gradle = "4.0.1"
+val gradle = "4.1.0"
 val mavenVersion = "2.1"
 val resources = "0.13.1"
 val sqldelight = "1.4.4"

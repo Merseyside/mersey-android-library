@@ -18,7 +18,7 @@ import com.merseyside.archy.presentation.view.IView
 import com.merseyside.archy.presentation.view.OrientationHandler
 import com.merseyside.archy.presentation.view.localeViews.ILocaleManager
 import com.merseyside.utils.Logger
-import com.merseyside.utils.SnackbarManager
+import com.merseyside.archy.utils.SnackbarManager
 
 abstract class BaseDialog : DialogFragment(), IView, OrientationHandler, ILocaleManager {
 

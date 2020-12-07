@@ -1,4 +1,4 @@
-package com.merseyside.utils.singletons
+package com.merseyside.archy.utils.singletons
 
 open class DoubleSingletonHolder<out T: Any, in A, in B>(creator: (A, B) -> T) {
     private var creator: ((A, B) -> T)? = creator

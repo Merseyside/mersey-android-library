@@ -17,7 +17,7 @@ import com.merseyside.archy.presentation.view.IView
 import com.merseyside.archy.presentation.view.OnKeyboardStateListener
 import com.merseyside.archy.presentation.view.OrientationHandler
 import com.merseyside.archy.presentation.view.localeViews.ILocaleManager
-import com.merseyside.utils.SnackbarManager
+import com.merseyside.archy.utils.SnackbarManager
 import com.merseyside.utils.ext.isNotNullAndEmpty
 
 abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandler, ILocaleManager {
@@ -27,7 +27,7 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
     protected lateinit var baseActivity: BaseActivity
         private set
 
-    private var requestCode: Int? = null
+    private var requestCode: Int = NO_REQUEST
     private var fragmentResult: FragmentResult? = null
 
     private var currentLanguage: String = ""
@@ -53,7 +53,6 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
 
     override fun setLanguage(lang: String?) {
         baseActivity.setLanguage(lang)
-
         setTitle()
     }
 
@@ -76,22 +75,20 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
                     bundle = savedInstanceState.getBundle(RESULT_BUNDLE_KEY)
                 }
 
-                this.fragmentResult = FragmentResult(resultCode, requestCode!!, bundle)
+                this.fragmentResult = FragmentResult(resultCode, requestCode, bundle)
             } else if (savedInstanceState.containsKey(REQUEST_CODE_KEY)) {
                 this.requestCode = savedInstanceState.getInt(REQUEST_CODE_KEY)
             }
         }
 
         restoreLanguage(savedInstanceState)
-
         setOrientation(resources, savedInstanceState)
-
         snackbarManager = baseActivity.snackbarManager
 
         return inflateView(inflater, container)
     }
     
-    open protected fun inflateView(
+    protected open fun inflateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         @LayoutRes layoutId: Int = getLayoutId()
@@ -104,7 +101,6 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         getToolbar()?.let {
             baseActivity.setFragmentToolbar(it)
         }
@@ -113,14 +109,12 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
             if (currentLanguage.isNotNullAndEmpty() && this != currentLanguage) {
                 updateLanguage(baseActivity.getContext())
             }
-
             currentLanguage = this
         }
     }
 
     override fun onStart() {
         super.onStart()
-
         setTitle()
 
         if (this is OnKeyboardStateListener) {
@@ -130,16 +124,13 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-
-        if (fragmentResult != null) {
-            outState.putInt(RESULT_CODE_KEY, fragmentResult!!.resultCode)
-            outState.putInt(REQUEST_CODE_KEY, fragmentResult!!.requestCode)
-            if (fragmentResult!!.bundle != null) {
-                outState.putBundle(RESULT_BUNDLE_KEY, fragmentResult!!.bundle)
+        fragmentResult?.let { result ->
+            outState.putInt(RESULT_CODE_KEY, result.resultCode)
+            outState.putInt(REQUEST_CODE_KEY, result.requestCode)
+            if (result.bundle != null) {
+                outState.putBundle(RESULT_BUNDLE_KEY, result.bundle)
             }
-        } else if (requestCode != null) {
-            outState.putInt(REQUEST_CODE_KEY, requestCode!!)
-        }
+        } ?: outState.putInt(REQUEST_CODE_KEY, requestCode)
 
         saveOrientation(outState)
         saveLanguage(outState)
@@ -147,9 +138,7 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
 
     override fun onStop() {
         super.onStop()
-
         dismissMsg()
-
         unregisterKeyboardListener()
     }
 
@@ -162,7 +151,6 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
     }
 
     override fun showMsg(msg: String, view: View?, actionMsg: String?, onClick: () -> Unit) {
-
        snackbarManager?.apply {
            showSnackbar(
                view = view,
@@ -174,7 +162,6 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
     }
 
     override fun showErrorMsg(msg: String, view: View?, actionMsg: String?, onClick: () -> Unit) {
-
        snackbarManager?.apply {
            showErrorSnackbar(
                view = view,
@@ -206,7 +193,6 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
         }
 
         val text = title ?: getTitle(context)
-
         if (text != null) {
             getActionBar()?.apply {
                 this.title = text
@@ -231,7 +217,6 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
         onNegativeClick: () -> Unit,
         isSingleAction: Boolean?,
         isCancelable: Boolean?) {
-        
         baseActivity.showAlertDialog(
             title,
             message,
@@ -252,9 +237,7 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
         onPositiveClick: () -> Unit,
         onNegativeClick: () -> Unit,
         isSingleAction: Boolean?,
-        isCancelable: Boolean?
-    ) {
-
+        isCancelable: Boolean?) {
         baseActivity.showAlertDialog(
             titleRes,
             messageRes,
@@ -273,10 +256,9 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
 
     override fun onDetach() {
         super.onDetach()
-
-        if (requestCode != null) {
+        if (requestCode != NO_REQUEST) {
             val result = if (fragmentResult == null) {
-                FragmentResult(RESULT_CANCELLED, requestCode!!)
+                FragmentResult(RESULT_CANCELLED, requestCode)
             } else {
                 fragmentResult!!
             }
@@ -286,8 +268,8 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
     }
 
     protected fun setFragmentResult(resultCode: Int, bundle: Bundle? = null) {
-        if (requestCode != null) {
-            this.fragmentResult = FragmentResult(resultCode, requestCode!!, bundle)
+        if (requestCode != NO_REQUEST) {
+            this.fragmentResult = FragmentResult(resultCode, requestCode, bundle)
         } else throw IllegalStateException("Firstly, set request code")
     }
 
@@ -296,7 +278,7 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
     }
 
     protected fun isStartedForResult(): Boolean {
-        return requestCode != null
+        return requestCode != NO_REQUEST
     }
 
     private fun saveLanguage(outState: Bundle) {
@@ -324,6 +306,8 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
     companion object {
         const val RESULT_OK = -1
         const val RESULT_CANCELLED = 0
+
+        const val NO_REQUEST = -1
 
         private const val LANGUAGE_KEY = "language_mvvm_lib"
 

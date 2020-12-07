@@ -10,13 +10,18 @@ import com.merseyside.adapters.model.BaseAdapterViewModel
 import com.merseyside.utils.ext.isZero
 import com.merseyside.utils.ext.minByNullable
 import com.merseyside.adapters.view.TypedBindingHolder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlin.coroutines.CoroutineContext
+import kotlin.jvm.Throws
 
 abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
     : RecyclerView.Adapter<TypedBindingHolder<T>>(),
     ItemPositionInterface<BaseAdapterViewModel<M>>,
     HasOnItemClickListener<M> {
 
-    protected var isRecyclable: Boolean? = null
+    protected var isRecyclable: Boolean = true
 
     override var listener: OnItemClickListener<M>? = null
 
@@ -42,9 +47,7 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
         listener?.let { obj.setOnItemClickListener(listener!!) }
         bind(holder, obj)
 
-        if (isRecyclable != null) {
-            holder.setIsRecyclable(isRecyclable!!)
-        }
+        holder.setIsRecyclable(isRecyclable)
     }
 
     @CallSuper
@@ -275,6 +278,7 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
 
     protected abstract fun createItemViewModel(obj: M): T
 
+    @Suppress("UNCHECKED_CAST")
     override fun getPosition(model: BaseAdapterViewModel<M>): Int {
         return getPositionOfModel(model as T)
     }
