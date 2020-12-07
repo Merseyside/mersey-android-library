@@ -27,7 +27,7 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
     protected lateinit var baseActivity: BaseActivity
         private set
 
-    private var requestCode: Int? = null
+    private var requestCode: Int = NO_REQUEST
     private var fragmentResult: FragmentResult? = null
 
     private var currentLanguage: String = ""
@@ -75,7 +75,7 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
                     bundle = savedInstanceState.getBundle(RESULT_BUNDLE_KEY)
                 }
 
-                this.fragmentResult = FragmentResult(resultCode, requestCode!!, bundle)
+                this.fragmentResult = FragmentResult(resultCode, requestCode, bundle)
             } else if (savedInstanceState.containsKey(REQUEST_CODE_KEY)) {
                 this.requestCode = savedInstanceState.getInt(REQUEST_CODE_KEY)
             }
@@ -130,7 +130,7 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
             if (result.bundle != null) {
                 outState.putBundle(RESULT_BUNDLE_KEY, result.bundle)
             }
-        } ?: outState.putInt(REQUEST_CODE_KEY, requestCode!!)
+        } ?: outState.putInt(REQUEST_CODE_KEY, requestCode)
 
         saveOrientation(outState)
         saveLanguage(outState)
@@ -256,9 +256,9 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
 
     override fun onDetach() {
         super.onDetach()
-        if (requestCode != null) {
+        if (requestCode != NO_REQUEST) {
             val result = if (fragmentResult == null) {
-                FragmentResult(RESULT_CANCELLED, requestCode!!)
+                FragmentResult(RESULT_CANCELLED, requestCode)
             } else {
                 fragmentResult!!
             }
@@ -268,8 +268,8 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
     }
 
     protected fun setFragmentResult(resultCode: Int, bundle: Bundle? = null) {
-        if (requestCode != null) {
-            this.fragmentResult = FragmentResult(resultCode, requestCode!!, bundle)
+        if (requestCode != NO_REQUEST) {
+            this.fragmentResult = FragmentResult(resultCode, requestCode, bundle)
         } else throw IllegalStateException("Firstly, set request code")
     }
 
@@ -278,7 +278,7 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
     }
 
     protected fun isStartedForResult(): Boolean {
-        return requestCode != null
+        return requestCode != NO_REQUEST
     }
 
     private fun saveLanguage(outState: Bundle) {
@@ -306,6 +306,8 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
     companion object {
         const val RESULT_OK = -1
         const val RESULT_CANCELLED = 0
+
+        const val NO_REQUEST = -1
 
         private const val LANGUAGE_KEY = "language_mvvm_lib"
 

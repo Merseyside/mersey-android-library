@@ -3,6 +3,7 @@ package com.merseyside.utils.time
 import android.annotation.SuppressLint
 import android.content.Context
 import com.merseyside.utils.LocaleManager
+import kotlinx.coroutines.CoroutineScope
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -96,5 +97,11 @@ fun getFormattedDate(
     } catch (e: Exception) {
         e.toString()
     }
+}
+
+suspend fun measureTime(block: suspend () -> Unit): TimeUnit {
+    val startTime = getCurrentTimeUnit()
+    block()
+    return getCurrentTimeUnit() - startTime
 }
 

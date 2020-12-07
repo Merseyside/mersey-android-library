@@ -15,8 +15,6 @@ android {
         multiDexEnabled = true
     }
 
-    flavorDimensions("nav")
-
     buildTypes {
         getByName("debug") {
             isMinifyEnabled = false
@@ -33,16 +31,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-        }
-    }
-
-    productFlavors {
-        create("navigation") {
-            dimension = "nav"
-        }
-
-        create("standart") {
-            dimension = "nav"
         }
     }
 
@@ -74,7 +62,6 @@ android {
     }
 
     sourceSets.getByName("main") {
-
         res.srcDir("src/main/res/")
         res.srcDir("src/main/res/layouts/fragment")
         res.srcDir("src/main/res/layouts/activity")
@@ -87,7 +74,7 @@ android {
 }
 
 val androidLibs = listOf(
-    LibraryDeps.Libs.Android.kotlinStdLib.name,
+    "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.0",
     LibraryDeps.Libs.Android.recyclerView.name,
     LibraryDeps.Libs.Android.coroutines.name,
     LibraryDeps.Libs.Android.constraintLayout.name,
@@ -107,9 +94,7 @@ val modulez = listOf(
 )
 
 dependencies {
-
     modulez.forEach { module -> implementation(project(module)) }
-
     androidLibs.forEach { lib -> implementation(lib) }
 
     compileOnly("javax.annotation:jsr250-api:1.0")

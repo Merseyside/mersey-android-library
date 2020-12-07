@@ -16,6 +16,7 @@ abstract class FlowUseCase<T, Params> : CoroutineScope by CoroutineScope(applica
     @ExperimentalCoroutinesApi
     protected abstract fun executeOnBackground(params: Params?): Flow<T>
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun observe(
         params: Params? = null,
         onEmit: (T) -> Unit,

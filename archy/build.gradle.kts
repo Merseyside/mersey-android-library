@@ -47,7 +47,6 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 }
 
 val androidLibs = listOf(
-    LibraryDeps.Libs.Android.kotlinStdLib.name,
     LibraryDeps.Libs.Android.coroutines.name,
     LibraryDeps.Libs.Android.appCompat.name,
     LibraryDeps.Libs.Android.material.name,
@@ -59,7 +58,6 @@ val androidLibs = listOf(
     LibraryDeps.Libs.Android.worker.name,
     LibraryDeps.Libs.Android.gson.name,
     LibraryDeps.Libs.Android.keyboard.name,
-    LibraryDeps.Libs.Android.reflect.name,
     LibraryDeps.Libs.Android.room.name,
     LibraryDeps.Libs.MultiPlatform.serialization.android!!
 )
@@ -71,9 +69,7 @@ val modulez = listOf(
 )
 
 dependencies {
-
     modulez.forEach { module -> implementation(project(module)) }
-
     androidLibs.forEach { lib -> implementation(lib)}
 
     kaptLibrary(LibraryDeps.Libs.Android.daggerCompiler)

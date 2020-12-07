@@ -42,7 +42,6 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 }
 
 val androidLibs = listOf(
-    LibraryDeps.Libs.Android.kotlinStdLib.name,
     LibraryDeps.Libs.Android.appCompat.name
 )
 
@@ -52,7 +51,6 @@ dependencies {
     androidLibs.forEach { lib -> implementation(lib)}
 }
 
-//apply("../common-gradle.gradle")
 repositories {
     mavenCentral()
 }

@@ -32,7 +32,6 @@ kotlin {
     android {
         publishAllLibraryVariants()
         publishLibraryVariantsGroupedByFlavor = true
-        //publishLibraryVariants = listOf("release")
     }
 }
 

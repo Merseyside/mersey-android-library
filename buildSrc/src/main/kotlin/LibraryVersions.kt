@@ -16,7 +16,7 @@ object LibraryVersions {
 
     object Common {
         const val kotlinStdLib = kotlin
-        const val coroutines = "1.3.8"
+        const val coroutines = "1.4.2"
         const val serialization = "1.0.1"
     }
 
