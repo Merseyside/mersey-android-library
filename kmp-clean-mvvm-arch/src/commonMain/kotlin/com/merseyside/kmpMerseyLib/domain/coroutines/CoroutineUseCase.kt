@@ -6,6 +6,7 @@ import kotlinx.coroutines.*
 abstract class CoroutineUseCase<T, Params> : BaseCoroutineUseCase<T, Params>() {
 
     fun execute(
+        coroutineScope: CoroutineScope = mainScope,
         onPreExecute: () -> Unit = {},
         onComplete: (T) -> Unit = {},
         onError: (Throwable) -> Unit = {},
@@ -16,7 +17,7 @@ abstract class CoroutineUseCase<T, Params> : BaseCoroutineUseCase<T, Params>() {
             cancel()
         }
 
-        launch {
+        coroutineScope.launch {
             onPreExecute()
 
             val deferred = doWorkAsync(params)

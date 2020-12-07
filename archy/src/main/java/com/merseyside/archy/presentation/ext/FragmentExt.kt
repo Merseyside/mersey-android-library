@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.merseyside.archy.presentation.model.ParcelableViewModel
 import com.merseyside.utils.ext.isNotNullAndEmpty
 
@@ -17,10 +16,8 @@ fun <VM : ViewModel> Fragment.viewModel(
     val factoryViewModel = factory()
     val viewModelProviderFactory = object : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-
             if (bundle.isNotNullAndEmpty() &&
                 factoryViewModel is ParcelableViewModel) {
-
                 factoryViewModel.readFrom(bundle!!)
             }
 
@@ -29,8 +26,8 @@ fun <VM : ViewModel> Fragment.viewModel(
     }
 
     return if (key != null) {
-        ViewModelProvider(this, viewModelProviderFactory).get(key, factoryViewModel::class.java)
+        ViewModelProvider(this, viewModelProviderFactory)[key, factoryViewModel::class.java]
     } else {
-        ViewModelProvider(this, viewModelProviderFactory).get(factoryViewModel::class.java)
+        ViewModelProvider(this, viewModelProviderFactory)[factoryViewModel::class.java]
     }
 }
