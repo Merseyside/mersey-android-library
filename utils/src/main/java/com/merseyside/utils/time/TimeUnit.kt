@@ -1,3 +1,5 @@
+@file:Suppress("UNCHECKED_CAST")
+
 package com.merseyside.utils.time
 
 import android.content.Context

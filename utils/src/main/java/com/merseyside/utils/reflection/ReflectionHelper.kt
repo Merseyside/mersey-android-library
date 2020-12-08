@@ -22,6 +22,7 @@ interface ReflectionHelper {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <T> get(name: String): T? {
         val property = getPropertyByName(name)
 

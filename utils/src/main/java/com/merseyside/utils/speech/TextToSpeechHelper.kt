@@ -128,6 +128,7 @@ class TextToSpeechHelper private constructor(private var textToSpeech: TextToSpe
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun ttsUnder20(text: String) {
         val map: HashMap<String, String> = HashMap()
         map[TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID] = "MessageId"

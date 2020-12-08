@@ -12,7 +12,6 @@ abstract class BaseExpandableAdapter<M: Any, T: BaseExpandableAdapterViewModel<M
 ): BaseSelectableAdapter<M, T>(selectableMode, isAllowToCancelSelection) {
 
     private var adapterList: MutableList<Pair<T, BaseAdapter<L, *>>> = ArrayList()
-
     private var updateRequest: UpdateRequest<M>? = null
 
     override fun onBindViewHolder(holder: TypedBindingHolder<T>, position: Int) {
@@ -30,11 +29,9 @@ abstract class BaseExpandableAdapter<M: Any, T: BaseExpandableAdapterViewModel<M
                 }
 
                 this.adapter = adapter
-                addExpandableItems(adapter, data!!)
+                addExpandableItems(adapter, data)
             }
         }
-
-
     }
 
     private fun putAdapter(model: T, adapter: BaseAdapter<L, *>) {
@@ -71,17 +68,13 @@ abstract class BaseExpandableAdapter<M: Any, T: BaseExpandableAdapterViewModel<M
 
         if (updated) {
             val model = getModelByObj(obj)
-
             if (model != null) {
                 val adapter = getAdapterIfExists(model)
 
                 if (adapter is BaseSortedAdapter<L, *>) {
-
                     adapter.let {
-
                         val updateRequest = UpdateRequest.Builder(
-                            model.getData() ?: emptyList()
-                        )
+                            model.getData() ?: emptyList())
                             .isAddNew(this.updateRequest!!.isAddNew)
                             .isDeleteOld(this.updateRequest!!.isDeleteOld)
                             .build()

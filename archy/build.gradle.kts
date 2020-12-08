@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     plugin(LibraryDeps.Plugins.androidLibrary)
     plugin(LibraryDeps.Plugins.kotlinAndroid)
@@ -40,7 +42,7 @@ android {
     buildFeatures.dataBinding = true
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = "1.8"
     }

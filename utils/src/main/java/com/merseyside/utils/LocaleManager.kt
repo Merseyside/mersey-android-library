@@ -31,6 +31,7 @@ class LocaleManager(var context: Context) {
         prefs.edit().putString(LANGUAGE_KEY, language).commit()
     }
 
+    @Suppress("DEPRECATION")
     private fun updateResources(language: String): Context {
 
         val locale = Locale(language)
@@ -58,6 +59,7 @@ class LocaleManager(var context: Context) {
     companion object {
         private const val LANGUAGE_KEY = "language_key"
 
+        @Suppress("DEPRECATION")
         fun getCurrentLocale(context: Context): Locale {
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 context.resources.configuration.locales[0]

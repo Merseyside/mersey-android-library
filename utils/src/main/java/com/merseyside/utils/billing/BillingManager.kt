@@ -36,18 +36,13 @@ class BillingManager(
         get() = Dispatchers.Main
 
     interface BillingConnectionListener {
-
         fun onConnected()
-
         fun onError(code: Int)
-
         fun onDisconnected()
     }
 
     interface OnPurchaseListener {
-
         fun onPurchase(purchase: Purchase)
-
         fun onError(result: BillingResult)
     }
 
@@ -60,11 +55,8 @@ class BillingManager(
     private var billingClient: BillingClient? = null
 
     private suspend fun startConnection(): BillingClient? {
-
         return if (billingClient == null) {
-
             suspendCancellableCoroutine { cont ->
-
                 val client = BillingClient
                     .newBuilder(context)
                     .enablePendingPurchases()
@@ -75,13 +67,10 @@ class BillingManager(
                     override fun onBillingSetupFinished(billingResult: BillingResult) {
                         if (cont.isActive) {
                             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-
                                 billingClient = client
                                 cont.resume(billingClient)
-
                             } else {
                                 cont.resume(null)
-                                //throw IllegalArgumentException("Result code: ${billingResult.responseCode}")
                             }
                         }
                     }
@@ -146,7 +135,7 @@ class BillingManager(
             billingClient = startConnection()
 
             return if (billingClient != null) {
-                val skuDetailsParams = SkuDetailsParams.newBuilder().setSkusList(skuList!!)
+                val skuDetailsParams = SkuDetailsParams.newBuilder().setSkusList(skuList)
                     .setType(BillingClient.SkuType.SUBS).build()
 
                 return suspendCoroutine { cont ->
@@ -255,9 +244,7 @@ class BillingManager(
                 } catch (e: GoogleJsonResponseException) {
                     isKeepActiveOnErrorMut = false
                     null
-                } catch (e: HttpResponseException) {
-                    null
-                },
+                } catch (e: HttpResponseException) { null },
                 isKeepActiveOnError = isKeepActiveOnErrorMut
             ).setSku(sku).build()
         }
@@ -282,10 +269,8 @@ class BillingManager(
         }
     }
 
-
     companion object {
         private const val TEST_SUBSCRIPTION_ID = "android.test.purchased"
-
         private const val PUBLISHER_SCOPE = "https://www.googleapis.com/auth/androidpublisher"
     }
 }
