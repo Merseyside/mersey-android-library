@@ -20,7 +20,7 @@ object LibraryVersions {
         const val serialization = "1.0.1"
     }
 
-    const val kotlin = "1.4.20"
+    const val kotlin = "1.4.21"
     private const val mokoResources = "0.13.1"
 
     object Plugins {

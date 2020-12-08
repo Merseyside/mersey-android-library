@@ -145,8 +145,8 @@ object LibraryDeps {
             )
             val coroutines = MultiPlatformLibrary(
                 android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${LibraryVersions.Common.coroutines}",
-                common = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${LibraryVersions.Common.coroutines}"
-                //ios = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${LibraryVersions.Common.coroutines}"
+                common = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${LibraryVersions.Common.coroutines}",
+                ios = "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:1.3.8"
             )
             val serialization = MultiPlatformLibrary(
                 android = "org.jetbrains.kotlinx:kotlinx-serialization-json:${LibraryVersions.Common.serialization}",

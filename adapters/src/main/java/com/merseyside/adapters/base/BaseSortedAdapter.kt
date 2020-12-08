@@ -348,7 +348,7 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
         val filteredList = applyFilters(models)
 
         if (filteredList.isNotNullAndEmpty()) {
-            this.filteredList = filteredList!!.toMutableList()
+            this.filteredList = filteredList.toMutableList()
 
             if (this.sortedList.isNotEquals(this.filteredList)) setList(filteredList)
         }

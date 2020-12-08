@@ -114,6 +114,7 @@ class ColorAnimator(
             return CURRENT_INT
         }
 
+        @Suppress("IMPLICIT_CAST_TO_ANY")
         override fun calculateCurrentValue(): Int {
             if (view != null) {
 
@@ -129,15 +130,15 @@ class ColorAnimator(
                     }
                 }
 
-                when (value) {
+                return when (value) {
                     is Drawable -> {
                         val color = value.getColor()
 
-                        return color ?: 0
+                        color ?: 0
                     }
 
                     is Int -> {
-                        return value
+                        value
                     }
                     else -> {
                         throw Exception()
@@ -157,5 +158,4 @@ class ColorAnimator(
     companion object {
         private const val BACKGROUND_COLOR = "backgroundColor"
     }
-
 }

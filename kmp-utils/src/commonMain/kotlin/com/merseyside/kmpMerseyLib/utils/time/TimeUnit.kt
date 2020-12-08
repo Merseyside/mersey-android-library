@@ -1,3 +1,5 @@
+@file:Suppress("UNCHECKED_CAST")
+
 package com.merseyside.kmpMerseyLib.utils.time
 
 object Conversions {
@@ -101,7 +103,6 @@ interface TimeUnit {
 inline class Millis(override val value: Long): TimeUnit {
 
     internal constructor(unit: TimeUnit): this(unit.value)
-
     constructor(string: String): this(string.toLong())
 
     override fun toMillis(): Millis {
@@ -136,7 +137,6 @@ inline class Millis(override val value: Long): TimeUnit {
 inline class Seconds(override val value: Long): TimeUnit {
 
     internal constructor(unit: TimeUnit): this(unit.value)
-
     constructor(string: String): this(string.toLong())
 
     override fun toMillis(): Millis {
@@ -171,7 +171,6 @@ inline class Seconds(override val value: Long): TimeUnit {
 inline class Minutes(override val value: Long): TimeUnit {
 
     internal constructor(unit: TimeUnit): this(unit.value)
-
     constructor(string: String): this(string.toLong())
 
     override fun toMillis(): Millis {
@@ -206,7 +205,6 @@ inline class Minutes(override val value: Long): TimeUnit {
 inline class Hours(override val value: Long): TimeUnit {
 
     internal constructor(unit: TimeUnit): this(unit.value)
-
     constructor(string: String): this(string.toLong())
 
     override fun toMillis(): Millis {
@@ -241,7 +239,6 @@ inline class Hours(override val value: Long): TimeUnit {
 inline class Days(override val value: Long): TimeUnit {
 
     internal constructor(unit: TimeUnit): this(unit.value)
-
     constructor(string: String): this(string.toLong())
 
     override fun toMillis(): Millis {
