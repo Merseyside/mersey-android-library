@@ -2,6 +2,9 @@ package com.merseyside.adapters.base
 
 import androidx.recyclerview.widget.SortedList
 import com.merseyside.adapters.model.BaseComparableAdapterViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.NoSuchElementException
 import kotlin.jvm.Throws
 
@@ -66,3 +69,6 @@ fun <M> HasOnItemClickListener<M>.onItemClicked(onClick: (M) -> Unit): OnItemCli
 
     return this.listener!!
 }
+
+internal fun CoroutineScope.asynchronously(block: suspend CoroutineScope.() -> Unit) =
+    launch(context = Dispatchers.Default, block = block)
