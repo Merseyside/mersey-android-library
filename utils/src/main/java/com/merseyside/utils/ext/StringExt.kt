@@ -1,6 +1,14 @@
 package com.merseyside.utils.ext
 
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
+
+@OptIn(ExperimentalContracts::class)
 fun String?.isNotNullAndEmpty(): Boolean {
+    contract {
+        returns(true) implies (this@isNotNullAndEmpty != null)
+    }
+
     return this != null && this.isNotEmpty()
 }
 

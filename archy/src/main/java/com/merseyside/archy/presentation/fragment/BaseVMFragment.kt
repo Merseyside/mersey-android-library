@@ -15,6 +15,8 @@ abstract class BaseVMFragment<B : ViewDataBinding, M : BaseViewModel> : BaseBind
     @Inject
     protected lateinit var viewModel: M
 
+    abstract fun getBindingVariable(): Int
+
     private val messageObserver = Observer<BaseViewModel.TextMessage?> { message ->
         if (message != null) {
             if (message.isError) {
@@ -41,8 +43,6 @@ abstract class BaseVMFragment<B : ViewDataBinding, M : BaseViewModel> : BaseBind
     private val permissionObserver = Observer<Pair<Array<String>, Int>> { pair ->
         PermissionManager.requestPermissions(this, *pair.first, requestCode = pair.second)
     }
-
-    abstract fun getBindingVariable(): Int
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

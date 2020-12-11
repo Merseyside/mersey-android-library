@@ -1,4 +1,4 @@
-package com.merseyside.merseyLib.application.main
+package com.merseyside.merseyLib.application.main.activity
 
 import android.os.Bundle
 import androidx.appcompat.widget.Toolbar

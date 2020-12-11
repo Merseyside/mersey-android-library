@@ -45,7 +45,7 @@ object LibraryVersions {
             const val cardView = "1.0.0"
             const val recyclerView = "1.1.0"
             const val dagger = "2.29.1"
-            const val navigation = "2.3.1"
+            const val navigation = "2.3.2"
             const val paging = "2.1.2"
             const val billing = "3.0.1"
             const val publisher = "v3-rev142-1.25.0"

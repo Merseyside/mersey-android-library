@@ -1,6 +1,7 @@
 plugins {
     plugin(LibraryDeps.Plugins.androidApplication)
     plugin(LibraryDeps.Plugins.kotlinAndroid)
+    plugin(LibraryDeps.Plugins.kotlinKapt)
 }
 
 android {
@@ -74,9 +75,10 @@ android {
 }
 
 val androidLibs = listOf(
-    "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.0",
     LibraryDeps.Libs.Android.recyclerView.name,
     LibraryDeps.Libs.Android.coroutines.name,
+    LibraryDeps.Libs.Android.navigation.name,
+    LibraryDeps.Libs.Android.navigationUi.name,
     LibraryDeps.Libs.Android.constraintLayout.name,
     LibraryDeps.Libs.Android.appCompat.name,
     LibraryDeps.Libs.Android.material.name,
@@ -97,5 +99,6 @@ dependencies {
     modulez.forEach { module -> implementation(project(module)) }
     androidLibs.forEach { lib -> implementation(lib) }
 
+    kapt(LibraryDeps.Libs.Android.daggerCompiler.name)
     compileOnly("javax.annotation:jsr250-api:1.0")
 }

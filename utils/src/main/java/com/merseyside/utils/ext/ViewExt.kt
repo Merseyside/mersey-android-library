@@ -80,7 +80,6 @@ fun TextView.addTextChangeListener(callback: (s: String?, length: Int, start: In
 
 fun View.onClick(onClick: () -> Unit): View.OnClickListener {
     val listener = View.OnClickListener { onClick.invoke() }
-
     this.setOnClickListener(listener)
 
     return listener
