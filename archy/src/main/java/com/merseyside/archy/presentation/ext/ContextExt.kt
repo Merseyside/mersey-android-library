@@ -1,10 +1,9 @@
-package com.merseyside.archy.ext
+package com.merseyside.archy.presentation.ext
 
 import android.content.Context
 import androidx.annotation.StringRes
 import com.merseyside.archy.BaseApplication
 import com.merseyside.utils.Logger
-
 
 fun Context.getActualString(@StringRes id: Int?, vararg args: String?): String? {
     return if (id != null) {

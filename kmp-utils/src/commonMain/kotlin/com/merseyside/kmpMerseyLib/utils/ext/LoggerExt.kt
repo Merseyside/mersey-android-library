@@ -9,6 +9,6 @@ fun <T> T.log(tag: Any = Logger.TAG, prefix: Any? = null, suffix: Any? = null): 
     return this
 }
 
-fun <T> T.log(prefix: Any? = null): T {
-    return this.log(Logger.TAG, prefix)
+inline fun <reified T> T.log(prefix: Any? = null): T {
+    return this.log(T::class.simpleName ?: Logger.TAG, prefix)
 }

@@ -5,5 +5,4 @@ abstract class BaseComparableAdapterViewModel<M>(obj: M) : BaseAdapterViewModel<
     abstract fun areContentsTheSame(obj: M): Boolean
 
     abstract fun compareTo(obj: M) : Int
-
 }

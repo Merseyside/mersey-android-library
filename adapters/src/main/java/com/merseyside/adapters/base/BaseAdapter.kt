@@ -7,14 +7,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.model.BaseAdapterViewModel
+import com.merseyside.adapters.view.TypedBindingHolder
 import com.merseyside.utils.ext.isZero
 import com.merseyside.utils.ext.minByNullable
-import com.merseyside.adapters.view.TypedBindingHolder
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlin.coroutines.CoroutineContext
-import kotlin.jvm.Throws
 
 abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
     : RecyclerView.Adapter<TypedBindingHolder<T>>(),
@@ -278,16 +273,16 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
 
     protected abstract fun createItemViewModel(obj: M): T
 
-    @Suppress("UNCHECKED_CAST")
-    override fun getPosition(model: BaseAdapterViewModel<M>): Int {
-        return getPositionOfModel(model as T)
-    }
-
-    override fun isLast(model: BaseAdapterViewModel<M>): Boolean {
-        return getPosition(model) == itemCount - 1
-    }
-
-    override fun isFirst(model: BaseAdapterViewModel<M>): Boolean {
-        return getPosition(model) == 0
-    }
+//    @Suppress("UNCHECKED_CAST")
+//    override fun getPosition(model: BaseAdapterViewModel<M>): Int {
+//        return getPositionOfModel(model as T)
+//    }
+//
+//    override fun isLast(model: BaseAdapterViewModel<M>): Boolean {
+//        return getPosition(model) == itemCount - 1
+//    }
+//
+//    override fun isFirst(model: BaseAdapterViewModel<M>): Boolean {
+//        return getPosition(model) == 0
+//    }
 }

@@ -50,12 +50,11 @@ fun randomBool(positiveProbability: Float): Boolean {
 fun convertPixelsToDp(context: Context, px: Int): Float {
     val density = context.resources.displayMetrics.density
     return px / density
-
 }
 
-fun convertDpToPixel(context: Context, dp: Float): Float {
+fun convertDpToPixel(context: Context, dp: Float): Int {
     val density = context.resources.displayMetrics.density
-    return dp * density
+    return (dp * density).toInt()
 }
 
 fun generateRandomString(length: Int): String {

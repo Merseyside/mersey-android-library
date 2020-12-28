@@ -559,12 +559,4 @@ abstract class BaseSortedAdapter<M: Any, T: BaseComparableAdapterViewModel<M>> :
     override fun getPosition(model: BaseAdapterViewModel<M>): Int {
         return getPositionOfModel(model as T)
     }
-
-    override fun isLast(model: BaseAdapterViewModel<M>): Boolean {
-        return getPosition(model) == itemCount - 1
-    }
-
-    override fun isFirst(model: BaseAdapterViewModel<M>): Boolean {
-        return getPosition(model) == 0
-    }
 }
