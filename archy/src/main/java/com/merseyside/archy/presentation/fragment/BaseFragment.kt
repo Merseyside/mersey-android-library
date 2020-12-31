@@ -56,6 +56,9 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
         setTitle()
     }
 
+    @LayoutRes
+    abstract fun getLayoutId(): Int
+
     protected abstract fun performInjection(bundle: Bundle?)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,9 +98,6 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
     ): View? {
         return inflater.inflate(layoutId, container, false)
     }
-
-    @LayoutRes
-    abstract fun getLayoutId(): Int
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -293,6 +293,10 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
 
     override fun getRootView(): View? {
         return view
+    }
+
+    open fun goBack() {
+        requireActivity().onBackPressed()
     }
 
     open fun onFragmentResult(resultCode: Int, requestCode: Int, bundle: Bundle? = null) {}

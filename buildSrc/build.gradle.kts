@@ -1,7 +1,7 @@
 plugins {
     `kotlin-dsl`
-    kotlin("jvm") version "1.4.30-M1"
-    kotlin("plugin.serialization") version "1.4.30-M1"
+    kotlin("jvm") version "1.4.21"
+    kotlin("plugin.serialization") version "1.4.21"
 }
 
 repositories {
@@ -14,7 +14,7 @@ repositories {
 }
 
 val multiplatform = "0.8.0"
-val kotlin = "1.4.30-M1"
+val kotlin = "1.4.21"
 val gradle = "4.1.1"
 val mavenVersion = "2.1"
 val resources = "0.13.1"

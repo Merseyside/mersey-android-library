@@ -207,7 +207,7 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
         return true
     }
 
-    open fun filter(obj: T, filterMap : Map<String, Any>): Boolean {
+    open fun filter(obj: T, key: String, filterObj: Any): Boolean {
         return true
     }
 

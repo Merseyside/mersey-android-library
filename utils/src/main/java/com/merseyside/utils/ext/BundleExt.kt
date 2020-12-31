@@ -2,6 +2,8 @@ package com.merseyside.utils.ext
 
 import android.os.Bundle
 import android.os.Parcelable
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 fun <T> Bundle.put(key: String, value: T) {
     when (value) {
@@ -22,6 +24,11 @@ fun <T> Bundle.put(key: String, value: T) {
     }
 }
 
+@OptIn(ExperimentalContracts::class)
 fun Bundle?.isNotNullAndEmpty(): Boolean {
+    contract {
+        returns(true) implies (this@isNotNullAndEmpty != null)
+    }
+
     return this != null && !this.isEmpty
 }

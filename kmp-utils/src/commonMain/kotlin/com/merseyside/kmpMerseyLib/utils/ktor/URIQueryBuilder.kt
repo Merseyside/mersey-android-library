@@ -6,7 +6,7 @@ class URIQueryBuilder(private val isEncoding: Boolean) {
 
     private var params: MutableMap<String, String> = LinkedHashMap()
 
-    val string: String?
+    val string: String
         get() {
             val builder = StringBuilder()
             for ((key, value) in params) {

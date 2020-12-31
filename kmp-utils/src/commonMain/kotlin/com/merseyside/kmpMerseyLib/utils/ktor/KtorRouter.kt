@@ -10,11 +10,13 @@ import kotlinx.serialization.json.Json
 
 abstract class KtorRouter(
     val client: HttpClient,
+    val json: Json,
     val baseUrl: String
 ) {
     constructor(
         httpClientEngine: HttpClientEngine,
         baseUrl: String,
+        json: Json = createJson(),
         defaultRequest: HttpRequestBuilder.() -> Unit = {}
     ): this(httpClientEngine.run {
         HttpClient(httpClientEngine) {
@@ -22,17 +24,10 @@ abstract class KtorRouter(
                 accept(ContentType.Application.Json)
                 defaultRequest()
             }
-    }}, baseUrl)
+    }}, json, baseUrl)
 
-    val json = createJson()
+
     var isEncoding = false
-
-    open fun createJson(): Json {
-        return Json {
-            isLenient = false
-            ignoreUnknownKeys = true
-        }
-    }
 
     open fun handleResponse(response: Response) {}
 
@@ -46,6 +41,15 @@ abstract class KtorRouter(
             uriQueryBuilder.addQueryToUri(uri)
         } else {
             uri
+        }
+    }
+
+    companion object {
+        fun createJson(): Json {
+            return Json {
+                isLenient = false
+                ignoreUnknownKeys = true
+            }
         }
     }
 }

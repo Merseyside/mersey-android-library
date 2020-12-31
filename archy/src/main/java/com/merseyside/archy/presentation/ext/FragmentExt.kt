@@ -18,7 +18,7 @@ fun <VM : ViewModel> Fragment.viewModel(
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (bundle.isNotNullAndEmpty() &&
                 factoryViewModel is ParcelableViewModel) {
-                factoryViewModel.readFrom(bundle!!)
+                factoryViewModel.readFrom(bundle)
             }
 
             return factoryViewModel as T

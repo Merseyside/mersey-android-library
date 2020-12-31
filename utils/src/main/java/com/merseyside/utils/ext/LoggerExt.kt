@@ -12,3 +12,9 @@ fun <T> T.log(tag: Any = Logger.TAG, prefix: Any? = null, suffix: Any? = null): 
 fun <T> T.log(prefix: Any? = null): T {
     return this.log(Logger.TAG, prefix)
 }
+
+inline fun <reified T> T.logMsg(msg: String): T {
+    Logger.log(T::class.simpleName, msg)
+
+    return this
+}
