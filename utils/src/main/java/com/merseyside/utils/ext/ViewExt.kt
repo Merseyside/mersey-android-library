@@ -56,25 +56,50 @@ interface CallbackUnregistrar {
 internal class TextChangeListenerUnregistrar(
     private val textView: TextView,
     private val textWatcher: TextWatcher
-): CallbackUnregistrar {
+) : CallbackUnregistrar {
 
     override fun removeCallback() {
         textView.removeTextChangedListener(textWatcher)
     }
 }
 
-fun TextView.addTextChangeListener(callback: (s: String?, length: Int, start: Int, before: Int, count: Int) -> Unit): CallbackUnregistrar {
-    val textWatcher = object: TextWatcher {
+fun TextView.addTextChangeListener(
+    callback: (
+        view: TextView,
+        newValue: String?,
+        oldValue: String?,
+        length: Int,
+        start: Int,
+        before: Int,
+        count: Int
+    ) -> Boolean
+): CallbackUnregistrar {
+    val textWatcher = object : TextWatcher {
+        private var oldValue: String? = null
+
         override fun afterTextChanged(s: Editable?) {}
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            callback(s?.toString(), s?.length ?: 0, start, before, count)
+            val newValue = s?.toString()
+
+            if (oldValue != newValue) {
+                if (callback(
+                        this@addTextChangeListener,
+                        newValue,
+                        oldValue,
+                        newValue?.length ?: 0,
+                        start,
+                        before,
+                        count
+                    )
+                ) {
+                    oldValue = newValue
+                }
+            }
         }
     }
-
     this.addTextChangedListener(textWatcher)
-
     return TextChangeListenerUnregistrar(this, textWatcher)
 }
 

@@ -6,19 +6,13 @@ import com.merseyside.adapters.base.ItemPositionInterface
 import com.merseyside.adapters.base.OnItemClickListener
 
 abstract class BaseAdapterViewModel<M>(
-    obj: M
+    var obj: M
 ) : BaseObservable() {
-
-    abstract var obj: M
 
     private lateinit var itemPosition: ItemPositionInterface<BaseAdapterViewModel<M>>
 
     internal fun setItemPositionInterface(i: ItemPositionInterface<BaseAdapterViewModel<M>>) {
         itemPosition = i
-    }
-
-    init {
-        this.obj = obj
     }
 
     private val listeners: ArrayList<OnItemClickListener<M>>

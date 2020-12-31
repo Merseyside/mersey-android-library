@@ -16,7 +16,8 @@ class MainFragment : BaseSampleFragment<FragmentMainBinding, MainViewModel>() {
 
     override fun getBindingVariable() = BR.viewModel
     override fun getLayoutId() = R.layout.fragment_main
-    override fun getTitle(context: Context): String = "Mersey Library"
+    override fun getTitle(context: Context): String = "Choose a feature"
+    override fun hasTitleBackButton() = false
 
     override fun performInjection(bundle: Bundle?) {
         DaggerMainComponent.builder()
@@ -25,10 +26,9 @@ class MainFragment : BaseSampleFragment<FragmentMainBinding, MainViewModel>() {
             .build().inject(this)
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.adapteresButton.onClick { navController.navigate(R.id.action_mainFragment_to_adaptersFragment) }
+        binding.adaptersButton.onClick { navController.navigate(R.id.action_mainFragment_to_adaptersFragment) }
     }
 }

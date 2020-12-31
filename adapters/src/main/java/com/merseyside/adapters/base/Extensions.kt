@@ -2,6 +2,7 @@ package com.merseyside.adapters.base
 
 import androidx.recyclerview.widget.SortedList
 import com.merseyside.adapters.model.BaseComparableAdapterViewModel
+import com.merseyside.utils.ext.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -9,7 +10,7 @@ import java.util.NoSuchElementException
 import kotlin.jvm.Throws
 
 @Throws(IllegalArgumentException::class)
-fun <T : BaseComparableAdapterViewModel<M>, M : Any> SortedList<T>.isEquals(list : MutableList<T>) : Boolean {
+fun <T : BaseComparableAdapterViewModel<M>, M : Any> SortedList<T>.isEquals(list : List<T>) : Boolean {
 
     if (this.size() != list.size) {
         return false
@@ -29,7 +30,7 @@ fun <T : BaseComparableAdapterViewModel<M>, M : Any> SortedList<T>.isEquals(list
 }
 
 fun <T : BaseComparableAdapterViewModel<M>, M : Any> SortedList<T>.isNotEquals(
-    list : MutableList<T>
+    list : List<T>
 ) : Boolean = !this.isEquals(list)
 
 inline fun <T> SortedList<T>.forEach(onValue: (T) -> Unit) {
@@ -56,7 +57,7 @@ inline fun <T> SortedList<T>.indexOf(predecate: (T) -> Boolean): Int {
 }
 
 fun <T> SortedList<T>.removeAll(list: List<T>) {
-    list.forEach { remove(it) }
+    list.forEach { remove(it)}
 }
 
 fun <M> HasOnItemClickListener<M>.onItemClicked(onClick: (M) -> Unit): OnItemClickListener<M> {

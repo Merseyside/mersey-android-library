@@ -10,8 +10,8 @@ object LibraryVersions {
         const val targetSdk = 29
         const val minSdk = 17
 
-        const val version = "1.2.8"
-        const val versionCode = 128
+        const val version = "1.2.9"
+        const val versionCode = 129
     }
 
     object Common {
@@ -41,7 +41,8 @@ object LibraryVersions {
             const val coroutines = "1.4.2"
             const val fragment = "1.2.5"
             const val constraintLayout = "2.0.4"
-            const val lifecycle = "2.2.0"
+            const val lifecycle_extension = "2.2.0"
+            const val lifecycle = "2.3.0-rc01"
             const val cardView = "1.0.0"
             const val recyclerView = "1.1.0"
             const val dagger = "2.29.1"

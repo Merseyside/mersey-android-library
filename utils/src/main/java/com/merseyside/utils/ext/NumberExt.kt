@@ -1,6 +1,7 @@
 package com.merseyside.utils.ext
 
-import androidx.annotation.NonNull
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 fun Float.trimTrailingZero(): String {
     return this.toString().trimTrailingZero()
@@ -30,21 +31,40 @@ fun Short.isZero(): Boolean {
     return this.toInt() == 0
 }
 
-@NonNull
+@OptIn(ExperimentalContracts::class)
 fun Float?.isNotNullAndZero(): Boolean {
+    contract {
+        returns(true) implies (this@isNotNullAndZero != null)
+    }
+
     return this != null && this.isNotZero()
 }
 
 
+@OptIn(ExperimentalContracts::class)
 fun Int?.isNotNullAndZero(): Boolean {
+    contract {
+        returns(true) implies (this@isNotNullAndZero != null)
+    }
+
     return this != null && this.isNotZero()
 }
 
+@OptIn(ExperimentalContracts::class)
 fun Double?.isNotNullAndZero(): Boolean {
+    contract {
+        returns(true) implies (this@isNotNullAndZero != null)
+    }
+
     return this != null && this.isNotZero()
 }
 
+@OptIn(ExperimentalContracts::class)
 fun Short?.isNotNullAndZero(): Boolean {
+    contract {
+        returns(true) implies (this@isNotNullAndZero != null)
+    }
+
     return this != null && this.toInt().isNotZero()
 }
 

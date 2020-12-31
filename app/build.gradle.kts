@@ -14,6 +14,7 @@ android {
         versionName = LibraryVersions.Android.version
 
         multiDexEnabled = true
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
@@ -76,10 +77,11 @@ android {
 
 val androidLibs = listOf(
     LibraryDeps.Libs.Android.recyclerView.name,
-    LibraryDeps.Libs.Android.coroutines.name,
+    "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2",
     LibraryDeps.Libs.Android.navigation.name,
     LibraryDeps.Libs.Android.navigationUi.name,
     LibraryDeps.Libs.Android.constraintLayout.name,
+    LibraryDeps.Libs.Android.lifecycleLiveDataKtx.name,
     LibraryDeps.Libs.Android.appCompat.name,
     LibraryDeps.Libs.Android.material.name,
     LibraryDeps.Libs.Android.lifecycle.name,
@@ -99,6 +101,6 @@ dependencies {
     modulez.forEach { module -> implementation(project(module)) }
     androidLibs.forEach { lib -> implementation(lib) }
 
-    kapt(LibraryDeps.Libs.Android.daggerCompiler.name)
+    kaptLibrary(LibraryDeps.Libs.Android.daggerCompiler)
     compileOnly("javax.annotation:jsr250-api:1.0")
 }

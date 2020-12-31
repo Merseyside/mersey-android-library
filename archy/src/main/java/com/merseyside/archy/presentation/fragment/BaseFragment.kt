@@ -295,6 +295,10 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
         return view
     }
 
+    open fun goBack() {
+        requireActivity().onBackPressed()
+    }
+
     open fun onFragmentResult(resultCode: Int, requestCode: Int, bundle: Bundle? = null) {}
 
     class FragmentResult(

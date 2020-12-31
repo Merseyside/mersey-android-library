@@ -6,8 +6,7 @@ import com.merseyside.adapters.model.BaseComparableAdapterViewModel
 import com.merseyside.adapters.view.TypedBindingHolder
 import com.merseyside.utils.Logger
 import com.merseyside.utils.concurency.Locker
-import com.merseyside.utils.concurency.withLock
-import com.merseyside.utils.ext.isNotNullAndEmpty
+import com.merseyside.utils.ext.*
 import com.merseyside.utils.isMainThread
 import com.merseyside.utils.mainThreadIfNeeds
 import kotlinx.coroutines.*
@@ -25,8 +24,7 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
 
     private val computationContext = Dispatchers.Default
 
-    override val mutex: Mutex
-        get() = Mutex()
+    override val mutex: Mutex = Mutex()
 
     /**
      * Any children of this class have to pass M and T types. Otherwise, this cast throws CastException
@@ -36,7 +34,6 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
 
     override val modelList: MutableList<T> = ArrayList()
     private val sortedList: SortedList<T>
-    private var filteredList: MutableList<T> = ArrayList()
 
     private var addJob: Job? = null
     private var updateJob: Job? = null
@@ -51,6 +48,7 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
     private val filtersMap by lazy { HashMap<String, Any>() }
     private val notAppliedFiltersMap by lazy { HashMap<String, Any>() }
     private var filterPattern: String = ""
+    private var filterKeyMap: MutableMap<String, List<T>> = HashMap()
 
     init {
         sortedList = SortedList(persistentClass, object : SortedList.Callback<T>() {
@@ -274,48 +272,52 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
 
         if (filtersMap.containsKey(key)) {
             filtersMap.remove(key)
-            notAppliedFiltersMap.putAll(filtersMap)
-            filtersMap.clear()
+
+            filterKeyMap.remove(key)
 
             isFiltered = false
         }
     }
 
     fun removeFilter(key: String) {
+        notAppliedFiltersMap.remove(key)
         if (filtersMap.containsKey(key)) {
             filtersMap.remove(key)
 
-            notAppliedFiltersMap.putAll(filtersMap)
-            filtersMap.clear()
+            filterKeyMap.remove(key)
 
-            filteredList.clear()
             isFiltered = false
         }
-
-        notAppliedFiltersMap.remove(key)
     }
 
     private fun applyFilters(models: List<T>): List<T>? {
         try {
             if (notAppliedFiltersMap.isNotEmpty()) {
-                val filteredList = run filterLabel@{
-                    return@filterLabel models.filter {
-                        if (isMainThread() || isActive) {
-                            filter(it, notAppliedFiltersMap)
-                        } else {
-                            return@filterLabel
-                        }
-                    }.toMutableList()
+                notAppliedFiltersMap.forEach { entry ->
+                    val filteredByKeyList = models.mapNotNull {
+                        if (filter(it, entry.key, entry.value)) it
+                        else null
+                    }
+
+                    filterKeyMap[entry.key] = if (filterKeyMap.contains(entry.key)) {
+                        filterKeyMap[entry.key]!!.toMutableList().apply { addAll(filteredByKeyList) }
+                    } else {
+                        filteredByKeyList
+                    }
                 }
 
-                if (isMainThread() || filterJob?.isActive == true) {
-                    isFiltered = true
+                filtersMap.putAll(notAppliedFiltersMap)
+                notAppliedFiltersMap.clear()
 
-                    filtersMap.putAll(notAppliedFiltersMap)
-                    notAppliedFiltersMap.clear()
+                isFiltered = true
+            }
 
-                    return filteredList as List<T>
-                }
+            if (isMainThread() || filterJob?.isActive == true) {
+
+                return filterKeyMap
+                    .map { entry -> entry.value }
+                    .intersect()
+                    .toMutableList()
             }
 
         } catch (e: ConcurrentModificationException) {
@@ -334,22 +336,16 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
         }
 
         if (filteredList != null) {
-            this.filteredList.addAll(filteredList)
-
-            if (this.sortedList.isNotEquals(this.filteredList)) addList(filteredList)
+            if (this.sortedList.isNotEquals(filteredList)) addList(filteredList)
         }
     }
 
     fun applyFilters() {
-        val models: MutableList<T> = if (filteredList.isNotEmpty()) filteredList else modelList
+        val listToSet = if (notAppliedFiltersMap.isNullOrEmpty() && filtersMap.isNullOrEmpty()) modelList
+        else applyFilters(modelList)
 
-        val filteredList = applyFilters(models)
-
-        if (filteredList.isNotNullAndEmpty()) {
-            this.filteredList = filteredList.toMutableList()
-
-            if (this.sortedList.isNotEquals(this.filteredList)) setList(filteredList)
-        }
+        if (listToSet != null &&
+            this.sortedList.isNotEquals(listToSet)) setList(listToSet)
     }
 
     fun applyFiltersAsync() {
@@ -422,8 +418,8 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
         isFiltered = false
 
         filtersMap.clear()
-        filteredList.clear()
         notAppliedFiltersMap.clear()
+        filterKeyMap.clear()
 
         setList(modelList)
     }
@@ -432,7 +428,7 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
         throw NotImplementedError()
     }
 
-    override fun filter(obj: T, filterMap: Map<String, Any>): Boolean {
+    override fun filter(obj: T, key: String, filterObj: Any): Boolean {
         throw NotImplementedError()
     }
 
@@ -476,12 +472,18 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
         removeList(modelList)
     }
 
+    /**
+     * Be sure your model's compareTo method handles equal items!
+     */
     private fun removeList(list: List<T>, isNotifyPositionChanged: Boolean = true) {
         if (list.isNotEmpty()) {
             val smallestPosition = getSmallestPosition(list)
 
             modelList.removeAll(list)
-            filteredList.removeAll(list)
+            filterKeyMap.clear()
+            filterKeyMap.forEach { entry ->
+                filterKeyMap[entry.key] = entry.value.toMutableList().apply { removeAll(list) }
+            }
 
             sortedList.beginBatchedUpdates()
             sortedList.removeAll(list)
@@ -496,7 +498,10 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
 
         sortedList.remove(model)
         modelList.remove(model)
-        filteredList.remove(model)
+        filterKeyMap.forEach { entry ->
+            filterKeyMap[entry.key] = entry.value.toMutableList().apply { remove(model) }
+        }
+        filterKeyMap.clear()
 
         if (isNotifyPositionChanged) notifyPositionsChanged(position)
     }

@@ -1,8 +1,8 @@
 <resources>
 
     <style name="Theme.Sample.21" parent="Theme.Sample.Base">
-        <item name="android:navigationBarColor">@color/dark</item>
-        <item name="android:statusBarColor">@color/dark</item>
+        <item name="android:navigationBarColor">@color/night</item>
+        <item name="android:statusBarColor">@color/night</item>
     </style>
 
     <style name="Theme.Sample" parent="Theme.Sample.21"/>
