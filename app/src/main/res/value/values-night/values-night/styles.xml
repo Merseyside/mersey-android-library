@@ -5,8 +5,8 @@
 
         <item name="colorAccent">@color/blue_primary</item>
 
-        <item name="colorPrimary">@color/dark</item>
-        <item name="colorPrimaryDark">@color/black</item>
+        <item name="colorPrimary">@color/night</item>
+        <item name="colorPrimaryDark">@color/night_dark</item>
         <item name="colorOnPrimary">@color/white</item>
 
         <item name="colorSecondary">@color/blue_primary</item>
@@ -16,10 +16,10 @@
         <item name="colorError">@color/pink</item>
         <item name="colorOnError">@color/white</item>
 
-        <item name="colorSurface">@color/dark</item>
+        <item name="colorSurface">@color/night</item>
         <item name="colorOnSurface">@color/white</item>
 
-        <item name="android:colorBackground">@color/dark</item>
+        <item name="android:colorBackground">@color/night</item>
         <item name="colorOnBackground">@color/white</item>
 
         <item name="android:textColor">@color/white</item>

@@ -34,9 +34,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    buildFeatures {
-        dataBinding = true
-    }
+    buildFeatures.dataBinding = true
 }
 
 tasks.withType<KotlinCompile> {

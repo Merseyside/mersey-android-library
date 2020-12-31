@@ -101,11 +101,14 @@ fun setText(textView: TextView, text: String?) {
 
 @BindingAdapter(value = ["app:textAttrChanged"]) // AttrChanged required postfix
 fun setTextListener(textView: TextView, listener: InverseBindingListener?) {
-    textView.addTextChangeListener { _, _, _, _, _ -> listener?.onChange() }
+    textView.addTextChangeListener { _, _, _, _, _, _, _ ->
+        listener?.onChange()
+        true
+    }
 }
 
 @InverseBindingAdapter(attribute = "app:text")
-fun getText(textView: TextView): String? {
+fun getText(textView: TextView): String {
     return textView.text.toString()
 }
 
@@ -182,9 +185,16 @@ fun setViewAttrBackgroundColor(view: View, @AttrRes attrId: Int?) {
 }
 
 @BindingAdapter("app:backgroundColorRes")
-fun setViewBackgroundColor(view: View, @ColorRes colorId: Int?) {
+fun setViewBackgroundResColor(view: View, @ColorRes colorId: Int?) {
     if (colorId.isNotNullAndZero()) {
         view.setBackgroundColor(ContextCompat.getColor(view.context, colorId!!))
+    }
+}
+
+@BindingAdapter("app:backgroundColor")
+fun setViewBackgroundColor(view: View, color: Int?) {
+    if (color.isNotNullAndZero()) {
+        view.setBackgroundColor(color)
     }
 }
 

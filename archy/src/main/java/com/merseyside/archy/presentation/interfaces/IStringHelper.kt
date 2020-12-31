@@ -2,7 +2,7 @@ package com.merseyside.archy.presentation.interfaces
 
 import android.content.Context
 import androidx.annotation.StringRes
-import com.merseyside.archy.ext.getActualString
+import com.merseyside.archy.presentation.ext.getActualString
 
 interface IStringHelper {
 

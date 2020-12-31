@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.archy.R
 import com.merseyside.utils.ext.log
 
-class MerseyRecyclerView(context: Context, attrSet: AttributeSet) : RecyclerView(context, attrSet) {
+open class MerseyRecyclerView(context: Context, attrSet: AttributeSet? = null) : RecyclerView(context, attrSet) {
     private var mMaxHeight = 0
     private var isSaveScrollPosition = true
 

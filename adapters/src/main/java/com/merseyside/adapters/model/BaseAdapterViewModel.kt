@@ -6,19 +6,13 @@ import com.merseyside.adapters.base.ItemPositionInterface
 import com.merseyside.adapters.base.OnItemClickListener
 
 abstract class BaseAdapterViewModel<M>(
-    obj: M
+    var obj: M
 ) : BaseObservable() {
-
-    abstract var obj: M
 
     private lateinit var itemPosition: ItemPositionInterface<BaseAdapterViewModel<M>>
 
     internal fun setItemPositionInterface(i: ItemPositionInterface<BaseAdapterViewModel<M>>) {
         itemPosition = i
-    }
-
-    init {
-        this.obj = obj
     }
 
     private val listeners: ArrayList<OnItemClickListener<M>>
@@ -58,21 +52,12 @@ abstract class BaseAdapterViewModel<M>(
         notifyUpdate()
     }
 
-    fun getItem(): M {
-        return obj
-    }
+    fun getItem() = obj
 
-    fun isLast(): Boolean {
-        return itemPosition.isLast(this)
-    }
-
-    fun isFirst(): Boolean {
-        return itemPosition.isFirst(this)
-    }
-
-    fun getPosition(): Int {
-        return itemPosition.getPosition(this)
-    }
+    fun getPosition() = itemPosition.getPosition(this)
+    fun getItemCount() = itemPosition.getItemCount()
+    fun isLast() = getPosition() == getItemCount() - 1
+    fun isFirst() = getPosition() == 0
 
     open fun onPositionChanged(position: Int) {}
 
@@ -87,5 +72,4 @@ abstract class BaseAdapterViewModel<M>(
     fun areItemsNotTheSame(obj: M) = !areItemsTheSame(obj)
 
     abstract fun notifyUpdate()
-
 }

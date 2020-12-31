@@ -8,8 +8,8 @@
     <color name="grey_light">#FAFAFA</color>
     <color name="grey_dark">#F1F1F1</color>
 
-    <color name="dark">#1F222C</color>
-    <color name="dark_light">#242930</color>
+    <color name="night">#1F222C</color>
+    <color name="night_dark">#191C25</color>
 
     <color name="pink">#D81B60</color>
     <color name="blue_primary">#03A9F4</color>

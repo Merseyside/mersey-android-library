@@ -10,7 +10,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.widget.Toolbar
 import com.merseyside.archy.BaseApplication
 import com.merseyside.archy.presentation.dialog.MaterialAlertDialog
-import com.merseyside.archy.ext.getActualString
+import com.merseyside.archy.presentation.ext.getActualString
 import com.merseyside.archy.presentation.fragment.BaseFragment
 import com.merseyside.archy.presentation.view.OnBackPressedListener
 import com.merseyside.archy.presentation.view.OnKeyboardStateListener

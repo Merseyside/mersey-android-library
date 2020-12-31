@@ -64,3 +64,37 @@ fun <T: Any, R : Comparable<R>> List<T>.minByNullable(selector: (T) -> R?): T? {
 fun <T: Any> List<T?>.forEachNotNull(action: (T) -> Unit): Unit {
     return this.filterNotNull().forEach(action)
 }
+
+fun List<Boolean>.forEachIsTrue(): Boolean {
+    return this.find { !it } != null
+}
+
+fun <T: Any> List<List<T>>.union(): List<T> {
+    val hasEmptyList = find { it.isEmpty() } != null
+
+    if (hasEmptyList || isEmpty()) return emptyList<T>()
+    if (size == 1) return first()
+
+    var resultList = first().toSet()
+
+    (1 until size).forEach { index ->
+        resultList = resultList.union(get(index))
+    }
+
+    return resultList.toList()
+}
+
+fun <T: Any> List<List<T>>.intersect(): List<T> {
+    val hasEmptyList = find { it.isEmpty() } != null
+
+    if (hasEmptyList || isEmpty()) return emptyList<T>().log(prefix = "here1")
+    if (size == 1) return first().log(prefix = "here2")
+
+    var resultList = first().toSet().log(prefix = "first")
+
+    (1 until size).forEach { index ->
+        resultList = resultList.intersect(get(index))
+    }
+
+    return resultList.toList()
+}

@@ -65,10 +65,13 @@ object LibraryDeps {
                 name = "androidx.constraintlayout:constraintlayout:${LibraryVersions.Libs.Android.constraintLayout}"
             )
             val lifecycle = AndroidLibrary(
-                name = "androidx.lifecycle:lifecycle-extensions:${LibraryVersions.Libs.Android.lifecycle}"
+                name = "androidx.lifecycle:lifecycle-extensions:${LibraryVersions.Libs.Android.lifecycle_extension}"
             )
             val lifecycleViewModel = AndroidLibrary(
                 name = "androidx.lifecycle:lifecycle-viewmodel-ktx:${LibraryVersions.Libs.Android.lifecycle}"
+            )
+            val lifecycleLiveDataKtx = AndroidLibrary(
+                name = "androidx.lifecycle:lifecycle-livedata-ktx:${LibraryVersions.Libs.Android.lifecycle}"
             )
             val cardView = AndroidLibrary(
                 name = "androidx.cardview:cardview:${LibraryVersions.Libs.Android.cardView}"

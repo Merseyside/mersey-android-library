@@ -3,12 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/fullscreenFragment">
+    app:startDestination="@id/mainFragment">
 
     <fragment
-        android:id="@+id/fullscreenFragment"
-        android:name="com.merseyside.merseyLib.features.main.FullscreenFragment"
-        android:label="fragment_fullscreen"
-        tools:layout="@layout/fragment_fullscreen"
+        android:id="@+id/mainFragment"
+        android:name="com.merseyside.merseyLib.application.main.fragment.view.MainFragment"
+        android:label="main_fragment"
+        tools:layout="@layout/fragment_main"
+        app:navGraph="@navigation/nav_graph">
+
+        <action
+            android:id="@+id/action_mainFragment_to_adaptersFragment"
+            app:destination="@id/adaptersFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/adaptersFragment"
+        android:name="com.merseyside.merseyLib.features.adapters.view.AdaptersFragment"
+        android:label="adapters_fragment"
+        tools:layout="@layout/fragment_adapters"
         app:navGraph="@navigation/nav_graph"/>
 </navigation>

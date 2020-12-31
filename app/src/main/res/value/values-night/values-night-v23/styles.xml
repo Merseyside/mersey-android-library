@@ -3,7 +3,7 @@
 
     <style name="Theme.Sample.23" parent="Theme.Sample.21">
         <item name="android:windowLightStatusBar">false</item>
-        <item name="android:statusBarColor">@color/dark</item>
+        <item name="android:statusBarColor">@color/night</item>
     </style>
 
     <style name="Theme.Sample" parent="Theme.Sample.23"/>
