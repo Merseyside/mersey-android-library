@@ -273,16 +273,8 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
 
     protected abstract fun createItemViewModel(obj: M): T
 
-//    @Suppress("UNCHECKED_CAST")
-//    override fun getPosition(model: BaseAdapterViewModel<M>): Int {
-//        return getPositionOfModel(model as T)
-//    }
-//
-//    override fun isLast(model: BaseAdapterViewModel<M>): Boolean {
-//        return getPosition(model) == itemCount - 1
-//    }
-//
-//    override fun isFirst(model: BaseAdapterViewModel<M>): Boolean {
-//        return getPosition(model) == 0
-//    }
+    @Suppress("UNCHECKED_CAST")
+    override fun getPosition(model: BaseAdapterViewModel<M>): Int {
+        return getPositionOfModel(model as T)
+    }
 }

@@ -13,14 +13,11 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import java.lang.reflect.ParameterizedType
 import kotlin.collections.set
-import kotlin.coroutines.CoroutineContext
 
 @Suppress("UNCHECKED_CAST")
-abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
-    : BaseAdapter<M, T>(), CoroutineScope, Locker {
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + SupervisorJob()
+abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>(
+    private val scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+) : BaseAdapter<M, T>(), Locker {
 
     private val computationContext = Dispatchers.Default
 
@@ -175,7 +172,7 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
     }
 
     fun addAsync(list: List<M>, func: () -> Unit = {}) {
-        addJob = asynchronously {
+        addJob = scope.asynchronously {
             withLock {
                 add(list)
                 func.invoke()
@@ -245,7 +242,7 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
         updateRequest: UpdateRequest<M>,
         onUpdated: () -> Unit = {}
     ) {
-        updateJob = asynchronously {
+        updateJob = scope.asynchronously {
             withLock {
                 update(updateRequest)
                 onUpdated.invoke()
@@ -349,7 +346,7 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
     }
 
     fun applyFiltersAsync() {
-        filterJob = asynchronously {
+        filterJob = scope.asynchronously {
             withLock {
                 applyFilters()
             }
@@ -393,7 +390,7 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
     override fun setFilterAsync(query: String, func: () -> Unit) {
         filterJob?.cancel()
 
-        filterJob = asynchronously {
+        filterJob = scope.asynchronously {
             withLock {
                 setFilter(query)
                 func.invoke()
@@ -437,9 +434,9 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
     fun getAllItemCount() = modelList.size
 
     override fun clear() {
-        cancel()
+        scope.cancel()
 
-        asynchronously {
+        scope.asynchronously {
             withLock {
                 sortedList.beginBatchedUpdates()
                 sortedList.clear()
@@ -534,9 +531,5 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
         } catch (e: Exception) {
             throw IndexOutOfBoundsException("List is empty")
         }
-    }
-
-    override fun getPosition(model: BaseAdapterViewModel<M>): Int {
-        return getPositionOfModel(model as T)
     }
 }
