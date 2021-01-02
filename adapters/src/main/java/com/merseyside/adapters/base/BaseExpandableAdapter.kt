@@ -5,11 +5,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.model.BaseExpandableAdapterViewModel
 import com.merseyside.utils.ext.isNotNullAndEmpty
 import com.merseyside.adapters.view.TypedBindingHolder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 
 abstract class BaseExpandableAdapter<M: Any, T: BaseExpandableAdapterViewModel<M, L>, L: Any> (
     selectableMode: SelectableMode = SelectableMode.MULTIPLE,
-    isAllowToCancelSelection: Boolean = true
-): BaseSelectableAdapter<M, T>(selectableMode, isAllowToCancelSelection) {
+    isAllowToCancelSelection: Boolean = true,
+    scope: CoroutineScope = CoroutineScope(
+        Dispatchers.Main + SupervisorJob())
+): BaseSelectableAdapter<M, T>(selectableMode, isAllowToCancelSelection, scope = scope) {
 
     private var adapterList: MutableList<Pair<T, BaseAdapter<L, *>>> = ArrayList()
     private var updateRequest: UpdateRequest<M>? = null

@@ -1,13 +1,17 @@
 package com.merseyside.adapters.base
 
 import com.merseyside.adapters.model.BaseSelectableAdapterViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlin.jvm.Throws
 
 abstract class BaseSelectableAdapter<M: Any, T: BaseSelectableAdapterViewModel<M>>(
     selectableMode: SelectableMode = SelectableMode.SINGLE,
     var isAllowToCancelSelection: Boolean = selectableMode == SelectableMode.MULTIPLE,
-    isSelectEnabled: Boolean = true
-) : BaseSortedAdapter<M, T>() {
+    isSelectEnabled: Boolean = true,
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+) : BaseSortedAdapter<M, T>(scope) {
 
     interface OnItemSelectedListener<M> {
         fun onSelected(item: M, isSelected: Boolean, isSelectedByUser: Boolean)

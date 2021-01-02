@@ -1,7 +1,6 @@
 package com.merseyside.adapters.base
 
 import androidx.recyclerview.widget.SortedList
-import com.merseyside.adapters.model.BaseAdapterViewModel
 import com.merseyside.adapters.model.BaseComparableAdapterViewModel
 import com.merseyside.adapters.view.TypedBindingHolder
 import com.merseyside.utils.Logger
