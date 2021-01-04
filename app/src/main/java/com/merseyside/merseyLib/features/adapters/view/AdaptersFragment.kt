@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
 import com.merseyside.adapters.base.UpdateRequest
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
@@ -19,7 +20,7 @@ import com.merseyside.utils.ext.log
 
 class AdaptersFragment : BaseSampleFragment<FragmentAdaptersBinding, AdaptersViewModel>() {
 
-    private val adapter = SampleAdapter()
+    private val adapter = SampleAdapter(lifecycleScope)
 
     override fun getBindingVariable() = BR.viewModel
 

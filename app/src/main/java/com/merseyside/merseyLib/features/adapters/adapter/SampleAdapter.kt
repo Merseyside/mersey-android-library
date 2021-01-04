@@ -7,8 +7,9 @@ import com.merseyside.merseyLib.features.adapters.entity.HexColor
 import com.merseyside.merseyLib.features.adapters.model.ColorItemViewModel
 import com.merseyside.utils.ext.forEachIsTrue
 import com.merseyside.utils.ext.log
+import kotlinx.coroutines.CoroutineScope
 
-class SampleAdapter : BaseSortedAdapter<HexColor, ColorItemViewModel>() {
+class SampleAdapter(scope: CoroutineScope) : BaseSortedAdapter<HexColor, ColorItemViewModel>(scope) {
 
     override fun getLayoutIdForPosition(position: Int): Int {
         return R.layout.item_color
