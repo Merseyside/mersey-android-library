@@ -1,5 +1,4 @@
 @file:Suppress("UNCHECKED_CAST")
-
 package com.merseyside.utils.time
 
 import android.content.Context
@@ -18,8 +17,16 @@ operator fun <T: TimeUnit> T.div(divider: Long): T {
     return newInstance(value / divider) as T
 }
 
+operator fun <T: TimeUnit> T.div(divider: Double): T {
+    return newInstance((value / divider).toLong()) as T
+}
+
 operator fun <T: TimeUnit> T.times(times: Long): T {
     return newInstance(value * times) as T
+}
+
+operator fun <T: TimeUnit> T.times(times: Double): T {
+    return newInstance((value * times).toLong()) as T
 }
 
 operator fun <T: TimeUnit> T.minus(unary: Long): T {
@@ -42,17 +49,21 @@ operator fun <T: TimeUnit> T.minus(unary: TimeUnit): T {
     return this - convert(unary)
 }
 
-operator fun <T: TimeUnit> T.compareTo(other: T): Int {
-    return this.toMillisLong().compareTo(other.toMillisLong())
-}
-
 fun <T: TimeUnit> T.isEqual(other: T): Boolean {
     return this.toMillisLong() == other.toMillisLong()
 }
 
+operator fun <T: TimeUnit> T.compareTo(value: Int): Int {
+    return this.toInt().compareTo(value)
+}
+
+operator fun <T: TimeUnit> T.compareTo(value: Long): Int {
+    return this.toLong().compareTo(value)
+}
+
 fun <T: TimeUnit> T.isNotEqual(other: T) = !isEqual(other)
 
-interface TimeUnit {
+interface TimeUnit : Comparable<TimeUnit> {
 
     val value: Long
 
@@ -79,10 +90,10 @@ interface TimeUnit {
     override fun toString(): String
 
     /**
-     * Returns true if value <= 0
+     * Returns true if value == 0
      */
     fun isEmpty(): Boolean {
-        return value <= 0
+        return value == 0L
     }
 
     fun isNotEmpty() = !isEmpty()
@@ -101,6 +112,10 @@ interface TimeUnit {
         return value.toLong()
     }
 
+    override fun compareTo(other: TimeUnit): Int {
+        return this.toMillisLong().compareTo(other.toMillisLong())
+    }
+
     companion object {
         fun getEmpty(): TimeUnit {
             return Millis(0)
@@ -112,8 +127,9 @@ inline class Millis(override val value: Long): TimeUnit {
 
     internal constructor(unit: TimeUnit): this(unit.value)
 
-    constructor(string: String): this(string.toLong())
-    constructor(int: Int): this(int.toString())
+    constructor(number: Number): this(number.toLong())
+    constructor(str: String): this(str.toLong())
+    constructor(): this(0)
 
     override fun toMillis(): Millis {
         return this
@@ -148,8 +164,9 @@ inline class Seconds(override val value: Long): TimeUnit {
 
     internal constructor(unit: TimeUnit): this(unit.value)
 
-    constructor(string: String): this(string.toLong())
-    constructor(int: Int): this(int.toString())
+    constructor(number: Number): this(number.toLong())
+    constructor(str: String): this(str.toLong())
+    constructor(): this(0)
 
     override fun toMillis(): Millis {
         return Millis(value * Conversions.MILLIS_CONST)
@@ -184,8 +201,9 @@ inline class Minutes(override val value: Long): TimeUnit {
 
     internal constructor(unit: TimeUnit): this(unit.value)
 
-    constructor(string: String): this(string.toLong())
-    constructor(int: Int): this(int.toString())
+    constructor(number: Number): this(number.toLong())
+    constructor(str: String): this(str.toLong())
+    constructor(): this(0)
 
     override fun toMillis(): Millis {
         return Millis(toSeconds() * Conversions.MILLIS_CONST)
@@ -220,8 +238,9 @@ inline class Hours(override val value: Long): TimeUnit {
 
     internal constructor(unit: TimeUnit): this(unit.value)
 
-    constructor(string: String): this(string.toLong())
-    constructor(int: Int): this(int.toString())
+    constructor(number: Number): this(number.toLong())
+    constructor(str: String): this(str.toLong())
+    constructor(): this(0)
 
     override fun toMillis(): Millis {
         return Millis(toSeconds() * Conversions.MILLIS_CONST)
@@ -256,8 +275,9 @@ inline class Days(override val value: Long): TimeUnit {
 
     internal constructor(unit: TimeUnit): this(unit.value)
 
-    constructor(string: String): this(string.toLong())
-    constructor(int: Int): this(int.toString())
+    constructor(number: Number): this(number.toLong())
+    constructor(str: String): this(str.toLong())
+    constructor(): this(0)
 
     override fun toMillis(): Millis {
         return Millis(toSeconds() * Conversions.MILLIS_CONST)

@@ -13,7 +13,7 @@ import com.merseyside.utils.ext.minByNullable
 
 abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
     : RecyclerView.Adapter<TypedBindingHolder<T>>(),
-    ItemPositionInterface<BaseAdapterViewModel<M>>,
+    ItemCallback<BaseAdapterViewModel<M>>,
     HasOnItemClickListener<M> {
 
     protected var isRecyclable: Boolean = true
@@ -42,7 +42,9 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
         listener?.let { obj.setOnItemClickListener(listener!!) }
         bind(holder, obj)
 
-        holder.setIsRecyclable(isRecyclable)
+        if (!isRecyclable || isRecyclable && !holder.isRecyclable) {
+            holder.setIsRecyclable(isRecyclable)
+        }
     }
 
     @CallSuper
@@ -73,6 +75,7 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
     override fun getItemCount() = modelList.size
 
     protected open fun add(model: T) {
+
         modelList.add(model)
     }
 
@@ -118,7 +121,7 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
 
             modelList.removeAll(list)
 
-            notifyPositionsChanged(smallestPosition)
+            notifyItemsRemoved(smallestPosition)
         }
     }
 
@@ -126,7 +129,7 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
         val position = getPositionOfModel(obj)
         modelList.remove(obj)
 
-        notifyPositionsChanged(position)
+        notifyItemsRemoved(position)
     }
 
     protected fun getSmallestPosition(list: List<T>): Int {
@@ -145,12 +148,21 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
         }
     }
 
-    protected open fun notifyPositionsChanged(startWithPosition: Int) {
-        if (startWithPosition < itemCount - 1) {
-            (startWithPosition until itemCount).forEach { index ->
+    protected open fun notifyItemsRemoved(startsWithPosition: Int) {
+        if (startsWithPosition < itemCount - 1) {
+            (startsWithPosition until itemCount).forEach { index ->
                 modelList[index].onPositionChanged(index)
             }
         }
+    }
+
+    /**
+     * -1 means item has removed.
+     */
+    protected open fun notifyItemMoved(
+        toPosition: Int
+    ) {
+        getModelByPosition(toPosition).onPositionChanged(toPosition)
     }
 
     open fun clear() {
@@ -272,9 +284,4 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
     }
 
     protected abstract fun createItemViewModel(obj: M): T
-
-    @Suppress("UNCHECKED_CAST")
-    override fun getPosition(model: BaseAdapterViewModel<M>): Int {
-        return getPositionOfModel(model as T)
-    }
 }

@@ -5,11 +5,11 @@ plugins {
     plugin(LibraryDeps.Plugins.kotlinAndroid)
     plugin(LibraryDeps.Plugins.kotlinKapt)
     plugin(LibraryDeps.Plugins.kotlinSerialization)
-    plugin(LibraryDeps.Plugins.jitpack)
+    plugin(LibraryDeps.Plugins.mavenPublish)
 }
 
-group = "com.github.Merseyside"
-version = LibraryVersions.Android.version
+group = LibraryVersions.Application.publishingId
+version = LibraryVersions.Application.version
 
 android {
     compileSdkVersion(LibraryVersions.Android.compileSdk)
@@ -17,8 +17,8 @@ android {
     defaultConfig {
         minSdkVersion(LibraryVersions.Android.minSdk)
         targetSdkVersion(LibraryVersions.Android.targetSdk)
-        versionCode = LibraryVersions.Android.versionCode
-        versionName = LibraryVersions.Android.version
+        versionCode = LibraryVersions.Application.versionCode
+        versionName = LibraryVersions.Application.version
     }
 
     buildTypes {
@@ -45,22 +45,22 @@ tasks.withType<KotlinCompile> {
 }
 
 val androidLibs = listOf(
-    LibraryDeps.Libs.Android.appCompat.name,
-    LibraryDeps.Libs.Android.material.name,
-    LibraryDeps.Libs.Android.coroutines.name,
-    LibraryDeps.Libs.Android.reflect.name,
-    LibraryDeps.Libs.Android.paging.name,
-    LibraryDeps.Libs.Android.billing.name,
-    LibraryDeps.Libs.Android.billingKtx.name,
-    LibraryDeps.Libs.Android.publisher.name,
-    LibraryDeps.Libs.Android.oauth2.name,
-    LibraryDeps.Libs.MultiPlatform.serialization.android!!,
-    LibraryDeps.Libs.Android.playCore.name,
-    LibraryDeps.Libs.Android.coil.name
+    LibraryDeps.Libs.Android.appCompat,
+    LibraryDeps.Libs.Android.material,
+    LibraryDeps.Libs.Android.coroutines,
+    LibraryDeps.Libs.Android.reflect,
+    LibraryDeps.Libs.Android.paging,
+    LibraryDeps.Libs.Android.billing,
+    LibraryDeps.Libs.Android.billingKtx,
+    LibraryDeps.Libs.Android.publisher,
+    LibraryDeps.Libs.Android.oauth2,
+    LibraryDeps.Libs.Android.serialization,
+    LibraryDeps.Libs.Android.playCore,
+    LibraryDeps.Libs.Android.coil
 )
 
 dependencies {
-    androidLibs.forEach { lib -> implementation(lib)}
+    androidLibs.forEach { lib -> implementation(lib.name)}
 }
 
 repositories {

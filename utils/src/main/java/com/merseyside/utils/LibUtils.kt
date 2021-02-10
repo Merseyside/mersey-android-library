@@ -18,14 +18,15 @@ import android.os.Looper
 import android.view.KeyCharacterMap
 import android.view.KeyEvent
 import android.view.ViewConfiguration
+import androidx.annotation.DimenRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
 import com.merseyside.utils.ext.toHandlerCanceller
 import com.merseyside.utils.time.TimeUnit
-import com.merseyside.utils.time.getCurrentTimeUnit
 import java.util.*
-import kotlin.jvm.Throws
+import kotlin.math.max
+import kotlin.math.min
 
 fun getLocalizedContext(localeManager: LocaleManager): Context {
     return if (localeManager.language.isNotEmpty()) {
@@ -35,7 +36,7 @@ fun getLocalizedContext(localeManager: LocaleManager): Context {
     }
 }
 
-fun randomBool(positiveProbability: Float): Boolean {
+fun randomBool(positiveProbability: Float = 0.5F): Boolean {
     return when {
         positiveProbability >= 1f -> true
         positiveProbability <= 0f -> false
@@ -228,4 +229,19 @@ fun getDrawableResourceIdByName(context: Context, name: String): Int {
         name, "drawable",
         context.packageName
     )
+}
+
+fun <T> emptyMutableList(): MutableList<T> {
+    return emptyList<T>().toMutableList()
+}
+
+fun getDimension(context: Context, @DimenRes res: Int): Float {
+    return context.resources.getDimension(res) / context.resources.displayMetrics.density
+}
+
+fun <T: Number> getMinMax(first: T, second: T): Pair<T, T> {
+    val min = min(first.toInt(), second.toInt())
+    val max = max(first.toInt(), second.toInt())
+
+    return min as T to max as T
 }

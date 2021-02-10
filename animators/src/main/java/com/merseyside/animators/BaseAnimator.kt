@@ -1,18 +1,21 @@
 package com.merseyside.animators
 
 import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.os.Build
 import com.merseyside.utils.Logger
 import com.merseyside.utils.delayedMainThread
+import com.merseyside.utils.emptyMutableList
+import com.merseyside.utils.ext.log
 import com.merseyside.utils.time.Millis
 
 abstract class BaseAnimator {
 
     var isLogging = false
 
-    private var isLegacy = false
+    private var isLegacy = Build.VERSION.SDK_INT < Build.VERSION_CODES.O
     private var isReverse = false
 
     set(value) {
@@ -23,15 +26,9 @@ abstract class BaseAnimator {
         }
     }
 
-    private val listenerList: MutableList<Animator.AnimatorListener> by lazy { ArrayList<Animator.AnimatorListener>() }
+    private val listenerList: MutableList<Animator.AnimatorListener> by lazy { emptyMutableList() }
 
     fun getListeners(): List<Animator.AnimatorListener> = listenerList
-
-    init {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            isLegacy = true
-        }
-    }
 
     private var internalCallback: Animator.AnimatorListener? = null
 
@@ -39,6 +36,9 @@ abstract class BaseAnimator {
     private var onRepeatCallback: (animation: Animator?, isReverse: Boolean) -> Unit? = { _, _ -> }
     private var onCancelCallback: (animation: Animator?, isReverse: Boolean) -> Unit? = { _, _ -> }
     private var onStartCallback: (animation: Animator?, isReverse: Boolean) -> Unit? = { _, _ -> }
+
+    internal abstract fun setReverse(isReverse: Boolean)
+    abstract fun getAnimator(): Animator
 
     fun setLegacyReverse(isLegacy: Boolean) {
         if (!this.isLegacy) {
@@ -52,6 +52,11 @@ abstract class BaseAnimator {
         }
     }
 
+    protected fun prepare() {
+        initInternalCallback()
+        applyListeners(getAnimator())
+    }
+
     fun start() {
         isReverse = false
 
@@ -61,15 +66,13 @@ abstract class BaseAnimator {
     }
 
     private fun play() {
-
         if (isRunning()) {
             stop()
         }
 
-        initInternalCallback()
+        prepare()
 
         getAnimator().apply {
-            applyListeners(this)
             start()
         }
     }
@@ -92,10 +95,9 @@ abstract class BaseAnimator {
         return getAnimator().isRunning
     }
 
-    internal abstract fun setReverse(isReverse: Boolean)
-
     fun reverse() {
         val animator = getAnimator()
+        animator.log()
         isReverse = true
 
         if (!isLegacy) {
@@ -106,7 +108,9 @@ abstract class BaseAnimator {
                     } else if (animator is ValueAnimator) {
                         animator.reverse()
                     }
-                } catch (e: IllegalStateException) {}
+                } catch (e: IllegalStateException) {
+                    e.printStackTrace()
+                }
 
                 return
             } else throw IllegalStateException("Wtf?")
@@ -114,8 +118,6 @@ abstract class BaseAnimator {
             play()
         }
     }
-
-    abstract fun getAnimator(): Animator
 
     fun addListener(listener: Animator.AnimatorListener) {
         listenerList.add(listener)
@@ -149,7 +151,7 @@ abstract class BaseAnimator {
 
     private fun initInternalCallback() {
         if (internalCallback == null) {
-            internalCallback = object: Animator.AnimatorListener {
+            internalCallback = object: AnimatorListenerAdapter() {
                 override fun onAnimationRepeat(animation: Animator?) {
                     onRepeatCallback.invoke(animation, isReverse)
                 }
@@ -184,5 +186,4 @@ abstract class BaseAnimator {
             Logger.log(tag, msg)
         }
     }
-
 }

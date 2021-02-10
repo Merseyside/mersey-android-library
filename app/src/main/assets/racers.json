@@ -1,0 +1,144 @@
+[
+  {
+    "team": "Alfa Romeo",
+    "racers": [
+      {
+        "name": "Kimi Räikkönen",
+        "image": "https://pbs.twimg.com/profile_images/1230075928606277632/cvJ_FW8Z_400x400.jpg"
+      },
+      {
+        "name": "Antonio Giovinazzi",
+        "image": "https://cdn-4.motorsport.com/images/mgl/2wB47NK0/s8/antonio-giovinazzi-alfa-romeo--1.jpg"
+      }
+    ]
+  },
+  {
+    "team": "Honda",
+    "racers": [
+      {
+        "name": "Pierre Gasly",
+        "image": "https://www.formula1.com/content/fom-website/en/drivers/pierre-gasly/_jcr_content/image16x9.img.1536.high.jpg"
+      },
+      {
+        "name": "Daniil Kvyat",
+        "image": "https://queen-of-motorsport.ru/wp-content/uploads/2019/03/Daniil_Kvyat.jpg"
+      }
+    ]
+  },
+  {
+    "team": "Ferrari",
+    "racers": [
+      {
+        "name": "Sebastian Vettel",
+        "image": "https://betslive.ru/wp-content/uploads/2019/10/Sebastian-Vettel.jpg"
+      },
+      {
+        "name": "Charles Leclerc",
+        "image": "https://www.formula1.com/content/fom-website/en/drivers/charles-leclerc/_jcr_content/image16x9.img.1536.high.jpg"
+      }
+    ]
+  },
+  {
+    "team": "Haas",
+    "racers": [
+      {
+        "name": "Romain Grosjean",
+        "image": "https://www.turbo.fr/sites/default/files/styles/article_690x405/public/2019-09/Romain%20Grosjean%20Haas%202020.jpg?itok=HuYGBvnz"
+      },
+      {
+        "name": "Pietro Fittipaldi",
+        "image": "https://www.thecheckeredflag.co.uk/wp-content/uploads/2020/11/Fittipaldi-Haas-1280x720.jpg"
+      },
+      {
+        "name": "Kevin Magnussen",
+        "image": "https://cdn-8.motorsport.com/images/mgl/Yv84M7G0/s8/kevin-magnussen-haas-f1-team-1.jpg"
+      }
+    ]
+  },
+  {
+    "team": "McLaren",
+    "racers": [
+      {
+        "name": "Lando Norris",
+        "image": "https://cdn-2.motorsport.com/images/mgl/6zQr7vLY/s8/lando-norris-mclaren-1.jpg"
+      },
+      {
+        "name": "Carlos Sainz Jr.",
+        "image": "https://cdn-9.motorsport.com/images/mgl/YEQkPNqY/s8/carlos-sainz-jr-mclaren-1.jpg"
+      }
+    ]
+  },
+  {
+    "team": "Mercedes",
+    "racers": [
+      {
+        "name": "Lewis Hamilton",
+        "image": "https://www.formula1.com/content/fom-website/en/drivers/lewis-hamilton/_jcr_content/image16x9.img.1536.high.jpg"
+      },
+      {
+        "name": "George Russell",
+        "image": "https://www.formula1.com/content/fom-website/en/drivers/george-russell/_jcr_content/image16x9.img.1536.high.jpg"
+      },
+      {
+        "name": "Valtteri Bottas",
+        "image": "https://cdn-4.motorsport.com/images/mgl/YpNw9gg0/s8/valtteri-bottas-mercedes-1.jpg"
+      }
+    ]
+  },
+  {
+    "team": "BWT Racing Point",
+    "racers": [
+      {
+        "name": "Sergio Pérez",
+        "image": "https://e1.365dm.com/f1/drivers/h_full_902.png"
+      },
+      {
+        "name": "Nico Hülkenberg",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQN2NCNbLaVdpHwbv7S50-ANu6Sg-Oh8M3sQw&usqp=CAU"
+      },
+      {
+        "name": "Lance Stroll",
+        "image": "https://e2.365dm.com/f1/drivers/h_full_1492.png"
+      }
+    ]
+  },
+  {
+    "team": "Aston Martin Red Bull",
+    "racers": [
+      {
+        "name": "Alexander Albon",
+        "image": "https://www.formula1.com/content/fom-website/en/drivers/alexander-albon/_jcr_content/image16x9.img.1536.high.jpg"
+      },
+      {
+        "name": "Max Verstappen",
+        "image": "https://www.formula1.com/content/fom-website/en/drivers/max-verstappen/_jcr_content/image16x9.img.1536.high.jpg"
+      }
+    ]
+  },
+  {
+    "team": "Renault DP World",
+    "racers": [
+      {
+        "name": "Daniel Ricciardo",
+        "image": "https://cdn.shopify.com/s/files/1/0258/9160/2490/files/daniel-ricciardo-profile-pic.jpg?v=18318248558567020916"
+      },
+      {
+        "name": "Esteban Ocon",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxXh8_c9ncFYG_z70c8bsmYIrduazNYcc85g&usqp=CAU"
+      }
+    ]
+  },
+  {
+    "team": "Williams",
+    "racers": [
+      {
+        "name": "Nicholas Latifi",
+        "image": "https://www.formula1.com/content/fom-website/en/drivers/nicholas-latifi/_jcr_content/image16x9.img.1536.high.jpg"
+      },
+      {
+        "name": "Jack Aitken",
+        "image": "https://az732437.vo.msecnd.net/-/media/williamsf1/racing/about/our-people/thumbnailjackaitken.ashx?revision=655fad8d-e3b9-4c47-8e9a-6b6e8d179b40"
+      }
+    ]
+  }
+]

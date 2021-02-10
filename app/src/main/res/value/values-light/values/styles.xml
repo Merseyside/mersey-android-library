@@ -21,6 +21,10 @@
         <item name="colorOnBackground">@color/black</item>
 
         <item name="android:textColor">@color/black</item>
+        <item name="android:textColorSecondary">@color/grey</item>
+
+        <item name="positive_text_color">@color/green</item>
+        <item name="negative_text_color">@color/red</item>
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light" />
