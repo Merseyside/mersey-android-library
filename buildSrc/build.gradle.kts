@@ -15,7 +15,7 @@ repositories {
 
 val multiplatform = "0.9.0"
 val kotlin = "1.4.30"
-val gradle = "7.0.0-alpha05"
+val gradle = "4.1.1"
 val mavenVersion = "2.1"
 val resources = "0.13.1"
 val sqldelight = "1.4.4"
