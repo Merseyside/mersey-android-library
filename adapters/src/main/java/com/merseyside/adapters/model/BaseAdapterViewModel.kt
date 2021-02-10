@@ -2,16 +2,17 @@ package com.merseyside.adapters.model
 
 import androidx.annotation.CallSuper
 import androidx.databinding.BaseObservable
-import com.merseyside.adapters.base.ItemPositionInterface
+import com.merseyside.adapters.base.ItemCallback
 import com.merseyside.adapters.base.OnItemClickListener
 
 abstract class BaseAdapterViewModel<M>(
     var obj: M
 ) : BaseObservable() {
 
-    private lateinit var itemPosition: ItemPositionInterface<BaseAdapterViewModel<M>>
+    private var pos: Int = NO_ITEM_POSITION
+    private lateinit var itemPosition: ItemCallback<BaseAdapterViewModel<M>>
 
-    internal fun setItemPositionInterface(i: ItemPositionInterface<BaseAdapterViewModel<M>>) {
+    internal fun setItemPositionInterface(i: ItemCallback<BaseAdapterViewModel<M>>) {
         itemPosition = i
     }
 
@@ -47,19 +48,28 @@ abstract class BaseAdapterViewModel<M>(
         return null as Void?
     }
 
-    open fun setItem(item: M) {
-        this.obj = item
-        notifyUpdate()
+    fun getItem(): M = obj
+
+    @Throws(IllegalStateException::class)
+    fun getPosition(): Int {
+        if (pos == NO_ITEM_POSITION) {
+            throw IllegalStateException("View has not initialized!")
+        }
+
+        return pos
     }
-
-    fun getItem() = obj
-
-    fun getPosition() = itemPosition.getPosition(this)
     fun getItemCount() = itemPosition.getItemCount()
     fun isLast() = getPosition() == getItemCount() - 1
     fun isFirst() = getPosition() == 0
 
-    open fun onPositionChanged(position: Int) {}
+    fun onPositionChanged(toPosition: Int) {
+        if (this.pos != toPosition) {
+            onPositionChanged(fromPosition = this.pos, toPosition = toPosition)
+            this.pos = toPosition
+        }
+    }
+
+    open fun onPositionChanged(fromPosition: Int, toPosition: Int) {}
 
     open fun isDeletable(): Boolean {
         return true
@@ -72,4 +82,8 @@ abstract class BaseAdapterViewModel<M>(
     fun areItemsNotTheSame(obj: M) = !areItemsTheSame(obj)
 
     abstract fun notifyUpdate()
+
+    companion object {
+        internal const val NO_ITEM_POSITION = -1
+    }
 }

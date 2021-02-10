@@ -17,12 +17,11 @@ abstract class BaseSingleAnimator(
     }
 
     override fun getAnimator(): Animator {
-        return if (nativeAnimator == null) {
-            nativeAnimator = builder.build()
-
-            return nativeAnimator!!
-        } else {
-            nativeAnimator!!
+        return nativeAnimator ?: run {
+            builder.build().also {
+                nativeAnimator = it
+                prepare()
+            }
         }
     }
 }

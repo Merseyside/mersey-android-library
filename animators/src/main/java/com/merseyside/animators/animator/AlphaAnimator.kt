@@ -3,24 +3,51 @@ package com.merseyside.animators.animator
 import android.animation.Animator
 import android.animation.ValueAnimator
 import android.view.View
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import com.merseyside.animators.BaseAnimatorBuilder
 import com.merseyside.animators.BaseSingleAnimator
 import com.merseyside.utils.time.TimeUnit
+import com.merseyside.utils.time.toMillis
 
 class AlphaAnimator(
     builder: Builder
 ) : BaseSingleAnimator(builder) {
 
     class Builder(
-        private val view: View,
+        val view: View,
         duration: TimeUnit,
-        private val endVisibilityState: Int = View.INVISIBLE
+        private val endVisibilityState: Int = INVISIBLE
     ): BaseAnimatorBuilder<AlphaAnimator>(duration) {
+
+        constructor(
+            view: View,
+            durationMillis: Long,
+            endVisibilityState: Int = INVISIBLE
+        ): this(view, durationMillis.toMillis(), endVisibilityState)
 
         private var values: FloatArray? = null
 
+        private var visibilityCallback: OnVisibilityChangeCallback? = null
+
         fun values(vararg values: Float) {
             this.values = values.toList().toFloatArray()
+        }
+
+        fun setOnVisibilityChangeCallback(callback: OnVisibilityChangeCallback) {
+            this.visibilityCallback = callback
+        }
+
+        fun setOnVisibilityChangeCallback(onChange: (state: Int) -> Unit) {
+            this.visibilityCallback = object: OnVisibilityChangeCallback {
+                override fun onChange(state: Int) {
+                    onChange.invoke(state)
+                }
+            }
+        }
+
+        fun removeOnVisibilityChangeCallback() {
+            visibilityCallback = null
         }
 
         private fun alphaAnimation(
@@ -59,11 +86,10 @@ class AlphaAnimator(
                     view.alpha = value
 
                     if (previousValue != value) {
-
-                        if (previousValue > 0f && previousValue.compareTo(value) == -1 && view.visibility != View.VISIBLE) {
-                            view.visibility = View.VISIBLE
-                        } else if (previousValue.compareTo(value) == 1 && value == 0f) {
-                            view.visibility = endVisibilityState
+                        if (previousValue > 0f && previousValue < value && view.visibility != VISIBLE) {
+                            view.visibility = VISIBLE.also { visibilityCallback?.onChange(it) }
+                        } else if (previousValue > value && value == 0f) {
+                            view.visibility = endVisibilityState.also { visibilityCallback?.onChange(it) }
                         }
                     }
 
@@ -87,5 +113,9 @@ class AlphaAnimator(
         override fun calculateCurrentValue(): Float {
             return view.alpha
         }
+    }
+
+    interface OnVisibilityChangeCallback {
+        fun onChange(state: Int)
     }
 }

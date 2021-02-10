@@ -2,14 +2,15 @@ package com.merseyside.animators
 
 import android.animation.Animator
 import android.animation.AnimatorSet
+import com.merseyside.utils.emptyMutableList
 
 /**
  * Collects animators and sets order(Approach) of playing.
  * Default approach is sequential.
  */
-class AnimatorList(val approach: Approach = Approach.SEQUENTIALLY): BaseAnimator() {
+class AnimatorList(private val approach: Approach = Approach.SEQUENTIALLY): BaseAnimator() {
 
-    internal val list: MutableList<BaseAnimator> = ArrayList()
+    internal val list: MutableList<BaseAnimator> = emptyMutableList()
     private var animatorSet: AnimatorSet? = null
 
     fun addAnimator(animator: BaseAnimator) {
@@ -18,9 +19,11 @@ class AnimatorList(val approach: Approach = Approach.SEQUENTIALLY): BaseAnimator
 
     override fun getAnimator(): Animator {
         return animatorSet ?: AnimatorSet().apply {
+            val animatorList = list.map { it.getAnimator() }
+
             when (approach) {
-                Approach.SEQUENTIALLY -> playSequentially(list.map { it.getAnimator() })
-                Approach.TOGETHER -> playTogether(list.map { it.getAnimator() })
+                Approach.SEQUENTIALLY -> playSequentially(animatorList)
+                Approach.TOGETHER -> playTogether(animatorList)
             }
 
             animatorSet = this

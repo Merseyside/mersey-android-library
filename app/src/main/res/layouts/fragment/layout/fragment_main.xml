@@ -7,15 +7,21 @@
     </data>
 
     <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <Button
-            android:id="@+id/adapters_button"
+            android:id="@+id/colors_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Adapters"
-            android:onClick="@{_ -> viewModel.onAdaptersClick()}"/>
+            android:text="Colors" />
+
+        <Button
+            android:id="@+id/racing_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Racing" />
 
     </LinearLayout>
 

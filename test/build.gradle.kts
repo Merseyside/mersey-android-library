@@ -3,7 +3,7 @@ plugins {
     plugin(LibraryDeps.Plugins.kotlinAndroid)
     plugin(LibraryDeps.Plugins.kotlinKapt)
     plugin(LibraryDeps.Plugins.kotlinSerialization)
-    plugin(LibraryDeps.Plugins.jitpack)
+    plugin(LibraryDeps.Plugins.mavenPublish)
 }
 
 group = "com.github.Merseyside"
@@ -54,7 +54,7 @@ val androidLibs = listOf(
     LibraryDeps.Libs.Android.billingKtx.name,
     LibraryDeps.Libs.Android.publisher.name,
     LibraryDeps.Libs.Android.oauth2.name,
-    LibraryDeps.Libs.MultiPlatform.serialization.android!!,
+    LibraryDeps.Libs.MultiPlatform.serializationJson.android!!,
     LibraryDeps.Libs.Android.firebaseFirestore.name,
     LibraryDeps.Libs.Android.playCore.name
 )

@@ -1,15 +1,16 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import extensions.androidImplementation
 
 plugins {
     plugin(LibraryDeps.Plugins.androidLibrary)
     plugin(LibraryDeps.Plugins.kotlinAndroid)
     plugin(LibraryDeps.Plugins.kotlinKapt)
     plugin(LibraryDeps.Plugins.kotlinSerialization)
-    plugin(LibraryDeps.Plugins.jitpack)
+    plugin(LibraryDeps.Plugins.mavenPublish)
 }
 
-group = "com.github.Merseyside"
-version = LibraryVersions.Android.version
+group = LibraryVersions.Application.publishingId
+version = LibraryVersions.Application.version
 
 android {
     compileSdkVersion(LibraryVersions.Android.compileSdk)
@@ -17,8 +18,8 @@ android {
     defaultConfig {
         minSdkVersion(LibraryVersions.Android.minSdk)
         targetSdkVersion(LibraryVersions.Android.targetSdk)
-        versionCode = LibraryVersions.Android.versionCode
-        versionName = LibraryVersions.Android.version
+        versionCode = LibraryVersions.Application.versionCode
+        versionName = LibraryVersions.Application.version
     }
 
     buildTypes {
@@ -49,19 +50,19 @@ tasks.withType<KotlinCompile> {
 }
 
 val androidLibs = listOf(
-    LibraryDeps.Libs.Android.coroutines.name,
-    LibraryDeps.Libs.Android.appCompat.name,
-    LibraryDeps.Libs.Android.material.name,
-    LibraryDeps.Libs.Android.navigation.name,
-    LibraryDeps.Libs.Android.rxjava2.name,
-    LibraryDeps.Libs.Android.navigationUi.name,
-    LibraryDeps.Libs.Android.lifecycle.name,
-    LibraryDeps.Libs.Android.dagger.name,
-    LibraryDeps.Libs.Android.worker.name,
-    LibraryDeps.Libs.Android.gson.name,
-    LibraryDeps.Libs.Android.keyboard.name,
-    LibraryDeps.Libs.Android.room.name,
-    LibraryDeps.Libs.MultiPlatform.serialization.android!!
+    LibraryDeps.Libs.Android.coroutines,
+    LibraryDeps.Libs.Android.appCompat,
+    LibraryDeps.Libs.Android.material,
+    LibraryDeps.Libs.Android.navigation,
+    LibraryDeps.Libs.Android.rxjava2,
+    LibraryDeps.Libs.Android.navigationUi,
+    LibraryDeps.Libs.Android.lifecycle,
+    LibraryDeps.Libs.Android.dagger,
+    LibraryDeps.Libs.Android.worker,
+    LibraryDeps.Libs.Android.gson,
+    LibraryDeps.Libs.Android.keyboard,
+    LibraryDeps.Libs.Android.room,
+    LibraryDeps.Libs.Android.serialization
 )
 
 val modulez = listOf(
@@ -72,7 +73,7 @@ val modulez = listOf(
 
 dependencies {
     modulez.forEach { module -> implementation(project(module)) }
-    androidLibs.forEach { lib -> implementation(lib)}
+    androidLibs.forEach { lib -> androidImplementation(lib) }
 
     kaptLibrary(LibraryDeps.Libs.Android.daggerCompiler)
     kaptLibrary(LibraryDeps.Libs.Android.roomCompiler)

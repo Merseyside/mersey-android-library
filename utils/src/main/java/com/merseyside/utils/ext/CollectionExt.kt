@@ -1,5 +1,8 @@
 package com.merseyside.utils.ext
 
+import com.merseyside.utils.time.Millis
+import com.merseyside.utils.time.TimeUnit
+import com.merseyside.utils.time.plus
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -72,7 +75,7 @@ fun List<Boolean>.forEachIsTrue(): Boolean {
 fun <T: Any> List<List<T>>.union(): List<T> {
     val hasEmptyList = find { it.isEmpty() } != null
 
-    if (hasEmptyList || isEmpty()) return emptyList<T>()
+    if (hasEmptyList || isEmpty()) return emptyList()
     if (size == 1) return first()
 
     var resultList = first().toSet()
@@ -97,4 +100,15 @@ fun <T: Any> List<List<T>>.intersect(): List<T> {
     }
 
     return resultList.toList()
+}
+
+fun <K, V> Map<out K, V>.forEachEntry(action: (key: K, value: V) -> Unit) {
+    forEach { entry -> action(entry.key, entry.value) }
+}
+
+fun List<TimeUnit>.sum(): TimeUnit {
+    var sum = Millis()
+    forEach { sum += it }
+
+    return sum
 }

@@ -1,11 +1,10 @@
 package com.merseyside.utils.time
 
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.util.*
-import java.util.TimeZone
+fun <T: Number> T.toTimeUnit(): TimeUnit {
+    return Millis(this.toLong())
+}
 
-fun <T: Number> T.toTimeUnit(): Millis {
+fun <T: Number> T.toMillis(): Millis {
     return Millis(this.toLong())
 }
 
@@ -26,8 +25,13 @@ fun <T: Number> T.toDays(): Days {
 }
 
 @Throws(NumberFormatException::class)
-fun <T: CharSequence> T.toTimeUnit(): Millis {
+fun <T: CharSequence> T.toTimeUnit(): TimeUnit {
     return this.toString().toLong().toTimeUnit()
+}
+
+@Throws(NumberFormatException::class)
+fun <T: CharSequence> T.toMillis(): Millis {
+    return this.toString().toLong().toMillis()
 }
 
 @Throws(NumberFormatException::class)
@@ -50,20 +54,14 @@ fun <T: CharSequence> T.toDays(): Days {
     return this.toString().toLong().toDays()
 }
 
-@Throws(ParseException::class, KotlinNullPointerException::class)
-fun String.toTimeUnit(dateFormat: String, locale: Locale = Locale.US): TimeUnit {
-    return try {
-        val date = SimpleDateFormat(dateFormat, locale).apply {
-            isLenient = false
-            timeZone = TimeZone.getTimeZone("GMT")
-        }.parse(this)
+fun TimeUnit.toDouble(): Double {
+    return value.toDouble()
+}
 
-        if (date != null) {
-            Millis(date.time)
-        } else {
-            throw KotlinNullPointerException("Date can not be parse within following format")
-        }
-    } catch (e: ParseException) {
-        throw e
-    }
+fun TimeUnit.toFloat(): Float {
+    return value.toFloat()
+}
+
+fun TimeUnit.toInt(): Int {
+    return value.toInt()
 }

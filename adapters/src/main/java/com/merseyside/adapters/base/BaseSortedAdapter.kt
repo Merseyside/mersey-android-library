@@ -6,36 +6,35 @@ import com.merseyside.adapters.view.TypedBindingHolder
 import com.merseyside.utils.Logger
 import com.merseyside.utils.concurency.Locker
 import com.merseyside.utils.ext.*
+import com.merseyside.utils.getMinMax
 import com.merseyside.utils.isMainThread
 import com.merseyside.utils.mainThreadIfNeeds
+import com.merseyside.utils.reflection.ReflectionUtils
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import java.lang.reflect.ParameterizedType
 import kotlin.collections.set
+import kotlin.reflect.KClass
 
 @Suppress("UNCHECKED_CAST")
 abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>(
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 ) : BaseAdapter<M, T>(), Locker {
-
     private val computationContext = Dispatchers.Default
-
     override val mutex: Mutex = Mutex()
 
     /**
      * Any children of this class have to pass M and T types. Otherwise, this cast throws CastException
      */
     private val persistentClass: Class<T> =
-        (javaClass.genericSuperclass as ParameterizedType).actualTypeArguments[1] as Class<T>
+        ReflectionUtils.getGenericParameterClass(this.javaClass, BaseSortedAdapter::class.java, 1)
+                as Class<T>
 
     override val modelList: MutableList<T> = ArrayList()
-    private val sortedList: SortedList<T>
 
     private var addJob: Job? = null
     private var updateJob: Job? = null
     private var filterJob: Job? = null
-
-    private val comparator: Comparator<T> = Comparator { o1, o2 -> o1.compareTo(o2.getItem()) }
 
     private val lock = Any()
 
@@ -44,38 +43,68 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
     private val filtersMap by lazy { HashMap<String, Any>() }
     private val notAppliedFiltersMap by lazy { HashMap<String, Any>() }
     private var filterPattern: String = ""
-    private var filterKeyMap: MutableMap<String, List<T>> = HashMap()
+    private val filterKeyMap: MutableMap<String, List<T>> by lazy { HashMap() }
 
-    init {
-        sortedList = SortedList(persistentClass, object : SortedList.Callback<T>() {
-            override fun onInserted(position: Int, count: Int) {
-                mainThreadIfNeeds { notifyItemRangeInserted(position, count) }
+    private val listCallback = object : SortedList.Callback<T>() {
+        override fun onInserted(position: Int, count: Int) {
+            for (i in position until sortedList.size()) {
+                sortedList[i].onPositionChanged(i)
             }
 
-            override fun onRemoved(position: Int, count: Int) {
-                mainThreadIfNeeds { notifyItemRangeRemoved(position, count) }
+            mainThreadIfNeeds { notifyItemRangeInserted(position, count) }
+        }
+
+        override fun onRemoved(position: Int, count: Int) {
+            for (i in position until sortedList.size()) {
+                sortedList[i].onPositionChanged(i)
             }
 
-            override fun onMoved(fromPosition: Int, toPosition: Int) {
-                mainThreadIfNeeds { notifyItemMoved(fromPosition, toPosition) }
+            mainThreadIfNeeds { notifyItemRangeRemoved(position, count) }
+        }
+
+        override fun onMoved(fromPosition: Int, toPosition: Int) {
+            val minMax = getMinMax(fromPosition, toPosition)
+
+            for (i in minMax.first..minMax.second) {
+                sortedList[i].onPositionChanged(i)
             }
 
-            override fun compare(o1: T, o2: T): Int {
-                return comparator.compare(o1, o2)
-            }
+            notifyItemMoved(fromPosition, toPosition)
+        }
 
-            override fun onChanged(position: Int, count: Int) {
-                mainThreadIfNeeds { notifyItemRangeChanged(position, count) }
-            }
+        override fun compare(o1: T, o2: T): Int {
+            return o1.compareTo(o2.getItem())
+        }
 
-            override fun areContentsTheSame(obj1: T, obj2: T): Boolean {
-                return obj1.areContentsTheSame(obj2.getItem())
-            }
+        override fun onChanged(position: Int, count: Int) {
+            notifyItemRangeChanged(position, count)
+        }
 
-            override fun areItemsTheSame(obj1: T, obj2: T): Boolean {
-                return obj1.areItemsTheSame(obj2.getItem())
+        override fun areContentsTheSame(obj1: T, obj2: T): Boolean {
+            return obj1.areContentsTheSame(obj2.getItem())
+        }
+
+        override fun areItemsTheSame(obj1: T, obj2: T): Boolean {
+            return obj1.areItemsTheSame(obj2.getItem())
+        }
+    }
+
+    private val sortedList: SortedList<T> = SortedList(persistentClass, listCallback)
+
+    override fun onBindViewHolder(
+        holder: TypedBindingHolder<T>,
+        position: Int,
+        payloads: List<Any>
+    ) {
+        if (payloads.isNotEmpty()) {
+            val payloadable = payloads[0] as List<BaseComparableAdapterViewModel.Payloadable>
+
+            if (isPayloadsValid(payloadable)) {
+                onPayloadable(holder, payloadable)
             }
-        })
+        } else {
+            super.onBindViewHolder(holder, position, payloads)
+        }
     }
 
     @Throws(IndexOutOfBoundsException::class)
@@ -116,40 +145,24 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
     }
 
     @Throws(IllegalArgumentException::class)
-    override fun notifyItemChanged(obj: M) {
-        find(obj)?.let {
-            it.notifyUpdate()
-            recalculateItemPosition(obj)
-        }
-    }
+    fun notifyItemChanged(
+        model: T,
+        payloads: List<BaseComparableAdapterViewModel.Payloadable> = emptyList()
+    ) {
+        val position = getPositionOfModel(model)
 
-    fun recalculateItemPosition(obj: M) {
-        recalculatePositionOfItemAt(getPositionOfObj(obj))
-    }
-
-    fun recalculatePositionOfItemAt(position: Int) {
+        notifyItemChanged(position, payloads)
         sortedList.recalculatePositionOfItemAt(position)
     }
 
     override fun add(obj: M) {
-        val isEmpty = isEmpty()
-
         val listItem = initItemViewModel(obj)
         modelList.add(listItem)
         sortedList.add(listItem)
-
-        if (!isEmpty) {
-            notifyPositionsChanged(0)
-        }
     }
 
     override fun add(list: List<M>) {
-        val isEmpty = isEmpty()
         addModels(itemsToModels(list))
-
-        if (!isEmpty) {
-            notifyPositionsChanged(0)
-        }
     }
 
     override fun add(model: T) {
@@ -180,8 +193,6 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
     }
 
     open fun update(updateRequest: UpdateRequest<M>) {
-        var isRemoved = false
-
         if (updateRequest.isDeleteOld) {
             val removeList = modelList
                 .filter { model ->
@@ -194,45 +205,37 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
                     }
                 }
 
-            isRemoved = removeList.isNotEmpty()
-            removeList(removeList, !updateRequest.isAddNew)
+            removeList(removeList)
         }
 
-        if (updateRequest.isAddNew) {
-            val addList = ArrayList<M>()
-            for (obj in updateRequest.list) {
-                if (isMainThread() || updateJob?.isActive == true) {
-                    if (!update(obj) && updateRequest.isAddNew) {
-                        addList.add(obj)
-                    }
-                } else {
-                    break
+        val addList = ArrayList<M>()
+        for (obj in updateRequest.list) {
+            if (isMainThread() || updateJob?.isActive == true) {
+                if (!update(obj) && updateRequest.isAddNew) {
+                    addList.add(obj)
                 }
+            } else {
+                break
             }
+        }
 
-            if (addList.isNotEmpty()) {
-                add(addList)
-            } else if (isRemoved) {
-                notifyPositionsChanged(0)
-            }
+        if (addList.isNotEmpty()) {
+            add(addList)
         }
     }
 
     internal open fun update(obj: M): Boolean {
         return run found@{
-            modelList.forEachIndexed { index, model ->
+            modelList.forEach { model ->
                 if (model.areItemsTheSame(obj)) {
                     if (!model.areContentsTheSame(obj)) {
                         mainThreadIfNeeds {
-                            model.setItem(obj)
-                            recalculatePositionOfItemAt(index)
+                            notifyItemChanged(model, model.payload(obj))
                         }
                     }
-
                     return@found true
                 }
             }
-
             false
         }
     }
@@ -296,7 +299,8 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
                     }
 
                     filterKeyMap[entry.key] = if (filterKeyMap.contains(entry.key)) {
-                        filterKeyMap[entry.key]!!.toMutableList().apply { addAll(filteredByKeyList) }
+                        filterKeyMap[entry.key]!!.toMutableList()
+                            .apply { addAll(filteredByKeyList) }
                     } else {
                         filteredByKeyList
                     }
@@ -337,11 +341,13 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
     }
 
     fun applyFilters() {
-        val listToSet = if (notAppliedFiltersMap.isNullOrEmpty() && filtersMap.isNullOrEmpty()) modelList
-        else applyFilters(modelList)
+        val listToSet =
+            if (notAppliedFiltersMap.isNullOrEmpty() && filtersMap.isNullOrEmpty()) modelList
+            else applyFilters(modelList)
 
         if (listToSet != null &&
-            this.sortedList.isNotEquals(listToSet)) setList(listToSet)
+            this.sortedList.isNotEquals(listToSet)
+        ) setList(listToSet)
     }
 
     fun applyFiltersAsync() {
@@ -398,16 +404,20 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
     }
 
     private fun setList(list: List<T>) {
-        sortedList.beginBatchedUpdates()
-        sortedList.clear()
-        sortedList.addAll(list)
-        sortedList.endBatchedUpdates()
+        sortedList.apply {
+            beginBatchedUpdates()
+            clear()
+            addAll(list)
+            endBatchedUpdates()
+        }
     }
 
     private fun addList(list: List<T>) {
-        sortedList.beginBatchedUpdates()
-        sortedList.addAll(list)
-        sortedList.endBatchedUpdates()
+        sortedList.apply {
+            beginBatchedUpdates()
+            addAll(list)
+            endBatchedUpdates()
+        }
     }
 
     fun clearFilters() {
@@ -437,20 +447,14 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
 
         scope.asynchronously {
             withLock {
-                sortedList.beginBatchedUpdates()
-                sortedList.clear()
-                sortedList.endBatchedUpdates()
+                sortedList.apply {
+                    beginBatchedUpdates()
+                    clear()
+                    endBatchedUpdates()
+                }
                 modelList.clear()
 
                 clearFilters()
-            }
-        }
-    }
-
-    override fun notifyPositionsChanged(startWithPosition: Int) {
-        if (startWithPosition < itemCount - 1) {
-            (startWithPosition until itemCount).forEach { index ->
-                sortedList[index].onPositionChanged(index)
             }
         }
     }
@@ -471,48 +475,40 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
     /**
      * Be sure your model's compareTo method handles equal items!
      */
-    private fun removeList(list: List<T>, isNotifyPositionChanged: Boolean = true) {
+    private fun removeList(list: List<T>) {
         if (list.isNotEmpty()) {
-            val smallestPosition = getSmallestPosition(list)
-
             modelList.removeAll(list)
             filterKeyMap.clear()
             filterKeyMap.forEach { entry ->
                 filterKeyMap[entry.key] = entry.value.toMutableList().apply { removeAll(list) }
             }
 
-            sortedList.beginBatchedUpdates()
-            sortedList.removeAll(list)
-            sortedList.endBatchedUpdates()
-
-            if (isNotifyPositionChanged) notifyPositionsChanged(smallestPosition)
+            sortedList.apply {
+                beginBatchedUpdates()
+                removeAll(list)
+                endBatchedUpdates()
+            }
         }
     }
 
-    private fun remove(model: T, isNotifyPositionChanged: Boolean = true) {
-        val position = getPositionOfModel(model)
-
+    private fun remove(model: T) {
         sortedList.remove(model)
         modelList.remove(model)
         filterKeyMap.forEach { entry ->
             filterKeyMap[entry.key] = entry.value.toMutableList().apply { remove(model) }
         }
         filterKeyMap.clear()
-
-        if (isNotifyPositionChanged) notifyPositionsChanged(position)
     }
 
-    override fun onBindViewHolder(
+    private fun isPayloadsValid(payloads: List<BaseComparableAdapterViewModel.Payloadable>): Boolean {
+        return payloads.isNotEmpty() &&
+                !payloads.contains(BaseComparableAdapterViewModel.Payloadable.None)
+    }
+
+    open fun onPayloadable(
         holder: TypedBindingHolder<T>,
-        position: Int,
-        payloads: MutableList<Any>
-    ) {
-        if (payloads.isNotEmpty()) {
-            sortedList[position].setItem(payloads[0] as M)
-        } else {
-            super.onBindViewHolder(holder, position, payloads)
-        }
-    }
+        payloads: List<BaseComparableAdapterViewModel.Payloadable>
+    ) {}
 
     @Throws(IndexOutOfBoundsException::class)
     override fun first(): M {

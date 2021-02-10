@@ -11,6 +11,7 @@ import com.merseyside.utils.Logger
 import com.merseyside.utils.PermissionManager
 import com.merseyside.utils.mvvm.SingleLiveEvent
 import com.merseyside.utils.ext.clear
+import kotlinx.coroutines.flow.MutableStateFlow
 
 abstract class BaseViewModel protected constructor() : ViewModel(), IStringHelper {
 

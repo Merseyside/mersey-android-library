@@ -41,14 +41,14 @@ fun getHoursMinutes(timestamp: TimeUnit, context: Context? = null): String {
 
 fun getDate(
     timestamp: Long,
-    context: Context?
+    context: Context? = null
 ): String {
     return getFormattedDate(timestamp, "dd.MM.YYYY", context)
 }
 
 fun getDate(
     timestamp: TimeUnit,
-    context: Context?
+    context: Context? = null
 ): String {
     return getDate(timestamp.toMillisLong(), context)
 }

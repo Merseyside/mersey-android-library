@@ -1,17 +1,3 @@
-buildscript {
-    repositories {
-        mavenLocal()
-
-        jcenter()
-        google()
-
-        maven { url = uri("https://dl.bintray.com/kotlin/kotlin") }
-        maven { url = uri("https://kotlin.bintray.com/kotlinx") }
-        maven { url = uri("https://plugins.gradle.org/m2/") }
-        maven { url = uri("https://dl.bintray.com/icerockdev/plugins") }
-    }
-}
-
 allprojects {
     repositories {
         mavenLocal()
@@ -32,6 +18,7 @@ allprojects {
         maven { url = uri("https://maven.fabric.io/public") }
         maven { url = uri("https://dl.bintray.com/icerockdev/plugins") }
         maven { url = uri("https://plugins.gradle.org/m2/") }
+        maven { url = uri("https://dl.bintray.com/ekito/koin")}
     }
 }
 

@@ -1,7 +1,11 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import extensions.androidImplementation
+
 plugins {
     plugin(LibraryDeps.Plugins.androidApplication)
     plugin(LibraryDeps.Plugins.kotlinAndroid)
     plugin(LibraryDeps.Plugins.kotlinKapt)
+    plugin(LibraryDeps.Plugins.kotlinSerialization)
 }
 
 android {
@@ -10,8 +14,8 @@ android {
     defaultConfig {
         minSdkVersion(LibraryVersions.Android.minSdk)
         targetSdkVersion(LibraryVersions.Android.targetSdk)
-        versionCode = LibraryVersions.Android.versionCode
-        versionName = LibraryVersions.Android.version
+        versionCode = LibraryVersions.Application.versionCode
+        versionName = LibraryVersions.Application.version
 
         multiDexEnabled = true
         vectorDrawables.useSupportLibrary = true
@@ -53,7 +57,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    tasks.withType<KotlinCompile> {
         kotlinOptions {
             jvmTarget = "1.8"
         }
@@ -72,22 +76,22 @@ android {
         res.srcDir("src/main/res/value/values-light")
         res.srcDir("src/main/res/value/values-night")
     }
-
 }
 
 val androidLibs = listOf(
-    LibraryDeps.Libs.Android.recyclerView.name,
-    "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2",
-    LibraryDeps.Libs.Android.navigation.name,
-    LibraryDeps.Libs.Android.navigationUi.name,
-    LibraryDeps.Libs.Android.constraintLayout.name,
-    LibraryDeps.Libs.Android.lifecycleLiveDataKtx.name,
-    LibraryDeps.Libs.Android.appCompat.name,
-    LibraryDeps.Libs.Android.material.name,
-    LibraryDeps.Libs.Android.lifecycle.name,
-    LibraryDeps.Libs.Android.cardView.name,
-    LibraryDeps.Libs.Android.annotation.name,
-    LibraryDeps.Libs.Android.dagger.name
+    LibraryDeps.Libs.Android.coroutines,
+    LibraryDeps.Libs.Android.serialization,
+    LibraryDeps.Libs.Android.recyclerView,
+    LibraryDeps.Libs.Android.navigation,
+    LibraryDeps.Libs.Android.navigationUi,
+    LibraryDeps.Libs.Android.constraintLayout,
+    LibraryDeps.Libs.Android.lifecycleLiveDataKtx,
+    LibraryDeps.Libs.Android.appCompat,
+    LibraryDeps.Libs.Android.material,
+    LibraryDeps.Libs.Android.lifecycle,
+    LibraryDeps.Libs.Android.cardView,
+    LibraryDeps.Libs.Android.annotation,
+    LibraryDeps.Libs.Android.dagger
 )
 
 val modulez = listOf(
@@ -99,7 +103,11 @@ val modulez = listOf(
 
 dependencies {
     modulez.forEach { module -> implementation(project(module)) }
-    androidLibs.forEach { lib -> implementation(lib) }
+    androidLibs.forEach { lib -> androidImplementation(lib) }
+
+    androidImplementation(LibraryDeps.Libs.Android.filemanager) {
+        exclude(group = "com.github.Merseyside.mersey-android-library", module = "utils")
+    }
 
     kaptLibrary(LibraryDeps.Libs.Android.daggerCompiler)
     compileOnly("javax.annotation:jsr250-api:1.0")
