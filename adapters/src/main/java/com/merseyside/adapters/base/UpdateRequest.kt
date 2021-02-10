@@ -2,6 +2,8 @@ package com.merseyside.adapters.base
 
 class UpdateRequest<T>(val list: List<T>) {
 
+    constructor(item: T): this(listOf(item))
+
     var isAddNew = true
         private set
 
@@ -9,6 +11,8 @@ class UpdateRequest<T>(val list: List<T>) {
         private set
 
     class Builder<T>(list: List<T>) {
+
+        constructor(item: T): this(listOf(item))
 
         private val request: UpdateRequest<T> =
             UpdateRequest(list)

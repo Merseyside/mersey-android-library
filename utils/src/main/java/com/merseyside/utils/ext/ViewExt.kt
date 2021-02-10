@@ -103,6 +103,14 @@ fun TextView.addTextChangeListener(
     return TextChangeListenerUnregistrar(this, textWatcher)
 }
 
+fun TextView.setTextColorAttr(
+    @AttrRes attrColor: Int,
+    typedValue: TypedValue = TypedValue(),
+    resolveRefs: Boolean = true
+) {
+    setTextColor(getColorFromAttr(attrColor, typedValue, resolveRefs))
+}
+
 fun View.onClick(onClick: () -> Unit): View.OnClickListener {
     val listener = View.OnClickListener { onClick.invoke() }
     this.setOnClickListener(listener)

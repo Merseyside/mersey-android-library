@@ -1,13 +1,16 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import extensions.androidImplementation
+
 plugins {
     plugin(LibraryDeps.Plugins.androidLibrary)
     plugin(LibraryDeps.Plugins.kotlinAndroid)
     plugin(LibraryDeps.Plugins.kotlinKapt)
     plugin(LibraryDeps.Plugins.kotlinSerialization)
-    plugin(LibraryDeps.Plugins.jitpack)
+    plugin(LibraryDeps.Plugins.mavenPublish)
 }
 
-group = "com.github.Merseyside"
-version = LibraryVersions.Android.version
+group = LibraryVersions.Application.publishingId
+version = LibraryVersions.Application.version
 
 android {
     compileSdkVersion(LibraryVersions.Android.compileSdk)
@@ -15,8 +18,8 @@ android {
     defaultConfig {
         minSdkVersion(LibraryVersions.Android.minSdk)
         targetSdkVersion(LibraryVersions.Android.targetSdk)
-        versionCode = LibraryVersions.Android.versionCode
-        versionName = LibraryVersions.Android.version
+        versionCode = LibraryVersions.Application.versionCode
+        versionName = LibraryVersions.Application.version
     }
 
     buildTypes {
@@ -33,21 +36,21 @@ android {
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = "1.8"
     }
 }
 
 val androidLibs = listOf(
-    LibraryDeps.Libs.Android.appCompat.name,
-    LibraryDeps.Libs.Android.material.name,
-    LibraryDeps.Libs.Android.recyclerView.name,
-    LibraryDeps.Libs.Android.coroutines.name
+    LibraryDeps.Libs.Android.appCompat,
+    LibraryDeps.Libs.Android.material,
+    LibraryDeps.Libs.Android.recyclerView,
+    LibraryDeps.Libs.Android.coroutines
 )
 
 dependencies {
-    androidLibs.forEach { lib -> implementation(lib) }
+    androidLibs.forEach { lib -> androidImplementation(lib) }
     api(LibraryDeps.Libs.Android.paging.name)
 
     implementation(project(LibraryModules.Android.utils))

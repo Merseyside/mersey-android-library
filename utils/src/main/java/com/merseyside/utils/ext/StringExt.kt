@@ -1,5 +1,10 @@
 package com.merseyside.utils.ext
 
+import com.merseyside.utils.time.Millis
+import com.merseyside.utils.time.TimeUnit
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -90,4 +95,22 @@ fun String.containsDigits(): Boolean {
 
 fun String.getLettersCount() : Int {
     return filter { it.isLetter() }.count()
+}
+
+@Throws(ParseException::class, KotlinNullPointerException::class)
+fun String.toTimeUnit(dateFormat: String, locale: Locale = Locale.US): TimeUnit {
+    return try {
+        val date = SimpleDateFormat(dateFormat, locale).apply {
+            isLenient = false
+            timeZone = TimeZone.getTimeZone("GMT")
+        }.parse(this)
+
+        if (date != null) {
+            Millis(date.time)
+        } else {
+            throw KotlinNullPointerException("Date can not be parse within following format")
+        }
+    } catch (e: ParseException) {
+        throw e
+    }
 }

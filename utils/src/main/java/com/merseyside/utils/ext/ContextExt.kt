@@ -7,6 +7,7 @@ import android.provider.Settings
 import android.util.TypedValue
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
+import androidx.annotation.DimenRes
 
 @ColorInt
 fun Context.getColorFromAttr(
@@ -49,4 +50,8 @@ fun Context?.startAppDetailsOnGooglePlay() {
             startActivity(intent)
         }
     }
+}
+
+fun Context.getDimension(@DimenRes res: Int): Float {
+    return com.merseyside.utils.getDimension(this, res)
 }

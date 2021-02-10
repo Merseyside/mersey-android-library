@@ -1,45 +1,37 @@
 object LibraryDeps {
     object Plugins {
-        val androidApplication = PluginDesc(id = "com.android.application")
-        val kotlinKapt = PluginDesc(id = "kotlin-kapt")
-        val kotlinAndroid = PluginDesc(id = "kotlin-android")
-        val mobileMultiplatform = PluginDesc(id = "dev.icerock.mobile.multiplatform")
+        val androidApplication = GradlePlugin(id = "com.android.application")
+        val kotlinKapt = GradlePlugin(id = "kotlin-kapt")
+        val kotlinAndroid = GradlePlugin(id = "kotlin-android")
+        val mobileMultiplatform = GradlePlugin(id = "dev.icerock.mobile.multiplatform")
+        val mavenPublish = GradlePlugin(id = "maven-publish")
 
-        val androidLibrary = PluginDesc(
+        val androidLibrary = GradlePlugin(
             id = "com.android.library",
-            module = "com.android.tools.build:gradle:${LibraryVersions.Plugins.android}"
+            module = "com.android.tools.build:gradle:${LibraryVersions.Plugins.gradle}"
         )
 
-        val kotlinMultiplatform = PluginDesc(
+        val kotlinMultiplatform = GradlePlugin(
             id = "org.jetbrains.kotlin.multiplatform",
             module = "org.jetbrains.kotlin:kotlin-gradle-plugin:${LibraryVersions.Plugins.kotlin}"
         )
 
-        val kotlinSerialization = PluginDesc(
+        val kotlinSerialization = GradlePlugin(
             id = "kotlinx-serialization",
             module = "org.jetbrains.kotlin:kotlin-serialization:${LibraryVersions.Plugins.serialization}"
         )
 
-        val jitpack = PluginDesc(
-            id = "com.github.dcendents.android-maven",
-            module = "com.github.dcendents:android-maven-gradle-plugin:${LibraryVersions.Plugins.maven}"
-        )
-
-        val resources = PluginDesc(
+        val resources = GradlePlugin(
             id = "dev.icerock.mobile.multiplatform-resources",
             module = "dev.icerock.moko:resources-generator:${LibraryVersions.Plugins.mokoResources}"
         )
 
-        val mavenPublish = PluginDesc(
-            id = "maven-publish"
-        )
-
-        val sqldelight = PluginDesc(
+        val sqldelight = GradlePlugin(
             id = "com.squareup.sqldelight",
             module = "com.squareup.sqldelight:gradle-plugin:${LibraryVersions.Plugins.sqlDelight}"
         )
 
-        val kotlinParcelize = PluginDesc(
+        val kotlinParcelize = GradlePlugin(
             id = "kotlin-parcelize"
         )
     }
@@ -47,7 +39,10 @@ object LibraryDeps {
     object Libs {
         object Android {
             val coroutines = AndroidLibrary(
-                name = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${LibraryVersions.Common.coroutines}"
+                name = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${LibraryVersions.Libs.Android.coroutines}"
+            )
+            val serialization = AndroidLibrary(
+                name = "org.jetbrains.kotlinx:kotlinx-serialization-json:${LibraryVersions.Common.serialization}"
             )
             val appCompat = AndroidLibrary(
                 name = "androidx.appcompat:appcompat:${LibraryVersions.Libs.Android.appCompat}"
@@ -69,6 +64,9 @@ object LibraryDeps {
             )
             val lifecycleViewModel = AndroidLibrary(
                 name = "androidx.lifecycle:lifecycle-viewmodel-ktx:${LibraryVersions.Libs.Android.lifecycle}"
+            )
+            val lifecycleViewModelSavedState = AndroidLibrary(
+                name = "androidx.lifecycle:lifecycle-viewmodel-savedstate:${LibraryVersions.Libs.Android.lifecycle}"
             )
             val lifecycleLiveDataKtx = AndroidLibrary(
                 name = "androidx.lifecycle:lifecycle-livedata-ktx:${LibraryVersions.Libs.Android.lifecycle}"
@@ -121,6 +119,15 @@ object LibraryDeps {
             val daggerCompiler = KaptLibrary(
                 name = "com.google.dagger:dagger-compiler:${LibraryVersions.Libs.Android.dagger}"
             )
+            val koin = AndroidLibrary(
+                name = "org.koin:koin-android:${LibraryVersions.Common.koin}"
+            )
+            val koinViewModels = AndroidLibrary(
+                name = "org.koin:koin-androidx-viewmodel:${LibraryVersions.Common.koin}"
+            )
+            val koinExt = AndroidLibrary(
+                name = "org.koin:koin-androidx-ext:${LibraryVersions.Common.koin}"
+            )
             val navigation = AndroidLibrary(
                 name = "androidx.navigation:navigation-fragment-ktx:${LibraryVersions.Libs.Android.navigation}"
             )
@@ -139,6 +146,18 @@ object LibraryDeps {
             val coil = AndroidLibrary(
                 name = "io.coil-kt:coil:${LibraryVersions.Libs.Android.coil}"
             )
+            val filemanager = AndroidLibrary(
+                name = "com.github.Merseyside:android-filemanager:${LibraryVersions.Libs.Android.filemanager}"
+            )
+            val typedDatastore = AndroidLibrary(
+                name = "androidx.datastore:datastore:${LibraryVersions.Libs.Android.typedDataStore}"
+            )
+            val mokoMvvmDatabinding = AndroidLibrary(
+                name = "dev.icerock.moko:mvvm-databinding:${LibraryVersions.Libs.Android.mokoMvvm}"
+            )
+            val mokoMvvmViewbinding = AndroidLibrary(
+                name = "dev.icerock.moko:mvvm-viewbinding:${LibraryVersions.Libs.Android.mokoMvvm}"
+            )
         }
 
         object MultiPlatform {
@@ -149,17 +168,20 @@ object LibraryDeps {
             val coroutines = MultiPlatformLibrary(
                 android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${LibraryVersions.Common.coroutines}",
                 common = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${LibraryVersions.Common.coroutines}",
-                ios = "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:${LibraryVersions.Common.coroutines}"
+                iosX64 = "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:${LibraryVersions.Common.coroutines}",
+                iosArm64 = "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:${LibraryVersions.Common.coroutines}"
             )
-            val serialization = MultiPlatformLibrary(
-                android = "org.jetbrains.kotlinx:kotlinx-serialization-json:${LibraryVersions.Common.serialization}",
-                common = "org.jetbrains.kotlinx:kotlinx-serialization-json:${LibraryVersions.Common.serialization}",
-                ios = "org.jetbrains.kotlinx:kotlinx-serialization-json:${LibraryVersions.Common.serialization}"
+            val serializationJson = MultiPlatformLibrary(
+                common = "org.jetbrains.kotlinx:kotlinx-serialization-json:${LibraryVersions.Common.serialization}"
+            )
+            val serializationProtobuf = MultiPlatformLibrary(
+                common = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf:${LibraryVersions.Common.serialization}"
             )
             val ktorClient = MultiPlatformLibrary(
                 android = "io.ktor:ktor-client-android:${LibraryVersions.Libs.MultiPlatform.ktor}",
                 common = "io.ktor:ktor-client-core:${LibraryVersions.Libs.MultiPlatform.ktor}",
-                ios = "io.ktor:ktor-client-ios:${LibraryVersions.Libs.MultiPlatform.ktor}"
+                iosX64 = "io.ktor:ktor-client-ios:${LibraryVersions.Libs.MultiPlatform.ktor}",
+                iosArm64 = "io.ktor:ktor-client-ios:${LibraryVersions.Libs.MultiPlatform.ktor}"
             )
             val mokoMvvm = MultiPlatformLibrary(
                 common = "dev.icerock.moko:mvvm:${LibraryVersions.Libs.MultiPlatform.mokoMvvm}",
@@ -171,8 +193,9 @@ object LibraryDeps {
                 iosX64 = "dev.icerock.moko:resources-iosx64:${LibraryVersions.Libs.MultiPlatform.mokoResources}",
                 iosArm64 = "dev.icerock.moko:resources-iosarm64:${LibraryVersions.Libs.MultiPlatform.mokoResources}"
             )
-            val kodein = MultiPlatformLibrary(
-                common = "org.kodein.di:kodein-di:${LibraryVersions.Libs.MultiPlatform.kodein}"
+            val koin = MultiPlatformLibrary(
+                common = "org.koin:koin-core:${LibraryVersions.Common.koin}",
+                android = "org.koin:koin-android:${LibraryVersions.Common.koin}"
             )
             val sqlDelight = MultiPlatformLibrary(
                 common = "com.squareup.sqldelight:runtime:${LibraryVersions.Libs.MultiPlatform.sqlDelight}",
