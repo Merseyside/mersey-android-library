@@ -18,7 +18,6 @@ val kotlin = "1.4.30"
 val gradle = "4.1.1"
 val mavenVersion = "2.1"
 val resources = "0.13.1"
-val sqldelight = "1.4.4"
 
 dependencies {
     implementation("dev.icerock:mobile-multiplatform:$multiplatform")
@@ -26,7 +25,6 @@ dependencies {
     implementation("com.android.tools.build:gradle:$gradle")
     implementation("org.jetbrains.kotlin:kotlin-serialization:$kotlin")
     implementation("dev.icerock.moko:resources-generator:$resources")
-    implementation("com.squareup.sqldelight:gradle-plugin:$sqldelight")
 }
 
 kotlinDslPluginOptions {
