@@ -82,9 +82,9 @@ dependencies {
 afterEvaluate {
     publishing.publications {
         create<MavenPublication>("release") {
-            groupId = LibraryVersions.Application.groupId
-            artifactId = LibraryVersions.Application.artifactId
-            version = LibraryVersions.Application.version
+            groupId = group.toString()
+            artifactId = project.name
+            version = rootProject.version.toString()
             from(components["release"])
         }
     }
