@@ -17,14 +17,12 @@ val multiplatform = "0.9.0"
 val kotlin = "1.4.30"
 val gradle = "4.1.1"
 val mavenVersion = "2.1"
-val resources = "0.13.1"
 
 dependencies {
     implementation("dev.icerock:mobile-multiplatform:$multiplatform")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin")
     implementation("com.android.tools.build:gradle:$gradle")
     implementation("org.jetbrains.kotlin:kotlin-serialization:$kotlin")
-    implementation("dev.icerock.moko:resources-generator:$resources")
 }
 
 kotlinDslPluginOptions {

@@ -9,7 +9,7 @@ plugins {
     plugin(LibraryDeps.Plugins.mavenPublish)
 }
 
-group = LibraryVersions.Application.publishingId
+group = LibraryVersions.Application.groupId
 version = LibraryVersions.Application.version
 
 android {
@@ -54,6 +54,17 @@ dependencies {
     androidLibs.forEach { lib -> androidImplementation(lib) }
 }
 
-repositories {
-    mavenCentral()
+afterEvaluate {
+    publishing.publications {
+        create<MavenPublication>("release") {
+            groupId = LibraryVersions.Application.groupId
+            artifactId = LibraryVersions.Application.artifactId
+            version = LibraryVersions.Application.version
+            from(components["release"])
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
 }

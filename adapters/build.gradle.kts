@@ -9,7 +9,7 @@ plugins {
     plugin(LibraryDeps.Plugins.mavenPublish)
 }
 
-group = LibraryVersions.Application.publishingId
+group = LibraryVersions.Application.groupId
 version = LibraryVersions.Application.version
 
 android {
@@ -26,7 +26,10 @@ android {
         getByName("release") {
             isMinifyEnabled = false
             consumerProguardFiles("proguard-rules.pro")
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
@@ -56,6 +59,18 @@ dependencies {
     implementation(project(LibraryModules.Android.utils))
 }
 
-repositories {
-    mavenCentral()
+afterEvaluate {
+    publishing.publications {
+        create<MavenPublication>("release") {
+            groupId = LibraryVersions.Application.groupId
+            artifactId = LibraryVersions.Application.artifactId
+            version = LibraryVersions.Application.version
+            from(components["release"])
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
 }
+

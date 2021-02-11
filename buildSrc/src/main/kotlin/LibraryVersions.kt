@@ -3,7 +3,8 @@ object LibraryVersions {
     object Application {
         const val packageName = "com.merseyside.merseyLib"
         const val applicationId = "com.merseyside.merseyLib"
-        const val publishingId = "com.github.Merseyside"
+        const val groupId = "com.github.Merseyside"
+        const val artifactId = "mersey-android-library"
 
         const val version = "1.3.1"
         const val versionCode = 131
