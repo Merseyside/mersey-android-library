@@ -43,9 +43,9 @@ class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel
             _: Int ->
 
         val filterName = when (view.id) {
-            binding.rColor.id -> ColorsAdapter.R_COLOR_FILTER
-            binding.gColor.id -> ColorsAdapter.G_COLOR_FILTER
-            binding.bColor.id -> ColorsAdapter.B_COLOR_FILTER
+            getBinding().rColor.id -> ColorsAdapter.R_COLOR_FILTER
+            getBinding().gColor.id -> ColorsAdapter.G_COLOR_FILTER
+            getBinding().bColor.id -> ColorsAdapter.B_COLOR_FILTER
             else -> throw IllegalArgumentException()
         }
 
@@ -65,27 +65,27 @@ class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.recyclerView.adapter = adapter
+        getBinding().recyclerView.adapter = adapter
 
-        binding.rColor.addTextChangeListener(textChangeListener)
-        binding.gColor.addTextChangeListener(textChangeListener)
-        binding.bColor.addTextChangeListener(textChangeListener)
+        getBinding().rColor.addTextChangeListener(textChangeListener)
+        getBinding().gColor.addTextChangeListener(textChangeListener)
+        getBinding().bColor.addTextChangeListener(textChangeListener)
 
         viewModel.getColorsFlow().asLiveData().observe(viewLifecycleOwner) {
-            if (binding.add.isChecked) {
+            if (getBinding().add.isChecked) {
 
-                if (binding.async.isChecked) {
+                if (getBinding().async.isChecked) {
                     adapter.addAsync(it)
                 } else {
                     adapter.add(it)
                 }
             } else {
                 val updateRequest = UpdateRequest.Builder(it)
-                    .isAddNew(binding.updateAdd.isChecked)
-                    .isDeleteOld(binding.updateRemove.isChecked)
+                    .isAddNew(getBinding().updateAdd.isChecked)
+                    .isDeleteOld(getBinding().updateRemove.isChecked)
                     .build()
 
-                if (binding.async.isChecked) {
+                if (getBinding().async.isChecked) {
                     adapter.updateAsync(updateRequest)
                 } else {
                     adapter.update(updateRequest)

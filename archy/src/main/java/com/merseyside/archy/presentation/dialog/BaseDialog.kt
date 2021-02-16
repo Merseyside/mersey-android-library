@@ -218,6 +218,12 @@ abstract class BaseDialog : DialogFragment(), IView, OrientationHandler, ILocale
         return getDialogView()
     }
 
+    fun setLayoutSize(width: Int, height: Int) {
+        dialog?.window?.apply {
+            setLayout(width, height)
+        } ?: throw IllegalStateException("Dialog is null!")
+    }
+
     fun setLayoutPixelSize(width: Int?, height: Int?) {
         val window = dialog!!.window ?: return
         val params: WindowManager.LayoutParams = window.attributes
@@ -228,7 +234,7 @@ abstract class BaseDialog : DialogFragment(), IView, OrientationHandler, ILocale
         window.attributes = params
     }
 
-    fun setLayoutSize(@DimenRes widthId: Int? = null, @DimenRes heightId: Int? = null) {
+    fun setLayoutDimenSize(@DimenRes widthId: Int? = null, @DimenRes heightId: Int? = null) {
         var width: Int? = null
         var height: Int? = null
 
