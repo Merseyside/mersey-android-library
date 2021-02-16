@@ -3,7 +3,6 @@ object LibraryDeps {
         val androidApplication = GradlePlugin(id = "com.android.application")
         val kotlinKapt = GradlePlugin(id = "kotlin-kapt")
         val kotlinAndroid = GradlePlugin(id = "kotlin-android")
-        val mobileMultiplatform = GradlePlugin(id = "dev.icerock.mobile.multiplatform")
         val mavenPublish = GradlePlugin(id = "maven-publish")
 
         val androidLibrary = GradlePlugin(

@@ -6,8 +6,8 @@ object LibraryVersions {
         const val groupId = "com.github.Merseyside"
         const val artifactId = "mersey-android-library"
 
-        const val version = "1.3.1"
-        const val versionCode = 131
+        const val version = "1.3.2"
+        const val versionCode = 132
     }
 
     object Android {
@@ -18,12 +18,12 @@ object LibraryVersions {
 
     object Common {
         const val kotlinStdLib = kotlin
-        const val coroutines = "1.3.8"
-        const val serialization = "1.0.1"
+        const val coroutines = "1.4.2"
+        const val serialization = "1.1.0-RC"
         const val koin = "3.0.0-alpha-4"
     }
 
-    const val kotlin = "1.4.21"
+    const val kotlin = "1.4.30"
     private const val mokoResources = "0.13.1"
 
     object Plugins {
@@ -71,7 +71,6 @@ object LibraryVersions {
             const val mokoMvvm = "0.9.1"
             const val mokoResources = LibraryVersions.mokoResources
             const val ktor = "1.5.1"
-            const val kodein = "7.1.0"
             const val sqlDelight = "1.4.4"
         }
     }
