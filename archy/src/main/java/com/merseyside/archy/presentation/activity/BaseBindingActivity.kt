@@ -5,20 +5,23 @@ import androidx.databinding.ViewDataBinding
 
 abstract class BaseBindingActivity<B: ViewDataBinding> : BaseActivity() {
 
-    protected lateinit var binding: B
+    private var binding: B? = null
 
-    protected var isBindingInit = false
+    protected fun getBinding(): B {
+        return binding ?: throw IllegalStateException("Binding is null. Do you call it after OnCreateView()?")
+    }
+
+    protected val isBindingInit: Boolean
+        get() { return binding != null }
 
     override fun setView(layoutId: Int) {
-        binding = DataBindingUtil.setContentView(this, getLayoutId())
-        binding.lifecycleOwner = this@BaseBindingActivity
-
-        isBindingInit = true
+        binding = DataBindingUtil.setContentView<B>(this, getLayoutId()).apply {
+            lifecycleOwner = this@BaseBindingActivity
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-
-        isBindingInit = false
+        binding = null
     }
 }

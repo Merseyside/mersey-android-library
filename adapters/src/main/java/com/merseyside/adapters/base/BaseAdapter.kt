@@ -39,7 +39,7 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
         val obj = getModelByPosition(position)
         bindItemList.add(obj)
 
-        listener?.let { obj.setOnItemClickListener(listener!!) }
+        listener?.let { obj.setOnItemClickListener(it) }
         bind(holder, obj)
 
         if (!isRecyclable || isRecyclable && !holder.isRecyclable) {

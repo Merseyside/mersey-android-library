@@ -11,10 +11,9 @@ import kotlin.coroutines.CoroutineContext
 abstract class FlowUseCase<T, Params> : CoroutineScope by CoroutineScope(applicationContext) {
 
     var job: Job? = null
-
     var backgroundContext: CoroutineContext = computationContext
 
-    @ExperimentalCoroutinesApi
+    @OptIn(ExperimentalCoroutinesApi::class)
     protected abstract fun executeOnBackground(params: Params?): Flow<T>
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -27,9 +26,7 @@ abstract class FlowUseCase<T, Params> : CoroutineScope by CoroutineScope(applica
         val flow = executeOnBackground(params)
             .flowOn(backgroundContext)
 
-        if (job != null) {
-            cancel()
-        }
+        if (job != null) cancel()
 
         job = coroutineScope.launch {
             try {

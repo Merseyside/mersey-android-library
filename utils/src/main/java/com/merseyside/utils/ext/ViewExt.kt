@@ -72,7 +72,7 @@ fun TextView.addTextChangeListener(
         start: Int,
         before: Int,
         count: Int
-    ) -> Boolean
+    ) -> Boolean // return true if new value is valid and should be saved
 ): CallbackUnregistrar {
     val textWatcher = object : TextWatcher {
         private var oldValue: String? = null

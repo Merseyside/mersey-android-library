@@ -23,8 +23,9 @@ abstract class BaseBindingFragment<B: ViewDataBinding> : BaseFragment() {
         container: ViewGroup?,
         @LayoutRes layoutId: Int
     ): View? {
-        binding = DataBindingUtil.inflate(inflater, getLayoutId(), container, false)
-        getBinding().lifecycleOwner = this
+        binding = DataBindingUtil.inflate<B>(inflater, getLayoutId(), container, false).apply {
+            lifecycleOwner = this@BaseBindingFragment
+        }
 
         return getBinding().root
     }

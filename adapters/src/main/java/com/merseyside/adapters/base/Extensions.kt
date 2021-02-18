@@ -2,7 +2,6 @@ package com.merseyside.adapters.base
 
 import androidx.recyclerview.widget.SortedList
 import com.merseyside.adapters.model.BaseComparableAdapterViewModel
-import com.merseyside.utils.ext.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -60,16 +59,19 @@ fun <T> SortedList<T>.removeAll(list: List<T>) {
     list.forEach { remove(it)}
 }
 
-fun <M> HasOnItemClickListener<M>.onItemClicked(onClick: (M) -> Unit): OnItemClickListener<M> {
-    this.listener = object:
-        OnItemClickListener<M> {
+fun <M> HasOnItemClickListener<M>.onItemClicked(onClick: (M) -> Unit) =
+    setOnItemClickListener(object: OnItemClickListener<M> {
         override fun onItemClicked(obj: M) {
             onClick.invoke(obj)
         }
-    }
+    })
 
-    return this.listener!!
-}
+fun <M> HasOnItemSelectedListener<M>.onItemSelected(onSelected: (M, Boolean, Boolean) -> Unit) =
+    setOnItemSelectedListener(object: OnItemSelectedListener<M> {
+        override fun onSelected(item: M, isSelected: Boolean, isSelectedByUser: Boolean) {
+            onSelected.invoke(item, isSelected, isSelectedByUser)
+        }
+    })
 
 internal fun CoroutineScope.asynchronously(block: suspend CoroutineScope.() -> Unit) =
     launch(context = Dispatchers.Default, block = block)
