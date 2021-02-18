@@ -49,7 +49,7 @@ abstract class BaseVMActivity<B : ViewDataBinding, M : BaseViewModel> : BaseBind
     abstract fun getBindingVariable(): Int
 
     private fun setBindingVariable() {
-        binding.apply {
+        getBinding().apply {
             setVariable(getBindingVariable(), viewModel)
             executePendingBindings()
         }
