@@ -59,19 +59,27 @@ fun <T> SortedList<T>.removeAll(list: List<T>) {
     list.forEach { remove(it)}
 }
 
-fun <M> HasOnItemClickListener<M>.onItemClicked(onClick: (M) -> Unit) =
-    setOnItemClickListener(object: OnItemClickListener<M> {
+fun <M> HasOnItemClickListener<M>.onItemClicked(onClick: (M) -> Unit): OnItemClickListener<M> {
+    val listener = object : OnItemClickListener<M> {
         override fun onItemClicked(obj: M) {
             onClick.invoke(obj)
         }
-    })
+    }
+    setOnItemClickListener(listener)
 
-fun <M> HasOnItemSelectedListener<M>.onItemSelected(onSelected: (M, Boolean, Boolean) -> Unit) =
-    setOnItemSelectedListener(object: OnItemSelectedListener<M> {
+    return listener
+}
+
+fun <M> HasOnItemSelectedListener<M>.onItemSelected(onSelected: (M, Boolean, Boolean) -> Unit): OnItemSelectedListener<M> {
+    val listener = object : OnItemSelectedListener<M> {
         override fun onSelected(item: M, isSelected: Boolean, isSelectedByUser: Boolean) {
             onSelected.invoke(item, isSelected, isSelectedByUser)
         }
-    })
+    }
+    setOnItemSelectedListener(listener)
+
+    return listener
+}
 
 internal fun CoroutineScope.asynchronously(block: suspend CoroutineScope.() -> Unit) =
     launch(context = Dispatchers.Default, block = block)

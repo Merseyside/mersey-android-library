@@ -50,7 +50,7 @@ abstract class BaseSelectableAdapter<M: Any, T: BaseSelectableAdapterViewModel<M
             }
         }
 
-    override val listeners: MutableList<OnItemSelectedListener<M>> = ArrayList()
+    override val selectedListeners: MutableList<OnItemSelectedListener<M>> = ArrayList()
     private var onSelectEnableListener: OnSelectEnabledListener? = null
 
     private var selectedList: MutableList<T> = ArrayList()
@@ -74,7 +74,7 @@ abstract class BaseSelectableAdapter<M: Any, T: BaseSelectableAdapterViewModel<M
     }
 
     fun removeOnItemClickListener(listener: OnItemSelectedListener<M>) {
-        listeners.remove(listener)
+        selectedListeners.remove(listener)
     }
 
     fun setOnSelectEnableListener(listener: OnSelectEnabledListener) {
@@ -203,7 +203,7 @@ abstract class BaseSelectableAdapter<M: Any, T: BaseSelectableAdapterViewModel<M
     }
 
     private fun notifyItemSelected(item: T, isSelectedByUser: Boolean) {
-        listeners.forEach { listener ->
+        selectedListeners.forEach { listener ->
             listener.onSelected(item.getItem(), item.isSelected(), isSelectedByUser)
         }
     }
@@ -243,5 +243,10 @@ abstract class BaseSelectableAdapter<M: Any, T: BaseSelectableAdapterViewModel<M
     override fun clear() {
         super.clear()
         clearSelections()
+    }
+
+    override fun removeListeners() {
+        super.removeListeners()
+        selectedListeners.clear()
     }
 }

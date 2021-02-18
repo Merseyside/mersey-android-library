@@ -9,9 +9,9 @@ interface OnSelectEnabledListener {
 }
 
 interface HasOnItemSelectedListener<M> {
-    val listeners: MutableList<OnItemSelectedListener<M>>
+    val selectedListeners: MutableList<OnItemSelectedListener<M>>
 
     fun setOnItemSelectedListener(listener: OnItemSelectedListener<M>) {
-        this.listeners.add(listener)
+        this.selectedListeners.add(listener)
     }
 }

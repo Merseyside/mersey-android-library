@@ -283,5 +283,9 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
         }
     }
 
+    open fun removeListeners() {
+        listener = null
+    }
+
     protected abstract fun createItemViewModel(obj: M): T
 }
