@@ -69,7 +69,7 @@ abstract class BaseAdapterViewModel<M>(
         }
     }
 
-    open fun onPositionChanged(fromPosition: Int, toPosition: Int) {}
+    protected open fun onPositionChanged(fromPosition: Int, toPosition: Int) {}
 
     open fun isDeletable(): Boolean {
         return true
