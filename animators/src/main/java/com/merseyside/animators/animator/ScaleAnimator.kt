@@ -52,7 +52,7 @@ class ScaleAnimator(
             values.also { if (isReverse) it.reverse() }
 
             return ValueAnimator.ofFloat(*values).apply {
-                this.duration = duration.toMillisLong()
+                this.duration = duration.millis
                 addUpdateListener { valueAnimator ->
                     val value = valueAnimator.animatedValue as Float
 

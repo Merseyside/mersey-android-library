@@ -44,9 +44,9 @@ class RacersAdapter(scope: CoroutineScope) :
     private fun getGapChangeFormatted(gapChange: Millis): String {
         return if (gapChange.isNotEmpty()) {
             if (gapChange > 0) {
-                "+ ${gapChange.toMillisLong()} ms"
+                "+ ${gapChange.millis} ms"
             } else {
-                "${gapChange.toMillisLong()} ms"
+                "${gapChange.millis} ms"
             }
         } else {
             ""

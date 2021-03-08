@@ -77,7 +77,7 @@ class AlphaAnimator(
             if (isReverse) values.reverse()
 
             return ValueAnimator.ofFloat(*values).apply {
-                this.duration = duration.toMillisLong()
+                this.duration = duration.millis
 
                 var previousValue: Float = values[0]
 

@@ -36,7 +36,7 @@ fun getHoursMinutes(timestamp: Long, context: Context? = null): String {
 }
 
 fun getHoursMinutes(timestamp: TimeUnit, context: Context? = null): String {
-    return getHoursMinutes(timestamp.toMillisLong(), context)
+    return getHoursMinutes(timestamp.millis, context)
 }
 
 fun getDate(
@@ -50,7 +50,7 @@ fun getDate(
     timestamp: TimeUnit,
     context: Context? = null
 ): String {
-    return getDate(timestamp.toMillisLong(), context)
+    return getDate(timestamp.millis, context)
 }
 
 fun getDateWithTime(
@@ -63,7 +63,7 @@ fun getDateWithTime(
 fun getDateWithTime(
     timestamp: TimeUnit,
     context: Context? = null): String {
-    return getDateWithTime(timestamp.toMillisLong(), context)
+    return getDateWithTime(timestamp.millis, context)
 }
 
 fun getFormattedDate(
@@ -71,7 +71,7 @@ fun getFormattedDate(
     pattern: String,
     context: Context? = null
 ): String {
-    return getFormattedDate(timestamp.toMillisLong(), pattern, context)
+    return getFormattedDate(timestamp.millis, pattern, context)
 }
 
 @SuppressLint("SimpleDateFormat")

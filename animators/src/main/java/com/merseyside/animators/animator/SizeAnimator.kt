@@ -79,7 +79,7 @@ class SizeAnimator(
             array.also { if (isReverse) it.reverse() }
 
             return ValueAnimator.ofInt(*array.toIntArray()).apply {
-                this.duration = duration.toMillisLong()
+                this.duration = duration.millis
 
                 addUpdateListener { valueAnimator ->
                     val value = valueAnimator.animatedValue as Int

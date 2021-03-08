@@ -63,9 +63,9 @@ class CheckpointItemViewModel(obj: Checkpoint) : BaseComparableAdapterViewModel<
     fun getChangeGap(): String {
         return if (gapChange.isNotEmpty()) {
             if (gapChange > 0) {
-                "+ ${gapChange.toMillisLong()} ms"
+                "+ ${gapChange.millis} ms"
             } else {
-                "${gapChange.toMillisLong()} ms"
+                "${gapChange.millis} ms"
             }
         } else {
             ""

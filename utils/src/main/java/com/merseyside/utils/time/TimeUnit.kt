@@ -9,83 +9,79 @@ object Conversions {
     const val HOURS_CONST = 24L
 }
 
-operator fun <T: TimeUnit> T.plus(increment: Long): T {
-    return newInstance(value + increment) as T
+operator fun <T: TimeUnit> T.plus(increment: Number): T {
+    return this + newInstance(increment.toLong())
 }
 
-operator fun <T: TimeUnit> T.div(divider: Long): T {
-    return newInstance(value / divider) as T
+operator fun <T: TimeUnit> T.div(divider: Number): T {
+    return this / newInstance(divider.toLong())
 }
 
-operator fun <T: TimeUnit> T.div(divider: Double): T {
-    return newInstance((value / divider).toLong()) as T
+operator fun <T: TimeUnit> T.times(times: Number): T {
+    return this * newInstance(times.toLong())
 }
 
-operator fun <T: TimeUnit> T.times(times: Long): T {
-    return newInstance(value * times) as T
-}
-
-operator fun <T: TimeUnit> T.times(times: Double): T {
-    return newInstance((value * times).toLong()) as T
-}
-
-operator fun <T: TimeUnit> T.minus(unary: Long): T {
-    return newInstance(value - unary) as T
+operator fun <T: TimeUnit> T.minus(unary: Number): T {
+    return this - newInstance(unary.toLong())
 }
 
 operator fun <T: TimeUnit> T.plus(increment: TimeUnit): T {
-    return this + convert(increment)
+    return newInstance(this.millis + increment.millis) as T
 }
 
 operator fun <T: TimeUnit> T.div(divider: TimeUnit): T {
-    return this / convert(divider)
+    return newInstance(this.millis / divider.millis) as T
 }
 
 operator fun <T: TimeUnit> T.times(times: TimeUnit): T {
-    return this * convert(times)
+    return newInstance(this.millis * times.millis) as T
 }
 
 operator fun <T: TimeUnit> T.minus(unary: TimeUnit): T {
-    return this - convert(unary)
+    return if (unary > this) newInstance(0) as T
+    else newInstance(this.millis - unary.millis) as T
 }
 
 fun <T: TimeUnit> T.isEqual(other: T): Boolean {
-    return this.toMillisLong() == other.toMillisLong()
+    return this.millis == other.millis
 }
 
-operator fun <T: TimeUnit> T.compareTo(value: Int): Int {
-    return this.toInt().compareTo(value)
-}
-
-operator fun <T: TimeUnit> T.compareTo(value: Long): Int {
-    return this.toLong().compareTo(value)
+operator fun <T: TimeUnit> T.compareTo(value: Number): Int {
+    return this.millis.compareTo(newInstance(value.toLong()).millis)
 }
 
 fun <T: TimeUnit> T.isNotEqual(other: T) = !isEqual(other)
 
 interface TimeUnit : Comparable<TimeUnit> {
 
+    val millis: Long
     val value: Long
 
-    fun toMillisLong(): Long {
-        return toMillis().value
+    fun toMillis(): Millis {
+        return Millis(millis)
     }
 
-    fun toMillis(): Millis
-    fun toSeconds(): Seconds
-    fun toMinutes(): Minutes
-    fun toHours(): Hours
-    fun toDays(): Days
+    fun toSeconds(): Seconds {
+        return Seconds(this)
+    }
 
+    fun toMinutes(): Minutes {
+        return Minutes(this)
+    }
+
+    fun toHours(): Hours {
+        return Hours(this)
+    }
+
+    fun toDays(): Days {
+        return Days(this)
+    }
+//
     fun getDayOfYear(context: Context? = null): Days {
         return Days(getFormattedDate(this, "DD", context))
     }
 
-    fun newInstance(value: Long): TimeUnit
-
-    fun toLong(): Long {
-        return value
-    }
+    fun newInstance(millis: Long): TimeUnit
 
     override fun toString(): String
 
@@ -93,27 +89,21 @@ interface TimeUnit : Comparable<TimeUnit> {
      * Returns true if value == 0
      */
     fun isEmpty(): Boolean {
-        return value == 0L
+        return millis == 0L
     }
 
     fun isNotEmpty() = !isEmpty()
 
-    fun convert(convertingUnit: TimeUnit): Long {
-
-        val value = when (this) {
-            is Millis -> convertingUnit.toMillis()
-            is Seconds -> convertingUnit.toSeconds()
-            is Minutes -> convertingUnit.toMinutes()
-            is Hours -> convertingUnit.toHours()
-            is Days -> convertingUnit.toDays()
-            else -> throw IllegalArgumentException("Wrong type")
-        }
-
-        return value.toLong()
+    fun isValid(value: Number): Boolean {
+        return this.millis >= 0
     }
 
     override fun compareTo(other: TimeUnit): Int {
-        return this.toMillisLong().compareTo(other.toMillisLong())
+        return this.millis.compareTo(other.millis)
+    }
+
+    fun getString(): String {
+        return "${javaClass.simpleName} = $value Millis = $millis"
     }
 
     companion object {
@@ -123,187 +113,135 @@ interface TimeUnit : Comparable<TimeUnit> {
     }
 }
 
-inline class Millis(override val value: Long): TimeUnit {
+inline class Millis(override val millis: Long): TimeUnit {
 
-    internal constructor(unit: TimeUnit): this(unit.value)
+    override val value: Long
+        get() = millis
+
+    init {
+        if (!isValid(millis)) throw IllegalArgumentException("$value is not valid!")
+    }
+
+    internal constructor(unit: TimeUnit): this(unit.millis)
 
     constructor(number: Number): this(number.toLong())
     constructor(str: String): this(str.toLong())
     constructor(): this(0)
+    
 
-    override fun toMillis(): Millis {
-        return this
-    }
-
-    override fun toSeconds(): Seconds {
-        return Seconds(value / Conversions.MILLIS_CONST)
-    }
-
-    override fun toMinutes(): Minutes {
-        return Minutes(toSeconds() / Conversions.SECONDS_MINUTES_CONST)
-    }
-
-    override fun toHours(): Hours {
-        return Hours(toMinutes() / Conversions.SECONDS_MINUTES_CONST)
-    }
-
-    override fun toDays(): Days {
-        return Days(toHours() / Conversions.HOURS_CONST)
-    }
-
-    override fun newInstance(value: Long): Millis {
-        return Millis(value)
+    override fun newInstance(millis: Long): Millis {
+        return Millis(millis)
     }
 
     override fun toString(): String {
-        return value.toString()
+        return getString()
     }
 }
 
-inline class Seconds(override val value: Long): TimeUnit {
+inline class Seconds private constructor(override val millis: Long): TimeUnit {
 
-    internal constructor(unit: TimeUnit): this(unit.value)
+    init {
+        if (!isValid(this.millis)) throw IllegalArgumentException("${this.millis} is not valid!")
+    }
 
-    constructor(number: Number): this(number.toLong())
-    constructor(str: String): this(str.toLong())
+    override val value: Long
+        get() = millis / Conversions.MILLIS_CONST
+
+    internal constructor(unit: TimeUnit): this(unit.millis)
+
+    constructor(number: Number): this(
+        (Millis(Conversions.MILLIS_CONST) * number).millis
+    )
+
+    constructor(str: String): this(number = str.toLong())
     constructor(): this(0)
 
-    override fun toMillis(): Millis {
-        return Millis(value * Conversions.MILLIS_CONST)
-    }
-
-    override fun toSeconds(): Seconds {
-        return this
-    }
-
-    override fun toMinutes(): Minutes {
-        return Minutes(value / Conversions.SECONDS_MINUTES_CONST)
-    }
-
-    override fun toHours(): Hours {
-        return Hours(toMinutes() / Conversions.SECONDS_MINUTES_CONST)
-    }
-
-    override fun toDays(): Days {
-        return Days(toHours() / Conversions.HOURS_CONST)
-    }
-
-    override fun newInstance(value: Long): Seconds {
-        return Seconds(value)
+    override fun newInstance(millis: Long): Seconds {
+        return Seconds(millis)
     }
 
     override fun toString(): String {
-        return value.toString()
+        return getString()
     }
 }
 
-inline class Minutes(override val value: Long): TimeUnit {
+inline class Minutes private constructor(override val millis: Long): TimeUnit {
 
-    internal constructor(unit: TimeUnit): this(unit.value)
+    init {
+        if (!isValid(millis)) throw IllegalArgumentException("$millis is not valid!")
+    }
 
-    constructor(number: Number): this(number.toLong())
-    constructor(str: String): this(str.toLong())
+    internal constructor(unit: TimeUnit): this(unit.millis)
+
+    constructor(number: Number): this(
+        (Seconds(Conversions.SECONDS_MINUTES_CONST) * number).millis
+    )
+
+    constructor(str: String): this(number = str.toLong())
     constructor(): this(0)
 
-    override fun toMillis(): Millis {
-        return Millis(toSeconds() * Conversions.MILLIS_CONST)
-    }
+    override val value: Long
+        get() = toSeconds().value / Conversions.SECONDS_MINUTES_CONST
 
-    override fun toSeconds(): Seconds {
-        return Seconds(value * Conversions.SECONDS_MINUTES_CONST)
-    }
-
-    override fun toMinutes(): Minutes {
-        return this
-    }
-
-    override fun toHours(): Hours {
-        return Hours(value / Conversions.SECONDS_MINUTES_CONST)
-    }
-
-    override fun toDays(): Days {
-        return Days(toHours() / Conversions.HOURS_CONST)
-    }
-
-    override fun newInstance(value: Long): Minutes {
-        return Minutes(value)
+    override fun newInstance(millis: Long): Minutes {
+        return Minutes(millis)
     }
 
     override fun toString(): String {
-        return value.toString()
+        return getString()
     }
 }
 
-inline class Hours(override val value: Long): TimeUnit {
+inline class Hours private constructor(override val millis: Long): TimeUnit {
 
-    internal constructor(unit: TimeUnit): this(unit.value)
+    init {
+        if (!isValid(millis)) throw IllegalArgumentException("$value is not valid!")
+    }
 
-    constructor(number: Number): this(number.toLong())
-    constructor(str: String): this(str.toLong())
+    internal constructor(unit: TimeUnit): this(unit.millis)
+
+    constructor(number: Number): this(
+        (Minutes(Conversions.SECONDS_MINUTES_CONST) * number).millis
+    )
+
+    constructor(str: String): this(number = str.toLong())
     constructor(): this(0)
 
-    override fun toMillis(): Millis {
-        return Millis(toSeconds() * Conversions.MILLIS_CONST)
-    }
+    override val value: Long
+        get() = toMinutes().value / Conversions.SECONDS_MINUTES_CONST
 
-    override fun toSeconds(): Seconds {
-        return Seconds(toMinutes() * Conversions.SECONDS_MINUTES_CONST)
-    }
-
-    override fun toMinutes(): Minutes {
-        return Minutes(value * Conversions.SECONDS_MINUTES_CONST)
-    }
-
-    override fun toHours(): Hours {
-        return this
-    }
-
-    override fun toDays(): Days {
-        return Days(value / Conversions.HOURS_CONST)
-    }
-
-    override fun newInstance(value: Long): Hours {
-        return Hours(value)
+    override fun newInstance(millis: Long): Hours {
+        return Hours(millis)
     }
 
     override fun toString(): String {
-        return value.toString()
+        return getString()
     }
 }
 
-inline class Days(override val value: Long): TimeUnit {
+inline class Days private constructor(override val millis: Long): TimeUnit {
 
-    internal constructor(unit: TimeUnit): this(unit.value)
+    init {
+        if (!isValid(millis)) throw IllegalArgumentException("$value is not valid!")
+    }
 
-    constructor(number: Number): this(number.toLong())
-    constructor(str: String): this(str.toLong())
+    internal constructor(unit: TimeUnit): this(unit.millis)
+
+    constructor(number: Number): this(
+        (Hours(Conversions.HOURS_CONST) * number).millis
+    )
+
+    constructor(str: String): this(number = str.toLong())
     constructor(): this(0)
 
-    override fun toMillis(): Millis {
-        return Millis(toSeconds() * Conversions.MILLIS_CONST)
-    }
+    override val value: Long
+        get() = toHours().value / Conversions.HOURS_CONST
 
-    override fun toSeconds(): Seconds {
-        return Seconds(toMinutes() * Conversions.SECONDS_MINUTES_CONST)
-    }
-
-    override fun toMinutes(): Minutes {
-        return Minutes(toHours() * Conversions.SECONDS_MINUTES_CONST)
-    }
-
-    override fun toHours(): Hours {
-        return Hours(value * Conversions.HOURS_CONST)
-    }
-
-    override fun toDays(): Days {
-        return this
-    }
-
-    override fun newInstance(value: Long): Days {
-        return Days(value)
+    override fun newInstance(millis: Long): Days {
+        return Days(millis)
     }
 
     override fun toString(): String {
-        return value.toString()
+        return getString()
     }
 }
