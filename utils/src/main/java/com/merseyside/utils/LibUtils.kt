@@ -215,7 +215,7 @@ fun copyToClipboard(context: Context, text: String, label: String = "Copied text
     val clipboard: ClipboardManager? =
         context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
     val clip: ClipData = ClipData.newPlainText(label, text)
-    clipboard?.primaryClip = clip
+    clipboard?.setPrimaryClip(clip)
 }
 
 fun getDrawableByName(context: Context, name: String): Drawable? {

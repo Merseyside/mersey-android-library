@@ -19,6 +19,10 @@
         <action
             android:id="@+id/action_mainFragment_to_racingFragment"
             app:destination="@id/racingFragment" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_locationFragment"
+            app:destination="@id/locationFragment" />
     </fragment>
 
     <fragment
@@ -33,5 +37,12 @@
         android:name="com.merseyside.merseyLib.features.adapters.racers.view.RacingFragment"
         android:label="racing_fragment"
         tools:layout="@layout/fragment_racing"
+        app:navGraph="@navigation/nav_graph"/>
+
+    <fragment
+        android:id="@+id/locationFragment"
+        android:name="com.merseyside.merseyLib.features.location.view.LocationFragment"
+        android:label="location_fragment"
+        tools:layout="@layout/fragment_location"
         app:navGraph="@navigation/nav_graph"/>
 </navigation>

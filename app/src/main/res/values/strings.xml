@@ -4,4 +4,7 @@
     <string name="start">Start</string>
     <string name="stop">Stop</string>
 
+    <string name="location_title">Location sample</string>
+    <string name="get_location">Get location</string>
+
 </resources>

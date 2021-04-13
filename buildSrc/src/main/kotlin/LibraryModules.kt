@@ -3,5 +3,4 @@ object LibraryModules {
     const val adapters = ":adapters"
     const val animators = ":animators"
     const val utils = ":utils"
-
 }

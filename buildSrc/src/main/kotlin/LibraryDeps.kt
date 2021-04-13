@@ -51,5 +51,6 @@ object LibraryDeps {
         val coil = "io.coil-kt:coil:${LibraryVersions.Libs.coil}"
         val filemanager = "com.github.Merseyside:android-filemanager:${LibraryVersions.Libs.filemanager}"
         val typedDatastore = "androidx.datastore:datastore:${LibraryVersions.Libs.typedDataStore}"
+        val location = "com.google.android.gms:play-services-location:${LibraryVersions.Libs.location}"
     }
 }

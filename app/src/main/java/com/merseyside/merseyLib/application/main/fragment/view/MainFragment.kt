@@ -31,5 +31,6 @@ class MainFragment : BaseSampleFragment<FragmentMainBinding, MainViewModel>() {
 
         getBinding().colorsButton.onClick { navController.navigate(R.id.action_mainFragment_to_colorsFragment) }
         getBinding().racingButton.onClick { navController.navigate(R.id.action_mainFragment_to_racingFragment) }
+        getBinding().locationButton.onClick { navController.navigate(R.id.action_mainFragment_to_locationFragment) }
     }
 }
