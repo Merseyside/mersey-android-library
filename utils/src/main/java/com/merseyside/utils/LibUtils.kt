@@ -156,7 +156,7 @@ fun runThread(onThread: () -> Unit): Thread {
 
 fun delayedMainThread(delay: TimeUnit, runnable: Runnable): HandlerCanceller {
     val handler = Handler(Looper.getMainLooper())
-    handler.postDelayed(runnable, delay.toMillisLong())
+    handler.postDelayed(runnable, delay.millis)
     return handler.toHandlerCanceller(runnable)
 }
 
@@ -166,7 +166,7 @@ fun delayedMainThread(delay: TimeUnit, onMain: () -> Unit): HandlerCanceller {
 
 fun delayedThread(delay: TimeUnit, runnable: Runnable): HandlerCanceller {
     val handler = Handler()
-    handler.postDelayed(runnable, delay.toMillisLong())
+    handler.postDelayed(runnable, delay.millis)
     return handler.toHandlerCanceller(runnable)
 }
 
