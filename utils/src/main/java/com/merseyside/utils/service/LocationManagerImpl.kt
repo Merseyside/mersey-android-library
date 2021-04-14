@@ -7,6 +7,10 @@ import android.location.Location
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
+import com.merseyside.utils.ext.logMsg
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
@@ -17,6 +21,7 @@ class LocationManagerImpl(private val context: Context) : LocationManager, Lifec
             return LocationUpdatesService.isRunning
         }
 
+    private val intent = Intent(context, LocationUpdatesService::class.java)
     private var broadcastReceiver: LocationBroadcastReceiver? = null
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
@@ -26,21 +31,47 @@ class LocationManagerImpl(private val context: Context) : LocationManager, Lifec
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onDestroy() {
-        removeReceiver()
+        stopAndUnregisterReceiver()
+    }
+
+    @ExperimentalCoroutinesApi
+    override fun getLocationFlow() = callbackFlow<Location> {
+        startService()
+
+        broadcastReceiver?.addCallback(object : LocationBroadcastReceiver.LocationCallback {
+            override fun onReceive(location: Location) {
+                offer(location)
+            }
+        })
+
+        awaitClose {
+            stopService()
+        }
+    }
+
+    override suspend fun getLastLocation(): Location = suspendCancellableCoroutine { continuation ->
+        startService()
+
+        broadcastReceiver?.addLastLocationCallback(object :
+            LocationBroadcastReceiver.LocationCallback {
+            override fun onReceive(location: Location) {
+                broadcastReceiver?.removeCallback(this)
+                continuation.resume(location)
+                stopService()
+            }
+        })
     }
 
     override suspend fun getLocation(): Location = suspendCancellableCoroutine { continuation ->
-        if (!isRunning) {
-            context.startService(Intent(context, LocationUpdatesService::class.java))
+        startService()
 
-            continuation.invokeOnCancellation { broadcastReceiver?.removeCallback() }
-            broadcastReceiver?.addCallback(object : LocationBroadcastReceiver.LocationCallback {
-                override fun onReceive(location: Location) {
-                    continuation.resume(location)
-                    broadcastReceiver?.removeCallback()
-                }
-            })
-        }
+        broadcastReceiver?.addCallback(object : LocationBroadcastReceiver.LocationCallback {
+            override fun onReceive(location: Location) {
+                broadcastReceiver?.removeCallback(this)
+                continuation.resume(location)
+                stopService()
+            }
+        })
     }
 
     private fun registerReceiver() {
@@ -52,8 +83,47 @@ class LocationManagerImpl(private val context: Context) : LocationManager, Lifec
         }
     }
 
-    private fun removeReceiver() {
-        context.unregisterReceiver(broadcastReceiver)
-        broadcastReceiver = null
+    private fun unregisterReceiver() {
+        broadcastReceiver?.let {
+            context.unregisterReceiver(broadcastReceiver)
+            broadcastReceiver = null
+        }
+    }
+
+    private fun startService() {
+        if (!isRunning) {
+            context.startService(intent)
+        }
+    }
+
+    private fun stopService() {
+        if (isRunning) {
+            context.stopService(intent)
+        }
+    }
+
+    private fun stopAndUnregisterReceiver() {
+        unregisterReceiver()
+        stopService()
+    }
+
+    fun setNotificationText(text: String) {
+        LocationUpdatesService.text = text
+    }
+
+    fun setNotificationTitle(title: String) {
+        LocationUpdatesService.title = title
+    }
+
+    fun setNotificationIcon(iconRes: Int) {
+        LocationUpdatesService.iconRes = iconRes
+    }
+
+    fun setNotificationTicker(ticker: String) {
+        LocationUpdatesService.ticker = ticker
+    }
+
+    fun setNotificationName(name: String) {
+        LocationUpdatesService.name = name
     }
 }

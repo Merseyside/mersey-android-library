@@ -2,7 +2,6 @@ package com.merseyside.utils.service
 
 import android.app.*
 import android.content.Intent
-import android.content.res.Configuration
 import android.location.Location
 import android.os.*
 import android.util.Log
@@ -14,13 +13,6 @@ class LocationUpdatesService : Service() {
 
     private val mBinder: IBinder = LocalBinder()
 
-
-    /**
-     * Used to check whether the bound activity has really gone away and not unbound as part of an
-     * orientation change. We create a foreground service notification only if the former takes
-     * place.
-     */
-    private var mChangingConfiguration = false
     private var mNotificationManager: NotificationManager? = null
 
     /**
@@ -37,8 +29,6 @@ class LocationUpdatesService : Service() {
      * Callback for changes in location.
      */
     private var mLocationCallback: LocationCallback? = null
-    private var mServiceHandler: Handler? = null
-
     /**
      * The current location.
      */
@@ -54,63 +44,32 @@ class LocationUpdatesService : Service() {
             }
         }
         createLocationRequest()
-        //getLastLocation()
-        val handlerThread = HandlerThread(TAG)
-        handlerThread.start()
-        mServiceHandler = Handler(handlerThread.looper)
         mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager?
 
         // Android O requires a Notification Channel.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name: CharSequence = "App name"
-            // Create the channel for the notification
             val mChannel =
                 NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT)
 
             // Set the Notification Channel for the Notification Manager.
-            mNotificationManager!!.createNotificationChannel(mChannel)
+            mNotificationManager?.createNotificationChannel(mChannel)
         }
 
+        getLastLocation()
         requestLocationUpdates()
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        Log.i(TAG, "Service started")
-        val startedFromNotification = intent.getBooleanExtra(
-            EXTRA_STARTED_FROM_NOTIFICATION,
-            false
-        )
-
-        // We got here because the user decided to remove location updates from the notification.
-        if (startedFromNotification) {
-            stopSelf()
-        }
-        // Tells the system to not try to recreate the service after it has been killed.
-        return START_NOT_STICKY
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        mChangingConfiguration = true
-    }
+    override fun onStartCommand(intent: Intent, flags: Int, startId: Int) = START_NOT_STICKY
 
     override fun onDestroy() {
-        mServiceHandler?.removeCallbacksAndMessages(null)
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback)
+        mNotificationManager?.cancelAll()
         isRunning = false
     }
 
     override fun onBind(intent: Intent?) = mBinder
 
-    inner class LocalBinder : Binder() {
-        val service: LocationUpdatesService
-            get() = this@LocationUpdatesService
-    }
-
-    /**
-     * Makes a request for location updates. Note that in this sample we merely log the
-     * [SecurityException].
-     */
-    fun requestLocationUpdates() {
+    private fun requestLocationUpdates() {
         Log.i(TAG, "Requesting location updates")
         startService(Intent(applicationContext, LocationUpdatesService::class.java))
         try {
@@ -118,6 +77,11 @@ class LocationUpdatesService : Service() {
                 mLocationRequest,
                 mLocationCallback,
                 Looper.myLooper()
+            )
+
+            mNotificationManager?.notify(
+                NOTIFICATION_ID,
+                notification
             )
         } catch (unlikely: SecurityException) {
             Log.e(
@@ -129,18 +93,12 @@ class LocationUpdatesService : Service() {
 
     private val notification: Notification
         get() {
-            val intent = Intent(this, LocationUpdatesService::class.java)
-            val text: CharSequence = "Some text"
-
-            // Extra to help us figure out if we arrived in onStartCommand via the notification or not.
-            intent.putExtra(EXTRA_STARTED_FROM_NOTIFICATION, true)
-
             val builder: NotificationCompat.Builder = NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentText(text)
-                .setContentTitle("Some title")
+                .setContentTitle(title)
                 .setOngoing(true)
-                .setSmallIcon(android.R.mipmap.sym_def_app_icon)
-                .setTicker(text)
+                .setSmallIcon(iconRes)
+                .setTicker(ticker)
                 .setWhen(System.currentTimeMillis())
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -161,7 +119,10 @@ class LocationUpdatesService : Service() {
             mFusedLocationClient.lastLocation
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful && task.result != null) {
-                        mLocation = task.result
+                        Intent(ACTION_BROADCAST).also {
+                            it.putExtra(LAST_LOCATION_KEY, task.result)
+                            sendBroadcast(it)
+                        }
                     } else {
                         Log.w(TAG, "Failed to get location.")
                     }
@@ -181,12 +142,6 @@ class LocationUpdatesService : Service() {
             it.putExtra(LOCATION_KEY, location)
             sendBroadcast(it)
         }
-
-        // Update notification content if running as a foreground service.
-        mNotificationManager!!.notify(
-            NOTIFICATION_ID,
-            notification
-        )
     }
 
     /**
@@ -199,24 +154,32 @@ class LocationUpdatesService : Service() {
         mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
     }
 
+    inner class LocalBinder : Binder() {
+        val service: LocationUpdatesService
+            get() = this@LocationUpdatesService
+    }
+
     companion object {
+        internal var name: String = "App name"
+        internal var title: String = "Location app"
+        internal var text: String = "Getting your location"
+        internal var ticker: String = ""
+        internal var iconRes: Int = android.R.mipmap.sym_def_app_icon
+
         var isRunning = false
 
-        private const val PACKAGE_NAME =
-            "com.merseyside.merseyLib"
+        private const val PACKAGE_NAME = "com.merseyside.merseyLib"
         private val TAG = LocationUpdatesService::class.java.simpleName
 
         const val ACTION_BROADCAST = "$PACKAGE_NAME.LOCATION_BROADCAST"
 
         const val LOCATION_KEY = "location"
+        const val LAST_LOCATION_KEY = "last_location"
 
         /**
          * The name of the channel for notifications.
          */
         private const val CHANNEL_ID = "channel_01"
-        private const val EXTRA_STARTED_FROM_NOTIFICATION = PACKAGE_NAME +
-                ".started_from_notification"
-
         /**
          * The desired interval for location updates. Inexact. Updates may be more or less frequent.
          */

@@ -23,7 +23,12 @@ class LocationModule(
 
     @Provides
     fun provideLocationManager(@ApplicationContext context: Context): LocationManager {
-        return LocationManagerImpl(context)
+        return LocationManagerImpl(context).apply {
+            fragment.lifecycle.addObserver(this)
+
+            setNotificationText("Testing foreground location")
+            setNotificationName("Sample")
+        }
     }
 
 }

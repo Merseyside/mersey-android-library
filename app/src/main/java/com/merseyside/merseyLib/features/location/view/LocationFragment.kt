@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.BR
@@ -16,6 +17,9 @@ import com.merseyside.utils.PermissionManager
 import com.merseyside.utils.ext.log
 import com.merseyside.utils.ext.onClick
 import com.merseyside.utils.service.LocationManager
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,6 +27,8 @@ class LocationFragment : BaseSampleFragment<FragmentLocationBinding, LocationVie
 
     @Inject
     lateinit var locationManager: LocationManager
+
+    private var job: Job? = null
 
     override fun hasTitleBackButton() = true
     override fun getLayoutId() = R.layout.fragment_location
@@ -38,12 +44,28 @@ class LocationFragment : BaseSampleFragment<FragmentLocationBinding, LocationVie
     override fun getTitle(context: Context) = getString(R.string.location_title)
     override fun getBindingVariable() = BR.viewModel
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getBinding().button.onClick {
-            lifecycleScope.launch {
-                locationManager.getLocation().log()
+            if (job == null) {
+                getBinding().button.text = getString(R.string.stop_getting_location)
+                job = lifecycleScope.launch {
+                    //locationManager.getLocation().log(prefix = "location = ")
+                    val flow = locationManager.getLocationFlow()
+                    flow.collect {
+                        Toast.makeText(
+                            context,
+                            "lat = ${it.latitude} lon = ${it.longitude}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            } else {
+                getBinding().button.text = getString(R.string.start_getting_location)
+                job?.let {
+                    it.cancel()
+                    job = null
+                }
             }
         }
     }

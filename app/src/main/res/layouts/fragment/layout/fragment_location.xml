@@ -21,7 +21,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:text="@string/get_location"/>
+            android:text="@string/start_getting_location"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
