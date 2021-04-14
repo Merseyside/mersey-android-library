@@ -32,7 +32,7 @@ object LibraryVersions {
         const val appCompat = "1.2.0"
         const val activity = "1.2.0"
         const val annotation = "1.2.0-alpha01"
-        const val material = "1.2.1"
+        const val material = "1.3.0"
         const val coroutines = "1.4.2"
         const val fragment = "1.3.0"
         const val constraintLayout = "2.1.0-alpha2"

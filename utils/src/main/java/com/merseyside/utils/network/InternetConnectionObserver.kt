@@ -25,7 +25,7 @@ class InternetConnectionObserver(private val context: Context) {
                     }
                 }
 
-                override fun onLost(network: Network?) {
+                override fun onLost(network: Network) {
                     mainThread {
                         listener.onConnectionState(false)
                     }

@@ -2,6 +2,7 @@ package com.merseyside.archy.presentation.activity
 
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import com.merseyside.utils.ext.log
 
 abstract class BaseBindingActivity<B: ViewDataBinding> : BaseActivity() {
 
