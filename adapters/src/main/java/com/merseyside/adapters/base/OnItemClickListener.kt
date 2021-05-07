@@ -11,8 +11,4 @@ interface HasOnItemClickListener<M> {
     fun setOnItemClickListener(listener: OnItemClickListener<M>?) {
         this.listener = listener
     }
-
-    fun getOnItemClickListener(): OnItemClickListener<M>? {
-        return listener
-    }
 }

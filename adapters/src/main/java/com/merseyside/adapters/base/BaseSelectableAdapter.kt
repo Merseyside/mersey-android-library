@@ -11,15 +11,7 @@ abstract class BaseSelectableAdapter<M: Any, T: BaseSelectableAdapterViewModel<M
     var isAllowToCancelSelection: Boolean = selectableMode == SelectableMode.MULTIPLE,
     isSelectEnabled: Boolean = true,
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-) : BaseSortedAdapter<M, T>(scope) {
-
-    interface OnItemSelectedListener<M> {
-        fun onSelected(item: M, isSelected: Boolean, isSelectedByUser: Boolean)
-    }
-
-    interface OnSelectEnabledListener {
-        fun onEnabled(isEnabled: Boolean)
-    }
+) : BaseSortedAdapter<M, T>(scope), HasOnItemSelectedListener<M> {
 
     enum class SelectableMode { SINGLE, MULTIPLE }
 
@@ -58,7 +50,7 @@ abstract class BaseSelectableAdapter<M: Any, T: BaseSelectableAdapterViewModel<M
             }
         }
 
-    private val listeners: MutableList<OnItemSelectedListener<M>> = ArrayList()
+    override val selectedListeners: MutableList<OnItemSelectedListener<M>> = ArrayList()
     private var onSelectEnableListener: OnSelectEnabledListener? = null
 
     private var selectedList: MutableList<T> = ArrayList()
@@ -69,20 +61,20 @@ abstract class BaseSelectableAdapter<M: Any, T: BaseSelectableAdapterViewModel<M
         }
     }
 
-    fun setOnItemSelectedListener(listener: OnItemSelectedListener<M>) {
-        listeners.add(listener)
+    override fun setOnItemSelectedListener(listener: OnItemSelectedListener<M>) {
+        super.setOnItemSelectedListener(listener)
 
         selectedList.forEach { item ->
             listener.onSelected(
+                item = item.getItem(),
                 isSelected = true,
-                isSelectedByUser = false,
-                item = item.getItem()
+                isSelectedByUser = false
             )
         }
     }
 
     fun removeOnItemClickListener(listener: OnItemSelectedListener<M>) {
-        listeners.remove(listener)
+        selectedListeners.remove(listener)
     }
 
     fun setOnSelectEnableListener(listener: OnSelectEnabledListener) {
@@ -176,12 +168,12 @@ abstract class BaseSelectableAdapter<M: Any, T: BaseSelectableAdapterViewModel<M
         return selectedList.map { it.obj }
     }
 
-    private fun isCanItemBeSelected(item: T?): Boolean {
+    private fun canItemBeSelected(item: T?): Boolean {
         return (item != null && item.isSelectable())
     }
 
     private fun setItemSelected(item: T?, isSelectedByUser: Boolean = false) {
-        if (item != null && isCanItemBeSelected(item)) {
+        if (item != null && canItemBeSelected(item)) {
             if (!item.isSelected()) {
                 if (selectableMode == SelectableMode.SINGLE) {
                     if (selectedList.isEmpty() || selectedList.first().areItemsNotTheSame(item.obj)) {
@@ -211,7 +203,7 @@ abstract class BaseSelectableAdapter<M: Any, T: BaseSelectableAdapterViewModel<M
     }
 
     private fun notifyItemSelected(item: T, isSelectedByUser: Boolean) {
-        listeners.forEach { listener ->
+        selectedListeners.forEach { listener ->
             listener.onSelected(item.getItem(), item.isSelected(), isSelectedByUser)
         }
     }
@@ -229,7 +221,7 @@ abstract class BaseSelectableAdapter<M: Any, T: BaseSelectableAdapterViewModel<M
     }
 
     private fun isItemSelected(model: T): Boolean {
-        return if (isCanItemBeSelected(model)) {
+        return if (canItemBeSelected(model)) {
             model.isSelected()
         } else {
             false
@@ -250,7 +242,11 @@ abstract class BaseSelectableAdapter<M: Any, T: BaseSelectableAdapterViewModel<M
 
     override fun clear() {
         super.clear()
-
         clearSelections()
+    }
+
+    override fun removeListeners() {
+        super.removeListeners()
+        selectedListeners.clear()
     }
 }

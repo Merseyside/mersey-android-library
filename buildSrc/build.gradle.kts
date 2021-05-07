@@ -1,32 +1,22 @@
 plugins {
     `kotlin-dsl`
-    kotlin("jvm") version "1.4.30"
-    kotlin("plugin.serialization") version "1.4.30"
+    kotlin("jvm") version "1.5.0"
+    kotlin("plugin.serialization") version "1.5.0"
 }
 
 repositories {
     mavenLocal()
-
-    jcenter()
+    mavenCentral()
     google()
-
-    maven { url = uri("https://dl.bintray.com/icerockdev/plugins") }
 }
 
-val multiplatform = "0.9.0"
-val kotlin = "1.4.30"
-val gradle = "7.0.0-alpha05"
-val mavenVersion = "2.1"
-val resources = "0.13.1"
-val sqldelight = "1.4.4"
+val kotlin = "1.5.0"
+val gradle = "4.1.3"
 
 dependencies {
-    implementation("dev.icerock:mobile-multiplatform:$multiplatform")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin")
     implementation("com.android.tools.build:gradle:$gradle")
     implementation("org.jetbrains.kotlin:kotlin-serialization:$kotlin")
-    implementation("dev.icerock.moko:resources-generator:$resources")
-    implementation("com.squareup.sqldelight:gradle-plugin:$sqldelight")
 }
 
 kotlinDslPluginOptions {

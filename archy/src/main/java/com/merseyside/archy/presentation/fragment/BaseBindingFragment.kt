@@ -9,26 +9,29 @@ import androidx.databinding.ViewDataBinding
 
 abstract class BaseBindingFragment<B: ViewDataBinding> : BaseFragment() {
 
-    protected lateinit var binding: B
+    private var binding: B? = null
 
-    protected var isBindingInit = false
+    protected fun getBinding(): B {
+        return binding ?: throw IllegalStateException("Binding is null. Do you call it after OnCreateView()?")
+    }
+
+    protected val isBindingInit: Boolean
+        get() { return binding != null }
 
     override fun inflateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         @LayoutRes layoutId: Int
     ): View? {
-        binding = DataBindingUtil.inflate(inflater, getLayoutId(), container, false)
-        binding.lifecycleOwner = this
+        binding = DataBindingUtil.inflate<B>(inflater, getLayoutId(), container, false).apply {
+            lifecycleOwner = this@BaseBindingFragment
+        }
 
-        isBindingInit = true
-
-        return binding.root
+        return getBinding().root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-
-        isBindingInit = false
+        binding = null
     }
 }

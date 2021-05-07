@@ -5,7 +5,6 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.Window
-import android.view.WindowManager
 import androidx.annotation.CallSuper
 import androidx.annotation.DimenRes
 import androidx.annotation.LayoutRes
@@ -109,22 +108,17 @@ abstract class BaseDialog : DialogFragment(), IView, OrientationHandler, ILocale
             }
 
         }.apply<Dialog> {
-
             val title = getTitle(context)
 
-            if (title.isNullOrEmpty()) {
-                requestWindowFeature(Window.FEATURE_NO_TITLE)
-            } else {
-                setTitle(title)
-            }
+            if (title.isNullOrEmpty()) requestWindowFeature(Window.FEATURE_NO_TITLE)
+            else setTitle(title)
 
             setCanceledOnTouchOutside(getCancelable())
-
             setView(this)
         }
     }
     
-    open protected fun setView(dialog: Dialog, @LayoutRes layoutId: Int = getLayoutId()) {
+    protected open fun setView(dialog: Dialog, @LayoutRes layoutId: Int = getLayoutId()) {
         dialog.setContentView(layoutId)
     }
 
@@ -134,7 +128,6 @@ abstract class BaseDialog : DialogFragment(), IView, OrientationHandler, ILocale
 
     override fun onStart() {
         super.onStart()
-
         doLayout()
     }
 
@@ -167,7 +160,7 @@ abstract class BaseDialog : DialogFragment(), IView, OrientationHandler, ILocale
         val transaction = fragmentManager.beginTransaction()
         val prevFragment = fragmentManager.findFragmentByTag(tag)
 
-        if (prevFragment != null) {
+        prevFragment?.let {
             transaction.remove(prevFragment)
         }
 
@@ -218,23 +211,25 @@ abstract class BaseDialog : DialogFragment(), IView, OrientationHandler, ILocale
         return getDialogView()
     }
 
-    fun setLayoutPixelSize(width: Int?, height: Int?) {
-        val window = dialog!!.window ?: return
-        val params: WindowManager.LayoutParams = window.attributes
-
-        if (width != null) params.width = width
-        if (height != null) params.height = height
-
-        window.attributes = params
+    fun setLayoutSize(width: Int? = null, height: Int? = null) {
+        dialog?.window?.apply {
+            attributes = attributes.apply {
+                if (width != null) this.width = width
+                if (height != null) this.height = height
+            }
+        } ?: throw IllegalStateException("Dialog is null!")
     }
 
-    fun setLayoutSize(@DimenRes widthId: Int? = null, @DimenRes heightId: Int? = null) {
+    fun setLayoutDimenSize(
+        @DimenRes widthId: Int? = null,
+        @DimenRes heightId: Int? = null
+    ) {
         var width: Int? = null
         var height: Int? = null
 
         if (widthId != null) width = resources.getDimensionPixelSize(widthId)
         if (heightId != null) height = resources.getDimensionPixelSize(heightId)
 
-        setLayoutPixelSize(width, height)
+        setLayoutSize(width, height)
     }
 }

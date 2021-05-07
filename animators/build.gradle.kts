@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import extensions.androidImplementation
 
 plugins {
     plugin(LibraryDeps.Plugins.androidLibrary)
@@ -9,15 +8,15 @@ plugins {
     plugin(LibraryDeps.Plugins.mavenPublish)
 }
 
-group = LibraryVersions.Application.publishingId
+group = LibraryVersions.Application.groupId
 version = LibraryVersions.Application.version
 
 android {
-    compileSdkVersion(LibraryVersions.Android.compileSdk)
+    compileSdkVersion(LibraryVersions.Application.compileSdk)
 
     defaultConfig {
-        minSdkVersion(LibraryVersions.Android.minSdk)
-        targetSdkVersion(LibraryVersions.Android.targetSdk)
+        minSdkVersion(LibraryVersions.Application.minSdk)
+        targetSdkVersion(LibraryVersions.Application.targetSdk)
         versionCode = LibraryVersions.Application.versionCode
         versionName = LibraryVersions.Application.version
     }
@@ -45,15 +44,26 @@ tasks.withType<KotlinCompile> {
 }
 
 val androidLibs = listOf(
-    LibraryDeps.Libs.Android.appCompat
+    LibraryDeps.Libs.appCompat
 )
 
 dependencies {
-    implementation(project(LibraryModules.Android.utils))
+    implementation(project(LibraryModules.utils))
 
-    androidLibs.forEach { lib -> androidImplementation(lib) }
+    androidLibs.forEach { lib -> implementation(lib) }
 }
 
-repositories {
-    mavenCentral()
+afterEvaluate {
+    publishing.publications {
+        create<MavenPublication>("release") {
+            groupId = group.toString()
+            artifactId = project.name
+            version = rootProject.version.toString()
+            from(components["release"])
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
 }

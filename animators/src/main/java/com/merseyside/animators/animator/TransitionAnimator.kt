@@ -94,7 +94,7 @@ class TransitionAnimator (
             }
 
             return ValueAnimator.ofFloat(*floatArray).apply {
-                this.duration = duration.toMillisLong()
+                this.duration = duration.millis
 
                 addUpdateListener { valueAnimator ->
                     val value = valueAnimator.animatedValue as Float

@@ -23,7 +23,7 @@ abstract class BaseCoroutineUseCase<T, Params> : CoroutineScope by CoroutineScop
 
     protected suspend fun doWorkAsync(params: Params?): Deferred<T> = scope.async(backgroundContext) {
         if (delay != null) {
-            delay(delay!!.toMillisLong())
+            delay(delay!!.millis)
         }
 
         executeOnBackground(params)

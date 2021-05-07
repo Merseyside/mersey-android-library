@@ -40,16 +40,16 @@ class PreferenceManager private constructor(
         prefs.registerOnSharedPreferenceChangeListener(listener)
     }
 
-//    fun setOnSharedPreferenceChangeListener(onChange: (key: String) -> Unit): OnSharedPreferenceChangeListener {
-//        val listener = OnSharedPreferenceChangeListener { _, key ->
-//            if (key != null) {
-//                onChange.invoke(key)
-//            }
-//        }
-//
-//        sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
-//        return listener
-//    }
+    fun setOnSharedPreferenceChangeListener(onChange: (key: String) -> Unit): OnSharedPreferenceChangeListener {
+        val listener = OnSharedPreferenceChangeListener { _, key ->
+            if (key != null) {
+                onChange.invoke(key)
+            }
+        }
+
+        prefs.registerOnSharedPreferenceChangeListener(listener)
+        return listener
+    }
 
     fun removeOnSharedPreferenceChangeListener(listener: OnSharedPreferenceChangeListener?) {
         prefs.unregisterOnSharedPreferenceChangeListener(listener)
@@ -92,7 +92,7 @@ class PreferenceManager private constructor(
 
     fun put(preference: String?, value: TimeUnit) {
         prefs.edit().apply {
-            putLong(preference, value.toMillisLong())
+            putLong(preference, value.millis)
             apply()
         }
     }
@@ -131,7 +131,7 @@ class PreferenceManager private constructor(
     }
 
     fun getTimeUnit(preference: String, defaultValue: TimeUnit): TimeUnit {
-        return getTimeUnit(preference, defaultValue.toMillisLong())
+        return getTimeUnit(preference, defaultValue.millis)
     }
 
     fun getTimeUnit(preference: String, defaultValue: Long): TimeUnit {

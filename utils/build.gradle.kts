@@ -8,15 +8,15 @@ plugins {
     plugin(LibraryDeps.Plugins.mavenPublish)
 }
 
-group = LibraryVersions.Application.publishingId
+group = LibraryVersions.Application.groupId
 version = LibraryVersions.Application.version
 
 android {
-    compileSdkVersion(LibraryVersions.Android.compileSdk)
+    compileSdkVersion(LibraryVersions.Application.compileSdk)
 
     defaultConfig {
-        minSdkVersion(LibraryVersions.Android.minSdk)
-        targetSdkVersion(LibraryVersions.Android.targetSdk)
+        minSdkVersion(LibraryVersions.Application.minSdk)
+        targetSdkVersion(LibraryVersions.Application.targetSdk)
         versionCode = LibraryVersions.Application.versionCode
         versionName = LibraryVersions.Application.version
     }
@@ -45,24 +45,35 @@ tasks.withType<KotlinCompile> {
 }
 
 val androidLibs = listOf(
-    LibraryDeps.Libs.Android.appCompat,
-    LibraryDeps.Libs.Android.material,
-    LibraryDeps.Libs.Android.coroutines,
-    LibraryDeps.Libs.Android.reflect,
-    LibraryDeps.Libs.Android.paging,
-    LibraryDeps.Libs.Android.billing,
-    LibraryDeps.Libs.Android.billingKtx,
-    LibraryDeps.Libs.Android.publisher,
-    LibraryDeps.Libs.Android.oauth2,
-    LibraryDeps.Libs.Android.serialization,
-    LibraryDeps.Libs.Android.playCore,
-    LibraryDeps.Libs.Android.coil
+    LibraryDeps.Libs.appCompat,
+    LibraryDeps.Libs.material,
+    LibraryDeps.Libs.coroutines,
+    LibraryDeps.Libs.reflect,
+    LibraryDeps.Libs.paging,
+    LibraryDeps.Libs.billing,
+    LibraryDeps.Libs.publisher,
+    LibraryDeps.Libs.oauth2,
+    LibraryDeps.Libs.serialization,
+    LibraryDeps.Libs.playCore,
+    LibraryDeps.Libs.coil,
+    LibraryDeps.Libs.location
 )
 
 dependencies {
-    androidLibs.forEach { lib -> implementation(lib.name)}
+    androidLibs.forEach { lib -> implementation(lib)}
 }
 
-repositories {
-    mavenCentral()
+afterEvaluate {
+    publishing.publications {
+        create<MavenPublication>("release") {
+            groupId = group.toString()
+            artifactId = project.name
+            version = rootProject.version.toString()
+            from(components["release"])
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
 }

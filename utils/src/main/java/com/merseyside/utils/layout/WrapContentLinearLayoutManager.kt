@@ -20,12 +20,8 @@ class WrapContentLinearLayoutManager(
         override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
             try {
                 super.onLayoutChildren(recycler, state)
-            } catch (ignored: IndexOutOfBoundsException) {
-            }
-
+            } catch (ignored: IndexOutOfBoundsException) {}
         }
 
-        override fun supportsPredictiveItemAnimations(): Boolean {
-            return false
-        }
+        override fun supportsPredictiveItemAnimations() = false
 }

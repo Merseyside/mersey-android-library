@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import extensions.androidImplementation
 
 plugins {
     plugin(LibraryDeps.Plugins.androidLibrary)
@@ -9,15 +8,15 @@ plugins {
     plugin(LibraryDeps.Plugins.mavenPublish)
 }
 
-group = LibraryVersions.Application.publishingId
+group = LibraryVersions.Application.groupId
 version = LibraryVersions.Application.version
 
 android {
-    compileSdkVersion(LibraryVersions.Android.compileSdk)
+    compileSdkVersion(LibraryVersions.Application.compileSdk)
 
     defaultConfig {
-        minSdkVersion(LibraryVersions.Android.minSdk)
-        targetSdkVersion(LibraryVersions.Android.targetSdk)
+        minSdkVersion(LibraryVersions.Application.minSdk)
+        targetSdkVersion(LibraryVersions.Application.targetSdk)
         versionCode = LibraryVersions.Application.versionCode
         versionName = LibraryVersions.Application.version
     }
@@ -26,7 +25,10 @@ android {
         getByName("release") {
             isMinifyEnabled = false
             consumerProguardFiles("proguard-rules.pro")
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
@@ -43,19 +45,31 @@ tasks.withType<KotlinCompile> {
 }
 
 val androidLibs = listOf(
-    LibraryDeps.Libs.Android.appCompat,
-    LibraryDeps.Libs.Android.material,
-    LibraryDeps.Libs.Android.recyclerView,
-    LibraryDeps.Libs.Android.coroutines
+    LibraryDeps.Libs.appCompat,
+    LibraryDeps.Libs.material,
+    LibraryDeps.Libs.recyclerView,
+    LibraryDeps.Libs.coroutines
 )
 
 dependencies {
-    androidLibs.forEach { lib -> androidImplementation(lib) }
-    api(LibraryDeps.Libs.Android.paging.name)
+    androidLibs.forEach { lib -> implementation(lib) }
+    api(LibraryDeps.Libs.paging)
 
-    implementation(project(LibraryModules.Android.utils))
+    implementation(project(LibraryModules.utils))
 }
 
-repositories {
-    mavenCentral()
+afterEvaluate {
+    publishing.publications {
+        create<MavenPublication>("release") {
+            groupId = group.toString()
+            artifactId = project.name
+            version = rootProject.version.toString()
+            from(components["release"])
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
 }
+

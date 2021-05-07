@@ -9,11 +9,13 @@ import com.merseyside.utils.ext.getActivity
 open class BaseBindingHolder(val binding: ViewDataBinding)
     : RecyclerView.ViewHolder(binding.root) {
 
-    lateinit var model: Any
+    private lateinit var _model: Any
+
+    open fun getModel() = _model
 
     @CallSuper
     fun bind(variable: Int, obj: Any) {
-        model = obj
+        _model = obj
 
         binding.apply {
             setVariable(variable, obj)

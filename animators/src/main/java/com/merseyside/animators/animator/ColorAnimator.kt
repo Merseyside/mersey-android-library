@@ -75,7 +75,7 @@ class ColorAnimator(
             if (propertyName == BACKGROUND_COLOR) {
 
                 return ValueAnimator.ofArgb(*values).apply {
-                    this.duration = duration.toMillisLong()
+                    this.duration = duration.millis
 
                     val drawable = getMutableDrawable()
 
@@ -97,7 +97,7 @@ class ColorAnimator(
                     ArgbEvaluator(),
                     *values.toTypedArray()
                 ).apply {
-                    this.duration = duration.toMillisLong()
+                    this.duration = duration.millis
                 }
             }
         }
