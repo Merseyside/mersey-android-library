@@ -10,4 +10,6 @@ interface LocationManager {
     fun getLocationFlow(): Flow<Location>
 
     suspend fun getLastLocation(): Location
+
+    fun hasRequestedPermissions(): Boolean
 }

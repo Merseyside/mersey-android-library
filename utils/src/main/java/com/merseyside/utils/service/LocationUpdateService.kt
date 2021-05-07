@@ -168,7 +168,7 @@ class LocationUpdatesService : Service() {
 
         var isRunning = false
 
-        private const val PACKAGE_NAME = "com.merseyside.merseyLib"
+        private const val PACKAGE_NAME = "com.merseyside.utils"
         private val TAG = LocationUpdatesService::class.java.simpleName
 
         const val ACTION_BROADCAST = "$PACKAGE_NAME.LOCATION_BROADCAST"

@@ -1,5 +1,6 @@
 package com.merseyside.utils.service
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -7,6 +8,7 @@ import android.location.Location
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
+import com.merseyside.utils.PermissionManager
 import com.merseyside.utils.ext.logMsg
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -105,6 +107,11 @@ class LocationManagerImpl(private val context: Context) : LocationManager, Lifec
     private fun stopAndUnregisterReceiver() {
         unregisterReceiver()
         stopService()
+    }
+
+    override fun hasRequestedPermissions(): Boolean {
+        return PermissionManager.isPermissionsGranted(context, Manifest.permission.ACCESS_FINE_LOCATION)
+                || PermissionManager.isPermissionsGranted(context, Manifest.permission.ACCESS_COARSE_LOCATION)
     }
 
     fun setNotificationText(text: String) {

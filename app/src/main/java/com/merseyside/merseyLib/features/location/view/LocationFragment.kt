@@ -14,11 +14,9 @@ import com.merseyside.merseyLib.features.location.di.DaggerLocationComponent
 import com.merseyside.merseyLib.features.location.di.LocationModule
 import com.merseyside.merseyLib.features.location.model.LocationViewModel
 import com.merseyside.utils.PermissionManager
-import com.merseyside.utils.ext.log
 import com.merseyside.utils.ext.onClick
 import com.merseyside.utils.service.LocationManager
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject

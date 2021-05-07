@@ -4,8 +4,8 @@ object LibraryVersions {
         const val groupId = "com.github.Merseyside"
         const val artifactId = "mersey-android-library"
 
-        const val version = "1.3.3"
-        const val versionCode = 133
+        const val version = "1.3.4"
+        const val versionCode = 134
 
         const val compileSdk = 30
         const val targetSdk = 30
@@ -18,10 +18,10 @@ object LibraryVersions {
         const val serialization = "1.1.0"
     }
 
-    const val kotlin = "1.4.31"
+    const val kotlin = "1.5.0"
 
     object Plugins {
-        const val gradle = "4.1.1"
+        const val gradle = "4.1.3"
 
         const val kotlin = LibraryVersions.kotlin
         const val serialization = LibraryVersions.kotlin
@@ -39,7 +39,7 @@ object LibraryVersions {
         const val lifecycle = "2.3.0"
         const val cardView = "1.0.0"
         const val recyclerView = "1.1.0"
-        const val dagger = "2.33"
+        const val dagger = "2.34"
         const val navigation = "2.3.2"
         const val paging = "2.1.2"
         const val billing = "3.0.1"

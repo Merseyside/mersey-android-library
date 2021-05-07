@@ -38,11 +38,6 @@
             android:enabled="true"
             android:exported="false"/>
 
-        <receiver android:name="com.merseyside.utils.service.LocationBroadcastReceiver"  android:exported="false">
-            <intent-filter>
-                <action android:name="de.kenkou.stressguide.LOCATION_BROADCAST"/>
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>

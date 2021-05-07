@@ -11,10 +11,8 @@ allprojects {
         maven { url = uri("https://dl.bintray.com/aakira/maven") }
         maven { url = uri("https://jitpack.io") }
         maven { url = uri("https://raw.githubusercontent.com/guardianproject/gpmaven/master") }
-        maven { url = uri("https://dl.bintray.com/merseysoft/mersey-library") }
         maven { url = uri("https://jetbrains.bintray.com/kotlin-native-dependencies") }
         maven { url = uri("https://maven.fabric.io/public") }
-        maven { url = uri("https://dl.bintray.com/icerockdev/plugins") }
         maven { url = uri("https://plugins.gradle.org/m2/") }
     }
 }

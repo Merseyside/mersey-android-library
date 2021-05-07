@@ -100,18 +100,6 @@ open class MerseyRecyclerView(context: Context, attrSet: AttributeSet? = null) :
             dest.writeInt(mScrollPosition)
         }
 
-        companion object {
-            val CREATOR: Parcelable.Creator<SavedState?> =
-                object : Parcelable.Creator<SavedState?> {
-                    override fun createFromParcel(`in`: Parcel?): SavedState {
-                        return SavedState(`in`!!)
-                    }
-
-                    override fun newArray(size: Int): Array<SavedState?> {
-                        return arrayOfNulls(size)
-                    }
-                }
-        }
     }
 
 }
