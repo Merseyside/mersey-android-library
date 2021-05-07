@@ -38,8 +38,7 @@ operator fun <T: TimeUnit> T.times(times: TimeUnit): T {
 }
 
 operator fun <T: TimeUnit> T.minus(unary: TimeUnit): T {
-    return if (unary > this) newInstance(0) as T
-    else newInstance(this.millis - unary.millis) as T
+    return newInstance(this.millis - unary.millis) as T
 }
 
 fun <T: TimeUnit> T.isEqual(other: T): Boolean {
@@ -94,10 +93,6 @@ interface TimeUnit : Comparable<TimeUnit> {
 
     fun isNotEmpty() = !isEmpty()
 
-    fun isValid(value: Number): Boolean {
-        return this.millis >= 0
-    }
-
     override fun compareTo(other: TimeUnit): Int {
         return this.millis.compareTo(other.millis)
     }
@@ -118,10 +113,6 @@ inline class Millis(override val millis: Long): TimeUnit {
     override val value: Long
         get() = millis
 
-    init {
-        if (!isValid(millis)) throw IllegalArgumentException("$value is not valid!")
-    }
-
     internal constructor(unit: TimeUnit): this(unit.millis)
 
     constructor(number: Number): this(number.toLong())
@@ -139,10 +130,6 @@ inline class Millis(override val millis: Long): TimeUnit {
 }
 
 inline class Seconds private constructor(override val millis: Long): TimeUnit {
-
-    init {
-        if (!isValid(this.millis)) throw IllegalArgumentException("${this.millis} is not valid!")
-    }
 
     override val value: Long
         get() = millis / Conversions.MILLIS_CONST
@@ -167,10 +154,6 @@ inline class Seconds private constructor(override val millis: Long): TimeUnit {
 
 inline class Minutes private constructor(override val millis: Long): TimeUnit {
 
-    init {
-        if (!isValid(millis)) throw IllegalArgumentException("$millis is not valid!")
-    }
-
     internal constructor(unit: TimeUnit): this(unit.millis)
 
     constructor(number: Number): this(
@@ -194,10 +177,6 @@ inline class Minutes private constructor(override val millis: Long): TimeUnit {
 
 inline class Hours private constructor(override val millis: Long): TimeUnit {
 
-    init {
-        if (!isValid(millis)) throw IllegalArgumentException("$value is not valid!")
-    }
-
     internal constructor(unit: TimeUnit): this(unit.millis)
 
     constructor(number: Number): this(
@@ -220,10 +199,6 @@ inline class Hours private constructor(override val millis: Long): TimeUnit {
 }
 
 inline class Days private constructor(override val millis: Long): TimeUnit {
-
-    init {
-        if (!isValid(millis)) throw IllegalArgumentException("$value is not valid!")
-    }
 
     internal constructor(unit: TimeUnit): this(unit.millis)
 

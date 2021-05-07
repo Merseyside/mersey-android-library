@@ -55,7 +55,8 @@ val androidLibs = listOf(
     LibraryDeps.Libs.oauth2,
     LibraryDeps.Libs.serialization,
     LibraryDeps.Libs.playCore,
-    LibraryDeps.Libs.coil
+    LibraryDeps.Libs.coil,
+    LibraryDeps.Libs.location
 )
 
 dependencies {
