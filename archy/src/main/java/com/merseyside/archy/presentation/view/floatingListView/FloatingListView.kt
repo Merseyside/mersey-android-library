@@ -13,11 +13,18 @@ import androidx.annotation.IdRes
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.merseyside.archy.R
 import com.merseyside.adapters.base.BaseAdapter
+import com.merseyside.archy.R
+import com.merseyside.archy.databinding.ViewFloatingListBinding
+import com.merseyside.utils.delegate.viewBinding
+import com.merseyside.utils.delegate.getValue
 
-
+/**
+ * This class have to be extended from RelativeLayout
+ */
 class FloatingListView(context: Context, attrsSet: AttributeSet? = null): RelativeLayout(context, attrsSet) {
+
+    private val binding: ViewFloatingListBinding by viewBinding(R.layout.view_floating_list)
 
     enum class Orientation {VERTICAL, HORIZONTAL, GRID}
 
@@ -29,12 +36,7 @@ class FloatingListView(context: Context, attrsSet: AttributeSet? = null): Relati
 
     @IdRes var containerId: Int = 0
 
-    var adapter: BaseAdapter<*, *>? = null
-    set(value) {
-        field = value
-
-        recyclerView.adapter = value
-    }
+    private var adapter: BaseAdapter<*, *>? = null
 
     init {
         if (attrsSet != null) {
@@ -63,15 +65,20 @@ class FloatingListView(context: Context, attrsSet: AttributeSet? = null): Relati
     }
 
     private fun doLayout() {
-        inflate(context, R.layout.view_floating_list, this)
+        //inflate(context, R.layout.view_floating_list, this)
 
-        recyclerView = findViewById(R.id.floating_list)
+        recyclerView = binding.floatingList
         applyOrientation()
 
         if (relativeView != null) {
             build()
         }
 
+    }
+
+    fun setAdapter(adapter: BaseAdapter<*, *>) {
+        recyclerView.adapter = adapter
+        this.adapter = adapter
     }
 
     @SuppressLint("ObsoleteSdkInt")
