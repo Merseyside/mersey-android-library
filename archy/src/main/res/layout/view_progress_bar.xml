@@ -1,29 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/root"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:gravity="center"
-              android:background="@color/opacity_black"
-              android:clickable="true"
-              android:focusable="true">
+<layout>
+    <merge xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/opacity_black"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        tools:parentTag="android.widget.LinearLayout">
 
-    <ProgressBar
+        <ProgressBar
             android:id="@+id/text_progress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:indeterminateTintMode="src_atop"
-            android:indeterminateTint="@android:color/white"/>
+            android:indeterminateTint="@android:color/white"
+            android:indeterminateTintMode="src_atop" />
 
-    <TextView
+        <TextView
             android:id="@+id/text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textColor="@android:color/white"
-            android:visibility="gone"
             android:layout_marginTop="@dimen/text_margin"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"/>
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            android:textColor="@android:color/white"
+            android:visibility="gone" />
 
-</LinearLayout>
+    </merge>
+
+</layout>

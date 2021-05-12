@@ -6,6 +6,7 @@ import android.os.Build
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.speech.tts.Voice
+import com.merseyside.utils.ext.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -38,7 +39,6 @@ class TextToSpeechHelper private constructor(private var textToSpeech: TextToSpe
 
         fun setPitch(pitch: Float): Builder {
             this.pitch = pitch
-
             return this
         }
 
@@ -58,7 +58,7 @@ class TextToSpeechHelper private constructor(private var textToSpeech: TextToSpe
 
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 Voice(
-                    "en-us-x-sfg#male_2-local",
+                    "en-us-x-sfg#male_1-local",
                     Locale("en", "US"),
                     400,
                     200,
@@ -81,42 +81,39 @@ class TextToSpeechHelper private constructor(private var textToSpeech: TextToSpe
 
         private suspend fun initTextSpeech(): TextToSpeech? {
 
-             return suspendCancellableCoroutine { continuation ->
+            return suspendCancellableCoroutine { continuation ->
 
-                 if (continuation.isActive) {
-                     var textToSpeech: TextToSpeech? = null
-                     textToSpeech = TextToSpeech(
-                         context,
-                         TextToSpeech.OnInitListener { status ->
-                             if (status == TextToSpeech.SUCCESS && textToSpeech != null) {
+                if (continuation.isActive) {
+                    var textToSpeech: TextToSpeech? = null
+                    textToSpeech = TextToSpeech(
+                        context
+                    ) { status ->
+                        if (status == TextToSpeech.SUCCESS && textToSpeech != null) {
 
-                                 textToSpeech!!.language =
-                                     if (textToSpeech?.isLanguageAvailable(language)
-                                         == TextToSpeech.LANG_AVAILABLE
-                                     ) {
-                                         language
-                                     } else {
-                                         Locale.US
-                                     }
+                            textToSpeech!!.language =
+                                if (textToSpeech?.isLanguageAvailable(language)
+                                    == TextToSpeech.LANG_AVAILABLE
+                                ) {
+                                    language
+                                } else {
+                                    Locale.US
+                                }
 
-                                 textToSpeech!!.setPitch(pitch)
-                                 textToSpeech!!.setSpeechRate(speechRate)
+                            textToSpeech!!.setPitch(pitch)
+                            textToSpeech!!.setSpeechRate(speechRate)
 
-                                 if (gender != Gender.FEMALE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                     textToSpeech!!.voice = getMaleVoice()
-                                 }
+                            if (gender != Gender.FEMALE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                textToSpeech!!.voice = getMaleVoice().log()
+                            }
 
-                                 continuation.resume(textToSpeech!!)
+                            continuation.resume(textToSpeech!!)
+                        } else {
+                            continuation.resume(null)
+                        }
+                    }
+                }
 
-
-                             } else {
-                                 continuation.resume(null)
-                             }
-                         }
-                     )
-                 }
-
-             }
+            }
         }
     }
 
