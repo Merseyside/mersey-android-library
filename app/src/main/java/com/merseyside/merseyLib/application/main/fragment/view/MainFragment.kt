@@ -29,8 +29,8 @@ class MainFragment : BaseSampleFragment<FragmentMainBinding, MainViewModel>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        getBinding().colorsButton.onClick { navController.navigate(R.id.action_mainFragment_to_colorsFragment) }
-        getBinding().racingButton.onClick { navController.navigate(R.id.action_mainFragment_to_racingFragment) }
-        getBinding().locationButton.onClick { navController.navigate(R.id.action_mainFragment_to_locationFragment) }
+        requireBinding().colorsButton.onClick { navController.navigate(R.id.action_mainFragment_to_colorsFragment) }
+        requireBinding().racingButton.onClick { navController.navigate(R.id.action_mainFragment_to_racingFragment) }
+        requireBinding().locationButton.onClick { navController.navigate(R.id.action_mainFragment_to_locationFragment) }
     }
 }

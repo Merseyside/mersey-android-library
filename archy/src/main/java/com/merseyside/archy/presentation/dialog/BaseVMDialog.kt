@@ -40,7 +40,7 @@ abstract class BaseVMDialog<B : ViewDataBinding, M : BaseViewModel> : BaseBindin
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
 
-        getBinding().apply {
+        requireBinding().apply {
             setVariable(getBindingVariable(), viewModel)
             executePendingBindings()
         }

@@ -2,18 +2,23 @@ package com.merseyside.archy.presentation.activity
 
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import com.merseyside.utils.ext.log
 
-abstract class BaseBindingActivity<B: ViewDataBinding> : BaseActivity() {
+abstract class BaseBindingActivity<B : ViewDataBinding> : BaseActivity() {
 
-    private var binding: B? = null
+    protected var binding: B? = null
+        private set
 
-    protected fun getBinding(): B {
-        return binding ?: throw IllegalStateException("Binding is null. Do you call it after OnCreateView()?")
+    protected fun requireBinding(): B {
+        return binding ?: throw IllegalStateException(
+            "Binding is null. Do you call it after OnCreateView()?" +
+                    " Current state is ${lifecycle.currentState}"
+        )
     }
 
     protected val isBindingInit: Boolean
-        get() { return binding != null }
+        get() {
+            return binding != null
+        }
 
     override fun setView(layoutId: Int) {
         binding = DataBindingUtil.setContentView<B>(this, getLayoutId()).apply {
