@@ -34,7 +34,7 @@ class RacingFragment : BaseSampleFragment<FragmentRacingBinding, RacingViewModel
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        getBinding().racersList.apply {
+        requireBinding().racersList.apply {
             adapter = this@RacingFragment.adapter
             addItemDecoration(CheckpointItemDecorator(context, R.dimen.small_spacing))
         }

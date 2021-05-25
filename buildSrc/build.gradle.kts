@@ -11,14 +11,10 @@ repositories {
 }
 
 val kotlin = "1.5.0"
-val gradle = "4.1.3"
+val gradle = "4.2.1"
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin")
     implementation("com.android.tools.build:gradle:$gradle")
     implementation("org.jetbrains.kotlin:kotlin-serialization:$kotlin")
-}
-
-kotlinDslPluginOptions {
-    experimentalWarning.set(false)
 }

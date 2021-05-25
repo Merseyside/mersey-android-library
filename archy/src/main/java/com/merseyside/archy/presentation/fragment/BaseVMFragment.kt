@@ -51,7 +51,7 @@ abstract class BaseVMFragment<B : ViewDataBinding, M : BaseViewModel> : BaseBind
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        getBinding().apply {
+        requireBinding().apply {
             setVariable(getBindingVariable(), viewModel)
             executePendingBindings()
         }

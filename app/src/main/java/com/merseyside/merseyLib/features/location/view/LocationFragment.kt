@@ -44,9 +44,9 @@ class LocationFragment : BaseSampleFragment<FragmentLocationBinding, LocationVie
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getBinding().button.onClick {
+        requireBinding().button.onClick {
             if (job == null) {
-                getBinding().button.text = getString(R.string.stop_getting_location)
+                requireBinding().button.text = getString(R.string.stop_getting_location)
                 job = lifecycleScope.launch {
                     //locationManager.getLocation().log(prefix = "location = ")
                     val flow = locationManager.getLocationFlow()
@@ -59,7 +59,7 @@ class LocationFragment : BaseSampleFragment<FragmentLocationBinding, LocationVie
                     }
                 }
             } else {
-                getBinding().button.text = getString(R.string.start_getting_location)
+                requireBinding().button.text = getString(R.string.start_getting_location)
                 job?.let {
                     it.cancel()
                     job = null

@@ -11,6 +11,6 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
 
     override fun performInjection(bundle: Bundle?) {}
     override fun getLayoutId() = R.layout.activity_main
-    override fun getToolbar(): Toolbar = getBinding().toolbar
+    override fun getToolbar(): Toolbar = requireBinding().toolbar
     override fun getFragmentContainer() = R.id.nav_host_fragment
 }

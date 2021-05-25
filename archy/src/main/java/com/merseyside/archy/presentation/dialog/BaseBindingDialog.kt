@@ -7,10 +7,12 @@ import androidx.databinding.ViewDataBinding
 
 abstract class BaseBindingDialog<B: ViewDataBinding> : BaseDialog() {
 
-    private var binding: B? = null
+    protected var binding: B? = null
+        private set
 
-    protected fun getBinding(): B {
-        return binding ?: throw IllegalStateException("Binding is null. Do you call it after OnCreateView()?")
+    protected fun requireBinding(): B {
+        return binding ?: throw IllegalStateException("Binding is null. Do you call it after OnCreateView()?" +
+                " Current state is ${lifecycle.currentState}")
     }
 
     protected val isBindingInit: Boolean
