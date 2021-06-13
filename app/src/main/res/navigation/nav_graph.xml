@@ -23,6 +23,10 @@
         <action
             android:id="@+id/action_mainFragment_to_locationFragment"
             app:destination="@id/locationFragment" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_concatFragment"
+            app:destination="@id/concatFragment" />
     </fragment>
 
     <fragment
@@ -44,5 +48,12 @@
         android:name="com.merseyside.merseyLib.features.location.view.LocationFragment"
         android:label="location_fragment"
         tools:layout="@layout/fragment_location"
+        app:navGraph="@navigation/nav_graph"/>
+
+    <fragment
+        android:id="@+id/concatFragment"
+        android:name="com.merseyside.merseyLib.features.adapters.concat.view.ConcatAdapterFragment"
+        android:label="concat_fragment"
+        tools:layout="@layout/fragment_concat_adapter"
         app:navGraph="@navigation/nav_graph"/>
 </navigation>

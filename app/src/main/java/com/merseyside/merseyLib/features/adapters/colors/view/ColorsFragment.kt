@@ -16,8 +16,6 @@ import com.merseyside.merseyLib.features.adapters.colors.di.DaggerColorsComponen
 import com.merseyside.merseyLib.features.adapters.colors.model.ColorsViewModel
 import com.merseyside.utils.ext.addTextChangeListener
 import com.merseyside.utils.ext.isZero
-import com.merseyside.utils.ext.log
-import com.merseyside.utils.ext.logMsg
 import com.merseyside.utils.time.*
 
 class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel>() {
@@ -39,7 +37,7 @@ class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel
     private val textChangeListener = {
             view: View,
             newValue: String?,
-            oldValue: String?,
+            _: String?,
             length: Int,
             _: Int,
             _: Int,
@@ -68,11 +66,12 @@ class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        requireBinding().recyclerView.adapter = adapter
-
-        requireBinding().rColor.addTextChangeListener(textChangeListener)
-        requireBinding().gColor.addTextChangeListener(textChangeListener)
-        requireBinding().bColor.addTextChangeListener(textChangeListener)
+        requireBinding().run {
+            recyclerView.adapter = adapter
+            rColor.addTextChangeListener(textChangeListener)
+            gColor.addTextChangeListener(textChangeListener)
+            bColor.addTextChangeListener(textChangeListener)
+        }
 
         viewModel.getColorsFlow().asLiveData().observe(viewLifecycleOwner) {
             if (requireBinding().add.isChecked) {

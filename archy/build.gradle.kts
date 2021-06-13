@@ -45,7 +45,7 @@ android {
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = "1.8"
-        freeCompilerArgs = listOf("-XXLanguage:+InlineClasses", "-Xopt-in=kotlin.RequiresOptIn")
+        freeCompilerArgs = listOf("-Xopt-in=kotlin.RequiresOptIn")
     }
 }
 

@@ -108,7 +108,8 @@ interface TimeUnit : Comparable<TimeUnit> {
     }
 }
 
-inline class Millis(override val millis: Long): TimeUnit {
+@JvmInline
+value class Millis(override val millis: Long): TimeUnit {
 
     override val value: Long
         get() = millis
@@ -129,7 +130,8 @@ inline class Millis(override val millis: Long): TimeUnit {
     }
 }
 
-inline class Seconds private constructor(override val millis: Long): TimeUnit {
+@JvmInline
+value class Seconds private constructor(override val millis: Long): TimeUnit {
 
     override val value: Long
         get() = millis / Conversions.MILLIS_CONST
@@ -152,7 +154,8 @@ inline class Seconds private constructor(override val millis: Long): TimeUnit {
     }
 }
 
-inline class Minutes private constructor(override val millis: Long): TimeUnit {
+@JvmInline
+value class Minutes private constructor(override val millis: Long): TimeUnit {
 
     internal constructor(unit: TimeUnit): this(unit.millis)
 
@@ -175,7 +178,8 @@ inline class Minutes private constructor(override val millis: Long): TimeUnit {
     }
 }
 
-inline class Hours private constructor(override val millis: Long): TimeUnit {
+@JvmInline
+value class Hours private constructor(override val millis: Long): TimeUnit {
 
     internal constructor(unit: TimeUnit): this(unit.millis)
 
@@ -198,7 +202,8 @@ inline class Hours private constructor(override val millis: Long): TimeUnit {
     }
 }
 
-inline class Days private constructor(override val millis: Long): TimeUnit {
+@JvmInline
+value class Days private constructor(override val millis: Long): TimeUnit {
 
     internal constructor(unit: TimeUnit): this(unit.millis)
 

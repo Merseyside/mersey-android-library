@@ -53,7 +53,7 @@ class RacersAdapter(scope: CoroutineScope) :
         }
     }
 
-    fun getGapChangeColor(gapChange: Millis): Int {
+    private fun getGapChangeColor(gapChange: Millis): Int {
         return if (gapChange < 0) {
             R.attr.positive_text_color
         } else {

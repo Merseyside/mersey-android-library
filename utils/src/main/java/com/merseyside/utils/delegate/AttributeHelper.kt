@@ -241,7 +241,7 @@ fun AttributeHelper.dimension(
 
     private fun getValue(resName: String): Int {
         return try {
-            getResourceId(namespace, resName).also { value = it }
+            getDimensionPixelSize(namespace, resName).also { value = it }
         } catch (e: NullPointerException) {
             e.printStackTrace()
             Logger.logErr("Are you sure you call it in init block or passed resName explicitly")
