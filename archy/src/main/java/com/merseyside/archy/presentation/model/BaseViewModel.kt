@@ -8,10 +8,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.merseyside.archy.presentation.interfaces.IStringHelper
 import com.merseyside.utils.Logger
-import com.merseyside.utils.PermissionManager
 import com.merseyside.utils.mvvm.SingleLiveEvent
 import com.merseyside.utils.ext.clear
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.merseyside.utils.isPermissionsGranted
 
 abstract class BaseViewModel protected constructor() : ViewModel(), IStringHelper {
 
@@ -171,7 +170,7 @@ abstract class BaseViewModel protected constructor() : ViewModel(), IStringHelpe
     }
 
     fun isPermissionsGranted(context: Context, vararg permissions: String): Boolean {
-        return PermissionManager.isPermissionsGranted(context, *permissions)
+        return context.isPermissionsGranted(*permissions)
     }
 
     fun requestPermissions(permissions: Pair<Array<String>, Int>) {

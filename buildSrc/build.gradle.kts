@@ -1,7 +1,7 @@
 plugins {
     `kotlin-dsl`
-    kotlin("jvm") version "1.5.0"
-    kotlin("plugin.serialization") version "1.5.0"
+    kotlin("jvm") version "1.5.20"
+    kotlin("plugin.serialization") version "1.5.20"
 }
 
 repositories {
@@ -10,7 +10,7 @@ repositories {
     google()
 }
 
-val kotlin = "1.5.0"
+val kotlin = "1.5.20"
 val gradle = "4.2.1"
 
 dependencies {

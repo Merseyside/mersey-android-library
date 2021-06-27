@@ -8,8 +8,7 @@ import android.location.Location
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
-import com.merseyside.utils.PermissionManager
-import com.merseyside.utils.ext.logMsg
+import com.merseyside.utils.isPermissionsGranted
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
@@ -42,7 +41,7 @@ class LocationManagerImpl(private val context: Context) : LocationManager, Lifec
 
         broadcastReceiver?.addCallback(object : LocationBroadcastReceiver.LocationCallback {
             override fun onReceive(location: Location) {
-                offer(location)
+                trySend(location)
             }
         })
 
@@ -110,8 +109,10 @@ class LocationManagerImpl(private val context: Context) : LocationManager, Lifec
     }
 
     override fun hasRequestedPermissions(): Boolean {
-        return PermissionManager.isPermissionsGranted(context, Manifest.permission.ACCESS_FINE_LOCATION)
-                || PermissionManager.isPermissionsGranted(context, Manifest.permission.ACCESS_COARSE_LOCATION)
+        with(context) {
+            return isPermissionsGranted(Manifest.permission.ACCESS_FINE_LOCATION) ||
+                isPermissionsGranted(Manifest.permission.ACCESS_COARSE_LOCATION)
+        }
     }
 
     fun setNotificationText(text: String) {

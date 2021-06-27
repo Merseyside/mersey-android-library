@@ -7,7 +7,7 @@ import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.Observer
 import com.merseyside.archy.presentation.model.BaseViewModel
 import com.merseyside.archy.presentation.model.ParcelableViewModel
-import com.merseyside.utils.PermissionManager
+import com.merseyside.utils.requestPermissions
 import javax.inject.Inject
 
 abstract class BaseVMFragment<B : ViewDataBinding, M : BaseViewModel> : BaseBindingFragment<B>() {
@@ -41,7 +41,7 @@ abstract class BaseVMFragment<B : ViewDataBinding, M : BaseViewModel> : BaseBind
     }
 
     private val permissionObserver = Observer<Pair<Array<String>, Int>> { pair ->
-        PermissionManager.requestPermissions(this, *pair.first, requestCode = pair.second)
+        requestPermissions(*pair.first, requestCode = pair.second)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

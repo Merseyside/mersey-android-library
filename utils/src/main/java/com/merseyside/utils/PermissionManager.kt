@@ -11,51 +11,46 @@ import kotlin.math.pow
 /**
  * Created by ivan_ on 10.12.2017.
  */
-object PermissionManager {
-    fun requestPermissions(
-        activity: Activity?,
-        vararg permissions: String,
-        requestCode: Int
-    ) {
-        if (isRequestCodeValid(requestCode)) {
-            if (!isPermissionsGranted(activity, *permissions)) {
-                ActivityCompat.requestPermissions(
-                    activity!!,
-                    permissions,
-                    requestCode
-                )
-            }
-        } else throw IllegalArgumentException("Request code is not valid")
-    }
-
-    fun requestPermissions(
-        fragment: Fragment,
-        vararg permissions: String,
-        requestCode: Int
-    ) {
-        if (isRequestCodeValid(requestCode)) {
-            if (!isPermissionsGranted(fragment.context, *permissions)) {
-                fragment.requestPermissions(
-                    permissions,
-                    requestCode
-                )
-            }
-        } else throw IllegalArgumentException("Request code is not valid")
-    }
-
-    fun isPermissionsGranted(
-        context: Context?,
-        vararg permissions: String
-    ): Boolean {
-        for (permission in permissions) {
-            val granted = checkSelfPermission(context!!, permission)
-            if (granted != PackageManager.PERMISSION_GRANTED) return false
+fun Activity.requestPermissions(
+    vararg permissions: String,
+    requestCode: Int
+) {
+    if (isRequestCodeValid(requestCode)) {
+        if (!isPermissionsGranted(*permissions)) {
+            ActivityCompat.requestPermissions(
+                this,
+                permissions,
+                requestCode
+            )
         }
+    } else throw IllegalArgumentException("Request code is not valid")
+}
 
-        return true
+fun Fragment.requestPermissions(
+    vararg permissions: String,
+    requestCode: Int
+) {
+    if (isRequestCodeValid(requestCode)) {
+        if (!requireContext().isPermissionsGranted(*permissions)) {
+            requestPermissions(
+                permissions,
+                requestCode
+            )
+        }
+    } else throw IllegalArgumentException("Request code is not valid")
+}
+
+fun Context.isPermissionsGranted(
+    vararg permissions: String
+): Boolean {
+    for (permission in permissions) {
+        val granted = checkSelfPermission(this, permission)
+        if (granted != PackageManager.PERMISSION_GRANTED) return false
     }
 
-    private fun isRequestCodeValid(code: Int): Boolean {
-        return code <= (2.0.pow(16.0))-1
-    }
+    return true
+}
+
+private fun isRequestCodeValid(code: Int): Boolean {
+    return code <= (2.0.pow(16.0)) - 1
 }
