@@ -13,8 +13,9 @@ import com.merseyside.merseyLib.databinding.FragmentLocationBinding
 import com.merseyside.merseyLib.features.location.di.DaggerLocationComponent
 import com.merseyside.merseyLib.features.location.di.LocationModule
 import com.merseyside.merseyLib.features.location.model.LocationViewModel
-import com.merseyside.utils.PermissionManager
 import com.merseyside.utils.ext.onClick
+import com.merseyside.utils.isPermissionsGranted
+import com.merseyside.utils.requestPermissions
 import com.merseyside.utils.service.LocationManager
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
@@ -48,7 +49,6 @@ class LocationFragment : BaseSampleFragment<FragmentLocationBinding, LocationVie
             if (job == null) {
                 requireBinding().button.text = getString(R.string.stop_getting_location)
                 job = lifecycleScope.launch {
-                    //locationManager.getLocation().log(prefix = "location = ")
                     val flow = locationManager.getLocationFlow()
                     flow.collect {
                         Toast.makeText(
@@ -77,8 +77,10 @@ class LocationFragment : BaseSampleFragment<FragmentLocationBinding, LocationVie
     private fun checkPermissions() {
         val permission = Manifest.permission.ACCESS_FINE_LOCATION
 
-        if (!PermissionManager.isPermissionsGranted(context, permission)) {
-            PermissionManager.requestPermissions(this, permission, requestCode = REQUEST_CODE)
+        with(requireContext()) {
+            if (!isPermissionsGranted (permission)) {
+                requestPermissions(permission, requestCode = REQUEST_CODE)
+            }
         }
     }
 

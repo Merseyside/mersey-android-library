@@ -2,55 +2,41 @@ package com.merseyside.archy.presentation.view.progressBar
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.os.Build
 import android.util.AttributeSet
 import android.widget.LinearLayout
-import androidx.annotation.ColorInt
-import androidx.core.content.ContextCompat
 import com.merseyside.archy.R
 import com.merseyside.archy.databinding.ViewProgressBarBinding
-import com.merseyside.utils.delegate.getValue
-import com.merseyside.utils.delegate.viewBinding
+import com.merseyside.utils.delegate.*
 
-class TextProgressBar(context: Context, attributeSet: AttributeSet)
-    : LinearLayout(context, attributeSet) {
+class TextProgressBar(context: Context, attributeSet: AttributeSet) :
+    LinearLayout(context, attributeSet) {
 
     private val binding: ViewProgressBarBinding by viewBinding(R.layout.view_progress_bar)
+    private val attrs = AttributeHelper(context, attributeSet)
 
-    private var textValue: String? = null
+    private var textValue: String? by attrs.stringOrNull(resName = "text")
 
-    @ColorInt
-    private var bgColor: Int? = null
-
-    @ColorInt
-    private var textColor: Int? = null
-
-    @ColorInt
-    private var progressColor: Int? = null
+    private var bgColor: Int by attrs.color(
+        R.color.default_progress_bg_color,
+        resName = "backgroundColor"
+    )
+    private var textColor: Int by attrs.color(
+        R.color.default_progress_text_color,
+        namespace = Namespace.ANDROID
+    )
+    private var progressColor: Int by attrs.color(R.color.default_progress_color)
 
     init {
-        loadAttrs(attributeSet)
         doLayout()
     }
 
-    private fun loadAttrs(attributeSet: AttributeSet) {
-        val array = context.theme.obtainStyledAttributes(attributeSet, R.styleable.ProgressBarAttr, 0, 0)
-
-        //TODO implement attribute delegate
-        textValue = array.getString(R.styleable.ProgressBarAttr_text) ?: ""
-        bgColor = array.getColor(R.styleable.ProgressBarAttr_backgroundColor, ContextCompat.getColor(context, R.color.default_progress_bg_color))
-        textColor = array.getColor(R.styleable.ProgressBarAttr_android_textColor, ContextCompat.getColor(context, R.color.default_progress_text_color))
-        progressColor = array.getColor(R.styleable.ProgressBarAttr_progressColor, ContextCompat.getColor(context, R.color.default_progress_color))
-
-        array.recycle()
-    }
-
     private fun doLayout() {
+        orientation = VERTICAL
 
-        binding.textProgress.indeterminateTintList = ColorStateList.valueOf(progressColor!!)
+        binding.textProgress.indeterminateTintList = ColorStateList.valueOf(progressColor)
 
-        setBackgroundColor(bgColor!!)
-        binding.text.setTextColor(textColor!!)
+        setBackgroundColor(bgColor)
+        binding.text.setTextColor(textColor)
 
         setText(textValue)
     }

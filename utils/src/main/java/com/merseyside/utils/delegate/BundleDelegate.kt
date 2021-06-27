@@ -37,7 +37,7 @@ fun Bundle.double(
         else defaultValue
     }
 
-fun Bundle.boolean(
+fun Bundle.bool(
     defaultValue: Boolean? = null,
     key: (KProperty<*>) -> String = KProperty<*>::name
 ): ReadOnlyProperty<Any, Boolean?> =
