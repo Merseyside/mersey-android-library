@@ -6,6 +6,8 @@ import android.util.AttributeSet
 import android.widget.LinearLayout
 import com.merseyside.archy.R
 import com.merseyside.archy.databinding.ViewProgressBarBinding
+import com.merseyside.utils.attributes.AttributeHelper
+import com.merseyside.utils.attributes.Namespace
 import com.merseyside.utils.delegate.*
 
 class TextProgressBar(context: Context, attributeSet: AttributeSet) :

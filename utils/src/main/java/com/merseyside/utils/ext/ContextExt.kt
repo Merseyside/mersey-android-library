@@ -9,6 +9,15 @@ import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.DimenRes
 
+fun Context.getResourceFromAttr(
+    @AttrRes attr: Int,
+    typedValue: TypedValue = TypedValue(),
+    resolveRefs: Boolean = true
+): Int {
+    theme.resolveAttribute(attr, typedValue, resolveRefs)
+    return typedValue.resourceId
+}
+
 @ColorInt
 fun Context.getColorFromAttr(
     @AttrRes attrColor: Int,
@@ -16,7 +25,6 @@ fun Context.getColorFromAttr(
     resolveRefs: Boolean = true
 ): Int {
     theme.resolveAttribute(attrColor, typedValue, resolveRefs)
-
     return typedValue.data
 }
 

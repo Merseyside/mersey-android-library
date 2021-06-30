@@ -1,4 +1,4 @@
-package com.merseyside.utils.service
+package com.merseyside.utils.location
 
 import android.app.*
 import android.content.Intent

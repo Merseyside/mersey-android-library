@@ -16,7 +16,7 @@ import com.merseyside.merseyLib.features.location.model.LocationViewModel
 import com.merseyside.utils.ext.onClick
 import com.merseyside.utils.isPermissionsGranted
 import com.merseyside.utils.requestPermissions
-import com.merseyside.utils.service.LocationManager
+import com.merseyside.utils.location.LocationManager
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch

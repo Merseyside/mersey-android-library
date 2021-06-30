@@ -1,4 +1,4 @@
-package com.merseyside.utils.service
+package com.merseyside.utils.location
 
 import android.location.Location
 import kotlinx.coroutines.flow.Flow

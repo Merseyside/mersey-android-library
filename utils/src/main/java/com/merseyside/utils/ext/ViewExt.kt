@@ -13,6 +13,15 @@ import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 
 @ColorInt
+fun View.getResourceFromAttr(
+    @AttrRes attrColor: Int,
+    typedValue: TypedValue = TypedValue(),
+    resolveRefs: Boolean = true
+): Int {
+    return this.context.getResourceFromAttr(attrColor, typedValue, resolveRefs)
+}
+
+@ColorInt
 fun View.getColorFromAttr(
     @AttrRes attrColor: Int,
     typedValue: TypedValue = TypedValue(),

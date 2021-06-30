@@ -34,7 +34,7 @@
 
         </activity>
 
-        <service android:name="com.merseyside.utils.service.LocationUpdatesService"
+        <service android:name="com.merseyside.utils.location.LocationUpdatesService"
             android:enabled="true"
             android:exported="false"/>
 

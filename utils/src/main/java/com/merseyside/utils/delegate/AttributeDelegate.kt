@@ -1,9 +1,13 @@
 package com.merseyside.utils.delegate
 
+import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
+import androidx.annotation.DrawableRes
 import com.merseyside.utils.Logger
+import com.merseyside.utils.attributes.AttributeHelper
+import com.merseyside.utils.attributes.Namespace
 import com.merseyside.utils.ext.log
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -244,6 +248,7 @@ fun AttributeHelper.color(
         if (resName != null) value = getValue(resName)
     }
 
+    @ColorInt
     override fun getValue(thisRef: Any, property: KProperty<*>): Int {
         return value ?: getValue(property.name).also { value = it }
     }
@@ -278,5 +283,52 @@ fun AttributeHelper.colorOrNull(
 
     private fun getValue(resName: String): Int? {
         return getColorOrNull(namespace, resName).also { value = it }
+    }
+}
+
+fun AttributeHelper.drawable(
+    @DrawableRes defaultValue: Int = 0,
+    namespace: Namespace = defNamespace,
+    resName: String? = null
+): ReadWriteProperty<Any, Drawable> = object: ReadWriteProperty<Any, Drawable> {
+    var value: Drawable? = null
+
+    init {
+        if (resName != null) value = getValue(resName)
+    }
+
+    override fun getValue(thisRef: Any, property: KProperty<*>): Drawable {
+        return value ?: getValue(property.name).also { value = it }
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: Drawable) {
+        this.value = value
+    }
+
+    private fun getValue(resName: String): Drawable {
+        return getDrawable(defaultValue, namespace, resName).also { value = it }
+    }
+}
+
+fun AttributeHelper.drawableOrNull(
+    namespace: Namespace = defNamespace,
+    resName: String? = null
+): ReadWriteProperty<Any, Drawable?> = object: ReadWriteProperty<Any, Drawable?> {
+    var value: Drawable? = null
+
+    init {
+        if (resName != null) value = getValue(resName)?.log()
+    }
+
+    override fun getValue(thisRef: Any, property: KProperty<*>): Drawable? {
+        return value ?: getValue(property.name)?.also { value = it }
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: Drawable?) {
+        this.value = value
+    }
+
+    private fun getValue(resName: String): Drawable? {
+        return getDrawableOrNull(namespace, resName).also { value = it }
     }
 }

@@ -1,4 +1,4 @@
-package com.merseyside.utils.delegate
+package com.merseyside.utils.attributes
 
 import android.content.Context
 import android.content.res.Resources
@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
+import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 
 class AttributeHelper(
@@ -99,6 +100,29 @@ class AttributeHelper(
     ) = try {
         val id = getResourceId(nameSpace, resName)
         ContextCompat.getColor(context, id)
+    } catch (e: Resources.NotFoundException) {
+        null
+    }
+
+    fun getDrawable(
+        @DrawableRes defValue: Int,
+        nameSpace: Namespace = Namespace.DEFAULT,
+        resName: String
+    ) = try {
+        val id = getResourceId(nameSpace, resName)
+        ContextCompat.getDrawable(context, id)
+            ?: throw Resources.NotFoundException("Passed resource not found")
+    } catch (e: Resources.NotFoundException) {
+        ContextCompat.getDrawable(context, defValue)
+            ?: throw Resources.NotFoundException("Default resource not found")
+    }
+
+    fun getDrawableOrNull(
+        nameSpace: Namespace = Namespace.DEFAULT,
+        resName: String
+    ) = try {
+        val id = getResourceId(nameSpace, resName)
+        ContextCompat.getDrawable(context, id)
     } catch (e: Resources.NotFoundException) {
         null
     }

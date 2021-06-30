@@ -1,4 +1,4 @@
-package com.merseyside.utils.service
+package com.merseyside.utils.location
 
 import android.Manifest
 import android.content.Context

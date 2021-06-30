@@ -6,8 +6,8 @@ import com.merseyside.archy.presentation.di.qualifiers.ApplicationContext
 import com.merseyside.archy.presentation.ext.viewModel
 import com.merseyside.merseyLib.features.location.model.LocationViewModel
 import com.merseyside.merseyLib.features.location.view.LocationFragment
-import com.merseyside.utils.service.LocationManager
-import com.merseyside.utils.service.LocationManagerImpl
+import com.merseyside.utils.location.LocationManager
+import com.merseyside.utils.location.LocationManagerImpl
 import dagger.Module
 import dagger.Provides
 
