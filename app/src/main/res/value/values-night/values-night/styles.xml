@@ -27,6 +27,8 @@
 
         <item name="positive_text_color">@color/cyan</item>
         <item name="negative_text_color">@color/pink</item>
+
+        <item name="some_text">Some text</item>
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Dark" />

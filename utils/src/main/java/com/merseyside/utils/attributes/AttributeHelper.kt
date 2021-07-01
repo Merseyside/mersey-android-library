@@ -8,6 +8,8 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
+import com.merseyside.utils.ext.getResourceFromAttr
+import com.merseyside.utils.ext.log
 
 class AttributeHelper(
     private val context: Context,
@@ -24,7 +26,15 @@ class AttributeHelper(
     fun getString(
         nameSpace: Namespace = Namespace.DEFAULT,
         resName: String
-    ) = attrSet.getAttributeValue(nameSpace.namespace, resName)
+    ): String {
+        val id = getResourceId(nameSpace, resName).log("id1 = ")
+        val kek = context.getResourceFromAttr(attrSet.getAttributeResourceValue(nameSpace.namespace, resName, -1).log("id = "))
+        return if (id == NO_VALUE) {
+            attrSet.getAttributeValue(nameSpace.namespace, resName)
+        } else {
+            context.resources.getString(id)
+        }
+    }
 
     fun getInt(
         defValue: Int,
@@ -79,7 +89,7 @@ class AttributeHelper(
     fun getResourceId(
         nameSpace: Namespace = Namespace.DEFAULT,
         resName: String
-    ) = attrSet.getAttributeResourceValue(nameSpace.namespace, resName, 0)
+    ) = attrSet.getAttributeResourceValue(nameSpace.namespace, resName, NO_VALUE)
 
     @ColorInt
     fun getColor(
@@ -125,6 +135,10 @@ class AttributeHelper(
         ContextCompat.getDrawable(context, id)
     } catch (e: Resources.NotFoundException) {
         null
+    }
+
+    companion object {
+        private const val NO_VALUE = -1
     }
 }
 
