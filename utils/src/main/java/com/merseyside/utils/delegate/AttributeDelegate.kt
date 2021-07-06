@@ -7,6 +7,7 @@ import androidx.annotation.DimenRes
 import androidx.annotation.DrawableRes
 import com.merseyside.utils.Logger
 import com.merseyside.utils.attributes.AttributeHelper
+import com.merseyside.utils.attributes.AttributeHelper.Companion.NO_VALUE
 import com.merseyside.utils.attributes.Namespace
 import com.merseyside.utils.ext.log
 import kotlin.properties.ReadWriteProperty
@@ -185,7 +186,7 @@ fun AttributeHelper.resource(
     }
 
     private fun getValue(resName: String): Int {
-        return getResourceId(namespace, resName).also { value = it }
+        return getResourceId(namespace, resName)?.also { value = it } ?: NO_VALUE
     }
 }
 
