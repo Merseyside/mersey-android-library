@@ -2,4 +2,6 @@
 <resources>
     <attr name="positive_text_color" format="reference"/>
     <attr name="negative_text_color" format="reference"/>
+
+    <attr name="some_text" format="string"/>
 </resources>

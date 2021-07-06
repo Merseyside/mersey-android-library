@@ -1,6 +1,5 @@
 package com.merseyside.utils.ext
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
@@ -12,13 +11,10 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import com.merseyside.utils.reflection.callMethodByName
 
-@SuppressLint("NewApi")
 fun Drawable.setColor(@ColorInt color: Int) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        if (this is VectorDrawable || this is RippleDrawable) {
-            colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)
-            return
-        }
+    if (this is VectorDrawable || this is RippleDrawable) {
+        colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)
+        return
     }
 
     when (this) {
@@ -44,11 +40,7 @@ fun Drawable.getColor(): Int? {
     return when(this) {
         is ColorDrawable -> color
         else  ->
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                getColorFromColorFilter(this)
-            } else {
-                null
-            }
+            getColorFromColorFilter(this)
     }
 
 }

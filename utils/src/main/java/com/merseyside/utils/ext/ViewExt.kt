@@ -12,13 +12,12 @@ import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 
-@ColorInt
 fun View.getResourceFromAttr(
     @AttrRes attrColor: Int,
     typedValue: TypedValue = TypedValue(),
     resolveRefs: Boolean = true
-): Int {
-    return this.context.getResourceFromAttr(attrColor, typedValue, resolveRefs)
+): Int? {
+    return this.getActivity().getResourceFromAttr(attrColor, typedValue, resolveRefs)
 }
 
 @ColorInt
@@ -27,7 +26,15 @@ fun View.getColorFromAttr(
     typedValue: TypedValue = TypedValue(),
     resolveRefs: Boolean = true
 ): Int {
-    return this.context.getColorFromAttr(attrColor, typedValue, resolveRefs)
+    return this.getActivity().getColorFromAttr(attrColor, typedValue, resolveRefs)
+}
+
+fun View.getStringFromAttr(
+    @AttrRes attrColor: Int,
+    typedValue: TypedValue = TypedValue(),
+    resolveRefs: Boolean = true
+): String {
+    return this.getActivity().getStringFromAttr(attrColor, typedValue, resolveRefs)
 }
 
 fun EditText.setTextWithCursor(text: String?) {
