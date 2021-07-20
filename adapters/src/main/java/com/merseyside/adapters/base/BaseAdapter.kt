@@ -135,7 +135,7 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
         notifyItemsRemoved(position)
     }
 
-    protected fun getSmallestPosition(list: List<T>): Int {
+    private fun getSmallestPosition(list: List<T>): Int {
         return run minValue@{
 
             list.minByNullable {
@@ -183,7 +183,7 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
     }
 
     @Throws(IllegalArgumentException::class)
-    open fun getPositionOfModel(model: T): Int {
+    protected open fun getPositionOfModel(model: T): Int {
         modelList.forEachIndexed { index, t ->
             if (t == model) return index
         }
@@ -191,7 +191,7 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
         throw IllegalArgumentException("No data found")
     }
 
-    open fun find(obj: M): T? {
+    protected open fun find(obj: M): T? {
         modelList.forEach {
             if (it.areItemsTheSame(obj)) {
                 return it
@@ -264,9 +264,9 @@ abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
     @CallSuper
     override fun onViewRecycled(holder: TypedBindingHolder<T>) {
         super.onViewRecycled(holder)
-        if (holder.adapterPosition != RecyclerView.NO_POSITION && holder.adapterPosition < itemCount) {
+        if (holder.absoluteAdapterPosition != RecyclerView.NO_POSITION && holder.absoluteAdapterPosition < itemCount) {
 
-            getModelByPosition(holder.adapterPosition).apply {
+            getModelByPosition(holder.absoluteAdapterPosition).apply {
                 bindItemList.remove(this)
                 listener?.let {
                     removeOnItemClickListener(it)
