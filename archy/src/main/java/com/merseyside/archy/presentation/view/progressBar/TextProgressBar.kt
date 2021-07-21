@@ -9,17 +9,18 @@ import com.merseyside.archy.databinding.ViewProgressBarBinding
 import com.merseyside.utils.attributes.AttributeHelper
 import com.merseyside.utils.attributes.Namespace
 import com.merseyside.utils.delegate.*
+import com.merseyside.utils.ext.getResourceFromAttr
 
 class TextProgressBar(context: Context, attributeSet: AttributeSet) :
     LinearLayout(context, attributeSet) {
 
     private val binding: ViewProgressBarBinding by viewBinding(R.layout.view_progress_bar)
-    private val attrs = AttributeHelper(context, attributeSet)
+    private val attrs = AttributeHelper(this, attributeSet)
 
     private var textValue: String? by attrs.stringOrNull(resName = "text")
 
     private var bgColor: Int by attrs.color(
-        R.color.default_progress_bg_color,
+        getResourceFromAttr(R.attr.colorSurface) ?: 0,
         resName = "backgroundColor"
     )
     private var textColor: Int by attrs.color(

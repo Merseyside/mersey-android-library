@@ -2,11 +2,12 @@ package com.merseyside.merseyLib.application.main.activity
 
 import android.os.Bundle
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import com.merseyside.merseyLib.R
 import com.merseyside.archy.presentation.activity.BaseBindingActivity
 import com.merseyside.merseyLib.databinding.ActivityMainBinding
+import com.merseyside.utils.ext.getColorFromAttr
 import com.merseyside.utils.ext.getResourceFromAttr
+import com.merseyside.utils.ext.getStringFromAttr
 import com.merseyside.utils.ext.log
 
 class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
@@ -19,6 +20,8 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
     override fun onResume() {
         super.onResume()
 
-        ContextCompat.getColor(getContext(), getResourceFromAttr(R.attr.colorPrimary)).log()
+        getStringFromAttr(R.attr.some_text).log()
+        //ContextCompat.getColor(getContext(), getResourceFromAttr(R.attr.colorPrimary)).log()
+        getColorFromAttr(R.attr.colorAccent).log()
     }
 }
