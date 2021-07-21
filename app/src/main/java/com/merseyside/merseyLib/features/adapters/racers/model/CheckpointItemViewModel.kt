@@ -2,7 +2,7 @@ package com.merseyside.merseyLib.features.adapters.racers.model
 
 import androidx.annotation.AttrRes
 import androidx.databinding.Bindable
-import com.merseyside.adapters.model.BaseComparableAdapterViewModel
+import com.merseyside.adapters.model.ComparableAdapterViewModel
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.features.adapters.racers.entity.Checkpoint
@@ -11,7 +11,7 @@ import com.merseyside.utils.time.compareTo
 import com.merseyside.utils.time.getFormattedDate
 import com.merseyside.utils.time.minus
 
-class CheckpointItemViewModel(obj: Checkpoint) : BaseComparableAdapterViewModel<Checkpoint>(obj) {
+class CheckpointItemViewModel(obj: Checkpoint) : ComparableAdapterViewModel<Checkpoint>(obj) {
 
     private var gapChange: Millis = Millis()
     private var rank: Int = 0
@@ -57,7 +57,7 @@ class CheckpointItemViewModel(obj: Checkpoint) : BaseComparableAdapterViewModel<
 
     @Bindable
     fun getGap(): String {
-        return getFormattedDate(obj.gap, "ss:SSS")
+        return getFormattedDate(obj.gap, "ss:SSS").value
     }
 
     fun getChangeGap(): String {

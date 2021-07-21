@@ -1,7 +1,7 @@
 package com.merseyside.merseyLib.features.adapters.racers.adapter
 
-import com.merseyside.adapters.base.BaseSortedAdapter
-import com.merseyside.adapters.model.BaseComparableAdapterViewModel
+import com.merseyside.adapters.base.SortedAdapter
+import com.merseyside.adapters.model.ComparableAdapterViewModel
 import com.merseyside.adapters.view.TypedBindingHolder
 import com.merseyside.animators.template.SetTextFadeOutInAnimator
 import com.merseyside.merseyLib.BR
@@ -15,14 +15,14 @@ import com.merseyside.utils.time.compareTo
 import kotlinx.coroutines.CoroutineScope
 
 class RacersAdapter(scope: CoroutineScope) :
-    BaseSortedAdapter<Checkpoint, CheckpointItemViewModel>(scope) {
+    SortedAdapter<Checkpoint, CheckpointItemViewModel>(scope) {
     override fun getLayoutIdForPosition(position: Int) = R.layout.item_checkpoint
     override fun getBindingVariable() = BR.viewModel
     override fun createItemViewModel(obj: Checkpoint) = CheckpointItemViewModel(obj)
 
     override fun onPayloadable(
         holder: TypedBindingHolder<CheckpointItemViewModel>,
-        payloads: List<BaseComparableAdapterViewModel.Payloadable>
+        payloads: List<ComparableAdapterViewModel.Payloadable>
     ) {
         payloads.forEach {
             when (it) {

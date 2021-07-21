@@ -1,13 +1,13 @@
 package com.merseyside.merseyLib.features.adapters.colors.adapter
 
-import com.merseyside.adapters.base.BaseSortedAdapter
+import com.merseyside.adapters.base.SortedAdapter
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.features.adapters.colors.entity.HexColor
 import com.merseyside.merseyLib.features.adapters.colors.model.ColorItemViewModel
 import kotlinx.coroutines.CoroutineScope
 
-class ColorsAdapter(scope: CoroutineScope) : BaseSortedAdapter<HexColor, ColorItemViewModel>(scope) {
+class ColorsAdapter(scope: CoroutineScope) : SortedAdapter<HexColor, ColorItemViewModel>(scope) {
 
     override fun getLayoutIdForPosition(position: Int) = R.layout.item_color
     override fun getBindingVariable() = BR.viewModel

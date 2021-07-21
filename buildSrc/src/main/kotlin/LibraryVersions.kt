@@ -4,8 +4,8 @@ object LibraryVersions {
         const val groupId = "com.github.Merseyside"
         const val artifactId = "mersey-android-library"
 
-        const val version = "1.3.9"
-        const val versionCode = 139
+        const val version = "1.4.0"
+        const val versionCode = 140
 
         const val compileSdk = 30
         const val targetSdk = 30
@@ -16,8 +16,8 @@ object LibraryVersions {
 
     object Common {
         const val kotlinStdLib = kotlin
-        const val coroutines = "1.5.0"
-        const val serialization = "1.2.1"
+        const val coroutines = "1.5.1"
+        const val serialization = "1.2.2"
     }
 
     object Plugins {
@@ -32,7 +32,7 @@ object LibraryVersions {
         const val activity = "1.2.0"
         const val annotation = "1.2.0-alpha01"
         const val material = "1.3.0"
-        const val coroutines = "1.5.0"
+        const val coroutines = "1.5.1"
         const val fragment = "1.3.1"
         const val constraintLayout = "2.1.0-beta02"
         const val lifecycle = "2.3.1"

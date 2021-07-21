@@ -5,14 +5,14 @@ import androidx.databinding.BaseObservable
 import com.merseyside.adapters.base.ItemCallback
 import com.merseyside.adapters.base.OnItemClickListener
 
-abstract class BaseAdapterViewModel<M>(
+abstract class AdapterViewModel<M>(
     var obj: M
 ) : BaseObservable() {
 
     private var pos: Int = NO_ITEM_POSITION
-    private lateinit var itemPosition: ItemCallback<BaseAdapterViewModel<M>>
+    private lateinit var itemPosition: ItemCallback<AdapterViewModel<M>>
 
-    internal fun setItemPositionInterface(i: ItemCallback<BaseAdapterViewModel<M>>) {
+    internal fun setItemPositionInterface(i: ItemCallback<AdapterViewModel<M>>) {
         itemPosition = i
     }
 

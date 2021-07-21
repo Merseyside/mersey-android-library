@@ -5,11 +5,11 @@ import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import com.merseyside.utils.mainThreadIfNeeds
 
-abstract class BaseExpandableAdapterViewModel<M, T: Any>(
+abstract class ExpandableAdapterViewModel<M, T: Any>(
     obj: M,
     private var isExpanded: Boolean = IS_EXPANDED_DEFAULT,
     private var isExpandable: Boolean = IS_EXPANDABLE_DEFAULT
-): BaseSelectableAdapterViewModel<M>(obj, isExpanded && isExpandable) {
+): SelectableAdapterViewModel<M>(obj, isExpanded && isExpandable) {
 
     val isExpandedObservable = ObservableField<Boolean>(isExpanded)
     val isExpandableObservable = ObservableBoolean()

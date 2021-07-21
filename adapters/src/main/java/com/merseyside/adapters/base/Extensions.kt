@@ -1,7 +1,8 @@
 package com.merseyside.adapters.base
 
 import androidx.recyclerview.widget.SortedList
-import com.merseyside.adapters.model.BaseComparableAdapterViewModel
+import com.merseyside.adapters.model.ComparableAdapterViewModel
+import com.merseyside.utils.emptyMutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -9,26 +10,24 @@ import java.util.NoSuchElementException
 import kotlin.jvm.Throws
 
 @Throws(IllegalArgumentException::class)
-fun <T : BaseComparableAdapterViewModel<M>, M : Any> SortedList<T>.isEquals(list : List<T>) : Boolean {
+fun <T : ComparableAdapterViewModel<M>, M : Any> SortedList<T>.isEquals(list : List<T>) : Boolean {
 
     if (this.size() != list.size) {
         return false
     } else {
 
-        var isEquals = true
         list.forEachIndexed { index, t ->
             val value = this.get(index)
             if (!value.areItemsTheSame(t.getItem())) {
-                isEquals = false
-                return@forEachIndexed
+                return@isEquals false
             }
         }
 
-        return isEquals
+        return true
     }
 }
 
-fun <T : BaseComparableAdapterViewModel<M>, M : Any> SortedList<T>.isNotEquals(
+fun <T : ComparableAdapterViewModel<M>, M : Any> SortedList<T>.isNotEquals(
     list : List<T>
 ) : Boolean = !this.isEquals(list)
 
@@ -42,15 +41,30 @@ inline fun <T> SortedList<T>.forEachIndexed(onValue: (Int, T) -> Unit) {
     }
 }
 
-inline fun <T> SortedList<T>.find(predecate: (T) -> Boolean): T? {
-    forEach { if (predecate(it)) return it }
+inline fun <T> SortedList<T>.find(predicate: (T) -> Boolean): T? {
+    forEach { if (predicate(it)) return it }
 
     return null
 }
 
+inline fun <M> BaseAdapter<M, *>.findFirst(predicate: (M) -> Boolean): M? {
+    return getAll().find { predicate(it) }
+}
+
+inline fun <M> BaseAdapter<M, *>.findLast(predicate: (M) -> Boolean): M? {
+    return getAll().findLast { predicate(it) }
+}
+
+inline fun <M> BaseAdapter<M, *>.findAll(predicate: (M) -> Boolean): List<M> {
+    val list = emptyMutableList<M>()
+    getAll().forEach { if (predicate(it)) list.add(it) }
+
+    return list
+}
+
 @Throws(NoSuchElementException::class)
-inline fun <T> SortedList<T>.indexOf(predecate: (T) -> Boolean): Int {
-    forEachIndexed { index, obj -> if (predecate(obj)) return index }
+inline fun <T> SortedList<T>.indexOf(predicate: (T) -> Boolean): Int {
+    forEachIndexed { index, obj -> if (predicate(obj)) return index }
 
     throw NoSuchElementException()
 }

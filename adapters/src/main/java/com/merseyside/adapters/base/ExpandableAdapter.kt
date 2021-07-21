@@ -2,19 +2,20 @@ package com.merseyside.adapters.base
 
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
-import com.merseyside.adapters.model.BaseExpandableAdapterViewModel
+import com.merseyside.adapters.model.ExpandableAdapterViewModel
 import com.merseyside.utils.ext.isNotNullAndEmpty
 import com.merseyside.adapters.view.TypedBindingHolder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
-abstract class BaseExpandableAdapter<M: Any, T: BaseExpandableAdapterViewModel<M, L>, L: Any> (
+abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, L>, L : Any>(
     selectableMode: SelectableMode = SelectableMode.MULTIPLE,
     isAllowToCancelSelection: Boolean = true,
     scope: CoroutineScope = CoroutineScope(
-        Dispatchers.Main + SupervisorJob())
-): BaseSelectableAdapter<M, T>(selectableMode, isAllowToCancelSelection, scope = scope) {
+        Dispatchers.Main + SupervisorJob()
+    )
+) : SelectableAdapter<M, T>(selectableMode, isAllowToCancelSelection, scope = scope) {
 
     private var adapterList: MutableList<Pair<T, BaseAdapter<L, *>>> = ArrayList()
     private var updateRequest: UpdateRequest<M>? = null
@@ -76,17 +77,10 @@ abstract class BaseExpandableAdapter<M: Any, T: BaseExpandableAdapterViewModel<M
             if (model != null) {
                 val adapter = getAdapterIfExists(model)
 
-                if (adapter is BaseSortedAdapter<L, *>) {
-                    adapter.let {
-                        val updateRequest = UpdateRequest.Builder(
-                            model.getData() ?: emptyList())
-                            .isAddNew(this.updateRequest!!.isAddNew)
-                            .isDeleteOld(this.updateRequest!!.isDeleteOld)
-                            .build()
-
-                        adapter.update(updateRequest)
+                if (adapter is SortedAdapter<L, *>) {
+                    model.getData()?.let { data ->
+                        adapter.update(UpdateRequest(data))
                     }
-
                 }
             }
         }

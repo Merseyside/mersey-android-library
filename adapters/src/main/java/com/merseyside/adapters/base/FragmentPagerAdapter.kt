@@ -9,7 +9,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 
 @SuppressLint("WrongConstant")
-abstract class BaseFragmentPagerAdapter(
+abstract class FragmentPagerAdapter(
     private val fm: FragmentManager,
     behavior: Int = BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
 ) : FragmentPagerAdapter(fm, behavior) {

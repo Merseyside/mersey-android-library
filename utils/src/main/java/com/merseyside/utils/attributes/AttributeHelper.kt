@@ -2,6 +2,7 @@ package com.merseyside.utils.attributes
 
 import android.content.Context
 import android.content.res.Resources
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.*
@@ -51,33 +52,39 @@ class AttributeHelper(
     ) = attrSet.getAttributeFloatValue(nameSpace.namespace, resName, defValue)
 
     fun getDimension(
-        @DimenRes defValue: Int,
+        defValue: Float,
         nameSpace: Namespace = Namespace.DEFAULT,
         resName: String
     ) = getResourceId(nameSpace, resName)?.let {
         context.resources.getDimension(it)
-    } ?: with(attrSet.getAttributeFloatValue(nameSpace.namespace, resName, -1F)) {
-        if (this == -1F) null
+    } ?: with(attrSet.getAttributeFloatValue(nameSpace.namespace, resName, NO_VALUE_FLOAT)) {
+        if (this == NO_VALUE_FLOAT) null
         else this
-    } ?: context.resources.getDimension(defValue)
+    } ?: defValue
 
-    fun getDimensionPixelSize(
-        @DimenRes defValue: Int,
+    fun getDimensionOrNull(
         nameSpace: Namespace = Namespace.DEFAULT,
         resName: String
-    ): Int =
-        getDimensionPixelSizeOrNull(nameSpace, resName) ?: context.resources.getDimensionPixelSize(
-            defValue
-        )
+    ) = getResourceId(nameSpace, resName)?.let {
+        context.resources.getDimension(it)
+    } ?: with(attrSet.getAttributeFloatValue(nameSpace.namespace, resName, NO_VALUE_FLOAT)) {
+        if (this == NO_VALUE_FLOAT) null
+        else this
+    }
 
+    fun getDimensionPixelSize(
+        defValue: Int,
+        nameSpace: Namespace = Namespace.DEFAULT,
+        resName: String
+    ) = getDimensionPixelSizeOrNull(nameSpace, resName) ?: defValue
 
     fun getDimensionPixelSizeOrNull(
         nameSpace: Namespace = Namespace.DEFAULT,
         resName: String
     ) = getResourceId(nameSpace, resName)?.let {
         context.resources.getDimensionPixelSize(it)
-    } ?: with(attrSet.getAttributeFloatValue(nameSpace.namespace, resName, -1F)) {
-        if (this == -1F) null
+    } ?: with(attrSet.getAttributeFloatValue(nameSpace.namespace, resName, NO_VALUE_FLOAT)) {
+        if (this == NO_VALUE_FLOAT) null
         else convertDpToPixel(context, this)
     }
 
@@ -118,10 +125,10 @@ class AttributeHelper(
 
     @ColorInt
     fun getColor(
-        @ColorRes defValue: Int,
+        @ColorInt defValue: Int,
         nameSpace: Namespace = Namespace.DEFAULT,
         resName: String
-    ) = getColorOrNull(nameSpace, resName) ?: ContextCompat.getColor(context, defValue)
+    ) = getColorOrNull(nameSpace, resName) ?: defValue
 
     @ColorInt
     fun getColorOrNull(
@@ -135,12 +142,10 @@ class AttributeHelper(
     }
 
     fun getDrawable(
-        @DrawableRes defValue: Int,
+        defValue: Drawable,
         nameSpace: Namespace = Namespace.DEFAULT,
         resName: String
-    ) = getDrawableOrNull(nameSpace, resName)
-        ?: ContextCompat.getDrawable(context, defValue)
-        ?: throw Resources.NotFoundException()
+    ) = getDrawableOrNull(nameSpace, resName) ?: defValue
 
     fun getDrawableOrNull(
         nameSpace: Namespace = Namespace.DEFAULT,
@@ -151,6 +156,7 @@ class AttributeHelper(
 
     companion object {
         internal const val NO_VALUE = -1
+        internal const val NO_VALUE_FLOAT = -1F
     }
 }
 
