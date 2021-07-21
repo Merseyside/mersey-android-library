@@ -6,15 +6,14 @@ import androidx.annotation.CallSuper
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
-import com.merseyside.adapters.model.BaseAdapterViewModel
+import com.merseyside.adapters.model.AdapterViewModel
 import com.merseyside.adapters.view.TypedBindingHolder
 import com.merseyside.utils.ext.isZero
-import com.merseyside.utils.ext.log
 import com.merseyside.utils.ext.minByNullable
 
-abstract class BaseAdapter<M, T : BaseAdapterViewModel<M>>
+abstract class BaseAdapter<M, T : AdapterViewModel<M>>
     : RecyclerView.Adapter<TypedBindingHolder<T>>(),
-    ItemCallback<BaseAdapterViewModel<M>>,
+    ItemCallback<AdapterViewModel<M>>,
     HasOnItemClickListener<M> {
 
     protected var isRecyclable: Boolean = true

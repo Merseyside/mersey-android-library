@@ -1,6 +1,6 @@
 package com.merseyside.adapters.model
 
-abstract class BaseComparableAdapterViewModel<M>(obj: M) : BaseAdapterViewModel<M>(obj) {
+abstract class ComparableAdapterViewModel<M>(obj: M) : AdapterViewModel<M>(obj) {
 
     abstract fun areContentsTheSame(obj: M): Boolean
 

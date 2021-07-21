@@ -191,55 +191,54 @@ fun AttributeHelper.resource(
 }
 
 fun AttributeHelper.dimension(
-    @DimenRes defaultValue: Int = 0,
+    defaultValue: Float,
     namespace: Namespace = defNamespace,
     resName: String? = null
-): ReadWriteProperty<Any, Int> = object: ReadWriteProperty<Any, Int> {
-    var value: Int? = null
+): ReadWriteProperty<Any, Float> = object: ReadWriteProperty<Any, Float> {
+    var value: Float? = null
 
     init {
         if (resName != null) value = getValue(resName)
     }
 
-    override fun getValue(thisRef: Any, property: KProperty<*>): Int {
+    override fun getValue(thisRef: Any, property: KProperty<*>): Float {
         return value ?: getValue(property.name).also { value = it }
     }
 
-    override fun setValue(thisRef: Any, property: KProperty<*>, value: Int) {
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: Float) {
         this.value = value
     }
 
-    private fun getValue(resName: String): Int {
-        return getDimensionPixelSize(defaultValue, namespace, resName).also { value = it }
+    private fun getValue(resName: String): Float {
+        return getDimension(defaultValue, namespace, resName).also { value = it }
     }
 }
 
 fun AttributeHelper.dimensionOrNull(
     namespace: Namespace = defNamespace,
     resName: String? = null
-): ReadWriteProperty<Any, Int?> = object: ReadWriteProperty<Any, Int?> {
-    var value: Int? = null
+): ReadWriteProperty<Any, Float?> = object: ReadWriteProperty<Any, Float?> {
+    var value: Float? = null
 
     init {
         if (resName != null) value = getValue(resName)
     }
 
-    override fun getValue(thisRef: Any, property: KProperty<*>): Int? {
+    override fun getValue(thisRef: Any, property: KProperty<*>): Float? {
         return value ?: getValue(property.name)?.also { value = it }
     }
 
-    override fun setValue(thisRef: Any, property: KProperty<*>, value: Int?) {
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: Float?) {
         this.value = value
     }
 
-    private fun getValue(resName: String): Int? {
-        return getDimensionPixelSizeOrNull(namespace, resName)?.also { value = it }
-
+    private fun getValue(resName: String): Float? {
+        return getDimensionOrNull(namespace, resName)?.also { value = it }
     }
 }
 
 fun AttributeHelper.color(
-    @ColorRes defaultValue: Int = 0,
+    @ColorInt defaultValue: Int = 0,
     namespace: Namespace = defNamespace,
     resName: String? = null
 ): ReadWriteProperty<Any, Int> = object: ReadWriteProperty<Any, Int> {
@@ -288,7 +287,7 @@ fun AttributeHelper.colorOrNull(
 }
 
 fun AttributeHelper.drawable(
-    @DrawableRes defaultValue: Int = 0,
+    defaultValue: Drawable,
     namespace: Namespace = defNamespace,
     resName: String? = null
 ): ReadWriteProperty<Any, Drawable> = object: ReadWriteProperty<Any, Drawable> {

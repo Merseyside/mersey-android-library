@@ -5,11 +5,11 @@ import androidx.databinding.ObservableField
 import com.merseyside.utils.ext.onChange
 import com.merseyside.utils.mainThreadIfNeeds
 
-abstract class BaseSelectableAdapterViewModel<M>(
+abstract class SelectableAdapterViewModel<M>(
     obj: M,
     private var isSelected: Boolean = IS_SELECTED_DEFAULT,
     private var isSelectable: Boolean = IS_SELECTABLE_DEFAULT
-) : BaseComparableAdapterViewModel<M>(obj) {
+) : ComparableAdapterViewModel<M>(obj) {
 
     private var isSelectEnabled: Boolean =
         IS_SELECT_ENABLE_DEFAULT

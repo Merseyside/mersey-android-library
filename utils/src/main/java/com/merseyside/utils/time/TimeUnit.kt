@@ -1,7 +1,8 @@
 @file:Suppress("UNCHECKED_CAST")
 package com.merseyside.utils.time
 
-import android.content.Context
+import kotlinx.serialization.Serializable
+import kotlin.jvm.JvmInline
 
 object Conversions {
     const val MILLIS_CONST = 1000L
@@ -10,35 +11,35 @@ object Conversions {
 }
 
 operator fun <T: TimeUnit> T.plus(increment: Number): T {
-    return this + newInstance(increment.toLong())
+    return this + newInstanceMillis(increment.toLong())
 }
 
 operator fun <T: TimeUnit> T.div(divider: Number): T {
-    return this / newInstance(divider.toLong())
+    return this / newInstanceMillis(divider.toLong())
 }
 
 operator fun <T: TimeUnit> T.times(times: Number): T {
-    return this * newInstance(times.toLong())
+    return this * newInstanceMillis(times.toLong()) as T
 }
 
 operator fun <T: TimeUnit> T.minus(unary: Number): T {
-    return this - newInstance(unary.toLong())
+    return this - newInstanceMillis(unary.toLong())
 }
 
 operator fun <T: TimeUnit> T.plus(increment: TimeUnit): T {
-    return newInstance(this.millis + increment.millis) as T
+    return newInstanceMillis(this.millis + increment.millis) as T
 }
 
 operator fun <T: TimeUnit> T.div(divider: TimeUnit): T {
-    return newInstance(this.millis / divider.millis) as T
+    return newInstanceMillis(this.millis / divider.millis) as T
 }
 
 operator fun <T: TimeUnit> T.times(times: TimeUnit): T {
-    return newInstance(this.millis * times.millis) as T
+    return newInstanceMillis(this.millis * times.millis) as T
 }
 
 operator fun <T: TimeUnit> T.minus(unary: TimeUnit): T {
-    return newInstance(this.millis - unary.millis) as T
+    return newInstanceMillis(this.millis - unary.millis) as T
 }
 
 fun <T: TimeUnit> T.isEqual(other: T): Boolean {
@@ -46,10 +47,12 @@ fun <T: TimeUnit> T.isEqual(other: T): Boolean {
 }
 
 operator fun <T: TimeUnit> T.compareTo(value: Number): Int {
-    return this.millis.compareTo(newInstance(value.toLong()).millis)
+    return this.millis.compareTo(newInstanceMillis(value.toLong()).millis)
 }
 
 fun <T: TimeUnit> T.isNotEqual(other: T) = !isEqual(other)
+
+fun <T: TimeUnit> T.round() = newInstance(value)
 
 interface TimeUnit : Comparable<TimeUnit> {
 
@@ -75,12 +78,14 @@ interface TimeUnit : Comparable<TimeUnit> {
     fun toDays(): Days {
         return Days(this)
     }
-//
-    fun getDayOfYear(context: Context? = null): Days {
-        return Days(getFormattedDate(this, "DD", context))
-    }
 
-    fun newInstance(millis: Long): TimeUnit
+//    fun getDayOfYear(context: Context? = null): Days {
+//        return Days(getFormattedDate(this, "DD", context))
+//    }
+
+    fun newInstance(value: Long): TimeUnit
+
+    fun newInstanceMillis(millis: Long): TimeUnit
 
     override fun toString(): String
 
@@ -98,7 +103,7 @@ interface TimeUnit : Comparable<TimeUnit> {
     }
 
     fun getString(): String {
-        return "${javaClass.simpleName} = $value Millis = $millis"
+        return "${this::class.simpleName} = $value Millis = $millis"
     }
 
     companion object {
@@ -108,20 +113,25 @@ interface TimeUnit : Comparable<TimeUnit> {
     }
 }
 
+@Serializable
 @JvmInline
 value class Millis(override val millis: Long): TimeUnit {
 
     override val value: Long
         get() = millis
 
+
     internal constructor(unit: TimeUnit): this(unit.millis)
 
     constructor(number: Number): this(number.toLong())
     constructor(str: String): this(str.toLong())
     constructor(): this(0)
-    
 
-    override fun newInstance(millis: Long): Millis {
+    override fun newInstance(value: Long): TimeUnit {
+        return Millis(value)
+    }
+
+    override fun newInstanceMillis(millis: Long): Millis {
         return Millis(millis)
     }
 
@@ -130,6 +140,7 @@ value class Millis(override val millis: Long): TimeUnit {
     }
 }
 
+@Serializable
 @JvmInline
 value class Seconds private constructor(override val millis: Long): TimeUnit {
 
@@ -145,7 +156,11 @@ value class Seconds private constructor(override val millis: Long): TimeUnit {
     constructor(str: String): this(number = str.toLong())
     constructor(): this(0)
 
-    override fun newInstance(millis: Long): Seconds {
+    override fun newInstance(value: Long): Seconds {
+        return Seconds((Millis(Conversions.MILLIS_CONST) * value).millis)
+    }
+
+    override fun newInstanceMillis(millis: Long): Seconds {
         return Seconds(millis)
     }
 
@@ -154,6 +169,7 @@ value class Seconds private constructor(override val millis: Long): TimeUnit {
     }
 }
 
+@Serializable
 @JvmInline
 value class Minutes private constructor(override val millis: Long): TimeUnit {
 
@@ -169,7 +185,11 @@ value class Minutes private constructor(override val millis: Long): TimeUnit {
     override val value: Long
         get() = toSeconds().value / Conversions.SECONDS_MINUTES_CONST
 
-    override fun newInstance(millis: Long): Minutes {
+    override fun newInstance(value: Long): TimeUnit {
+        return Minutes((Seconds(Conversions.SECONDS_MINUTES_CONST) * value).millis)
+    }
+
+    override fun newInstanceMillis(millis: Long): Minutes {
         return Minutes(millis)
     }
 
@@ -178,6 +198,7 @@ value class Minutes private constructor(override val millis: Long): TimeUnit {
     }
 }
 
+@Serializable
 @JvmInline
 value class Hours private constructor(override val millis: Long): TimeUnit {
 
@@ -193,7 +214,11 @@ value class Hours private constructor(override val millis: Long): TimeUnit {
     override val value: Long
         get() = toMinutes().value / Conversions.SECONDS_MINUTES_CONST
 
-    override fun newInstance(millis: Long): Hours {
+    override fun newInstance(value: Long): TimeUnit {
+        return Hours((Minutes(Conversions.SECONDS_MINUTES_CONST) * value).millis)
+    }
+
+    override fun newInstanceMillis(millis: Long): Hours {
         return Hours(millis)
     }
 
@@ -202,6 +227,7 @@ value class Hours private constructor(override val millis: Long): TimeUnit {
     }
 }
 
+@Serializable
 @JvmInline
 value class Days private constructor(override val millis: Long): TimeUnit {
 
@@ -217,7 +243,11 @@ value class Days private constructor(override val millis: Long): TimeUnit {
     override val value: Long
         get() = toHours().value / Conversions.HOURS_CONST
 
-    override fun newInstance(millis: Long): Days {
+    override fun newInstance(value: Long): TimeUnit {
+        return Days((Hours(Conversions.HOURS_CONST) * value).millis)
+    }
+
+    override fun newInstanceMillis(millis: Long): Days {
         return Days(millis)
     }
 

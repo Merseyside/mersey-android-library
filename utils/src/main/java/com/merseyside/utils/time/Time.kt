@@ -105,3 +105,26 @@ suspend fun measureTime(block: suspend () -> Unit): TimeUnit {
     return getCurrentTimeUnit() - startTime
 }
 
+/**
+ * If set return type to Millis
+ */
+fun getCurrentTimeUnit(): TimeUnit {
+    return Millis(getCurrentTimeMillis())
+}
+
+fun getHoursMinutes(timestamp: TimeUnit): FormattedDate {
+    return getFormattedDate(timestamp, "HH:mm")
+}
+
+fun getDate(timestamp: TimeUnit): FormattedDate {
+    return getFormattedDate(timestamp, "dd.MM.YYYY")
+}
+
+fun getDateWithTime(timestamp: TimeUnit): FormattedDate {
+    return getFormattedDate(timestamp, "dd-MM-YYYY hh:mm")
+}
+
+fun getFormattedDate(timestamp: TimeUnit, pattern: String): FormattedDate {
+    return FormattedDate(getFormattedDate(timestamp.millis, pattern))
+}
+

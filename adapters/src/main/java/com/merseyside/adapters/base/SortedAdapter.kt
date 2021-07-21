@@ -1,7 +1,7 @@
 package com.merseyside.adapters.base
 
 import androidx.recyclerview.widget.SortedList
-import com.merseyside.adapters.model.BaseComparableAdapterViewModel
+import com.merseyside.adapters.model.ComparableAdapterViewModel
 import com.merseyside.adapters.view.TypedBindingHolder
 import com.merseyside.utils.Logger
 import com.merseyside.utils.concurency.Locker
@@ -12,12 +12,10 @@ import com.merseyside.utils.mainThreadIfNeeds
 import com.merseyside.utils.reflection.ReflectionUtils
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
-import java.lang.reflect.ParameterizedType
 import kotlin.collections.set
-import kotlin.reflect.KClass
 
 @Suppress("UNCHECKED_CAST")
-abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>(
+abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 ) : BaseAdapter<M, T>(), Locker {
     private val computationContext = Dispatchers.Default
@@ -27,7 +25,7 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
      * Any children of this class have to pass M and T types. Otherwise, this cast throws CastException
      */
     private val persistentClass: Class<T> =
-        ReflectionUtils.getGenericParameterClass(this.javaClass, BaseSortedAdapter::class.java, 1)
+        ReflectionUtils.getGenericParameterClass(this.javaClass, SortedAdapter::class.java, 1)
                 as Class<T>
 
     override val modelList: MutableList<T> = ArrayList()
@@ -97,7 +95,7 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
         payloads: List<Any>
     ) {
         if (payloads.isNotEmpty()) {
-            val payloadable = payloads[0] as List<BaseComparableAdapterViewModel.Payloadable>
+            val payloadable = payloads[0] as List<ComparableAdapterViewModel.Payloadable>
 
             if (isPayloadsValid(payloadable)) {
                 onPayloadable(holder, payloadable)
@@ -147,7 +145,7 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
     @Throws(IllegalArgumentException::class)
     fun notifyItemChanged(
         model: T,
-        payloads: List<BaseComparableAdapterViewModel.Payloadable> = emptyList()
+        payloads: List<ComparableAdapterViewModel.Payloadable> = emptyList()
     ) {
         val position = getPositionOfModel(model)
 
@@ -500,14 +498,14 @@ abstract class BaseSortedAdapter<M : Any, T : BaseComparableAdapterViewModel<M>>
         filterKeyMap.clear()
     }
 
-    private fun isPayloadsValid(payloads: List<BaseComparableAdapterViewModel.Payloadable>): Boolean {
+    private fun isPayloadsValid(payloads: List<ComparableAdapterViewModel.Payloadable>): Boolean {
         return payloads.isNotEmpty() &&
-                !payloads.contains(BaseComparableAdapterViewModel.Payloadable.None)
+                !payloads.contains(ComparableAdapterViewModel.Payloadable.None)
     }
 
     open fun onPayloadable(
         holder: TypedBindingHolder<T>,
-        payloads: List<BaseComparableAdapterViewModel.Payloadable>
+        payloads: List<ComparableAdapterViewModel.Payloadable>
     ) {}
 
     @Throws(IndexOutOfBoundsException::class)

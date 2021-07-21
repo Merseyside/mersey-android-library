@@ -7,11 +7,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
-import com.merseyside.adapters.model.BaseAdapterViewModel
+import com.merseyside.adapters.model.AdapterViewModel
 import com.merseyside.adapters.view.BaseBindingHolder
 import com.merseyside.utils.Logger
 
-abstract class BasePagedAdapter<M, T : BaseAdapterViewModel<M>>(diffUtil: DiffUtil.ItemCallback<M>)
+abstract class PagedAdapter<M, T : AdapterViewModel<M>>(diffUtil: DiffUtil.ItemCallback<M>)
     : PagedListAdapter<M, BaseBindingHolder>(diffUtil),
     HasOnItemClickListener<M> {
 

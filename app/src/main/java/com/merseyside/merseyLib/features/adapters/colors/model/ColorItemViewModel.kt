@@ -1,9 +1,9 @@
 package com.merseyside.merseyLib.features.adapters.colors.model
 
-import com.merseyside.adapters.model.BaseComparableAdapterViewModel
+import com.merseyside.adapters.model.ComparableAdapterViewModel
 import com.merseyside.merseyLib.features.adapters.colors.entity.HexColor
 
-class ColorItemViewModel(obj: HexColor) : BaseComparableAdapterViewModel<HexColor>(obj) {
+class ColorItemViewModel(obj: HexColor) : ComparableAdapterViewModel<HexColor>(obj) {
 
     override fun areContentsTheSame(obj: HexColor): Boolean {
         return this.obj.color == obj.color
