@@ -441,20 +441,14 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
     fun getAllItemCount() = modelList.size
 
     override fun clear() {
-        scope.cancel()
-
-        scope.asynchronously {
-            withLock {
-                sortedList.apply {
-                    beginBatchedUpdates()
-                    clear()
-                    endBatchedUpdates()
-                }
-                modelList.clear()
-
-                clearFilters()
-            }
+        sortedList.apply {
+            beginBatchedUpdates()
+            clear()
+            endBatchedUpdates()
         }
+        modelList.clear()
+
+        clearFilters()
     }
 
     override fun remove(obj: M) {
@@ -506,7 +500,8 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
     open fun onPayloadable(
         holder: TypedBindingHolder<T>,
         payloads: List<ComparableAdapterViewModel.Payloadable>
-    ) {}
+    ) {
+    }
 
     @Throws(IndexOutOfBoundsException::class)
     override fun first(): M {

@@ -19,7 +19,7 @@ class TransitionAnimator (
     class Builder(
         private val view: View,
         duration: TimeUnit
-    ): BaseAnimatorBuilder<TransitionAnimator>(duration) {
+    ): BaseAnimatorBuilder<TransitionAnimator, Float>(duration) {
 
         private var viewWidth: Float = -1F
         private var viewHeight: Float = -1f
@@ -109,6 +109,8 @@ class TransitionAnimator (
                         Axis.Y ->
                             view.y = value
                     }
+
+                    onValueCallback(value)
                 }
             }
         }

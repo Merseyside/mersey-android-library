@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.coroutines.CoroutineScope
 
 fun View.getResourceFromAttr(
     @AttrRes attrColor: Int,

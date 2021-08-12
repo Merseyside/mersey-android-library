@@ -90,10 +90,10 @@ fun <T: Any> List<List<T>>.union(): List<T> {
 fun <T: Any> List<List<T>>.intersect(): List<T> {
     val hasEmptyList = find { it.isEmpty() } != null
 
-    if (hasEmptyList || isEmpty()) return emptyList<T>().log(prefix = "here1")
-    if (size == 1) return first().log(prefix = "here2")
+    if (hasEmptyList || isEmpty()) return emptyList<T>()
+    if (size == 1) return first()
 
-    var resultList = first().toSet().log(prefix = "first")
+    var resultList = first().toSet()
 
     (1 until size).forEach { index ->
         resultList = resultList.intersect(get(index))

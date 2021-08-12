@@ -33,7 +33,6 @@ class CircleTextView(context: Context, attributeSet: AttributeSet) : View(contex
     private var font: Typeface? = null
 
     init {
-
         loadAttrs(attributeSet)
 
         initCirclePaint(circleColor)

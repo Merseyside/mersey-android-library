@@ -7,6 +7,7 @@ import com.merseyside.animators.Axis
 import com.merseyside.animators.BaseAnimatorBuilder
 import com.merseyside.animators.BaseSingleAnimator
 import com.merseyside.utils.Logger
+import com.merseyside.utils.ext.log
 import com.merseyside.utils.time.TimeUnit
 
 class SizeAnimator(
@@ -16,15 +17,19 @@ class SizeAnimator(
     class Builder(
         private val view: View,
         duration: TimeUnit
-    ) : BaseAnimatorBuilder<SizeAnimator>(duration) {
+    ) : BaseAnimatorBuilder<SizeAnimator, Int>(duration) {
 
         var values: IntArray? = null
         var axis: Axis? = null
 
         fun setInPercents(values: IntArray, axis: Axis) {
             this.axis = axis
-
             this.values = getPixelsFromPercents(values, axis)
+        }
+
+        fun setInPixels(values: IntArray, axis: Axis) {
+            this.axis = axis
+            this.values = values
         }
 
         private fun getPixelsFromPercents(
@@ -70,9 +75,7 @@ class SizeAnimator(
             }
 
             if (ints.size == 1) {
-
                 array.add(0, calculateCurrentValue())
-
                 this.values = array.toIntArray()
             }
 
@@ -84,15 +87,19 @@ class SizeAnimator(
                 addUpdateListener { valueAnimator ->
                     val value = valueAnimator.animatedValue as Int
 
+                    val layoutParams = view.layoutParams
                     when (axis) {
                         Axis.X -> {
-                            view.layoutParams.width = value
+                            layoutParams.width = value
                         }
 
                         Axis.Y -> {
-                            view.layoutParams.height = value
+                            layoutParams.height = value
                         }
                     }
+
+                    view.layoutParams = layoutParams
+                    onValueCallback(value)
                 }
 
             }

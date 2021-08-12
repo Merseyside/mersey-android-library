@@ -3,9 +3,11 @@ package com.merseyside.animators
 import android.animation.Animator
 import com.merseyside.utils.time.TimeUnit
 
-abstract class BaseAnimatorBuilder<T>(
+abstract class BaseAnimatorBuilder<T, M>(
     val duration: TimeUnit
 ) {
+
+    var onValueCallback: (M) -> Unit = {}
 
     var isReverse: Boolean = false
         internal set

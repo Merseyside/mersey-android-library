@@ -269,7 +269,7 @@ fun AttributeHelper.colorOrNull(
     var value: Int? = null
 
     init {
-        if (resName != null) value = getValue(resName)?.log()
+        if (resName != null) value = getValue(resName)
     }
 
     @ColorInt
@@ -317,7 +317,7 @@ fun AttributeHelper.drawableOrNull(
     var value: Drawable? = null
 
     init {
-        if (resName != null) value = getValue(resName)?.log()
+        if (resName != null) value = getValue(resName)
     }
 
     override fun getValue(thisRef: Any, property: KProperty<*>): Drawable? {
