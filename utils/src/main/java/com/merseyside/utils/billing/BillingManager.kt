@@ -7,7 +7,7 @@ import com.android.billingclient.api.*
 import com.google.api.client.googleapis.json.GoogleJsonResponseException
 import com.google.api.client.http.HttpResponseException
 import com.google.api.client.http.javanet.NetHttpTransport
-import com.google.api.client.json.jackson2.JacksonFactory
+import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.androidpublisher.AndroidPublisher
 import com.google.auth.http.HttpCredentialsAdapter
 import com.google.auth.oauth2.GoogleCredentials
@@ -24,7 +24,6 @@ import java.io.IOException
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
-
 
 class BillingManager(
     private val context: Context,
@@ -134,12 +133,12 @@ class BillingManager(
             Logger.log(this, this)
             billingClient = startConnection()
 
-            return if (billingClient != null) {
+            return billingClient?.let { client ->
                 val skuDetailsParams = SkuDetailsParams.newBuilder().setSkusList(skuList)
                     .setType(BillingClient.SkuType.SUBS).build()
 
                 return suspendCoroutine { cont ->
-                    billingClient!!.querySkuDetailsAsync(
+                    client.querySkuDetailsAsync(
                         skuDetailsParams
                     ) { result, responseSkuList ->
                         if (result.responseCode == BillingClient.BillingResponseCode.OK) {
@@ -149,10 +148,15 @@ class BillingManager(
                         }
                     }
                 }
-            } else {
-                null
             }
         } else throw IllegalArgumentException("Sku list can not be empty")
+    }
+
+    suspend fun startSubscription(activity: Activity, sku: String): BillingResult {
+        val details = getSkuDetails(listOf(sku))
+        return details?.let {
+            return startSubscription(activity, it.first())
+        } ?: throw IllegalArgumentException("Sku $sku not found!")
     }
 
     fun startSubscription(activity: Activity, skuDetails: SkuDetails): BillingResult {
@@ -190,13 +194,17 @@ class BillingManager(
                 }.log()
 
                 return historyList
-                    ?.filter { skus.contains(it.sku) }
-                    ?.mapNotNull {
-                        getSubscriptionState(
-                            it.sku,
-                            it.purchaseToken,
-                            isKeepActiveOnError
-                        )
+                    ?.filter { it.skus.find { historySkus -> skus.contains(historySkus) } != null }
+                    ?.flatMap { purchase ->
+                        purchase.skus.mapNotNull {
+                            if (skus.contains(it)) {
+                                getSubscriptionState(
+                                    it,
+                                    purchase.purchaseToken,
+                                    isKeepActiveOnError
+                                )
+                            } else null
+                        }
                     }
             } else {
                 return null
@@ -218,10 +226,10 @@ class BillingManager(
         sku: String,
         token: String,
         isKeepActiveOnError: Boolean
-    ): Subscription? {
+    ): Subscription {
 
         val httpTransport = NetHttpTransport()
-        val jacksonJsonFactory = JacksonFactory.getDefaultInstance()
+        val jacksonJsonFactory = GsonFactory.getDefaultInstance()
 
         val packageName = context.packageName
 
@@ -263,10 +271,12 @@ class BillingManager(
     }
 
     private fun getGoogleCredentials(): GoogleCredentials {
-        context.resources.openRawResource(credentialsId!!).use { `is` ->
-            return GoogleCredentials.fromStream(`is`)
-                .createScoped(PUBLISHER_SCOPE)
-        }
+        credentialsId?.let {
+            context.resources.openRawResource(it).use { `is` ->
+                return GoogleCredentials.fromStream(`is`)
+                    .createScoped(PUBLISHER_SCOPE)
+            }
+        } ?: throw IllegalArgumentException("Credential ids not set!")
     }
 
     companion object {

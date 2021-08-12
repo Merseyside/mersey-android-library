@@ -3,7 +3,7 @@ package com.merseyside.animators
 import android.animation.Animator
 
 abstract class BaseSingleAnimator(
-    val builder: BaseAnimatorBuilder<out BaseSingleAnimator>
+    val builder: BaseAnimatorBuilder<out BaseSingleAnimator, *>
 ): BaseAnimator() {
     
     var nativeAnimator: Animator? = null

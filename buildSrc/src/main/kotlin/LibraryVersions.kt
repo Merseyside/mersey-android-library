@@ -4,15 +4,15 @@ object LibraryVersions {
         const val groupId = "com.github.Merseyside"
         const val artifactId = "mersey-android-library"
 
-        const val version = "1.4.0"
-        const val versionCode = 140
+        const val version = "1.4.1"
+        const val versionCode = 141
 
         const val compileSdk = 30
         const val targetSdk = 30
         const val minSdk = 21
     }
 
-    const val kotlin = "1.5.20"
+    const val kotlin = "1.5.30-RC"
 
     object Common {
         const val kotlinStdLib = kotlin
@@ -41,11 +41,11 @@ object LibraryVersions {
         const val dagger = "2.35.1"
         const val navigation = "2.3.2"
         const val paging = "2.1.2"
-        const val billing = "3.0.1"
-        const val publisher = "v3-rev142-1.25.0"
-        const val auth = "0.22.0"
+        const val billing = "4.0.0"
+        const val publisher = "v3-rev20210728-1.32.1"
+        const val auth = "1.0.0"
         const val firebaseFirestore = "22.0.0"
-        const val playCore = "1.8.3"
+        const val playCore = "1.10.0"
         const val keyboard = "2.3.0"
         const val gson = "2.8.6"
         const val worker = "2.4.0"

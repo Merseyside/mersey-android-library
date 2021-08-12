@@ -7,8 +7,19 @@ import kotlin.jvm.JvmInline
 @JvmInline
 value class FormattedDate(val value: String) {
 
+    override fun toString(): String {
+        return value
+    }
+
     companion object {
         fun empty(): FormattedDate = FormattedDate("")
+
+        fun from(
+            timeUnit: TimeUnit,
+            pattern: String
+        ): FormattedDate {
+            return timeUnit.toFormattedDate(pattern)
+        }
     }
 }
 

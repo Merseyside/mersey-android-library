@@ -30,7 +30,7 @@ class ColorAnimator(
         duration: TimeUnit,
         val propertyName: String = BACKGROUND_COLOR,
         val isUseColorFilter: Boolean = false
-    ) : BaseAnimatorBuilder<ColorAnimator>(duration) {
+    ) : BaseAnimatorBuilder<ColorAnimator, Int>(duration) {
 
         init {
             if (view == null && drawable == null) throw IllegalArgumentException("Please, pass view or drawable")
@@ -87,6 +87,8 @@ class ColorAnimator(
                         } else {
                             drawable.colorFilter = PorterDuffColorFilter(value, PorterDuff.Mode.SRC_IN)
                         }
+
+                        onValueCallback(value)
                     }
                 }
             } else {
@@ -133,7 +135,6 @@ class ColorAnimator(
                 return when (value) {
                     is Drawable -> {
                         val color = value.getColor()
-
                         color ?: 0
                     }
 

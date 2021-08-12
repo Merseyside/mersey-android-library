@@ -15,7 +15,7 @@ class ScaleAnimator(
     class Builder(
         private val view: View,
         duration: TimeUnit
-    ) : BaseAnimatorBuilder<ScaleAnimator>(duration) {
+    ) : BaseAnimatorBuilder<ScaleAnimator, Float>(duration) {
 
         private var values: FloatArray? = null
         var axis: Axis? = null
@@ -65,6 +65,8 @@ class ScaleAnimator(
                             view.scaleY = value
                         }
                     }
+
+                    onValueCallback(value)
                 }
             }
         }

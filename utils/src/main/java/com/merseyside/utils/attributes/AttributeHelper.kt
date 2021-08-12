@@ -10,13 +10,13 @@ import androidx.core.content.ContextCompat
 import com.merseyside.utils.R
 import com.merseyside.utils.convertDpToPixel
 import com.merseyside.utils.ext.*
+import java.lang.RuntimeException
 
 class AttributeHelper(
     view: View,
     private val attrSet: AttributeSet,
     val defNamespace: Namespace = Namespace.DEFAULT
 ) {
-
     val context: Context = view.getActivity()
 
     fun getBool(
@@ -55,21 +55,25 @@ class AttributeHelper(
         defValue: Float,
         nameSpace: Namespace = Namespace.DEFAULT,
         resName: String
-    ) = getResourceId(nameSpace, resName)?.let {
-        context.resources.getDimension(it)
-    } ?: with(attrSet.getAttributeFloatValue(nameSpace.namespace, resName, NO_VALUE_FLOAT)) {
-        if (this == NO_VALUE_FLOAT) null
-        else this
-    } ?: defValue
+    ) = getDimensionOrNull(nameSpace, resName) ?: defValue
 
     fun getDimensionOrNull(
         nameSpace: Namespace = Namespace.DEFAULT,
         resName: String
     ) = getResourceId(nameSpace, resName)?.let {
         context.resources.getDimension(it)
-    } ?: with(attrSet.getAttributeFloatValue(nameSpace.namespace, resName, NO_VALUE_FLOAT)) {
-        if (this == NO_VALUE_FLOAT) null
-        else this
+    } ?: let {
+        try {
+            with(attrSet.getAttributeFloatValue(nameSpace.namespace, resName, NO_VALUE_FLOAT)) {
+                if (this == NO_VALUE_FLOAT) null
+                else this
+            }
+        } catch (e: RuntimeException) {
+            e.printStackTrace()
+            parseDimensionToFloat(resName, nameSpace)?.let {
+                convertDpToPixel(context, it).toFloat()
+            }
+        }
     }
 
     fun getDimensionPixelSize(
@@ -83,9 +87,18 @@ class AttributeHelper(
         resName: String
     ) = getResourceId(nameSpace, resName)?.let {
         context.resources.getDimensionPixelSize(it)
-    } ?: with(attrSet.getAttributeFloatValue(nameSpace.namespace, resName, NO_VALUE_FLOAT)) {
-        if (this == NO_VALUE_FLOAT) null
-        else convertDpToPixel(context, this)
+    } ?: let {
+        try {
+            with(attrSet.getAttributeFloatValue(nameSpace.namespace, resName, NO_VALUE_FLOAT)) {
+                if (this == NO_VALUE_FLOAT) null
+                else this
+            }
+        } catch (e: RuntimeException) {
+            e.printStackTrace()
+            parseDimensionToFloat(resName, nameSpace)?.let {
+                convertDpToPixel(context, it).toFloat()
+            }
+        }
     }
 
     fun getResourceId(
@@ -154,9 +167,15 @@ class AttributeHelper(
         ContextCompat.getDrawable(context, it)
     }
 
+    private fun parseDimensionToFloat(resName: String, nameSpace: Namespace): Float? {
+        return attrSet.getAttributeValue(nameSpace.namespace, resName)?.run {
+            replace("dip", "").replace("sp", "")
+        }?.toFloatOrNull()
+    }
+
     companion object {
-        internal const val NO_VALUE = -1
-        internal const val NO_VALUE_FLOAT = -1F
+        internal const val NO_VALUE = -999
+        internal const val NO_VALUE_FLOAT = -999F
     }
 }
 

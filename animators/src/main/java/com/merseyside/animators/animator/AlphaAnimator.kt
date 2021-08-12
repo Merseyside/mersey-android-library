@@ -18,7 +18,7 @@ class AlphaAnimator(
         val view: View,
         duration: TimeUnit,
         private val endVisibilityState: Int = INVISIBLE
-    ): BaseAnimatorBuilder<AlphaAnimator>(duration) {
+    ): BaseAnimatorBuilder<AlphaAnimator, Float>(duration) {
 
         constructor(
             view: View,
@@ -94,6 +94,7 @@ class AlphaAnimator(
                     }
 
                     previousValue = value
+                    onValueCallback(value)
                 }
             }
         }

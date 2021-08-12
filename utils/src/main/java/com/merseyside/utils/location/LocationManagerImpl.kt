@@ -35,7 +35,7 @@ class LocationManagerImpl(private val context: Context) : LocationManager, Lifec
         stopAndUnregisterReceiver()
     }
 
-    @ExperimentalCoroutinesApi
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun getLocationFlow() = callbackFlow<Location> {
         startService()
 

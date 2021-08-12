@@ -5,6 +5,7 @@ import android.util.Log
 import com.google.android.play.core.appupdate.AppUpdateInfo
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.InstallState
 import com.google.android.play.core.install.InstallStateUpdatedListener
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.InstallStatus
@@ -81,16 +82,14 @@ class UpdateManager(private val activity: Activity) {
         if (isRequestCodeValid(requestCode))  {
             this.requestCode = requestCode
 
-            if (appUpdateInfo != null) {
+            appUpdateInfo?.let {
                 appUpdateManager.startUpdateFlowForResult(
-                    appUpdateInfo,
+                    it,
                     AppUpdateType.IMMEDIATE,
                     activity,
                     requestCode
                 )
-            } else {
-                throw IllegalStateException("App is not available for updating")
-            }
+            } ?: throw IllegalStateException("App is not available for updating")
         } else throw IllegalArgumentException("requestCode must be lower than 2^16")
     }
 
@@ -99,45 +98,48 @@ class UpdateManager(private val activity: Activity) {
         if (isRequestCodeValid(requestCode)) {
             this.requestCode = requestCode
 
-            if (appUpdateInfo != null) {
+            appUpdateInfo?.let {
                 appUpdateManager.startUpdateFlowForResult(
-                    appUpdateInfo,
+                    it,
                     AppUpdateType.FLEXIBLE,
                     activity,
                     requestCode
                 )
 
-                var installListener: InstallStateUpdatedListener? = null
-                installListener = InstallStateUpdatedListener { state ->
-                    when (state.installStatus()) {
-                        InstallStatus.DOWNLOADED -> {
-                            onFlexibleUpdateStateListener.onDownloaded()
+                val installListener: InstallStateUpdatedListener = object: InstallStateUpdatedListener {
+
+                    override fun onStateUpdate(state: InstallState) {
+                        when (state.installStatus()) {
+                            InstallStatus.DOWNLOADED -> {
+                                onFlexibleUpdateStateListener.onDownloaded()
+                            }
+
+                            InstallStatus.FAILED -> {
+                                onFlexibleUpdateStateListener.onFailed()
+                            }
+
+                            InstallStatus.CANCELED -> {
+                                onFlexibleUpdateStateListener.onCanceled()
+
+                            }
+
+                            InstallStatus.INSTALLED -> {
+                                onFlexibleUpdateStateListener.onInstalled()
+                            }
+
+                            else -> {}
                         }
 
-                        InstallStatus.FAILED -> {
-                            onFlexibleUpdateStateListener.onFailed()
+                        if (state.installStatus() != InstallStatus.DOWNLOADED) {
+                            appUpdateManager.unregisterListener(this)
                         }
 
-                        InstallStatus.CANCELED -> {
-                            onFlexibleUpdateStateListener.onCanceled()
-
-                        }
-
-                        InstallStatus.INSTALLED -> {
-                            onFlexibleUpdateStateListener.onInstalled()
-                        }
-
-                        else -> {}
-                    }
-
-                    if (state.installStatus() != InstallStatus.DOWNLOADED) {
-                        appUpdateManager.unregisterListener(installListener)
                     }
                 }
 
-            } else {
-                throw IllegalStateException("App is not available for updating")
-            }
+                appUpdateManager.registerListener(installListener)
+
+            } ?: throw IllegalStateException("App is not available for updating")
         } else throw IllegalArgumentException("requestCode must be lower than 2^16")
     }
 

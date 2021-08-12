@@ -10,7 +10,7 @@ import java.util.NoSuchElementException
 import kotlin.jvm.Throws
 
 @Throws(IllegalArgumentException::class)
-fun <T : ComparableAdapterViewModel<M>, M : Any> SortedList<T>.isEquals(list : List<T>) : Boolean {
+fun <T : ComparableAdapterViewModel<M>, M : Any> SortedList<T>.isEquals(list: List<T>): Boolean {
 
     if (this.size() != list.size) {
         return false
@@ -28,30 +28,30 @@ fun <T : ComparableAdapterViewModel<M>, M : Any> SortedList<T>.isEquals(list : L
 }
 
 fun <T : ComparableAdapterViewModel<M>, M : Any> SortedList<T>.isNotEquals(
-    list : List<T>
-) : Boolean = !this.isEquals(list)
+    list: List<T>
+): Boolean = !this.isEquals(list)
 
 inline fun <T> SortedList<T>.forEach(onValue: (T) -> Unit) {
     forEachIndexed { _, item -> onValue(item) }
 }
 
-inline fun <T> SortedList<T>.forEachIndexed(onValue: (Int, T) -> Unit) {
+inline fun <T> SortedList<T>.forEachIndexed(onValue: (Int, model: T) -> Unit) {
     for (i in 0 until size()) {
         onValue(i, get(i))
     }
 }
 
-inline fun <T> SortedList<T>.find(predicate: (T) -> Boolean): T? {
+inline fun <T> SortedList<T>.find(predicate: (model: T) -> Boolean): T? {
     forEach { if (predicate(it)) return it }
 
     return null
 }
 
-inline fun <M> BaseAdapter<M, *>.findFirst(predicate: (M) -> Boolean): M? {
+inline fun <M> BaseAdapter<M, *>.findFirst(predicate: (item: M) -> Boolean): M? {
     return getAll().find { predicate(it) }
 }
 
-inline fun <M> BaseAdapter<M, *>.findLast(predicate: (M) -> Boolean): M? {
+inline fun <M> BaseAdapter<M, *>.findLast(predicate: (item: M) -> Boolean): M? {
     return getAll().findLast { predicate(it) }
 }
 
@@ -70,10 +70,10 @@ inline fun <T> SortedList<T>.indexOf(predicate: (T) -> Boolean): Int {
 }
 
 fun <T> SortedList<T>.removeAll(list: List<T>) {
-    list.forEach { remove(it)}
+    list.forEach { remove(it) }
 }
 
-fun <M> HasOnItemClickListener<M>.onItemClicked(onClick: (M) -> Unit): OnItemClickListener<M> {
+fun <M> HasOnItemClickListener<M>.onItemClicked(onClick: (item: M) -> Unit): OnItemClickListener<M> {
     val listener = object : OnItemClickListener<M> {
         override fun onItemClicked(obj: M) {
             onClick.invoke(obj)
@@ -84,7 +84,12 @@ fun <M> HasOnItemClickListener<M>.onItemClicked(onClick: (M) -> Unit): OnItemCli
     return listener
 }
 
-fun <M> HasOnItemSelectedListener<M>.onItemSelected(onSelected: (M, Boolean, Boolean) -> Unit): OnItemSelectedListener<M> {
+fun <M> HasOnItemSelectedListener<M>.onItemSelected(
+    onSelected: (
+        item: M,
+        isSelected: Boolean,
+        isSelectedByUser: Boolean
+    ) -> Unit): OnItemSelectedListener<M> {
     val listener = object : OnItemSelectedListener<M> {
         override fun onSelected(item: M, isSelected: Boolean, isSelectedByUser: Boolean) {
             onSelected.invoke(item, isSelected, isSelectedByUser)

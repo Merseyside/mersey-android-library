@@ -1,24 +1,18 @@
 package com.merseyside.utils.binding
 
-import androidx.annotation.AttrRes
-import androidx.cardview.widget.CardView
-import androidx.databinding.BindingAdapter
-import com.google.android.material.textfield.TextInputLayout
-import com.merseyside.utils.ext.getColorFromAttr
-import com.merseyside.utils.ext.isNotNullAndEmpty
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.annotation.LayoutRes
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 
-/**/
-
-@BindingAdapter("app:attrCardBackgroundColor")
-fun setCardViewBackgroundColor(cardView: CardView, @AttrRes attrId: Int?) {
-    if (attrId != null) {
-        cardView.setCardBackgroundColor(cardView.getColorFromAttr(attrId))
-    }
+fun <Binding: ViewDataBinding> View.getBinding(
+    @LayoutRes layoutRes: Int,
+    parent: ViewGroup? = null,
+    attachToParent: Boolean = false
+): Binding {
+    val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    return DataBindingUtil.inflate(inflater, layoutRes, parent, attachToParent)
 }
-
-@BindingAdapter("app:errorText")
-fun setErrorMessage(view: TextInputLayout, errorMessage: String?) {
-    view.isErrorEnabled = errorMessage.isNotNullAndEmpty()
-    view.error = errorMessage
-}
-
