@@ -1,6 +1,6 @@
 package com.merseyside.utils.preferences
 
-import com.merseyside.utils.time.TimeUnit
+import com.merseyside.merseyLib.time.TimeUnit
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 

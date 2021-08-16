@@ -1,7 +1,7 @@
 package com.merseyside.animators
 
 import android.animation.Animator
-import com.merseyside.utils.time.TimeUnit
+import com.merseyside.merseyLib.time.TimeUnit
 
 abstract class BaseAnimatorBuilder<T, M>(
     val duration: TimeUnit

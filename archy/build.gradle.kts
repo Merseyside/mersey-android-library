@@ -61,7 +61,8 @@ val androidLibs = listOf(
     LibraryDeps.Libs.gson,
     LibraryDeps.Libs.keyboard,
     LibraryDeps.Libs.room,
-    LibraryDeps.Libs.serialization
+    LibraryDeps.Libs.serialization,
+    LibraryDeps.MerseyLibs.time
 )
 
 val modulez = listOf(

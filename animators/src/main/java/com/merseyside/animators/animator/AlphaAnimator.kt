@@ -7,8 +7,8 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import com.merseyside.animators.BaseAnimatorBuilder
 import com.merseyside.animators.BaseSingleAnimator
-import com.merseyside.utils.time.TimeUnit
-import com.merseyside.utils.time.toMillis
+import com.merseyside.merseyLib.time.Millis
+import com.merseyside.merseyLib.time.TimeUnit
 
 class AlphaAnimator(
     builder: Builder
@@ -24,7 +24,7 @@ class AlphaAnimator(
             view: View,
             durationMillis: Long,
             endVisibilityState: Int = INVISIBLE
-        ): this(view, durationMillis.toMillis(), endVisibilityState)
+        ): this(view, Millis(durationMillis), endVisibilityState)
 
         private var values: FloatArray? = null
 

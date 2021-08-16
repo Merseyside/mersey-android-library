@@ -1,6 +1,7 @@
 package com.merseyside.adapters.base
 
 import com.merseyside.adapters.model.SelectableAdapterViewModel
+import com.merseyside.utils.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -138,8 +139,9 @@ abstract class SelectableAdapter<M: Any, T: SelectableAdapterViewModel<M>>(
     }
 
     fun selectItem(item: M) {
-        val found = find(item)
-        setItemSelected(found!!)
+        find(item)?.let {
+            setItemSelected(it)
+        } ?: Logger.logErr("Item for selection not found!")
     }
 
     @Throws(IndexOutOfBoundsException::class)

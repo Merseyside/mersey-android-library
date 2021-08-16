@@ -20,96 +20,95 @@ class AttributeHelper(
     val context: Context = view.getActivity()
 
     fun getBool(
+        resName: String,
         defValue: Boolean,
-        nameSpace: Namespace = Namespace.DEFAULT,
-        resName: String
-    ) = attrSet.getAttributeBooleanValue(nameSpace.namespace, resName, defValue)
+        namespace: Namespace = Namespace.DEFAULT
+        
+    ) = attrSet.getAttributeBooleanValue(namespace.namespace, resName, defValue)
 
     fun getString(
-        nameSpace: Namespace = Namespace.DEFAULT,
-        resName: String
+        resName: String,
+        namespace: Namespace = Namespace.DEFAULT
     ): String {
-        val attrId = getAttributeId(nameSpace, resName)
+        val attrId = getAttributeId(resName, namespace)
         return attrId?.let {
             context.getStringFromAttr(it)
-        } ?: with(getResourceId(nameSpace, resName)) {
+        } ?: with(getResourceId(resName, namespace)) {
             this?.let {
                 context.resources.getString(this)
-            } ?: attrSet.getAttributeValue(nameSpace.namespace, resName)
+            } ?: attrSet.getAttributeValue(namespace.namespace, resName)
         }
     }
 
     fun getInt(
+        resName: String,
         defValue: Int,
-        nameSpace: Namespace = Namespace.DEFAULT,
-        resName: String
-    ) = attrSet.getAttributeIntValue(nameSpace.namespace, resName, defValue)
+        namespace: Namespace = Namespace.DEFAULT
+    ) = attrSet.getAttributeIntValue(namespace.namespace, resName, defValue)
 
     fun getFloat(
+        resName: String,
         defValue: Float,
-        nameSpace: Namespace = Namespace.DEFAULT,
-        resName: String
-    ) = attrSet.getAttributeFloatValue(nameSpace.namespace, resName, defValue)
+        namespace: Namespace = Namespace.DEFAULT
+    ) = attrSet.getAttributeFloatValue(namespace.namespace, resName, defValue)
 
     fun getDimension(
+        resName: String,
         defValue: Float,
-        nameSpace: Namespace = Namespace.DEFAULT,
-        resName: String
-    ) = getDimensionOrNull(nameSpace, resName) ?: defValue
+        namespace: Namespace = Namespace.DEFAULT,
+    ) = getDimensionOrNull(resName, namespace) ?: defValue
 
     fun getDimensionOrNull(
-        nameSpace: Namespace = Namespace.DEFAULT,
-        resName: String
-    ) = getResourceId(nameSpace, resName)?.let {
+        resName: String,
+        namespace: Namespace = Namespace.DEFAULT
+    ) = getResourceId(resName, namespace)?.let {
         context.resources.getDimension(it)
     } ?: let {
         try {
-            with(attrSet.getAttributeFloatValue(nameSpace.namespace, resName, NO_VALUE_FLOAT)) {
+            with(attrSet.getAttributeFloatValue(namespace.namespace, resName, NO_VALUE_FLOAT)) {
                 if (this == NO_VALUE_FLOAT) null
                 else this
             }
         } catch (e: RuntimeException) {
-            e.printStackTrace()
-            parseDimensionToFloat(resName, nameSpace)?.let {
+            parseDimensionToFloat(resName, namespace)?.let {
                 convertDpToPixel(context, it).toFloat()
             }
         }
     }
 
     fun getDimensionPixelSize(
+        resName: String,
         defValue: Int,
-        nameSpace: Namespace = Namespace.DEFAULT,
-        resName: String
-    ) = getDimensionPixelSizeOrNull(nameSpace, resName) ?: defValue
+        namespace: Namespace = Namespace.DEFAULT
+    ) = getDimensionPixelSizeOrNull(resName, namespace) ?: defValue
 
     fun getDimensionPixelSizeOrNull(
-        nameSpace: Namespace = Namespace.DEFAULT,
-        resName: String
-    ) = getResourceId(nameSpace, resName)?.let {
+        resName: String,
+        namespace: Namespace = Namespace.DEFAULT
+    ) = getResourceId(resName, namespace)?.let {
         context.resources.getDimensionPixelSize(it)
     } ?: let {
         try {
-            with(attrSet.getAttributeFloatValue(nameSpace.namespace, resName, NO_VALUE_FLOAT)) {
+            with(attrSet.getAttributeFloatValue(namespace.namespace, resName, NO_VALUE_FLOAT)) {
                 if (this == NO_VALUE_FLOAT) null
                 else this
             }
         } catch (e: RuntimeException) {
-            e.printStackTrace()
-            parseDimensionToFloat(resName, nameSpace)?.let {
+            parseDimensionToFloat(resName, namespace)?.let {
                 convertDpToPixel(context, it).toFloat()
             }
         }
     }
 
     fun getResourceId(
-        nameSpace: Namespace = Namespace.DEFAULT,
-        resName: String
+        resName: String,
+        namespace: Namespace = Namespace.DEFAULT
     ): Int? {
         val possibleResId =
-            attrSet.getAttributeResourceValue(nameSpace.namespace, resName, NO_VALUE)
+            attrSet.getAttributeResourceValue(namespace.namespace, resName, NO_VALUE)
 
         return if (possibleResId == NO_VALUE) {
-            getAttributeId(nameSpace, resName)?.let {
+            getAttributeId(resName, namespace)?.let {
                 context.getResourceFromAttr(it)
             }
         } else {
@@ -119,10 +118,10 @@ class AttributeHelper(
 
     @AttrRes
     private fun getAttributeId(
-        nameSpace: Namespace = Namespace.DEFAULT,
-        resName: String
+        resName: String,
+        namespace: Namespace = Namespace.DEFAULT,
     ): Int? {
-        val value = attrSet.getAttributeValue(nameSpace.namespace, resName)
+        val value = attrSet.getAttributeValue(namespace.namespace, resName)
 
         return if (value.isNotNullAndEmpty() && value.startsWith("?")) {
             val attrRes = value.substring(1)
@@ -138,37 +137,37 @@ class AttributeHelper(
 
     @ColorInt
     fun getColor(
+        resName: String,
         @ColorInt defValue: Int,
-        nameSpace: Namespace = Namespace.DEFAULT,
-        resName: String
-    ) = getColorOrNull(nameSpace, resName) ?: defValue
+        namespace: Namespace = Namespace.DEFAULT
+    ) = getColorOrNull(resName, namespace) ?: defValue
 
     @ColorInt
     fun getColorOrNull(
-        nameSpace: Namespace = Namespace.DEFAULT,
-        resName: String
-    ) = getResourceId(nameSpace, resName)?.let {
+        resName: String,
+        namespace: Namespace = Namespace.DEFAULT
+    ) = getResourceId(resName, namespace)?.let {
         ContextCompat.getColor(context, it)
-    } ?: with(attrSet.getAttributeIntValue(nameSpace.namespace, resName, NO_VALUE)) {
+    } ?: with(attrSet.getAttributeIntValue(namespace.namespace, resName, NO_VALUE)) {
         if (this == NO_VALUE) null
         else this
     }
 
     fun getDrawable(
+        resName: String,
         defValue: Drawable,
-        nameSpace: Namespace = Namespace.DEFAULT,
-        resName: String
-    ) = getDrawableOrNull(nameSpace, resName) ?: defValue
+        namespace: Namespace = Namespace.DEFAULT
+    ) = getDrawableOrNull(resName, namespace) ?: defValue
 
     fun getDrawableOrNull(
-        nameSpace: Namespace = Namespace.DEFAULT,
-        resName: String
-    ) = getResourceId(nameSpace, resName)?.let {
+        resName: String,
+        namespace: Namespace = Namespace.DEFAULT
+    ) = getResourceId(resName, namespace)?.let {
         ContextCompat.getDrawable(context, it)
     }
 
-    private fun parseDimensionToFloat(resName: String, nameSpace: Namespace): Float? {
-        return attrSet.getAttributeValue(nameSpace.namespace, resName)?.run {
+    private fun parseDimensionToFloat(resName: String, namespace: Namespace): Float? {
+        return attrSet.getAttributeValue(namespace.namespace, resName)?.run {
             replace("dip", "").replace("sp", "")
         }?.toFloatOrNull()
     }

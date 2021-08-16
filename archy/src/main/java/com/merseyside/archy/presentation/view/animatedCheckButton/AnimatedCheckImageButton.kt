@@ -11,10 +11,10 @@ import com.merseyside.animators.AnimatorList
 import com.merseyside.animators.Approach
 import com.merseyside.archy.R
 import com.merseyside.animators.animator.ColorAnimator
+import com.merseyside.merseyLib.time.Millis
 import com.merseyside.utils.Logger
 import com.merseyside.utils.ext.onClick
 import com.merseyside.utils.ext.setColor
-import com.merseyside.utils.time.Millis
 
 class AnimatedCheckImageButton(context: Context, attributeSet: AttributeSet)
     : AppCompatImageButton(context, attributeSet), ICheckableView {

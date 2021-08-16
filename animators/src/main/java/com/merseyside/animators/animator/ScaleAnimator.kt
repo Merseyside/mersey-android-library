@@ -6,7 +6,7 @@ import android.view.View
 import com.merseyside.animators.Axis
 import com.merseyside.animators.BaseAnimatorBuilder
 import com.merseyside.animators.BaseSingleAnimator
-import com.merseyside.utils.time.TimeUnit
+import com.merseyside.merseyLib.time.TimeUnit
 
 class ScaleAnimator(
     builder: Builder

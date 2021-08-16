@@ -1,6 +1,7 @@
 package com.merseyside.utils.billing
 
-import com.merseyside.utils.time.TimeUnit
+import com.merseyside.merseyLib.time.Days as DaysUnit
+import com.merseyside.merseyLib.time.TimeUnit
 
 sealed class Period {
 
@@ -23,7 +24,7 @@ sealed class Period {
             }
 
         override fun toTimeUnit(): TimeUnit {
-            return com.merseyside.utils.time.Days(count)
+            return DaysUnit(count)
         }
     }
 
@@ -37,7 +38,7 @@ sealed class Period {
             }
 
         override fun toTimeUnit(): TimeUnit {
-            return com.merseyside.utils.time.Days(count * 7)
+            return DaysUnit(count * 7)
         }
     }
 
@@ -48,7 +49,7 @@ sealed class Period {
             }
 
         override fun toTimeUnit(): TimeUnit {
-            return com.merseyside.utils.time.Days(count * 30)
+            return DaysUnit(count * 30)
         }
     }
 
@@ -62,7 +63,7 @@ sealed class Period {
             }
 
         override fun toTimeUnit(): TimeUnit {
-            return com.merseyside.utils.time.Days(count * 365)
+            return DaysUnit(count * 365)
         }
     }
 
