@@ -1,7 +1,7 @@
 package com.merseyside.utils.ext
 
-import com.merseyside.utils.time.Millis
-import com.merseyside.utils.time.TimeUnit
+import com.merseyside.merseyLib.time.Millis
+import com.merseyside.merseyLib.time.TimeUnit
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*

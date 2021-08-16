@@ -9,8 +9,8 @@ import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.databinding.ItemCheckpointBinding
 import com.merseyside.merseyLib.features.adapters.racers.entity.Checkpoint
 import com.merseyside.merseyLib.features.adapters.racers.model.CheckpointItemViewModel
+import com.merseyside.merseyLib.time.Millis
 import com.merseyside.utils.ext.setTextColorAttr
-import com.merseyside.utils.time.Millis
 import com.merseyside.utils.time.compareTo
 import kotlinx.coroutines.CoroutineScope
 

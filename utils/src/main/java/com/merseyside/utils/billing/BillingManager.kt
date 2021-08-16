@@ -13,9 +13,9 @@ import com.google.auth.http.HttpCredentialsAdapter
 import com.google.auth.oauth2.GoogleCredentials
 import com.merseyside.utils.Logger
 import com.merseyside.utils.billing.Security.verifyPurchase
+import com.merseyside.utils.ext.getApplicationName
 import com.merseyside.utils.ext.isNotNullAndEmpty
 import com.merseyside.utils.ext.log
-import com.merseyside.utils.getApplicationName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -238,7 +238,7 @@ class BillingManager(
             jacksonJsonFactory,
             HttpCredentialsAdapter(getGoogleCredentials())
         )
-            .setApplicationName(getApplicationName(context))
+            .setApplicationName(context.getApplicationName())
             .build()
 
         val request = publisher.Purchases().subscriptions().get(packageName, sku, token)

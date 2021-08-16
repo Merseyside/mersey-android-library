@@ -39,7 +39,7 @@ fun AttributeHelper.bool(
 
     private fun getValue(resName: String): Boolean {
         return try {
-            getBool(defaultValue, namespace, resName).also { value = it }
+            getBool(resName, defaultValue, namespace).also { value = it }
         } catch (e: NullPointerException) {
             e.printStackTrace()
             Logger.logErr("Are you sure you call it in init block or passed resName explicitly")
@@ -69,7 +69,7 @@ fun AttributeHelper.string(
 
     private fun getValue(resName: String): String {
         return try {
-            getString(namespace, resName).also { value = it }
+            getString(resName, namespace).also { value = it }
         } catch (e: NullPointerException) {
             e.printStackTrace()
             Logger.logErr("Are you sure you call it in init block or passed resName explicitly")
@@ -98,7 +98,7 @@ fun AttributeHelper.stringOrNull(
 
     private fun getValue(resName: String): String? {
         return try {
-            getString(namespace, resName).also { value = it }
+            getString(resName, namespace).also { value = it }
         } catch (e: NullPointerException) {
             e.printStackTrace()
             Logger.logErr("Are you sure you call it in init block or passed resName explicitly")
@@ -128,7 +128,7 @@ fun AttributeHelper.int(
 
     private fun getValue(resName: String): Int {
         return try {
-            getInt(defaultValue, namespace, resName).also { value = it }
+            getInt(resName, defaultValue, namespace).also { value = it }
         } catch (e: NullPointerException) {
             e.printStackTrace()
             Logger.logErr("Are you sure you call it in init block or passed resName explicitly")
@@ -158,7 +158,7 @@ fun AttributeHelper.float(
 
     private fun getValue(resName: String): Float {
         return try {
-            getFloat(defaultValue, namespace, resName).also { value = it }
+            getFloat(resName, defaultValue, namespace).also { value = it }
         } catch (e: NullPointerException) {
             e.printStackTrace()
             Logger.logErr("Are you sure you call it in init block or passed resName explicitly")
@@ -186,7 +186,7 @@ fun AttributeHelper.resource(
     }
 
     private fun getValue(resName: String): Int {
-        return getResourceId(namespace, resName)?.also { value = it } ?: NO_VALUE
+        return getResourceId(resName, namespace)?.also { value = it } ?: NO_VALUE
     }
 }
 
@@ -210,7 +210,7 @@ fun AttributeHelper.dimension(
     }
 
     private fun getValue(resName: String): Float {
-        return getDimension(defaultValue, namespace, resName).also { value = it }
+        return getDimension(resName, defaultValue, namespace).also { value = it }
     }
 }
 
@@ -233,7 +233,7 @@ fun AttributeHelper.dimensionOrNull(
     }
 
     private fun getValue(resName: String): Float? {
-        return getDimensionOrNull(namespace, resName)?.also { value = it }
+        return getDimensionOrNull(resName, namespace)?.also { value = it }
     }
 }
 
@@ -258,7 +258,7 @@ fun AttributeHelper.color(
     }
 
     private fun getValue(resName: String): Int {
-        return getColor(defaultValue, namespace, resName).also { value = it }
+        return getColor(resName, defaultValue, namespace).also { value = it }
     }
 }
 
@@ -282,7 +282,7 @@ fun AttributeHelper.colorOrNull(
     }
 
     private fun getValue(resName: String): Int? {
-        return getColorOrNull(namespace, resName).also { value = it }
+        return getColorOrNull(resName, namespace).also { value = it }
     }
 }
 
@@ -306,7 +306,7 @@ fun AttributeHelper.drawable(
     }
 
     private fun getValue(resName: String): Drawable {
-        return getDrawable(defaultValue, namespace, resName).also { value = it }
+        return getDrawable(resName, defaultValue, namespace).also { value = it }
     }
 }
 
@@ -329,6 +329,6 @@ fun AttributeHelper.drawableOrNull(
     }
 
     private fun getValue(resName: String): Drawable? {
-        return getDrawableOrNull(namespace, resName).also { value = it }
+        return getDrawableOrNull(resName, namespace).also { value = it }
     }
 }

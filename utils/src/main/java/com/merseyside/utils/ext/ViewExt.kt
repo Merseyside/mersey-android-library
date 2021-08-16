@@ -2,6 +2,8 @@ package com.merseyside.utils.ext
 
 import android.content.Context
 import android.content.ContextWrapper
+import android.graphics.Point
+import android.graphics.Rect
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.TypedValue
@@ -11,7 +13,6 @@ import android.widget.TextView
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.coroutines.CoroutineScope
 
 fun View.getResourceFromAttr(
     @AttrRes attrColor: Int,
@@ -133,4 +134,33 @@ fun View.onClick(onClick: () -> Unit): View.OnClickListener {
     this.setOnClickListener(listener)
 
     return listener
+}
+
+fun View.isFullyVisible(): Boolean {
+    val visibleSize = getVisibleSize()
+    val drawingSize = getAdjustedSize()
+
+    return visibleSize.x == drawingSize.x && visibleSize.y == drawingSize.y
+}
+
+fun View.getVisibleSize(): Point {
+    val viewRect = Rect().apply {
+        this@getVisibleSize.getGlobalVisibleRect(this)
+    }
+
+    val visibleWidth = viewRect.width()
+    val visibleHeight = viewRect.height()
+
+    return Point(visibleWidth, visibleHeight)
+}
+
+fun View.getAdjustedSize(): Point {
+    val drawingRect = Rect().apply {
+        this@getAdjustedSize.getDrawingRect(this)
+    }
+
+    val drawingWidth = drawingRect.width()
+    val drawingHeight = drawingRect.height()
+
+    return Point(drawingWidth, drawingHeight)
 }

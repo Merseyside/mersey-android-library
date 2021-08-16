@@ -5,11 +5,11 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.os.Build
+import com.merseyside.merseyLib.time.Millis
 import com.merseyside.utils.Logger
 import com.merseyside.utils.delayedMainThread
 import com.merseyside.utils.emptyMutableList
 import com.merseyside.utils.ext.log
-import com.merseyside.utils.time.Millis
 
 abstract class BaseAnimator {
 

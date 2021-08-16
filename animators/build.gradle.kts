@@ -44,7 +44,8 @@ tasks.withType<KotlinCompile> {
 }
 
 val androidLibs = listOf(
-    LibraryDeps.Libs.appCompat
+    LibraryDeps.Libs.appCompat,
+    LibraryDeps.MerseyLibs.time
 )
 
 dependencies {

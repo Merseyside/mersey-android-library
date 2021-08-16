@@ -22,8 +22,8 @@ import androidx.annotation.DimenRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
+import com.merseyside.merseyLib.time.TimeUnit
 import com.merseyside.utils.ext.toHandlerCanceller
-import com.merseyside.utils.time.TimeUnit
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
@@ -69,70 +69,6 @@ fun generateRandomString(length: Int): String {
     }
 
     return ""
-}
-
-fun getWindowWidth(context: Context): Int {
-    val metrics = context.resources.displayMetrics
-    return metrics.widthPixels
-}
-
-fun getWindowHeight(context: Context): Int {
-    val metrics = context.resources.displayMetrics
-    return metrics.heightPixels
-}
-
-fun getNavigationBarHeight(context: Context): Int {
-    val result = 0
-    val hasMenuKey =
-        ViewConfiguration.get(context).hasPermanentMenuKey()
-    val hasBackKey =
-        KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK)
-    if (!hasMenuKey && !hasBackKey) { //The device has a navigation bar
-        val resources = context.resources
-        val orientation = context.resources.configuration.orientation
-        val resourceId: Int
-        resourceId = if (isTablet(context)) {
-            resources.getIdentifier(
-                if (orientation == Configuration.ORIENTATION_PORTRAIT) "navigation_bar_height" else "navigation_bar_height_landscape",
-                "dimen",
-                "android"
-            )
-        } else {
-            resources.getIdentifier(
-                if (orientation == Configuration.ORIENTATION_PORTRAIT) "navigation_bar_height" else "navigation_bar_width",
-                "dimen",
-                "android"
-            )
-        }
-        if (resourceId > 0) {
-            return context.resources.getDimensionPixelSize(resourceId)
-        }
-    }
-    return result
-}
-
-fun isTablet(context: Context): Boolean {
-    return ((context.resources.configuration.screenLayout
-            and Configuration.SCREENLAYOUT_SIZE_MASK)
-            >= Configuration.SCREENLAYOUT_SIZE_LARGE)
-}
-
-fun getApplicationName(context: Context): String? {
-    val applicationInfo: ApplicationInfo = context.applicationInfo
-    val stringId: Int = applicationInfo.labelRes
-    return if (stringId == 0) applicationInfo.nonLocalizedLabel.toString() else context.getString(
-        stringId
-    )
-}
-
-fun getVersion(context: Context): String? {
-    return try {
-        val pInfo: PackageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-        pInfo.versionName
-    } catch (e: PackageManager.NameNotFoundException) {
-        e.printStackTrace()
-        null
-    }
 }
 
 fun mainThread(onMain: () -> Unit): Handler {

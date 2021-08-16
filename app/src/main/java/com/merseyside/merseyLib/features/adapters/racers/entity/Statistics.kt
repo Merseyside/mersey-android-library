@@ -1,8 +1,9 @@
 package com.merseyside.merseyLib.features.adapters.racers.entity
 
+import com.merseyside.merseyLib.time.Millis
+import com.merseyside.merseyLib.time.TimeUnit
 import com.merseyside.utils.emptyMutableList
 import com.merseyside.utils.ext.*
-import com.merseyside.utils.randomBool
 import com.merseyside.utils.time.*
 
 class Statistics(
@@ -41,7 +42,7 @@ class Statistics(
     }
 
     fun getNextCheckpointAverageTime(racer: RacerModel): TimeUnit {
-        return (lapCheckpointsAverageTime[getCurrentCheckpointNumber(racer)] * 1000).toMillis()
+        return Millis(lapCheckpointsAverageTime[getCurrentCheckpointNumber(racer)] * 1000)
     }
 
     private fun getRacerResults(racer: RacerModel): MutableList<MutableList<TimeUnit>> {
@@ -128,15 +129,15 @@ class Statistics(
 
             var notPassedSum = 0F
             for (i in (checkpointCount * (currentLap-1)) + currentCheckpoint + 1 until timePoints.size) {
-                notPassedSum += timePoints[i].toFloat()
+                notPassedSum += timePoints[i].millis.toFloat()
             }
 
             var leaderMirrorSum = 0F
             for (i in 0 until (checkpointCount * (currentLap-1)) + currentCheckpoint) {
-                leaderMirrorSum += timePoints[i].toFloat()
+                leaderMirrorSum += timePoints[i].millis.toFloat()
             }
 
-            getTotalTime(racer) - leaderMirrorSum.toMillis() + notPassedSum.toMillis()
+            getTotalTime(racer) - Millis(leaderMirrorSum) + Millis(notPassedSum)
         }
     }
 }

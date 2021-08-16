@@ -3,8 +3,8 @@ package com.merseyside.utils.preferences
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import com.merseyside.utils.time.Millis
-import com.merseyside.utils.time.TimeUnit
+import com.merseyside.merseyLib.time.Millis
+import com.merseyside.merseyLib.time.TimeUnit
 
 class PreferenceManager private constructor(
     context: Context,

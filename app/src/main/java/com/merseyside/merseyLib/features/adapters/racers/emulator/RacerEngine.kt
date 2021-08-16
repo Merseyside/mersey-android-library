@@ -1,6 +1,8 @@
 package com.merseyside.merseyLib.features.adapters.racers.emulator
 
 import com.merseyside.merseyLib.features.adapters.racers.entity.RacerModel
+import com.merseyside.merseyLib.time.Millis
+import com.merseyside.merseyLib.time.TimeUnit
 import com.merseyside.utils.ext.delay
 import com.merseyside.utils.time.*
 import kotlinx.coroutines.CoroutineScope
@@ -25,7 +27,7 @@ class RacerEngine(
 
         if (racerCheckpointTime.isEmpty()) {
             val firstCheckpoint = callback.getNextCheckpointTime(racer)
-            racerCheckpointTime = Random.nextDouble(0.0, firstCheckpoint.toDouble()).toMillis()
+            racerCheckpointTime = Millis(Random.nextDouble(0.0, firstCheckpoint.millis.toDouble()))
         }
 
         job = scope.launch {
@@ -56,8 +58,8 @@ class RacerEngine(
     }
 
     private fun calculateCheckpointTime(checkpointTime: TimeUnit): TimeUnit {
-        val delta = checkpointTime.toDouble() * 0.05
-        return checkpointTime + (Random.nextDouble(from = -delta, until = delta)).toMillis()
+        val delta = checkpointTime.millis.toDouble() * 0.05
+        return checkpointTime + Millis((Random.nextDouble(from = -delta, until = delta)))
     }
 
     interface RacerCallback {

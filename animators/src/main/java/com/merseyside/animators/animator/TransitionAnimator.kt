@@ -8,9 +8,9 @@ import com.merseyside.animators.Axis
 import com.merseyside.animators.BaseAnimatorBuilder
 import com.merseyside.animators.BaseSingleAnimator
 import com.merseyside.animators.MainPoint
+import com.merseyside.merseyLib.time.TimeUnit
 import com.merseyside.utils.Logger
 import com.merseyside.utils.ext.log
-import com.merseyside.utils.time.TimeUnit
 
 class TransitionAnimator (
     builder: Builder
