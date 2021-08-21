@@ -60,7 +60,7 @@ val androidLibs = listOf(
 )
 
 dependencies {
-    api(LibraryDeps.MerseyLibs.time)
+    api(LibraryDeps.Libs.MerseyLibs.time)
     androidLibs.forEach { lib -> implementation(lib) }
 }
 

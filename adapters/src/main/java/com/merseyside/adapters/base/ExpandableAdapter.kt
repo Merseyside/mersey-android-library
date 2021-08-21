@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.model.ExpandableAdapterViewModel
 import com.merseyside.utils.ext.isNotNullAndEmpty
 import com.merseyside.adapters.view.TypedBindingHolder
+import com.merseyside.utils.ext.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

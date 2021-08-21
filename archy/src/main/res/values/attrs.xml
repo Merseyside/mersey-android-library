@@ -73,4 +73,9 @@
         <attr name="defaultImageColor" format="color"/>
         <attr name="checkedImageColor" format="color"/>
     </declare-styleable>
+
+    <declare-styleable name="RoundTextView">
+        <attr name="backgroundColor" format="color"/>
+        <attr name="cornerRadius" format="dimension"/>
+    </declare-styleable>
 </resources>

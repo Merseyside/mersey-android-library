@@ -49,7 +49,7 @@ val androidLibs = listOf(
     LibraryDeps.Libs.material,
     LibraryDeps.Libs.recyclerView,
     LibraryDeps.Libs.coroutines,
-    LibraryDeps.MerseyLibs.time
+    LibraryDeps.Libs.MerseyLibs.time
 )
 
 dependencies {
