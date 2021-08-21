@@ -52,9 +52,11 @@ object LibraryDeps {
         const val filemanager = "com.github.Merseyside:android-filemanager:${LibraryVersions.Libs.filemanager}"
         const val typedDatastore = "androidx.datastore:datastore:${LibraryVersions.Libs.typedDataStore}"
         const val location = "com.google.android.gms:play-services-location:${LibraryVersions.Libs.location}"
+
+        object MerseyLibs {
+            const val time = "io.github.merseyside:time:${LibraryVersions.Libs.time}"
+        }
     }
 
-    object MerseyLibs {
-        const val time = "io.github.merseyside:time:${LibraryVersions.Libs.time}"
-    }
+
 }

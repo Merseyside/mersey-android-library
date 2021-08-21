@@ -8,6 +8,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.Toolbar
+import androidx.navigation.fragment.NavHostFragment
 import com.merseyside.archy.BaseApplication
 import com.merseyside.archy.presentation.dialog.MaterialAlertDialog
 import com.merseyside.archy.presentation.ext.getActualString
@@ -19,6 +20,7 @@ import com.merseyside.archy.presentation.view.localeViews.ILocaleManager
 import com.merseyside.utils.LocaleManager
 import com.merseyside.utils.Logger
 import com.merseyside.archy.utils.SnackbarManager
+import com.merseyside.utils.ext.log
 import com.merseyside.utils.getLocalizedContext
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.Unregistrar
@@ -103,7 +105,8 @@ abstract class BaseActivity : NavigationBaseActivity(),
     }
 
     override fun getLanguage(): String {
-        return application?.getLanguage() ?: throw IllegalStateException("Please, extend your application from BaseApplication class")
+        return application?.getLanguage()
+            ?: throw IllegalStateException("Please, extend your application from BaseApplication class")
     }
 
     @LayoutRes
@@ -142,12 +145,13 @@ abstract class BaseActivity : NavigationBaseActivity(),
     }
 
     override fun hideKeyboard(context: Context?, view: View) {
-        val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputMethodManager =
+            getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     override fun onBackPressed() {
-        val fragment = getCurrentFragment()
+        val fragment = getCurrentFragment().log(prefix = "current")
 
         if (fragment != null && fragment is OnBackPressedListener) {
             if (fragment.onBackPressed()) {
@@ -164,16 +168,23 @@ abstract class BaseActivity : NavigationBaseActivity(),
 
     override fun handleError(throwable: Throwable) {}
 
-    protected fun getCurrentFragment(res: Int? = getFragmentContainer()): BaseFragment? {
+    protected fun getCurrentFragment(res: Int? = getFragmentContainer().log(prefix = "container")): BaseFragment? {
 
-        res?.let {
-            if (supportFragmentManager.findFragmentById(res) is BaseFragment) {
-                return supportFragmentManager
-                    .findFragmentById(res) as BaseFragment
+        return res?.let {
+            with(supportFragmentManager.findFragmentById(res)) {
+                when (this) {
+                    is BaseFragment -> {
+                        this
+                    }
+                    is NavHostFragment -> {
+                        this.getChildFragmentManager().fragments[0] as BaseFragment
+                    }
+                    else -> {
+                        null
+                    }
+                }
             }
         }
-
-        return null
     }
 
     override fun showAlertDialog(
@@ -196,7 +207,7 @@ abstract class BaseActivity : NavigationBaseActivity(),
             .isSingleAction(isSingleAction)
             .isCancelable(isCancelable)
             .build()
-        
+
         dialog.show()
     }
 

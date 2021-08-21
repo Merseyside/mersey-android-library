@@ -4,7 +4,7 @@ import android.widget.TextView
 import com.merseyside.animators.BaseAnimator
 import com.merseyside.animators.animator.AlphaAnimator
 import com.merseyside.merseyLib.time.TimeUnit
-import com.merseyside.utils.time.div
+import com.merseyside.merseyLib.time.div
 
 class SetTextFadeOutInAnimator(
     val view: TextView,

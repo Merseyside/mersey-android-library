@@ -7,6 +7,7 @@ import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.features.adapters.racers.entity.Checkpoint
 import com.merseyside.merseyLib.time.Millis
+import com.merseyside.merseyLib.time.ext.toFormattedDate
 import com.merseyside.utils.time.compareTo
 import com.merseyside.utils.time.minus
 
@@ -56,8 +57,7 @@ class CheckpointItemViewModel(obj: Checkpoint) : ComparableAdapterViewModel<Chec
 
     @Bindable
     fun getGap(): String {
-        //return getFormattedDate(obj.gap, "ss:SSS").value
-        return ""
+        return obj.gap.toFormattedDate("ss:SSS").value
     }
 
     fun getChangeGap(): String {

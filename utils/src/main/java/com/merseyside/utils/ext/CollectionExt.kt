@@ -2,9 +2,9 @@ package com.merseyside.utils.ext
 
 import com.merseyside.merseyLib.time.Millis
 import com.merseyside.merseyLib.time.TimeUnit
+import com.merseyside.merseyLib.time.plus
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
-import com.merseyside.utils.time.plus
 
 @OptIn(ExperimentalContracts::class)
 fun Collection<*>?.isNotNullAndEmpty(): Boolean {
