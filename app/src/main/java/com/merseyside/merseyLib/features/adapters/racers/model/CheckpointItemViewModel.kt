@@ -8,8 +8,8 @@ import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.features.adapters.racers.entity.Checkpoint
 import com.merseyside.merseyLib.time.Millis
 import com.merseyside.merseyLib.time.ext.toFormattedDate
-import com.merseyside.utils.time.compareTo
-import com.merseyside.utils.time.minus
+import com.merseyside.merseyLib.time.compareTo
+import com.merseyside.merseyLib.time.minus
 
 class CheckpointItemViewModel(obj: Checkpoint) : ComparableAdapterViewModel<Checkpoint>(obj) {
 
