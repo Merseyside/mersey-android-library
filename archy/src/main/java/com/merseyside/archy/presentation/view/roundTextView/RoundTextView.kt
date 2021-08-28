@@ -38,10 +38,6 @@ class RoundTextView(
         )
     }
 
-    init {
-        cornerRadius.log(prefix = "radius")
-    }
-
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
