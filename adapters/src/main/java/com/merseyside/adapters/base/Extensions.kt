@@ -6,8 +6,7 @@ import com.merseyside.utils.emptyMutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.NoSuchElementException
-import kotlin.jvm.Throws
+import java.util.*
 
 @Throws(IllegalArgumentException::class)
 fun <T : ComparableAdapterViewModel<M>, M : Any> SortedList<T>.isEquals(list: List<T>): Boolean {
@@ -31,17 +30,17 @@ fun <T : ComparableAdapterViewModel<M>, M : Any> SortedList<T>.isNotEquals(
     list: List<T>
 ): Boolean = !this.isEquals(list)
 
-inline fun <T> SortedList<T>.forEach(onValue: (T) -> Unit) {
+internal inline fun <T> SortedList<T>.forEach(onValue: (T) -> Unit) {
     forEachIndexed { _, item -> onValue(item) }
 }
 
-inline fun <T> SortedList<T>.forEachIndexed(onValue: (Int, model: T) -> Unit) {
+internal inline fun <T> SortedList<T>.forEachIndexed(onValue: (Int, model: T) -> Unit) {
     for (i in 0 until size()) {
         onValue(i, get(i))
     }
 }
 
-inline fun <T> SortedList<T>.find(predicate: (model: T) -> Boolean): T? {
+internal inline fun <T> SortedList<T>.find(predicate: (model: T) -> Boolean): T? {
     forEach { if (predicate(it)) return it }
 
     return null
@@ -63,13 +62,13 @@ inline fun <M> BaseAdapter<M, *>.findAll(predicate: (M) -> Boolean): List<M> {
 }
 
 @Throws(NoSuchElementException::class)
-inline fun <T> SortedList<T>.indexOf(predicate: (T) -> Boolean): Int {
+internal inline fun <T> SortedList<T>.indexOf(predicate: (T) -> Boolean): Int {
     forEachIndexed { index, obj -> if (predicate(obj)) return index }
 
     throw NoSuchElementException()
 }
 
-fun <T> SortedList<T>.removeAll(list: List<T>) {
+internal fun <T> SortedList<T>.removeAll(list: List<T>) {
     list.forEach { remove(it) }
 }
 

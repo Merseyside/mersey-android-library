@@ -25,9 +25,13 @@ abstract class BaseCoroutineUseCase<T, Params> {
 
     protected abstract suspend fun executeOnBackground(params: Params?): T
 
-    protected suspend fun doWorkAsync(params: Params?): Deferred<T> = scope.backgroundAsync {
-        executeOnBackground(params)
-    }.also { job = it }
+    protected suspend fun doWorkAsync(params: Params?): Deferred<T> = coroutineScope {
+        async {
+            withContext(asyncJob) {
+                executeOnBackground(params)
+            }
+        }.also { job = it }
+    }
 
     fun cancel(cause: CancellationException? = null) {
         job?.cancel(cause)

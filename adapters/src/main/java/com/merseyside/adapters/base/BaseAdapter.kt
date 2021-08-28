@@ -190,7 +190,7 @@ abstract class BaseAdapter<M, T : AdapterViewModel<M>>
         throw IllegalArgumentException("No data found")
     }
 
-    protected open fun find(obj: M): T? {
+    internal open fun find(obj: M): T? {
         modelList.forEach {
             if (it.areItemsTheSame(obj)) {
                 return it

@@ -60,7 +60,7 @@ fun ImageView.imageUrl(url: String?, @DrawableRes placeholderId: Int?) {
 }
 
 @BindingAdapter("imageUrl", "imagePlaceholder", "cropCircle", "crossfade", requireAll = false)
-fun ImageView.imageUrlDrawablePlaceholder(
+fun ImageView.imageUrlPlaceholder(
     url: String?,
     placeholder: Drawable?,
     isCropCircle: Boolean = false,
@@ -70,6 +70,24 @@ fun ImageView.imageUrlDrawablePlaceholder(
         load(placeholder)
     } else {
         load(url) {
+            if (isCrossfade) crossfade(true)
+            this.placeholder(placeholder)
+            if (isCropCircle) transformations(CircleCropTransformation())
+        }
+    }
+}
+
+@BindingAdapter("drawable", "imagePlaceholder", "cropCircle", "crossfade", requireAll = false)
+fun ImageView.imageDrawablePlaceholder(
+    drawable: Drawable?,
+    placeholder: Drawable?,
+    isCropCircle: Boolean = false,
+    isCrossfade: Boolean = false
+) {
+    if (drawable == null) {
+        load(placeholder)
+    } else {
+        load(drawable) {
             if (isCrossfade) crossfade(true)
             this.placeholder(placeholder)
             if (isCropCircle) transformations(CircleCropTransformation())
