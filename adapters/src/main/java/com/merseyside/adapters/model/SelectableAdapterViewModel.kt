@@ -30,7 +30,7 @@ abstract class SelectableAdapterViewModel<M>(
         setSelected(isSelected)
     }
 
-    fun setSelected(isSelected: Boolean, isNotifyItem: Boolean = false) {
+    fun setSelected(isSelected: Boolean, notifyItem: Boolean = true) {
         mainThreadIfNeeds {
             this.isSelected = isSelected
 
@@ -38,7 +38,7 @@ abstract class SelectableAdapterViewModel<M>(
                 this.selectedObservable.set(isSelected)
             }
 
-            if (isNotifyItem) {
+            if (notifyItem) {
                 onSelectedChanged(isSelected)
             }
         }

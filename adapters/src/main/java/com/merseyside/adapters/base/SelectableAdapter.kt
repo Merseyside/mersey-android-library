@@ -5,7 +5,6 @@ import com.merseyside.utils.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlin.jvm.Throws
 
 abstract class SelectableAdapter<M: Any, T: SelectableAdapterViewModel<M>>(
     selectableMode: SelectableMode = SelectableMode.SINGLE,
@@ -24,10 +23,7 @@ abstract class SelectableAdapter<M: Any, T: SelectableAdapterViewModel<M>>(
                 if (value == SelectableMode.SINGLE) {
                     if (selectedList.size > 1) {
                         (1 until selectedList.size).forEach { index ->
-                            selectedList[index].setSelected(
-                                isSelected = false,
-                                isNotifyItem = true
-                            )
+                            selectedList[index].setSelected(false)
                         }
 
                         selectedList = mutableListOf(selectedList.first())
@@ -180,10 +176,7 @@ abstract class SelectableAdapter<M: Any, T: SelectableAdapterViewModel<M>>(
                 if (selectableMode == SelectableMode.SINGLE) {
                     if (selectedList.isEmpty() || selectedList.first().areItemsNotTheSame(item.obj)) {
                         if (selectedList.isNotEmpty()) {
-                            selectedList.first().setSelected(
-                                isSelected = false,
-                                isNotifyItem = true
-                            )
+                            selectedList.first().setSelected(false)
                             selectedList.clear()
                         }
 
@@ -193,10 +186,10 @@ abstract class SelectableAdapter<M: Any, T: SelectableAdapterViewModel<M>>(
                     selectedList.add(item)
                 }
 
-                item.setSelected(isSelected = true, isNotifyItem = true)
+                item.setSelected(true)
                 notifyItemSelected(item, isSelectedByUser)
             } else if (isAllowToCancelSelection) {
-                item.setSelected(isSelected = false, isNotifyItem = true)
+                item.setSelected(false)
                 selectedList.remove(item)
 
                 notifyItemSelected(item, isSelectedByUser)

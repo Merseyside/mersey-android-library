@@ -5,23 +5,24 @@ import android.util.AttributeSet
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class WrapContentLinearLayoutManager(
-    context: Context,
-    attrs: AttributeSet?,
-    defStyleAttr: Int,
-    defStyleRes: Int
-): LinearLayoutManager(context, attrs, defStyleAttr, defStyleRes) {
+open class WrapContentLinearLayoutManager: LinearLayoutManager {
 
-    @Throws(IndexOutOfBoundsException::class)
-    constructor(context: Context) : this(
-        context,
-        null, 0, 0
+    constructor(
+        context: Context,
+        attrs: AttributeSet?,
+        defStyleAttr: Int,
+        defStyleRes: Int
+    ): super(context, attrs, defStyleAttr, defStyleRes)
+
+    constructor(context: Context, orientation: Int, reverseLayout: Boolean) : super(
+        context, orientation, reverseLayout
     )
-        override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
-            try {
-                super.onLayoutChildren(recycler, state)
-            } catch (ignored: IndexOutOfBoundsException) {}
-        }
 
-        override fun supportsPredictiveItemAnimations() = false
+    override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
+        try {
+            super.onLayoutChildren(recycler, state)
+        } catch (ignored: IndexOutOfBoundsException) {}
+    }
+
+    override fun supportsPredictiveItemAnimations() = false
 }

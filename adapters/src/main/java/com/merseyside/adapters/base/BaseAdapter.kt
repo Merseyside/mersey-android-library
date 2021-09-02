@@ -22,6 +22,12 @@ abstract class BaseAdapter<M, T : AdapterViewModel<M>>
 
     protected open val modelList: MutableList<T> = ArrayList()
     private val bindItemList: MutableList<T> = ArrayList()
+    lateinit var recyclerView: RecyclerView
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        this.recyclerView = recyclerView
+        super.onAttachedToRecyclerView(recyclerView)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TypedBindingHolder<T> {
         val layoutInflater : LayoutInflater = LayoutInflater.from(parent.context)
