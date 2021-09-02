@@ -47,10 +47,14 @@ private class LazyBindingImpl<B: ViewDataBinding>(
 
     private fun initBinding(): B {
         if (_value == null) {
-            val inflater = view.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            return DataBindingUtil.inflate<B>(inflater, layoutRes, view, attachToParent).also { _value = it}
+            return view.getBinding<B>(layoutRes, attachToParent).also { _value = it }
         } else {
             throw IllegalStateException("Binding already initialized")
         }
     }
+}
+
+fun <B: ViewDataBinding> ViewGroup.getBinding(@LayoutRes layoutRes: Int, attachToParent: Boolean = true): B {
+    val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    return DataBindingUtil.inflate(inflater, layoutRes, this, attachToParent)
 }
