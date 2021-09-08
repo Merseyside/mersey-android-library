@@ -179,7 +179,7 @@ abstract class BaseAdapter<M, T : AdapterViewModel<M>>
     }
 
     @Throws(IllegalArgumentException::class)
-    open fun getPositionOfObj(obj: M): Int {
+    open fun getPositionOfItem(obj: M): Int {
         modelList.forEachIndexed { index, t ->
             if (t.areItemsTheSame(obj)) return index
         }

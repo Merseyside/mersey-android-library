@@ -145,7 +145,9 @@ fun View.isFullyVisible(): Boolean {
 
 fun View.getVisibleSize(): Point {
     val viewRect = Rect().apply {
-        this@getVisibleSize.getGlobalVisibleRect(this)
+        if (!this@getVisibleSize.getGlobalVisibleRect(this)) {
+            return Point()
+        }
     }
 
     val visibleWidth = viewRect.width()
@@ -172,4 +174,12 @@ fun View.padding(
     bottom: Int = paddingBottom
 ) {
     setPadding(left, top, right, bottom)
+}
+
+fun View.setHorizontalPadding(size: Int) {
+    padding(left = size, right = size)
+}
+
+fun View.setVerticalPadding(size: Int) {
+    padding(top = size, bottom = size)
 }

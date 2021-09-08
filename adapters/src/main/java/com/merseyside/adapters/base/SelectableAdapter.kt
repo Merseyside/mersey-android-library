@@ -162,6 +162,12 @@ abstract class SelectableAdapter<M: Any, T: SelectableAdapterViewModel<M>>(
         }
     }
 
+    fun getSelectedItemPosition(): Int {
+        return getSelectedItem()?.let {
+            getPositionOfItem(it)
+        } ?: NO_SELECTIONS
+    }
+
     fun getSelectedItems(): List<M> {
         return selectedList.map { it.obj }
     }
@@ -195,6 +201,8 @@ abstract class SelectableAdapter<M: Any, T: SelectableAdapterViewModel<M>>(
                 notifyItemSelected(item, isSelectedByUser)
             }
         }
+
+        recyclerView.invalidateItemDecorations()
     }
 
     private fun notifyItemSelected(item: T, isSelectedByUser: Boolean) {
@@ -243,5 +251,9 @@ abstract class SelectableAdapter<M: Any, T: SelectableAdapterViewModel<M>>(
     override fun removeListeners() {
         super.removeListeners()
         selectedListeners.clear()
+    }
+
+    companion object {
+        const val NO_SELECTIONS = -1
     }
 }

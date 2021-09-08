@@ -4,8 +4,8 @@ object LibraryVersions {
         const val groupId = "com.github.Merseyside"
         const val artifactId = "mersey-android-library"
 
-        const val version = "1.4.5"
-        const val versionCode = 145
+        const val version = "1.4.6"
+        const val versionCode = 146
 
         const val compileSdk = 30
         const val targetSdk = 30

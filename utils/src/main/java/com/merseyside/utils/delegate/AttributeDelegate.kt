@@ -2,14 +2,10 @@ package com.merseyside.utils.delegate
 
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
-import androidx.annotation.ColorRes
-import androidx.annotation.DimenRes
-import androidx.annotation.DrawableRes
 import com.merseyside.utils.Logger
 import com.merseyside.utils.attributes.AttributeHelper
 import com.merseyside.utils.attributes.AttributeHelper.Companion.NO_VALUE
 import com.merseyside.utils.attributes.Namespace
-import com.merseyside.utils.ext.log
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -234,6 +230,53 @@ fun AttributeHelper.dimensionOrNull(
 
     private fun getValue(resName: String): Float? {
         return getDimensionOrNull(resName, namespace)?.also { value = it }
+    }
+}
+
+fun AttributeHelper.dimensionPixelSize(
+    defaultValue: Int,
+    namespace: Namespace = defNamespace,
+    resName: String? = null
+): ReadWriteProperty<Any, Int> = object: ReadWriteProperty<Any, Int> {
+    var value: Int? = null
+
+    init {
+        if (resName != null) value = getValue(resName)
+    }
+
+    override fun getValue(thisRef: Any, property: KProperty<*>): Int {
+        return value ?: getValue(property.name).also { value = it }
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: Int) {
+        this.value = value
+    }
+
+    private fun getValue(resName: String): Int {
+        return getDimensionPixelSize(resName, defaultValue, namespace).also { value = it }
+    }
+}
+
+fun AttributeHelper.dimensionPixelSizeOrNull(
+    namespace: Namespace = defNamespace,
+    resName: String? = null
+): ReadWriteProperty<Any, Int?> = object: ReadWriteProperty<Any, Int?> {
+    var value: Int? = null
+
+    init {
+        if (resName != null) value = getValue(resName)
+    }
+
+    override fun getValue(thisRef: Any, property: KProperty<*>): Int? {
+        return value ?: getValue(property.name)?.also { value = it }
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: Int?) {
+        this.value = value
+    }
+
+    private fun getValue(resName: String): Int? {
+        return getDimensionPixelSizeOrNull(resName, namespace)?.also { value = it }
     }
 }
 

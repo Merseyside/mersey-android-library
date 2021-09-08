@@ -119,7 +119,7 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
     }
 
     @Throws(NoSuchElementException::class)
-    override fun getPositionOfObj(obj: M): Int {
+    override fun getPositionOfItem(obj: M): Int {
         try {
             return sortedList.indexOf { item -> item.areItemsTheSame(obj) }
         } catch (e: NoSuchElementException) {
