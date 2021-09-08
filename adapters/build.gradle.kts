@@ -48,13 +48,13 @@ val androidLibs = listOf(
     LibraryDeps.Libs.appCompat,
     LibraryDeps.Libs.material,
     LibraryDeps.Libs.recyclerView,
-    LibraryDeps.Libs.coroutines,
-    LibraryDeps.Libs.MerseyLibs.time
+    LibraryDeps.Libs.coroutines
 )
 
 dependencies {
     androidLibs.forEach { lib -> implementation(lib) }
     api(LibraryDeps.Libs.paging)
+    api(LibraryDeps.Libs.MerseyLibs.time)
 
     implementation(project(LibraryModules.utils))
 }

@@ -44,12 +44,12 @@ tasks.withType<KotlinCompile> {
 }
 
 val androidLibs = listOf(
-    LibraryDeps.Libs.appCompat,
-    LibraryDeps.Libs.MerseyLibs.time
+    LibraryDeps.Libs.appCompat
 )
 
 dependencies {
     implementation(project(LibraryModules.utils))
+    api(LibraryDeps.Libs.MerseyLibs.time)
 
     androidLibs.forEach { lib -> implementation(lib) }
 }

@@ -46,6 +46,12 @@ internal inline fun <T> SortedList<T>.find(predicate: (model: T) -> Boolean): T?
     return null
 }
 
+inline fun <M> BaseAdapter<M, *>.findPosition(predicate: (item: M) -> Boolean): Int {
+    return getAll().find { predicate(it) }?.run {
+        getPositionOfItem(this)
+    } ?: -1
+}
+
 inline fun <M> BaseAdapter<M, *>.findFirst(predicate: (item: M) -> Boolean): M? {
     return getAll().find { predicate(it) }
 }

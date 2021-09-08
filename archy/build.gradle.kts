@@ -61,8 +61,7 @@ val androidLibs = listOf(
     LibraryDeps.Libs.gson,
     LibraryDeps.Libs.keyboard,
     LibraryDeps.Libs.room,
-    LibraryDeps.Libs.serialization,
-    LibraryDeps.Libs.MerseyLibs.time
+    LibraryDeps.Libs.serialization
 )
 
 val modulez = listOf(
@@ -72,6 +71,7 @@ val modulez = listOf(
 )
 
 dependencies {
+    api(LibraryDeps.Libs.MerseyLibs.time)
     modulez.forEach { module -> implementation(project(module)) }
     androidLibs.forEach { lib -> implementation(lib) }
 

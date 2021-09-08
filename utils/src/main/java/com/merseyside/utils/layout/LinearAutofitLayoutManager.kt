@@ -17,12 +17,6 @@ class LinearAutofitLayoutManager : WrapContentLinearLayoutManager, SizeProviderL
     private var maxSize: Int = Int.MAX_VALUE
 
     private var lastItemCount = 0
-        set(value) {
-            if (value != field) {
-                field = value
-                requestLayout()
-            }
-        }
 
     constructor(
         context: Context,
@@ -33,10 +27,11 @@ class LinearAutofitLayoutManager : WrapContentLinearLayoutManager, SizeProviderL
 
     constructor(
         @NonNull context: Context,
+        desiredItemSize: Int = 0,
         orientation: Int = HORIZONTAL,
         reverseLayout: Boolean = false,
         maxSize: Int = Int.MAX_VALUE
-    ) : super(context, orientation, reverseLayout) {
+    ) : super(context, desiredItemSize, orientation, reverseLayout) {
         this.maxSize = maxSize
     }
 
@@ -60,24 +55,23 @@ class LinearAutofitLayoutManager : WrapContentLinearLayoutManager, SizeProviderL
         }
     }
 
-    override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
-        if (lastWidth != width || lastHeight != height || lastItemCount != itemCount) {
-
-            lastWidth = width
-            lastHeight = height
+    private fun setupNewValues(): Boolean {
+        return if (lastWidth != measuredWidth || lastHeight != measuredHeight || lastItemCount != itemCount) {
+            lastWidth = measuredWidth
+            lastHeight = measuredHeight
             lastItemCount = itemCount
 
             calculateItemSizes()
-
-            requestLayout()
-        }
-
-        super.onLayoutChildren(recycler, state)
+            true
+        } else false
     }
 
     override fun checkLayoutParams(lp: RecyclerView.LayoutParams): Boolean {
+        setupNewValues()
+
         lp.width = itemWidth
         lp.height = itemHeight
+
         return true
     }
 }

@@ -1,16 +1,14 @@
 package com.merseyside.utils.attributes
 
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
-import androidx.annotation.*
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
-import com.merseyside.utils.R
 import com.merseyside.utils.convertDpToPixel
 import com.merseyside.utils.ext.*
-import java.lang.RuntimeException
 
 class AttributeHelper(
     view: View,
@@ -23,7 +21,7 @@ class AttributeHelper(
         resName: String,
         defValue: Boolean,
         namespace: Namespace = Namespace.DEFAULT
-        
+
     ) = attrSet.getAttributeBooleanValue(namespace.namespace, resName, defValue)
 
     fun getString(
@@ -91,11 +89,11 @@ class AttributeHelper(
         try {
             with(attrSet.getAttributeFloatValue(namespace.namespace, resName, NO_VALUE_FLOAT)) {
                 if (this == NO_VALUE_FLOAT) null
-                else this
+                else convertDpToPixel(context, this)
             }
         } catch (e: RuntimeException) {
             parseDimensionToFloat(resName, namespace)?.let {
-                convertDpToPixel(context, it).toFloat()
+                convertDpToPixel(context, it)
             }
         }
     }
@@ -104,15 +102,19 @@ class AttributeHelper(
         resName: String,
         namespace: Namespace = Namespace.DEFAULT
     ): Int? {
-        val possibleResId =
-            attrSet.getAttributeResourceValue(namespace.namespace, resName, NO_VALUE)
+        return try {
+            val possibleResId =
+                attrSet.getAttributeResourceValue(namespace.namespace, resName, NO_VALUE)
 
-        return if (possibleResId == NO_VALUE) {
-            getAttributeId(resName, namespace)?.let {
-                context.getResourceFromAttr(it)
+            if (possibleResId == NO_VALUE) {
+                getAttributeId(resName, namespace)?.let {
+                    context.getResourceFromAttr(it)
+                }
+            } else {
+                possibleResId
             }
-        } else {
-            possibleResId
+        } catch (e: NullPointerException) {
+            null
         }
     }
 
@@ -121,16 +123,20 @@ class AttributeHelper(
         resName: String,
         namespace: Namespace = Namespace.DEFAULT,
     ): Int? {
-        val value = attrSet.getAttributeValue(namespace.namespace, resName)
+        return try {
+            val value = attrSet.getAttributeValue(namespace.namespace, resName)
 
-        return if (value.isNotNullAndEmpty() && value.startsWith("?")) {
-            val attrRes = value.substring(1)
-            if (attrRes.containsDigits()) {
-                return attrRes.toInt()
+            if (value.isNotNullAndEmpty() && value.startsWith("?")) {
+                val attrRes = value.substring(1)
+                if (attrRes.containsDigits()) {
+                    return attrRes.toInt()
+                } else {
+                    null
+                }
             } else {
                 null
             }
-        } else {
+        } catch (e: NullPointerException) {
             null
         }
     }
@@ -167,9 +173,13 @@ class AttributeHelper(
     }
 
     private fun parseDimensionToFloat(resName: String, namespace: Namespace): Float? {
-        return attrSet.getAttributeValue(namespace.namespace, resName)?.run {
-            replace("dip", "").replace("sp", "")
-        }?.toFloatOrNull()
+        return try {
+            attrSet.getAttributeValue(namespace.namespace, resName)?.run {
+                replace("dip", "sp", newValue = "")
+            }?.toFloatOrNull()
+        } catch (e: NullPointerException) {
+            null
+        }
     }
 
     companion object {
