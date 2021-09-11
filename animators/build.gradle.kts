@@ -1,24 +1,24 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    plugin(LibraryDeps.Plugins.androidLibrary)
-    plugin(LibraryDeps.Plugins.kotlinAndroid)
-    plugin(LibraryDeps.Plugins.kotlinKapt)
-    plugin(LibraryDeps.Plugins.kotlinSerialization)
-    plugin(LibraryDeps.Plugins.mavenPublish)
+    plugin(Plugins.androidLibrary)
+    plugin(Plugins.kotlinAndroid)
+    plugin(Plugins.kotlinKapt)
+    plugin(Plugins.kotlinSerialization)
+    plugin(Plugins.mavenPublish)
 }
 
-group = LibraryVersions.Application.groupId
-version = LibraryVersions.Application.version
+group = Application.groupId
+version = Application.version
 
 android {
-    compileSdkVersion(LibraryVersions.Application.compileSdk)
+    compileSdkVersion(Application.compileSdk)
 
     defaultConfig {
-        minSdkVersion(LibraryVersions.Application.minSdk)
-        targetSdkVersion(LibraryVersions.Application.targetSdk)
-        versionCode = LibraryVersions.Application.versionCode
-        versionName = LibraryVersions.Application.version
+        minSdkVersion(Application.minSdk)
+        targetSdkVersion(Application.targetSdk)
+        versionCode = Application.versionCode
+        versionName = Application.version
     }
 
     buildTypes {
@@ -44,12 +44,12 @@ tasks.withType<KotlinCompile> {
 }
 
 val androidLibs = listOf(
-    LibraryDeps.Libs.appCompat
+    libs.appCompat
 )
 
 dependencies {
-    implementation(project(LibraryModules.utils))
-    api(LibraryDeps.Libs.MerseyLibs.time)
+    implementation(projects.utils)
+    api(libs.merseyLib.time)
 
     androidLibs.forEach { lib -> implementation(lib) }
 }

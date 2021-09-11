@@ -1,20 +1,20 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    plugin(LibraryDeps.Plugins.androidApplication)
-    plugin(LibraryDeps.Plugins.kotlinAndroid)
-    plugin(LibraryDeps.Plugins.kotlinKapt)
-    plugin(LibraryDeps.Plugins.kotlinSerialization)
+    plugin(Plugins.androidApplication)
+    plugin(Plugins.kotlinAndroid)
+    plugin(Plugins.kotlinKapt)
+    plugin(Plugins.kotlinSerialization)
 }
 
 android {
-    compileSdkVersion(LibraryVersions.Application.compileSdk)
+    compileSdkVersion(Application.compileSdk)
 
     defaultConfig {
-        minSdkVersion(LibraryVersions.Application.minSdk)
-        targetSdkVersion(LibraryVersions.Application.targetSdk)
-        versionCode = LibraryVersions.Application.versionCode
-        versionName = LibraryVersions.Application.version
+        minSdkVersion(Application.minSdk)
+        targetSdkVersion(Application.targetSdk)
+        versionCode = Application.versionCode
+        versionName = Application.version
 
         multiDexEnabled = true
         vectorDrawables.useSupportLibrary = true
@@ -78,35 +78,35 @@ android {
 }
 
 val androidLibs = listOf(
-    LibraryDeps.Libs.coroutines,
-    LibraryDeps.Libs.serialization,
-    LibraryDeps.Libs.recyclerView,
-    LibraryDeps.Libs.navigation,
-    LibraryDeps.Libs.navigationUi,
-    LibraryDeps.Libs.constraintLayout,
-    LibraryDeps.Libs.lifecycleLiveDataKtx,
-    LibraryDeps.Libs.appCompat,
-    LibraryDeps.Libs.material,
-    LibraryDeps.Libs.cardView,
-    LibraryDeps.Libs.annotation,
-    LibraryDeps.Libs.dagger
+    libs.coroutines,
+    libs.serialization,
+    libs.recyclerView,
+    libs.navigation,
+    libs.navigationUi,
+    libs.constraintLayout,
+    libs.lifecycleLiveDataKtx,
+    libs.appCompat,
+    libs.material,
+    libs.cardView,
+    libs.annotation,
+    libs.dagger
 )
 
 val modulez = listOf(
-    LibraryModules.utils,
-    LibraryModules.archy,
-    LibraryModules.adapters,
-    LibraryModules.animators
+    projects.utils,
+    projects.archy,
+    projects.adapters,
+    projects.animators
 )
 
 dependencies {
-    modulez.forEach { module -> implementation(project(module)) }
+    modulez.forEach { module -> implementation(module) }
     androidLibs.forEach { lib -> implementation(lib) }
 
-    implementation(LibraryDeps.Libs.filemanager) {
+    implementation(libs.filemanager) {
         exclude(group = "com.github.Merseyside.mersey-android-library", module = "utils")
     }
 
-    kapt(LibraryDeps.Libs.daggerCompiler)
+    kapt(libs.daggerCompiler)
     compileOnly("javax.annotation:jsr250-api:1.0")
 }

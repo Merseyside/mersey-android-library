@@ -14,6 +14,7 @@ import com.merseyside.merseyLib.features.adapters.racers.adapter.RacersAdapter
 import com.merseyside.merseyLib.features.adapters.racers.di.DaggerRacingComponent
 import com.merseyside.merseyLib.features.adapters.racers.di.RacingModule
 import com.merseyside.merseyLib.features.adapters.racers.model.RacingViewModel
+import com.merseyside.utils.ext.log
 
 class RacingFragment : BaseSampleFragment<FragmentRacingBinding, RacingViewModel>() {
 
@@ -41,6 +42,7 @@ class RacingFragment : BaseSampleFragment<FragmentRacingBinding, RacingViewModel
 
 
         viewModel.getCheckpointFlow().asLiveData().observe(viewLifecycleOwner) {
+            it.log()
             adapter.updateAsync(UpdateRequest(it))
         }
     }

@@ -1,24 +1,24 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    plugin(LibraryDeps.Plugins.androidLibrary)
-    plugin(LibraryDeps.Plugins.kotlinAndroid)
-    plugin(LibraryDeps.Plugins.kotlinKapt)
-    plugin(LibraryDeps.Plugins.kotlinSerialization)
-    plugin(LibraryDeps.Plugins.mavenPublish)
+    plugin(Plugins.androidLibrary)
+    plugin(Plugins.kotlinAndroid)
+    plugin(Plugins.kotlinKapt)
+    plugin(Plugins.kotlinSerialization)
+    plugin(Plugins.mavenPublish)
 }
 
-group = LibraryVersions.Application.groupId
-version = LibraryVersions.Application.version
+group = Application.groupId
+version = Application.version
 
 android {
-    compileSdkVersion(LibraryVersions.Application.compileSdk)
+    compileSdkVersion(Application.compileSdk)
 
     defaultConfig {
-        minSdkVersion(LibraryVersions.Application.minSdk)
-        targetSdkVersion(LibraryVersions.Application.targetSdk)
-        versionCode = LibraryVersions.Application.versionCode
-        versionName = LibraryVersions.Application.version
+        minSdkVersion(Application.minSdk)
+        targetSdkVersion(Application.targetSdk)
+        versionCode = Application.versionCode
+        versionName = Application.version
     }
 
     buildTypes {
@@ -50,33 +50,37 @@ tasks.withType<KotlinCompile> {
 }
 
 val androidLibs = listOf(
-    LibraryDeps.Libs.coroutines,
-    LibraryDeps.Libs.appCompat,
-    LibraryDeps.Libs.material,
-    LibraryDeps.Libs.navigation,
-    LibraryDeps.Libs.rxjava2,
-    LibraryDeps.Libs.navigationUi,
-    LibraryDeps.Libs.dagger,
-    LibraryDeps.Libs.worker,
-    LibraryDeps.Libs.gson,
-    LibraryDeps.Libs.keyboard,
-    LibraryDeps.Libs.room,
-    LibraryDeps.Libs.serialization
+    libs.coroutines,
+    libs.serialization,
+    libs.appCompat,
+    libs.material,
+    libs.rxjava2,
+    libs.dagger,
+    libs.worker,
+    libs.gson,
+    libs.keyboard,
+    libs.room
+)
+
+val androidBundles = listOf(
+    libs.bundles.lifecycle,
+    libs.bundles.navigation
 )
 
 val modulez = listOf(
-    LibraryModules.utils,
-    LibraryModules.adapters,
-    LibraryModules.animators
+    projects.utils,
+    projects.adapters,
+    projects.animators
 )
 
 dependencies {
-    api(LibraryDeps.Libs.MerseyLibs.time)
-    modulez.forEach { module -> implementation(project(module)) }
+    api(libs.merseyLib.time)
+    modulez.forEach { module -> implementation(module) }
     androidLibs.forEach { lib -> implementation(lib) }
+    androidBundles.forEach { bundle -> implementation(bundle) }
 
-    kapt(LibraryDeps.Libs.daggerCompiler)
-    kapt(LibraryDeps.Libs.roomCompiler)
+    kapt(libs.daggerCompiler)
+    kapt(libs.roomCompiler)
 }
 
 afterEvaluate {

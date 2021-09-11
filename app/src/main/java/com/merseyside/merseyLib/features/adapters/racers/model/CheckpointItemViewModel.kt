@@ -7,9 +7,10 @@ import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.features.adapters.racers.entity.Checkpoint
 import com.merseyside.merseyLib.time.Millis
-import com.merseyside.merseyLib.time.ext.toFormattedDate
 import com.merseyside.merseyLib.time.compareTo
+import com.merseyside.merseyLib.time.ext.toFormattedDate
 import com.merseyside.merseyLib.time.minus
+import com.merseyside.utils.ext.log
 
 class CheckpointItemViewModel(obj: Checkpoint) : ComparableAdapterViewModel<Checkpoint>(obj) {
 
@@ -61,6 +62,7 @@ class CheckpointItemViewModel(obj: Checkpoint) : ComparableAdapterViewModel<Chec
     }
 
     fun getChangeGap(): String {
+        gapChange.log(prefix = "gap change")
         return if (gapChange.isNotEmpty()) {
             if (gapChange > 0) {
                 "+ ${gapChange.millis} ms"
@@ -83,7 +85,7 @@ class CheckpointItemViewModel(obj: Checkpoint) : ComparableAdapterViewModel<Chec
 
     override fun payload(newItem: Checkpoint): List<Payloadable> {
         gapChange = if (newItem.gap.isEmpty()) {
-            Millis(0)
+            newItem.gap
         } else {
             newItem.gap - obj.gap
         }

@@ -5,19 +5,14 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.content.pm.ApplicationInfo
-import android.content.pm.PackageInfo
-import android.content.pm.PackageManager
-import android.content.res.Configuration
 import android.content.res.Resources
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Environment
 import android.os.Handler
 import android.os.Looper
-import android.view.KeyCharacterMap
-import android.view.KeyEvent
-import android.view.ViewConfiguration
+import androidx.annotation.ColorInt
 import androidx.annotation.DimenRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
@@ -27,6 +22,7 @@ import com.merseyside.utils.ext.toHandlerCanceller
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 fun getLocalizedContext(localeManager: LocaleManager): Context {
     return if (localeManager.language.isNotEmpty()) {
@@ -173,6 +169,15 @@ fun <T> emptyMutableList(): MutableList<T> {
 
 fun getDimension(context: Context, @DimenRes res: Int): Float {
     return context.resources.getDimension(res) / context.resources.displayMetrics.density
+}
+
+@ColorInt
+fun adjustAlpha(@ColorInt color: Int, factor: Float): Int {
+    val alpha = (Color.alpha(color) * factor).roundToInt()
+    val red: Int = Color.red(color)
+    val green: Int = Color.green(color)
+    val blue: Int = Color.blue(color)
+    return Color.argb(alpha, red, green, blue)
 }
 
 fun <T: Number> getMinMax(first: T, second: T): Pair<T, T> {
