@@ -1,3 +1,8 @@
+//@Suppress("DSL_SCOPE_VIOLATION")
+//plugins {
+//    alias(libs1.plugins.versionChecker)
+//}
+
 allprojects {
     repositories {
         mavenLocal()
@@ -9,16 +14,16 @@ allprojects {
         maven { url = uri("https://raw.githubusercontent.com/guardianproject/gpmaven/master") }
         maven { url = uri("https://maven.fabric.io/public") }
     }
-}
 
-allprojects {
     configurations.configureEach {
         resolutionStrategy {
-            val coroutines: MinimalExternalModuleDependency = rootProject.libs.coroutines.get()
-            val forcedCoroutines: ModuleVersionSelector = org.gradle.api.internal.artifacts.DefaultModuleVersionSelector.newSelector(
-                coroutines.module,
-                coroutines.versionConstraint.requiredVersion
-            )
+            val coroutines: MinimalExternalModuleDependency =
+                rootProject.androidLibs.coroutines.get()
+            val forcedCoroutines: ModuleVersionSelector =
+                org.gradle.api.internal.artifacts.DefaultModuleVersionSelector.newSelector(
+                    coroutines.module,
+                    coroutines.versionConstraint.requiredVersion
+                )
             force(forcedCoroutines)
         }
     }

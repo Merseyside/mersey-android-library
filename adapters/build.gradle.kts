@@ -44,17 +44,17 @@ tasks.withType<KotlinCompile> {
     }
 }
 
-val androidLibs = listOf(
-    libs.appCompat,
-    libs.material,
-    libs.recyclerView,
-    libs.coroutines
+val android = listOf(
+    androidLibs.appCompat,
+    androidLibs.material,
+    androidLibs.recyclerView,
+    androidLibs.coroutines
 )
 
 dependencies {
-    androidLibs.forEach { lib -> implementation(lib) }
-    api(libs.paging)
-    api(libs.merseyLib.time)
+    android.forEach { lib -> implementation(lib) }
+    api(androidLibs.paging)
+    api(androidLibs.merseyLib.time)
 
     implementation(projects.utils)
 }

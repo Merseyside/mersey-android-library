@@ -5,6 +5,8 @@ import androidx.appcompat.widget.Toolbar
 import com.merseyside.merseyLib.R
 import com.merseyside.archy.presentation.activity.BaseBindingActivity
 import com.merseyside.merseyLib.databinding.ActivityMainBinding
+import com.merseyside.merseyLib.time.Millis
+import com.merseyside.utils.delayedMainThread
 import com.merseyside.utils.ext.getColorFromAttr
 import com.merseyside.utils.ext.getResourceFromAttr
 import com.merseyside.utils.ext.getStringFromAttr
@@ -19,9 +21,5 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
 
     override fun onResume() {
         super.onResume()
-
-        getStringFromAttr(R.attr.some_text).log()
-        //ContextCompat.getColor(getContext(), getResourceFromAttr(R.attr.colorPrimary)).log()
-        getColorFromAttr(R.attr.colorAccent).log()
     }
 }

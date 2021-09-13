@@ -77,19 +77,19 @@ android {
     }
 }
 
-val androidLibs = listOf(
-    libs.coroutines,
-    libs.serialization,
-    libs.recyclerView,
-    libs.navigation,
-    libs.navigationUi,
-    libs.constraintLayout,
-    libs.lifecycleLiveDataKtx,
-    libs.appCompat,
-    libs.material,
-    libs.cardView,
-    libs.annotation,
-    libs.dagger
+val android = listOf(
+    androidLibs.coroutines,
+    androidLibs.serialization,
+    androidLibs.recyclerView,
+    androidLibs.navigation,
+    androidLibs.navigationUi,
+    androidLibs.constraintLayout,
+    androidLibs.lifecycleLiveDataKtx,
+    androidLibs.appCompat,
+    androidLibs.material,
+    androidLibs.cardView,
+    androidLibs.annotation,
+    androidLibs.dagger
 )
 
 val modulez = listOf(
@@ -101,12 +101,12 @@ val modulez = listOf(
 
 dependencies {
     modulez.forEach { module -> implementation(module) }
-    androidLibs.forEach { lib -> implementation(lib) }
+    android.forEach { lib -> implementation(lib) }
 
-    implementation(libs.filemanager) {
+    implementation(androidLibs.filemanager) {
         exclude(group = "com.github.Merseyside.mersey-android-library", module = "utils")
     }
 
-    kapt(libs.daggerCompiler)
+    kapt(androidLibs.daggerCompiler)
     compileOnly("javax.annotation:jsr250-api:1.0")
 }

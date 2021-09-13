@@ -44,24 +44,24 @@ tasks.withType<KotlinCompile> {
     }
 }
 
-val androidLibs = listOf(
-    libs.coroutines,
-    libs.serialization,
-    libs.appCompat,
-    libs.material,
-    libs.reflect,
-    libs.paging,
-    libs.billing,
-    libs.publisher,
-    libs.oauth2,
-    libs.playCore,
-    libs.coil,
-    libs.location
+val android = listOf(
+    androidLibs.coroutines,
+    androidLibs.serialization,
+    androidLibs.appCompat,
+    androidLibs.material,
+    androidLibs.reflect,
+    androidLibs.paging,
+    androidLibs.billing,
+    androidLibs.publisher,
+    androidLibs.oauth2,
+    androidLibs.playCore,
+    androidLibs.coil,
+    androidLibs.location
 )
 
 dependencies {
-    api(libs.merseyLib.time)
-    androidLibs.forEach { lib -> implementation(lib) }
+    api(androidLibs.merseyLib.time)
+    android.forEach { lib -> implementation(lib) }
 }
 
 afterEvaluate {

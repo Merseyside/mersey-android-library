@@ -43,15 +43,15 @@ tasks.withType<KotlinCompile> {
     }
 }
 
-val androidLibs = listOf(
-    libs.appCompat
+val android = listOf(
+    androidLibs.appCompat
 )
 
 dependencies {
     implementation(projects.utils)
-    api(libs.merseyLib.time)
+    api(androidLibs.merseyLib.time)
 
-    androidLibs.forEach { lib -> implementation(lib) }
+    android.forEach { lib -> implementation(lib) }
 }
 
 afterEvaluate {

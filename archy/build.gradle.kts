@@ -49,22 +49,22 @@ tasks.withType<KotlinCompile> {
     }
 }
 
-val androidLibs = listOf(
-    libs.coroutines,
-    libs.serialization,
-    libs.appCompat,
-    libs.material,
-    libs.rxjava2,
-    libs.dagger,
-    libs.worker,
-    libs.gson,
-    libs.keyboard,
-    libs.room
+val android = listOf(
+    androidLibs.coroutines,
+    androidLibs.serialization,
+    androidLibs.appCompat,
+    androidLibs.material,
+    androidLibs.rxjava2,
+    androidLibs.dagger,
+    androidLibs.worker,
+    androidLibs.gson,
+    androidLibs.keyboard,
+    androidLibs.room
 )
 
 val androidBundles = listOf(
-    libs.bundles.lifecycle,
-    libs.bundles.navigation
+    androidLibs.bundles.lifecycle,
+    androidLibs.bundles.navigation
 )
 
 val modulez = listOf(
@@ -74,13 +74,13 @@ val modulez = listOf(
 )
 
 dependencies {
-    api(libs.merseyLib.time)
+    api(androidLibs.merseyLib.time)
     modulez.forEach { module -> implementation(module) }
-    androidLibs.forEach { lib -> implementation(lib) }
+    android.forEach { lib -> implementation(lib) }
     androidBundles.forEach { bundle -> implementation(bundle) }
 
-    kapt(libs.daggerCompiler)
-    kapt(libs.roomCompiler)
+    kapt(androidLibs.daggerCompiler)
+    kapt(androidLibs.roomCompiler)
 }
 
 afterEvaluate {
