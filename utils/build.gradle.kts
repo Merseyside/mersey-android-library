@@ -1,24 +1,24 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    plugin(LibraryDeps.Plugins.androidLibrary)
-    plugin(LibraryDeps.Plugins.kotlinAndroid)
-    plugin(LibraryDeps.Plugins.kotlinKapt)
-    plugin(LibraryDeps.Plugins.kotlinSerialization)
-    plugin(LibraryDeps.Plugins.mavenPublish)
+    plugin(Plugins.androidLibrary)
+    plugin(Plugins.kotlinAndroid)
+    plugin(Plugins.kotlinKapt)
+    plugin(Plugins.kotlinSerialization)
+    plugin(Plugins.mavenPublish)
 }
 
-group = LibraryVersions.Application.groupId
-version = LibraryVersions.Application.version
+group = Application.groupId
+version = Application.version
 
 android {
-    compileSdkVersion(LibraryVersions.Application.compileSdk)
+    compileSdkVersion(Application.compileSdk)
 
     defaultConfig {
-        minSdkVersion(LibraryVersions.Application.minSdk)
-        targetSdkVersion(LibraryVersions.Application.targetSdk)
-        versionCode = LibraryVersions.Application.versionCode
-        versionName = LibraryVersions.Application.version
+        minSdkVersion(Application.minSdk)
+        targetSdkVersion(Application.targetSdk)
+        versionCode = Application.versionCode
+        versionName = Application.version
     }
 
     buildTypes {
@@ -44,24 +44,24 @@ tasks.withType<KotlinCompile> {
     }
 }
 
-val androidLibs = listOf(
-    LibraryDeps.Libs.appCompat,
-    LibraryDeps.Libs.material,
-    LibraryDeps.Libs.coroutines,
-    LibraryDeps.Libs.reflect,
-    LibraryDeps.Libs.paging,
-    LibraryDeps.Libs.billing,
-    LibraryDeps.Libs.publisher,
-    LibraryDeps.Libs.oauth2,
-    LibraryDeps.Libs.serialization,
-    LibraryDeps.Libs.playCore,
-    LibraryDeps.Libs.coil,
-    LibraryDeps.Libs.location
+val android = listOf(
+    androidLibs.coroutines,
+    common.serialization,
+    androidLibs.appCompat,
+    androidLibs.material,
+    androidLibs.reflect,
+    androidLibs.paging,
+    androidLibs.billing,
+    androidLibs.publisher,
+    androidLibs.oauth2,
+    androidLibs.playCore,
+    androidLibs.coil,
+    androidLibs.location
 )
 
 dependencies {
-    api(LibraryDeps.Libs.MerseyLibs.time)
-    androidLibs.forEach { lib -> implementation(lib) }
+    api(common.merseyLib.time)
+    android.forEach { lib -> implementation(lib) }
 }
 
 afterEvaluate {

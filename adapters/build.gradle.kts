@@ -1,24 +1,24 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    plugin(LibraryDeps.Plugins.androidLibrary)
-    plugin(LibraryDeps.Plugins.kotlinAndroid)
-    plugin(LibraryDeps.Plugins.kotlinKapt)
-    plugin(LibraryDeps.Plugins.kotlinSerialization)
-    plugin(LibraryDeps.Plugins.mavenPublish)
+    plugin(Plugins.androidLibrary)
+    plugin(Plugins.kotlinAndroid)
+    plugin(Plugins.kotlinKapt)
+    plugin(Plugins.kotlinSerialization)
+    plugin(Plugins.mavenPublish)
 }
 
-group = LibraryVersions.Application.groupId
-version = LibraryVersions.Application.version
+group = Application.groupId
+version = Application.version
 
 android {
-    compileSdkVersion(LibraryVersions.Application.compileSdk)
+    compileSdkVersion(Application.compileSdk)
 
     defaultConfig {
-        minSdkVersion(LibraryVersions.Application.minSdk)
-        targetSdkVersion(LibraryVersions.Application.targetSdk)
-        versionCode = LibraryVersions.Application.versionCode
-        versionName = LibraryVersions.Application.version
+        minSdkVersion(Application.minSdk)
+        targetSdkVersion(Application.targetSdk)
+        versionCode = Application.versionCode
+        versionName = Application.version
     }
 
     buildTypes {
@@ -44,19 +44,19 @@ tasks.withType<KotlinCompile> {
     }
 }
 
-val androidLibs = listOf(
-    LibraryDeps.Libs.appCompat,
-    LibraryDeps.Libs.material,
-    LibraryDeps.Libs.recyclerView,
-    LibraryDeps.Libs.coroutines
+val android = listOf(
+    androidLibs.appCompat,
+    androidLibs.material,
+    androidLibs.recyclerView,
+    androidLibs.coroutines
 )
 
 dependencies {
-    androidLibs.forEach { lib -> implementation(lib) }
-    api(LibraryDeps.Libs.paging)
-    api(LibraryDeps.Libs.MerseyLibs.time)
+    android.forEach { lib -> implementation(lib) }
+    api(androidLibs.paging)
+    api(common.merseyLib.time)
 
-    implementation(project(LibraryModules.utils))
+    implementation(projects.utils)
 }
 
 afterEvaluate {

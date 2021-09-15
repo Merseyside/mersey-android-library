@@ -37,7 +37,6 @@ class RacersAdapter(scope: CoroutineScope) :
                 else -> {
                 }
             }
-
         }
     }
 

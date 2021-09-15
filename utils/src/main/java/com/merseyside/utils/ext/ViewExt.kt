@@ -129,6 +129,10 @@ fun TextView.setTextColorAttr(
     setTextColor(getColorFromAttr(attrColor, typedValue, resolveRefs))
 }
 
+fun TextView.setTextSizePx(value: Number) {
+    setTextSize(TypedValue.COMPLEX_UNIT_PX, value.toFloat())
+}
+
 fun View.onClick(onClick: () -> Unit): View.OnClickListener {
     val listener = View.OnClickListener { onClick.invoke() }
     this.setOnClickListener(listener)
