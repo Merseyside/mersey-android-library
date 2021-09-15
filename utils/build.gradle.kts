@@ -46,7 +46,7 @@ tasks.withType<KotlinCompile> {
 
 val android = listOf(
     androidLibs.coroutines,
-    androidLibs.serialization,
+    common.serialization,
     androidLibs.appCompat,
     androidLibs.material,
     androidLibs.reflect,
@@ -60,7 +60,7 @@ val android = listOf(
 )
 
 dependencies {
-    api(androidLibs.merseyLib.time)
+    api(common.merseyLib.time)
     android.forEach { lib -> implementation(lib) }
 }
 

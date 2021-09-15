@@ -49,7 +49,7 @@ val android = listOf(
 
 dependencies {
     implementation(projects.utils)
-    api(androidLibs.merseyLib.time)
+    api(common.merseyLib.time)
 
     android.forEach { lib -> implementation(lib) }
 }

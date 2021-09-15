@@ -9,12 +9,12 @@ dependencyResolutionManagement {
 
     versionCatalogs {
         create("androidLibs") {
-            from("io.github.merseyside:catalog-version-android:0.1.0")
+            from("io.github.merseyside:catalog-version-android:1.0.0")
         }
 
-//        create("common") {
-//            from("io.github.merseyside:catalog-version-common:0.1.0")
-//        }
+        create("common") {
+            from("io.github.merseyside:catalog-version-common:1.0.0")
+        }
     }
 }
 

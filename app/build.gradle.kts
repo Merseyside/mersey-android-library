@@ -79,7 +79,7 @@ android {
 
 val android = listOf(
     androidLibs.coroutines,
-    androidLibs.serialization,
+    common.serialization,
     androidLibs.recyclerView,
     androidLibs.navigation,
     androidLibs.navigationUi,
@@ -103,7 +103,7 @@ dependencies {
     modulez.forEach { module -> implementation(module) }
     android.forEach { lib -> implementation(lib) }
 
-    implementation(androidLibs.filemanager) {
+    implementation(androidLibs.merseyLib.filemanager) {
         exclude(group = "com.github.Merseyside.mersey-android-library", module = "utils")
     }
 

@@ -54,7 +54,7 @@ val android = listOf(
 dependencies {
     android.forEach { lib -> implementation(lib) }
     api(androidLibs.paging)
-    api(androidLibs.merseyLib.time)
+    api(common.merseyLib.time)
 
     implementation(projects.utils)
 }
