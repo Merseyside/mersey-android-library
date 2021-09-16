@@ -1,7 +1,7 @@
-//@Suppress("DSL_SCOPE_VIOLATION")
-//plugins {
-//    alias(libs1.plugins.versionChecker)
-//}
+@Suppress("DSL_SCOPE_VIOLATION")
+plugins {
+    alias(common.plugins.versionChecker)
+}
 
 allprojects {
     repositories {
