@@ -7,13 +7,15 @@ dependencyResolutionManagement {
         mavenLocal()
     }
 
+    val group = "io.github.merseyside"
+    val catalogVersions = "1.0.4"
     versionCatalogs {
         create("androidLibs") {
-            from("io.github.merseyside:catalog-version-android:1.0.0")
+            from("$group:catalog-version-android:$catalogVersions")
         }
 
         create("common") {
-            from("io.github.merseyside:catalog-version-common:1.0.0")
+            from("$group:catalog-version-common:$catalogVersions")
         }
     }
 }

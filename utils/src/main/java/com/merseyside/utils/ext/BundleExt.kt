@@ -2,6 +2,12 @@ package com.merseyside.utils.ext
 
 import android.os.Bundle
 import android.os.Parcelable
+import com.merseyside.utils.serialization.JsonConfigurator
+import com.merseyside.utils.serialization.deserialize
+import com.merseyside.utils.serialization.serialize
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.SerializationStrategy
+import kotlinx.serialization.json.Json
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -31,4 +37,36 @@ fun Bundle?.isNotNullAndEmpty(): Boolean {
     }
 
     return this != null && !this.isEmpty
+}
+
+inline fun <reified T : Any> Bundle.putSerialize(
+    key: String,
+    value: T,
+    json: Json = JsonConfigurator.json
+) {
+    this.putString(key, value.serialize(json))
+}
+
+inline fun <reified T : Any> Bundle.getSerialize(
+    key: String,
+    json: Json = JsonConfigurator.json
+): T? {
+    return this.getString(key)?.deserialize(json)
+}
+
+inline fun <reified T : Any> Bundle.putSerialize(
+    key: String,
+    value: T,
+    serializationStrategy: SerializationStrategy<T>,
+    json: Json = JsonConfigurator.json
+) {
+    this.putString(key, value.serialize(serializationStrategy, json))
+}
+
+inline fun <reified T : Any> Bundle.getSerialize(
+    key: String,
+    deserializationStrategy: DeserializationStrategy<T>,
+    json: Json = JsonConfigurator.json
+): T? {
+    return this.getString(key)?.deserialize(deserializationStrategy, json)
 }
