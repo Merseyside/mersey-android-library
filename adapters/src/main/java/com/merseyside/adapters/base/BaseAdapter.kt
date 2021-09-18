@@ -89,14 +89,15 @@ abstract class BaseAdapter<M, T : AdapterViewModel<M>>
 
     open fun add(obj: M) {
         add(initItemViewModel(obj))
-        notifyDataSetChanged()
+        notifyItemInserted(itemCount - 1)
     }
 
     open fun add(list: List<M>) {
+        val startPosition = itemCount - 1
         val models = itemsToModels(list)
 
         addModels(models)
-        notifyDataSetChanged()
+        notifyItemRangeChanged(startPosition, models.size)
     }
 
     internal open fun addModels(list: List<T>) {
@@ -126,7 +127,6 @@ abstract class BaseAdapter<M, T : AdapterViewModel<M>>
     private fun removeList(list: List<T>) {
         if (list.isNotEmpty()) {
             val smallestPosition = getSmallestPosition(list)
-
             modelList.removeAll(list)
 
             notifyItemsRemoved(smallestPosition)
@@ -162,6 +162,8 @@ abstract class BaseAdapter<M, T : AdapterViewModel<M>>
                 modelList[index].onPositionChanged(index)
             }
         }
+
+        notifyDataSetChanged()
     }
 
     /**
