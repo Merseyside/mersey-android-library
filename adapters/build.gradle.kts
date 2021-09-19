@@ -1,11 +1,9 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
-    plugin(Plugins.androidLibrary)
-    plugin(Plugins.kotlinAndroid)
-    plugin(Plugins.kotlinKapt)
-    plugin(Plugins.kotlinSerialization)
-    plugin(Plugins.mavenPublish)
+    id(Plugins.androidLibrary)
+    id(Plugins.kotlinAndroid)
+    id(Plugins.kotlinKapt)
+    id(Plugins.kotlinSerialization)
+    id(Plugins.mavenPublish)
 }
 
 group = Application.groupId
@@ -30,17 +28,6 @@ android {
                 "proguard-rules.pro"
             )
         }
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = "1.8"
     }
 }
 
