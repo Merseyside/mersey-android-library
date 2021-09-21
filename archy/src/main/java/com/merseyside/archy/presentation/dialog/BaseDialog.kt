@@ -16,8 +16,8 @@ import com.merseyside.archy.presentation.activity.Orientation
 import com.merseyside.archy.presentation.view.IView
 import com.merseyside.archy.presentation.view.OrientationHandler
 import com.merseyside.archy.presentation.view.localeViews.ILocaleManager
-import com.merseyside.utils.Logger
 import com.merseyside.archy.utils.SnackbarManager
+import com.merseyside.utils.Logger
 
 abstract class BaseDialog : DialogFragment(), IView, OrientationHandler, ILocaleManager {
 
@@ -36,7 +36,7 @@ abstract class BaseDialog : DialogFragment(), IView, OrientationHandler, ILocale
         }
     }
 
-    protected abstract fun performInjection(bundle: Bundle?)
+    protected abstract fun performInjection(bundle: Bundle?, vararg params: Any)
 
     @LayoutRes
     abstract fun getLayoutId(): Int

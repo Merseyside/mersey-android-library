@@ -25,7 +25,7 @@ class RacingFragment : BaseSampleFragment<FragmentRacingBinding, RacingViewModel
     override fun getLayoutId() = R.layout.fragment_racing
     override fun getTitle(context: Context) = "Racing"
 
-    override fun performInjection(bundle: Bundle?) {
+    override fun performInjection(bundle: Bundle?, vararg params: Any) {
         DaggerRacingComponent.builder()
             .appComponent(appComponent)
             .racingModule(RacingModule(this))

@@ -17,9 +17,9 @@ import com.merseyside.archy.presentation.view.OnBackPressedListener
 import com.merseyside.archy.presentation.view.OnKeyboardStateListener
 import com.merseyside.archy.presentation.view.OrientationHandler
 import com.merseyside.archy.presentation.view.localeViews.ILocaleManager
+import com.merseyside.archy.utils.SnackbarManager
 import com.merseyside.utils.LocaleManager
 import com.merseyside.utils.Logger
-import com.merseyside.archy.utils.SnackbarManager
 import com.merseyside.utils.ext.log
 import com.merseyside.utils.getLocalizedContext
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
@@ -51,7 +51,7 @@ abstract class BaseActivity : NavigationBaseActivity(),
         }
     }
 
-    protected abstract fun performInjection(bundle: Bundle?)
+    protected abstract fun performInjection(bundle: Bundle?, vararg params: Any)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

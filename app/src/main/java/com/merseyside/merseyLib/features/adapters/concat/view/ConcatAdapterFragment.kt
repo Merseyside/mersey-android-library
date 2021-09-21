@@ -23,7 +23,7 @@ class ConcatAdapterFragment : BaseSampleFragment<FragmentConcatAdapterBinding, C
 
     override fun hasTitleBackButton() = true
     override fun getLayoutId() = R.layout.fragment_concat_adapter
-    override fun performInjection(bundle: Bundle?) {
+    override fun performInjection(bundle: Bundle?, vararg params: Any) {
         DaggerConcatComponent.builder()
             .appComponent(appComponent)
             .concatModule(ConcatModule(this))

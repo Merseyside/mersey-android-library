@@ -59,7 +59,7 @@ abstract class BaseFragment : NavigationBaseFragment(), IView, OrientationHandle
     @LayoutRes
     abstract fun getLayoutId(): Int
 
-    protected abstract fun performInjection(bundle: Bundle?)
+    protected abstract fun performInjection(bundle: Bundle?, vararg params: Any)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

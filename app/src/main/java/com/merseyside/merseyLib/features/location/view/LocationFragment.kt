@@ -32,7 +32,7 @@ class LocationFragment : BaseSampleFragment<FragmentLocationBinding, LocationVie
     override fun hasTitleBackButton() = true
     override fun getLayoutId() = R.layout.fragment_location
 
-    override fun performInjection(bundle: Bundle?) {
+    override fun performInjection(bundle: Bundle?, vararg params: Any) {
         DaggerLocationComponent.builder()
             .appComponent(appComponent)
             .locationModule(getLocationModule(bundle))

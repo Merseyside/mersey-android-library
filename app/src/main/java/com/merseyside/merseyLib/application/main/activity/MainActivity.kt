@@ -14,7 +14,7 @@ import com.merseyside.utils.ext.log
 
 class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
 
-    override fun performInjection(bundle: Bundle?) {}
+    override fun performInjection(bundle: Bundle?, vararg params: Any) {}
     override fun getLayoutId() = R.layout.activity_main
     override fun getToolbar(): Toolbar = requireBinding().toolbar
     override fun getFragmentContainer() = R.id.nav_host_fragment

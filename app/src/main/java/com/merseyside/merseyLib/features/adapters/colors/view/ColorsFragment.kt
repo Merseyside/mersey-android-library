@@ -26,7 +26,7 @@ class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel
     override fun getTitle(context: Context) = "Adapters"
     override fun hasTitleBackButton() = true
 
-    override fun performInjection(bundle: Bundle?) {
+    override fun performInjection(bundle: Bundle?, vararg params: Any) {
         DaggerColorsComponent.builder()
             .appComponent(appComponent)
             .colorsModule(ColorsModule(this))

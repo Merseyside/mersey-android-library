@@ -19,7 +19,7 @@ class MainFragment : BaseSampleFragment<FragmentMainBinding, MainViewModel>() {
     override fun getTitle(context: Context): String = "Choose a feature"
     override fun hasTitleBackButton() = false
 
-    override fun performInjection(bundle: Bundle?) {
+    override fun performInjection(bundle: Bundle?, vararg params: Any) {
         DaggerMainComponent.builder()
             .appComponent(appComponent)
             .mainModule(MainModule(this))
