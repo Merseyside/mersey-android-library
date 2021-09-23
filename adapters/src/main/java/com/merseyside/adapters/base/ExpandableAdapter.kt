@@ -3,9 +3,8 @@ package com.merseyside.adapters.base
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.model.ExpandableAdapterViewModel
-import com.merseyside.utils.ext.isNotNullAndEmpty
 import com.merseyside.adapters.view.TypedBindingHolder
-import com.merseyside.utils.ext.log
+import com.merseyside.utils.ext.isNotNullAndEmpty
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -31,7 +30,7 @@ abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, L>, 
             val recyclerView: RecyclerView? = getExpandableView(holder.binding)
             recyclerView?.apply {
 
-                val adapter = getAdapterIfExists(model) ?: initExpandableList().also { adapter ->
+                val adapter = getAdapterIfExists(model) ?: initExpandableList(model).also { adapter ->
                     putAdapter(model, adapter)
                 }
 
@@ -49,7 +48,7 @@ abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, L>, 
         return adapterList.find { it.first.areItemsTheSame(model.getItem()) }?.second
     }
 
-    abstract fun initExpandableList(): BaseAdapter<L, *>
+    abstract fun initExpandableList(model: T): BaseAdapter<L, *>
 
     abstract fun getExpandableView(binding: ViewDataBinding): RecyclerView?
 
