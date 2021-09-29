@@ -9,7 +9,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
-abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, L>, L : Any>(
+abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, L>,
+        L : Any, InnerAdapter : BaseAdapter<L, *>>(
     selectableMode: SelectableMode = SelectableMode.MULTIPLE,
     isAllowToCancelSelection: Boolean = true,
     scope: CoroutineScope = CoroutineScope(
@@ -17,8 +18,11 @@ abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, L>, 
     )
 ) : SelectableAdapter<M, T>(selectableMode, isAllowToCancelSelection, scope = scope) {
 
-    private var adapterList: MutableList<Pair<T, BaseAdapter<L, *>>> = ArrayList()
+    private var adapterList: MutableList<Pair<T, InnerAdapter>> = ArrayList()
     private var updateRequest: UpdateRequest<M>? = null
+
+    /*Inner adapters add out of sync, so we have to be sure when can work with them */
+    var onAdaptersInitializedCallback: () -> Unit = {}
 
     override fun onBindViewHolder(holder: TypedBindingHolder<T>, position: Int) {
         super.onBindViewHolder(holder, position)
@@ -30,30 +34,51 @@ abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, L>, 
             val recyclerView: RecyclerView? = getExpandableView(holder.binding)
             recyclerView?.apply {
 
-                val adapter = getAdapterIfExists(model) ?: initExpandableList(model).also { adapter ->
-                    putAdapter(model, adapter)
-                }
+                val adapter =
+                    getAdapterIfExists(model) ?: initExpandableList(model).also { adapter ->
+                        putAdapter(model, adapter)
+                    }
 
                 this.adapter = adapter
                 addExpandableItems(adapter, data)
             }
         }
+
+        if (position == getAllItemCount() - 1) {
+            onAdaptersInitializedCallback()
+        }
     }
 
-    private fun putAdapter(model: T, adapter: BaseAdapter<L, *>) {
+    fun getAdapterByItem(item: M): InnerAdapter? {
+        val model = getModelByObj(item)
+        return model?.let {
+            getAdapterIfExists(it)
+        }
+    }
+
+    fun getExpandableAdapters(): List<InnerAdapter> {
+        return adapterList.map { it.second }
+    }
+
+    private fun putAdapter(model: T, adapter: InnerAdapter) {
         adapterList.add(model to adapter)
     }
 
-    private fun getAdapterIfExists(model: T): BaseAdapter<L, *>? {
+    private fun getAdapterIfExists(model: T): InnerAdapter? {
         return adapterList.find { it.first.areItemsTheSame(model.getItem()) }?.second
     }
 
-    abstract fun initExpandableList(model: T): BaseAdapter<L, *>
+    abstract fun initExpandableList(model: T): InnerAdapter
 
     abstract fun getExpandableView(binding: ViewDataBinding): RecyclerView?
 
-    open fun addExpandableItems(adapter: BaseAdapter<L, *>, list: List<L>) {
-        adapter.add(list)
+    private fun addExpandableItems(adapter: InnerAdapter, list: List<L>) {
+        if (adapter.isEmpty()) {
+            adapter.add(list)
+        } else adapter.update(UpdateRequest.Builder(list)
+            .isAddNew(true)
+            .isDeleteOld(true)
+            .build())
     }
 
     override fun update(updateRequest: UpdateRequest<M>) {
@@ -76,8 +101,7 @@ abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, L>, 
             val model = getModelByObj(obj)
             if (model != null) {
                 val adapter = getAdapterIfExists(model)
-
-                if (adapter is SortedAdapter<L, *>) {
+                adapter?.let {
                     model.getData()?.let { data ->
                         adapter.update(UpdateRequest(data))
                     }
@@ -86,5 +110,9 @@ abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, L>, 
         }
 
         return updated
+    }
+
+    fun removeOnAdaptersInitializedCallback() {
+        onAdaptersInitializedCallback = {}
     }
 }

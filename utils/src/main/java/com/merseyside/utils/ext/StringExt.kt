@@ -46,7 +46,7 @@ fun String.snakeToLowerCamelCase(): String {
 }
 
 fun String.snakeToUpperCamelCase(): String {
-    return this.snakeToLowerCamelCase().capitalize()
+    return this.snakeToLowerCamelCase().capitalize(Locale.getDefault())
 }
 
 fun String.camelToHumanReadable(): String {

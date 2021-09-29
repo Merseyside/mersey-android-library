@@ -190,7 +190,7 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
         }
     }
 
-    open fun update(updateRequest: UpdateRequest<M>) {
+    override fun update(updateRequest: UpdateRequest<M>) {
         if (updateRequest.isDeleteOld) {
             val removeList = modelList
                 .filter { model ->
@@ -222,7 +222,7 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
         }
     }
 
-    internal open fun update(obj: M): Boolean {
+    override fun update(obj: M): Boolean {
         return run found@{
             modelList.forEach { model ->
                 if (model.areItemsTheSame(obj)) {
@@ -429,11 +429,11 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
     }
 
     override fun filter(obj: T, query: String): Boolean {
-        throw NotImplementedError()
+        throw NotImplementedError("Override this method in your implementation!")
     }
 
     override fun filter(obj: T, key: String, filterObj: Any): Boolean {
-        throw NotImplementedError()
+        throw NotImplementedError("Override this method in your implementation!")
     }
 
     override fun getItemCount() = sortedList.size()

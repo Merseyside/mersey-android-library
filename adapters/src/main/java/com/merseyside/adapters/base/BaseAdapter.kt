@@ -100,6 +100,14 @@ abstract class BaseAdapter<M, T : AdapterViewModel<M>>
         notifyItemRangeChanged(startPosition, models.size)
     }
 
+    open fun update(updateRequest: UpdateRequest<M>) {
+        TODO("Not implemented")
+    }
+
+    internal open fun update(obj: M): Boolean {
+        TODO("Not implemented")
+    }
+
     internal open fun addModels(list: List<T>) {
         modelList.addAll(list)
     }

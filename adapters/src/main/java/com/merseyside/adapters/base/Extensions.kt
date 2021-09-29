@@ -78,6 +78,18 @@ internal fun <T> SortedList<T>.removeAll(list: List<T>) {
     list.forEach { remove(it) }
 }
 
+fun <M: Any> List<BaseAdapter<M, *>>.onItemClicked(onClick: (item: M) -> Unit): OnItemClickListener<M> {
+    val listener = object : OnItemClickListener<M> {
+        override fun onItemClicked(obj: M) {
+            onClick.invoke(obj)
+        }
+    }
+
+    forEach { it.setOnItemClickListener(listener) }
+
+    return listener
+}
+
 fun <M> HasOnItemClickListener<M>.onItemClicked(onClick: (item: M) -> Unit): OnItemClickListener<M> {
     val listener = object : OnItemClickListener<M> {
         override fun onItemClicked(obj: M) {
@@ -94,13 +106,32 @@ fun <M> HasOnItemSelectedListener<M>.onItemSelected(
         item: M,
         isSelected: Boolean,
         isSelectedByUser: Boolean
-    ) -> Unit): OnItemSelectedListener<M> {
+    ) -> Unit
+): OnItemSelectedListener<M> {
     val listener = object : OnItemSelectedListener<M> {
         override fun onSelected(item: M, isSelected: Boolean, isSelectedByUser: Boolean) {
             onSelected.invoke(item, isSelected, isSelectedByUser)
         }
     }
     setOnItemSelectedListener(listener)
+
+    return listener
+}
+
+fun <M: Any> List<SelectableAdapter<M, *>>.onItemSelected(
+    onSelected: (
+        item: M,
+        isSelected: Boolean,
+        isSelectedByUser: Boolean
+    ) -> Unit
+): OnItemSelectedListener<M> {
+    val listener = object : OnItemSelectedListener<M> {
+        override fun onSelected(item: M, isSelected: Boolean, isSelectedByUser: Boolean) {
+            onSelected.invoke(item, isSelected, isSelectedByUser)
+        }
+    }
+
+    forEach { it.setOnItemSelectedListener(listener) }
 
     return listener
 }

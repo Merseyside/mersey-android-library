@@ -7,8 +7,8 @@ import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import coil.load
+import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
-import com.merseyside.utils.ext.log
 import com.merseyside.utils.getDrawableResourceIdByName
 
 @BindingAdapter("app:drawableName")
@@ -62,17 +62,19 @@ fun ImageView.imageUrl(url: String?, @DrawableRes placeholderId: Int?) {
 @BindingAdapter("imageUrl", "imagePlaceholder", "cropCircle", "crossfade", requireAll = false)
 fun ImageView.imageUrlPlaceholder(
     url: String?,
-    placeholder: Drawable?,
+    placeholder: Any?,
     isCropCircle: Boolean = false,
     isCrossfade: Boolean = false
 ) {
+    val builder = build(isCrossfade, isCropCircle)
     if (url.isNullOrEmpty()) {
-        load(placeholder)
+        loadPlaceHolder(placeholder) {
+            builder()
+        }
     } else {
         load(url) {
-            if (isCrossfade) crossfade(true)
+            builder()
             this.placeholder(placeholder)
-            if (isCropCircle) transformations(CircleCropTransformation())
         }
     }
 }
@@ -80,17 +82,49 @@ fun ImageView.imageUrlPlaceholder(
 @BindingAdapter("drawable", "imagePlaceholder", "cropCircle", "crossfade", requireAll = false)
 fun ImageView.imageDrawablePlaceholder(
     drawable: Drawable?,
-    placeholder: Drawable?,
+    placeholder: Any?,
     isCropCircle: Boolean = false,
     isCrossfade: Boolean = false
 ) {
+    val builder = build(isCrossfade, isCropCircle)
     if (drawable == null) {
-        load(placeholder)
+        loadPlaceHolder(placeholder, builder)
     } else {
         load(drawable) {
-            if (isCrossfade) crossfade(true)
+            builder()
             this.placeholder(placeholder)
-            if (isCropCircle) transformations(CircleCropTransformation())
         }
+    }
+}
+
+private fun ImageView.loadPlaceHolder(
+    placeholder: Any?,
+    builder: ImageRequest.Builder.() -> Unit
+) {
+    when (placeholder) {
+        null -> {}
+        is Drawable -> load(placeholder) { builder() }
+        is String -> load(placeholder) { builder() }
+        is Int -> load(drawableResId = placeholder) { builder() }
+        else -> throw IllegalArgumentException("Wrong placeholder type!")
+    }
+}
+
+private fun build(
+    crossfade: Boolean,
+    cropCircle: Boolean
+): ImageRequest.Builder.() -> Unit {
+    return {
+        if (crossfade) this.crossfade(crossfade)
+        if (cropCircle) transformations(CircleCropTransformation())
+    }
+}
+
+private fun ImageRequest.Builder.placeholder(holder: Any?) = apply {
+    when (holder) {
+        null -> {}
+        is Drawable -> placeholder(holder)
+        is Int -> placeholder(holder)
+        else -> throw IllegalArgumentException("Wrong placeholder type!")
     }
 }

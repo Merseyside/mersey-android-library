@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import com.merseyside.utils.Logger
 import com.merseyside.utils.ext.*
 
 fun <Binding: ViewDataBinding> View.getBinding(
@@ -47,15 +46,6 @@ fun isVisibleOrGone(view: View, isVisible: Boolean?) {
 }
 
 @BindingAdapter("app:isVisibleOrGone")
-fun isVisibleOrGone(view: View, obj: Any?) {
-    view.visibility = if (obj != null) {
-        View.VISIBLE
-    } else {
-        View.GONE
-    }
-}
-
-@BindingAdapter("app:isVisibleOrGone")
 fun isVisibleOrGone(view: View, obj: String?) {
     view.visibility = if (obj.isNotNullAndEmpty()) {
         View.VISIBLE
@@ -73,6 +63,24 @@ fun isVisibleOrGone(view: View, collection: Collection<*>?) {
     }
 }
 
+@BindingAdapter("app:isVisibleOrGone")
+fun isVisibleOrGone(view: View, number: Number?) {
+    view.visibility = if (number != null && number != 0) {
+        View.VISIBLE
+    } else {
+        View.GONE
+    }
+}
+
+@BindingAdapter("app:isVisibleOrGone")
+fun isVisibleOrGone(view: View, obj: Any?) {
+    view.visibility = if (obj != null) {
+        View.VISIBLE
+    } else {
+        View.GONE
+    }
+}
+
 @BindingAdapter("app:isVisible")
 fun isVisible(view: View, isVisible: Boolean) {
     when(isVisible) {
@@ -82,8 +90,8 @@ fun isVisible(view: View, isVisible: Boolean) {
 }
 
 @BindingAdapter("app:isVisible")
-fun isVisible(view: View, obj: Any?) {
-    view.visibility = if (obj != null) {
+fun isVisible(view: View, collection: Collection<*>?) {
+    view.visibility = if (collection.isNotNullAndEmpty()) {
         View.VISIBLE
     } else {
         View.INVISIBLE
@@ -91,8 +99,17 @@ fun isVisible(view: View, obj: Any?) {
 }
 
 @BindingAdapter("app:isVisible")
-fun isVisible(view: View, collection: Collection<*>?) {
-    view.visibility = if (collection.isNotNullAndEmpty()) {
+fun isVisible(view: View, number: Number?) {
+    view.visibility = if (number != null && number != 0) {
+        View.VISIBLE
+    } else {
+        View.INVISIBLE
+    }
+}
+
+@BindingAdapter("app:isVisible")
+fun isVisible(view: View, obj: Any?) {
+    view.visibility = if (obj != null) {
         View.VISIBLE
     } else {
         View.INVISIBLE
