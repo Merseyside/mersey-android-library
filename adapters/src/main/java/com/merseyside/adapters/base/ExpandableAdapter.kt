@@ -9,8 +9,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
-abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, L>,
-        L : Any, InnerAdapter : BaseAdapter<L, *>>(
+abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, SubItem>,
+        SubItem : Any, InnerAdapter : BaseAdapter<SubItem, *>>(
     selectableMode: SelectableMode = SelectableMode.MULTIPLE,
     isAllowToCancelSelection: Boolean = true,
     scope: CoroutineScope = CoroutineScope(
@@ -72,13 +72,14 @@ abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, L>,
 
     abstract fun getExpandableView(binding: ViewDataBinding): RecyclerView?
 
-    private fun addExpandableItems(adapter: InnerAdapter, list: List<L>) {
+    private fun addExpandableItems(adapter: InnerAdapter, list: List<SubItem>) {
         if (adapter.isEmpty()) {
             adapter.add(list)
         } else adapter.update(UpdateRequest.Builder(list)
             .isAddNew(true)
             .isDeleteOld(true)
-            .build())
+            .build()
+        )
     }
 
     override fun update(updateRequest: UpdateRequest<M>) {
@@ -110,6 +111,18 @@ abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, L>,
         }
 
         return updated
+    }
+
+    override fun setFilter(models: List<T>): List<T>? {
+        return models.filter { model ->
+            val adapter = getAdapterIfExists(model)
+            adapter?.let {
+                val hasSubItems = it.setFilter(filterPattern)
+                val passedFilter = filter(model, filterPattern)
+
+                hasSubItems || passedFilter
+            } ?: false
+        }.also { isFiltered = true }
     }
 
     fun removeOnAdaptersInitializedCallback() {

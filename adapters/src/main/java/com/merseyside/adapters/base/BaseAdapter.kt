@@ -20,7 +20,7 @@ abstract class BaseAdapter<M, T : AdapterViewModel<M>>
 
     override var listener: OnItemClickListener<M>? = null
 
-    protected open val modelList: MutableList<T> = ArrayList()
+    internal open val modelList: MutableList<T> = ArrayList()
     private val bindItemList: MutableList<T> = ArrayList()
     lateinit var recyclerView: RecyclerView
 
@@ -225,7 +225,7 @@ abstract class BaseAdapter<M, T : AdapterViewModel<M>>
         find(obj)?.notifyUpdate()
     }
 
-    open fun setFilter(query: String) {
+    open fun setFilter(query: String): Boolean {
         throw NotImplementedError()
     }
 

@@ -8,6 +8,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
 
+fun SortedList<*>.isEmpty(): Boolean {
+    return this.size() == 0
+}
+
+fun SortedList<*>.isNotEmpty(): Boolean {
+    return !isEmpty()
+}
+
 @Throws(IllegalArgumentException::class)
 fun <T : ComparableAdapterViewModel<M>, M : Any> SortedList<T>.isEquals(list: List<T>): Boolean {
 

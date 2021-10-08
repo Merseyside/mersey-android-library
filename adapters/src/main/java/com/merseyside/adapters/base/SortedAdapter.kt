@@ -36,11 +36,12 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
 
     private val lock = Any()
 
-    private var isFiltered = false
+    var isFiltered = false
+        internal set
 
     private val filtersMap by lazy { HashMap<String, Any>() }
     private val notAppliedFiltersMap by lazy { HashMap<String, Any>() }
-    private var filterPattern: String = ""
+    internal var filterPattern: String = ""
     private val filterKeyMap: MutableMap<String, List<T>> by lazy { HashMap() }
 
     private val listCallback = object : SortedList.Callback<T>() {
@@ -250,7 +251,7 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
         }
     }
 
-    private fun replaceAll(models: List<T>) {
+    internal fun replaceAll(models: List<T>) {
         sortedList.beginBatchedUpdates()
 
         for (i in sortedList.size() - 1 downTo 0) {
@@ -361,7 +362,7 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
         filtersMap.clear()
     }
 
-    private fun setFilter(models: List<T>): List<T>? {
+    internal open fun setFilter(models: List<T>): List<T>? {
         filterJob?.let {
             if (!it.isActive) return null
         }
@@ -373,8 +374,9 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
 
     /**
      * Don't forget to override areItemsTheSame method with real value
+     * @return true if filtered list is not empty, false otherwise.
      */
-    override fun setFilter(query: String) {
+    override fun setFilter(query: String): Boolean {
         if (filterPattern != query) {
             filterPattern = query
 
@@ -388,6 +390,8 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
                 replaceAll(modelList)
             }
         }
+
+        return sortedList.isNotEmpty()
     }
 
     override fun setFilterAsync(query: String, func: () -> Unit) {
