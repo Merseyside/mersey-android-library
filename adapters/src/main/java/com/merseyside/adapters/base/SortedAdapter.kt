@@ -504,24 +504,5 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
     open fun onPayloadable(
         holder: TypedBindingHolder<T>,
         payloads: List<ComparableAdapterViewModel.Payloadable>
-    ) {
-    }
-
-    @Throws(IndexOutOfBoundsException::class)
-    override fun first(): M {
-        try {
-            return getModelByPosition(0).getItem()
-        } catch (e: Exception) {
-            throw IndexOutOfBoundsException("List is empty")
-        }
-    }
-
-    @Throws(IndexOutOfBoundsException::class)
-    override fun last(): M {
-        try {
-            return getModelByPosition(itemCount - 1).getItem()
-        } catch (e: Exception) {
-            throw IndexOutOfBoundsException("List is empty")
-        }
-    }
+    ) {}
 }

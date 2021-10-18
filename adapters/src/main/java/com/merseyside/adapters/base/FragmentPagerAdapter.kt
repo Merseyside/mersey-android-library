@@ -53,7 +53,7 @@ abstract class FragmentPagerAdapter(
         if (savedInstanceState != null) {
             val count = savedInstanceState.getInt(FRAGMENT_COUNT_KEY)
 
-            (0 until count).forEach { index -> 
+            (0 until count).forEach { index ->
                 val fragment = fm.getFragment(savedInstanceState, "pager_fragment_$index")
 
                 if (fragment != null) {

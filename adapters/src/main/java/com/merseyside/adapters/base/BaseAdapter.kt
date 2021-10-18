@@ -225,10 +225,12 @@ abstract class BaseAdapter<M, T : AdapterViewModel<M>>
         find(obj)?.notifyUpdate()
     }
 
+    @Throws(NotImplementedError::class)
     open fun setFilter(query: String): Boolean {
         throw NotImplementedError()
     }
 
+    @Throws(NotImplementedError::class)
     open fun setFilterAsync(query: String, func: () -> Unit = {}) {
         throw NotImplementedError()
     }

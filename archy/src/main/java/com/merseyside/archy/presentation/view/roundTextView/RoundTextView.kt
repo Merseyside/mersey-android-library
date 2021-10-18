@@ -7,23 +7,55 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
-import com.merseyside.archy.R
 import com.merseyside.utils.attributes.AttributeHelper
-import com.merseyside.utils.delegate.dimension
-import com.merseyside.utils.ext.getColorFromAttr
 import com.merseyside.utils.ext.isZero
 import kotlin.math.min
 
 class RoundTextView(
     context: Context,
-    attributeSet: AttributeSet,
+    attributeSet: AttributeSet?,
     style: Int
 ) : AppCompatTextView(context, attributeSet, style) {
+
+    private var cornerRadius: Float = 0F
+    private var strokeWidth: Float = 0F
+    private var fillColor: Int = 0
+    private var strokeColor: Int = 0
 
     constructor(
         context: Context,
         attributeSet: AttributeSet
     ) : this(context, attributeSet, 0)
+
+    constructor(
+        context: Context,
+        cornerRadius: Float = 0F,
+        strokeWidth: Float = 0F,
+        fillColor: Int = 0,
+        strokeColor: Int = 0
+    ): this(context, null, 0) {
+        this.cornerRadius = cornerRadius
+        this.strokeColor = strokeColor
+        this.strokeWidth = strokeWidth
+        this.fillColor = fillColor
+    }
+
+    init {
+        if (attributeSet != null) {
+            AttributeHelper(this, attributeSet).run {
+                cornerRadius = getDimension(resName = "cornerRadius", defValue = 0F)
+                strokeWidth = getDimension(resName = "strokeWidth", defValue = 0F)
+                fillColor = getColor(
+                    resName = "fillColor",
+                    defValue = ContextCompat.getColor(context, android.R.color.transparent)
+                )
+                strokeColor = getColor(
+                    resName = "strokeColor",
+                    defValue = fillColor
+                )
+            }
+        }
+    }
 
     private var rect: RectF = RectF().apply {
         left = 0F
@@ -32,23 +64,12 @@ class RoundTextView(
 
     private var strokeRect = RectF()
 
-    private val attrs = AttributeHelper(this, attributeSet)
-
-    private var cornerRadius: Float by attrs.dimension(resName = "cornerRadius", defaultValue = 0F)
-    private var strokeWidth: Float by attrs.dimension(defaultValue = 0F)
-
     private val paint = Paint().apply {
-        color = attrs.getColor(
-            resName = "fillColor",
-            defValue = ContextCompat.getColor(context, android.R.color.transparent)
-        )
+        color = fillColor
     }
 
     private val strokePaint = Paint().apply {
-        color = attrs.getColor(
-            resName = "strokeColor",
-            defValue = getColorFromAttr(R.attr.colorAccent)
-        )
+        color = strokeColor
         strokeWidth = this@RoundTextView.strokeWidth
         setStyle(Paint.Style.STROKE)
     }
@@ -72,8 +93,8 @@ class RoundTextView(
     }
 
     override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
         canvas.drawRoundRect(rect, cornerRadius, cornerRadius, paint)
         canvas.drawRoundRect(strokeRect, cornerRadius, cornerRadius, strokePaint)
+        super.onDraw(canvas)
     }
 }

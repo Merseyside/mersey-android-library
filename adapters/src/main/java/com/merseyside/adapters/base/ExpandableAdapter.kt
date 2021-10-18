@@ -22,7 +22,7 @@ abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, SubI
     private var updateRequest: UpdateRequest<M>? = null
 
     /*Inner adapters add out of sync, so we have to be sure when can work with them */
-    var onAdaptersInitializedCallback: () -> Unit = {}
+    var onAdapterInitializedCallback: (InnerAdapter) -> Unit = {}
 
     override fun onBindViewHolder(holder: TypedBindingHolder<T>, position: Int) {
         super.onBindViewHolder(holder, position)
@@ -34,18 +34,20 @@ abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, SubI
             val recyclerView: RecyclerView? = getExpandableView(holder.binding)
             recyclerView?.apply {
 
+                var newAdapter = false
                 val adapter =
                     getAdapterIfExists(model) ?: initExpandableList(model).also { adapter ->
+                        newAdapter = true
                         putAdapter(model, adapter)
                     }
 
                 this.adapter = adapter
                 addExpandableItems(adapter, data)
-            }
-        }
 
-        if (position == getAllItemCount() - 1) {
-            onAdaptersInitializedCallback()
+                if (newAdapter) {
+                    onAdapterInitializedCallback(adapter)
+                }
+            }
         }
     }
 
@@ -117,15 +119,19 @@ abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, SubI
         return models.filter { model ->
             val adapter = getAdapterIfExists(model)
             adapter?.let {
-                val hasSubItems = it.setFilter(filterPattern)
-                val passedFilter = filter(model, filterPattern)
+                val hasSubItems = try {
+                     it.setFilter(filterPattern)
+                } catch (e: NotImplementedError) {
+                    true
+                }
 
+                val passedFilter = filter(model, filterPattern)
                 hasSubItems || passedFilter
             } ?: false
         }.also { isFiltered = true }
     }
 
-    fun removeOnAdaptersInitializedCallback() {
-        onAdaptersInitializedCallback = {}
+    fun removeOnAdapterInitializedCallback() {
+        onAdapterInitializedCallback = {}
     }
 }

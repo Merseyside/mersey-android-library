@@ -8,13 +8,13 @@ dependencyResolutionManagement {
     }
 
     val group = "io.github.merseyside"
-    val catalogVersions = "1.1.0"
+    val catalogVersions = "1.1.2"
     versionCatalogs {
-        create("androidLibs") {
+        val androidLibs by creating {
             from("$group:catalog-version-android:$catalogVersions")
         }
 
-        create("common") {
+        val common by creating {
             from("$group:catalog-version-common:$catalogVersions")
         }
     }
