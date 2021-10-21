@@ -20,7 +20,7 @@ class RoundTextView(
     private var cornerRadius: Float = 0F
     private var strokeWidth: Float = 0F
     private var fillColor: Int = 0
-    private var strokeColor: Int = 0
+    private var strokeColor: Int = 2
 
     constructor(
         context: Context,
@@ -33,7 +33,7 @@ class RoundTextView(
         strokeWidth: Float = 0F,
         fillColor: Int = 0,
         strokeColor: Int = 0
-    ): this(context, null, 0) {
+    ) : this(context, null, 0) {
         this.cornerRadius = cornerRadius
         this.strokeColor = strokeColor
         this.strokeWidth = strokeWidth
@@ -64,14 +64,18 @@ class RoundTextView(
 
     private var strokeRect = RectF()
 
-    private val paint = Paint().apply {
-        color = fillColor
+    private val paint by lazy {
+        Paint().apply {
+            color = fillColor
+        }
     }
 
-    private val strokePaint = Paint().apply {
-        color = strokeColor
-        strokeWidth = this@RoundTextView.strokeWidth
-        setStyle(Paint.Style.STROKE)
+    private val strokePaint by lazy {
+        Paint().apply {
+            color = strokeColor
+            strokeWidth = this@RoundTextView.strokeWidth
+            setStyle(Paint.Style.STROKE)
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -88,7 +92,7 @@ class RoundTextView(
 
         strokeRect.apply {
             set(rect)
-            inset(strokeWidth / 2, strokeWidth / 2)
+            inset(strokeWidth / 2F, strokeWidth / 2F)
         }
     }
 

@@ -130,11 +130,10 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
 
     @Throws(IllegalArgumentException::class)
     override fun getPositionOfModel(model: T): Int {
-        sortedList.forEachIndexed { index, item ->
-            if (item == model) return index
+        return sortedList.indexOf(model).let { position ->
+            if (position != SortedList.INVALID_POSITION) position
+            else throw IllegalArgumentException("No data found")
         }
-
-        throw IllegalArgumentException("No data found")
     }
 
     override fun find(obj: M): T? {
@@ -147,11 +146,13 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
     fun notifyItemChanged(
         model: T,
         payloads: List<ComparableAdapterViewModel.Payloadable> = emptyList()
-    ) {
+    ) = try {
         val position = getPositionOfModel(model)
 
         notifyItemChanged(position, payloads)
         sortedList.recalculatePositionOfItemAt(position)
+    } catch (e: IllegalArgumentException) {
+        Logger.log("Skip notify item change!")
     }
 
     override fun add(obj: M) {
@@ -504,5 +505,6 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
     open fun onPayloadable(
         holder: TypedBindingHolder<T>,
         payloads: List<ComparableAdapterViewModel.Payloadable>
-    ) {}
+    ) {
+    }
 }
