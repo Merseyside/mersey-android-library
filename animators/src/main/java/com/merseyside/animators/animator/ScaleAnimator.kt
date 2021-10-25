@@ -72,6 +72,7 @@ class ScaleAnimator(
         }
 
         override fun build(): Animator {
+
             if (values != null && axis != null) {
                 return scaleAnimation(values!!.copyOf(), axis!!, duration)
             } else {

@@ -4,7 +4,7 @@ import android.app.Application
 import android.content.Context
 import androidx.annotation.StringRes
 import com.merseyside.utils.LocaleManager
-import com.merseyside.utils.getLocalizedContext
+import com.merseyside.utils.ext.getLocalizedContext
 import java.lang.Exception
 import java.util.*
 import kotlin.jvm.Throws
@@ -18,7 +18,7 @@ abstract class BaseApplication : Application() {
 
     override fun attachBaseContext(base: Context) {
         localeManager = LocaleManager(base)
-        context = getLocalizedContext(localeManager)
+        context = localeManager.getLocalizedContext()
 
         super.attachBaseContext(context)
     }

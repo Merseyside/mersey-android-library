@@ -8,7 +8,6 @@ import android.os.Build
 import com.merseyside.merseyLib.time.Millis
 import com.merseyside.utils.Logger
 import com.merseyside.utils.delayedMainThread
-import com.merseyside.utils.emptyMutableList
 import com.merseyside.utils.ext.log
 
 abstract class BaseAnimator {
@@ -26,8 +25,7 @@ abstract class BaseAnimator {
         }
     }
 
-    private val listenerList: MutableList<Animator.AnimatorListener> by lazy { emptyMutableList() }
-
+    private val listenerList: MutableList<Animator.AnimatorListener> = mutableListOf()
     fun getListeners(): List<Animator.AnimatorListener> = listenerList
 
     private var internalCallback: Animator.AnimatorListener? = null

@@ -5,7 +5,6 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import com.merseyside.utils.buffer.BufferQueue
-import com.merseyside.utils.emptyMutableList
 import com.merseyside.utils.gestures.ClickGestureListener
 import com.merseyside.utils.gestures.SwipeGestureListener
 import com.merseyside.utils.view.ext.inverse
@@ -70,8 +69,8 @@ class TouchManager(
         }
     }
 
-    private var scrollListeners: MutableList<OnScrollListener> = emptyMutableList()
-    private var clickListeners: MutableList<OnClickListener> = emptyMutableList()
+    private var scrollListeners: MutableList<OnScrollListener> = mutableListOf()
+    private var clickListeners: MutableList<OnClickListener> = mutableListOf()
 
     interface OnScrollListener {
         fun onPositionChanged(position: Point)

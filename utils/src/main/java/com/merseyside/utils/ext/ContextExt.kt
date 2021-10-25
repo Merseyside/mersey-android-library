@@ -1,11 +1,15 @@
 package com.merseyside.utils.ext
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.content.res.Resources
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.provider.Settings
 import android.util.TypedValue
@@ -15,6 +19,8 @@ import android.view.ViewConfiguration
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.DimenRes
+import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 
 fun Context.getResourceFromAttr(
     attr: Int,
@@ -46,40 +52,36 @@ fun Context.getColorFromAttr(
     return typedValue.data
 }
 
-fun Context?.startMapIntent(latitude: Double?, longitude: Double?, dealershipName: String?) {
+fun Context.startMapIntent(latitude: Double, longitude: Double, dealershipName: String = "") {
     val gmmIntentUri = Uri.parse("geo:0,0?q=$latitude,$longitude($dealershipName)")
     val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
     mapIntent.setPackage("com.google.android.apps.maps")
-    this?.packageManager?.let { packageManager ->
+    packageManager?.let { packageManager ->
         if (mapIntent.resolveActivity(packageManager) != null) {
             startActivity(mapIntent)
         }
     }
 }
 
-fun Context?.startAppSettingsIntent() {
+fun Context.startAppSettingsIntent() {
     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-    val uri = Uri.fromParts("package", this?.packageName, null)
+    val uri = Uri.fromParts("package", packageName, null)
     intent.data = uri
-    this?.packageManager?.let { packageManager ->
+    packageManager?.let { packageManager ->
         if (intent.resolveActivity(packageManager) != null) {
             startActivity(intent)
         }
     }
 }
 
-fun Context?.startAppDetailsOnGooglePlay() {
+fun Context.startAppDetailsOnGooglePlay() {
     val intent = Intent(Intent.ACTION_VIEW)
-    intent.data = Uri.parse("market://details?id=${this?.packageName}")
-    this?.packageManager?.let { packageManager ->
+    intent.data = Uri.parse("market://details?id=${packageName}")
+    packageManager?.let { packageManager ->
         if (intent.resolveActivity(packageManager) != null) {
             startActivity(intent)
         }
     }
-}
-
-fun Context.getDimension(@DimenRes res: Int): Float {
-    return com.merseyside.utils.getDimension(this, res)
 }
 
 fun Context.getWindowWidth(): Int {
@@ -140,4 +142,33 @@ fun Context.getVersion(): String? {
         e.printStackTrace()
         null
     }
+}
+
+fun Context.getDimension(@DimenRes res: Int): Float {
+    return resources.getDimension(res)
+}
+
+fun Context.getDrawableByName(name: String): Drawable? {
+    return ContextCompat.getDrawable(this, getDrawableResourceIdByName(name))
+}
+
+@DrawableRes
+fun Context.getDrawableResourceIdByName(name: String): Int {
+    val resources: Resources = resources
+    return resources.getIdentifier(
+        name, "drawable",
+        packageName
+    )
+}
+
+fun Context.openUrl(url: String) {
+    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+    ContextCompat.startActivity(this, browserIntent, null)
+}
+
+fun Context.copyToClipboard(text: String, label: String = "Copied text") {
+    val clipboard: ClipboardManager? =
+        getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+    val clip: ClipData = ClipData.newPlainText(label, text)
+    clipboard?.setPrimaryClip(clip)
 }

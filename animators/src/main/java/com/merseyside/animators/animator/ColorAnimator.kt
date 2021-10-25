@@ -105,11 +105,9 @@ class ColorAnimator(
         }
 
         override fun build(): Animator {
-            if (values != null) {
-                return rgbsAnimation(values!!.copyOf(), duration, propertyName)
-            } else {
-                throw IllegalArgumentException("Points haven't been set")
-            }
+            return values?.let {
+                rgbsAnimation(it.copyOf(), duration, propertyName)
+            } ?: throw IllegalArgumentException("Points haven't been set")
         }
 
         override fun getCurrentValue(): Int {

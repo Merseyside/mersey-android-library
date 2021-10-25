@@ -2,7 +2,6 @@ package com.merseyside.adapters.base
 
 import androidx.recyclerview.widget.SortedList
 import com.merseyside.adapters.model.ComparableAdapterViewModel
-import com.merseyside.utils.emptyMutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -69,7 +68,7 @@ inline fun <M> BaseAdapter<M, *>.findLast(predicate: (item: M) -> Boolean): M? {
 }
 
 inline fun <M> BaseAdapter<M, *>.findAll(predicate: (M) -> Boolean): List<M> {
-    val list = emptyMutableList<M>()
+    val list = mutableListOf<M>()
     getAll().forEach { if (predicate(it)) list.add(it) }
 
     return list

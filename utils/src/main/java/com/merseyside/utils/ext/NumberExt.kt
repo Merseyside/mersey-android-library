@@ -80,6 +80,7 @@ fun Long.isNotZero() = !this.isZero()
 fun Float.isNotZero() = !this.isZero()
 fun Short.isNotZero() = !this.isZero()
 
-operator fun <T: Number> T.compareTo(other: T): Int {
-    return toInt().compareTo(other.toInt())
+@Throws(NumberFormatException::class)
+fun Number.getNumberOfDigits(): Int {
+    return toString().length
 }

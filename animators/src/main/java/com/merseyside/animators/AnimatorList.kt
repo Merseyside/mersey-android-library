@@ -2,7 +2,6 @@ package com.merseyside.animators
 
 import android.animation.Animator
 import android.animation.AnimatorSet
-import com.merseyside.utils.emptyMutableList
 
 /**
  * Collects animators and sets order(Approach) of playing.
@@ -10,7 +9,7 @@ import com.merseyside.utils.emptyMutableList
  */
 class AnimatorList(private val approach: Approach = Approach.SEQUENTIALLY): BaseAnimator() {
 
-    internal val list: MutableList<BaseAnimator> = emptyMutableList()
+    internal val list: MutableList<BaseAnimator> = mutableListOf()
     private var animatorSet: AnimatorSet? = null
 
     fun addAnimator(animator: BaseAnimator) {

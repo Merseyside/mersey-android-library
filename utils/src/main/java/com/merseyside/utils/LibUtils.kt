@@ -1,36 +1,14 @@
 @file:JvmName("LibUtils")
 package com.merseyside.utils
 
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
-import android.content.Intent
-import android.content.res.Resources
 import android.graphics.Color
-import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Environment
-import android.os.Handler
-import android.os.Looper
 import androidx.annotation.ColorInt
-import androidx.annotation.DimenRes
-import androidx.annotation.DrawableRes
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
-import com.merseyside.merseyLib.time.TimeUnit
-import com.merseyside.utils.ext.toHandlerCanceller
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
-
-fun getLocalizedContext(localeManager: LocaleManager): Context {
-    return if (localeManager.language.isNotEmpty()) {
-        localeManager.setLocale()
-    } else {
-        localeManager.context
-    }
-}
 
 fun randomBool(positiveProbability: Float = 0.5F): Boolean {
     return when {
@@ -67,59 +45,9 @@ fun generateRandomString(length: Int): String {
     return ""
 }
 
-fun mainThread(onMain: () -> Unit): Handler {
-    val handler = Handler(Looper.getMainLooper())
-    handler.post(onMain)
-    return handler
-}
-
-fun mainThreadIfNeeds(onMain: () -> Unit): Handler? {
-    return if (!isMainThread()) {
-        mainThread(onMain)
-    } else {
-        onMain.invoke()
-        null
-    }
-}
-
-fun runThread(onThread: () -> Unit): Thread {
-    return Thread { onThread() }.apply { start() }
-}
-
-fun delayedMainThread(delay: TimeUnit, runnable: Runnable): HandlerCanceller {
-    val handler = Handler(Looper.getMainLooper())
-    handler.postDelayed(runnable, delay.millis)
-    return handler.toHandlerCanceller(runnable)
-}
-
-fun delayedMainThread(delay: TimeUnit, onMain: () -> Unit): HandlerCanceller {
-    return delayedMainThread(delay, Runnable { onMain.invoke() })
-}
-
-fun delayedThread(delay: TimeUnit, runnable: Runnable): HandlerCanceller {
-    val handler = Handler()
-    handler.postDelayed(runnable, delay.millis)
-    return handler.toHandlerCanceller(runnable)
-}
-
-fun delayedThread(delay: TimeUnit, onThread: () -> Unit): HandlerCanceller {
-    return delayedThread(delay, Runnable { onThread.invoke() })
-}
-
-fun isMainThread(): Boolean {
-    return Looper.myLooper() == Looper.getMainLooper()
-}
-
 fun isExternalStorageReadable(): Boolean {
     val state = Environment.getExternalStorageState()
     return Environment.MEDIA_MOUNTED == state || Environment.MEDIA_MOUNTED_READ_ONLY == state
-}
-
-@Throws(NumberFormatException::class)
-fun getNumberOfDigits(number: Number): Int {
-    val str = number.toLong().toString()
-
-    return str.length
 }
 
 fun shrinkNumber(number: Number): String {
@@ -136,39 +64,6 @@ fun shrinkNumber(number: Number): String {
             "${long / 1_000_000}M+"
         }
     }
-}
-
-fun openUrl(context: Context, url: String) {
-    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-    startActivity(context, browserIntent, null)
-}
-
-fun copyToClipboard(context: Context, text: String, label: String = "Copied text") {
-    val clipboard: ClipboardManager? =
-        context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
-    val clip: ClipData = ClipData.newPlainText(label, text)
-    clipboard?.setPrimaryClip(clip)
-}
-
-fun getDrawableByName(context: Context, name: String): Drawable? {
-    return ContextCompat.getDrawable(context, getDrawableResourceIdByName(context, name))
-}
-
-@DrawableRes
-fun getDrawableResourceIdByName(context: Context, name: String): Int {
-    val resources: Resources = context.resources
-    return resources.getIdentifier(
-        name, "drawable",
-        context.packageName
-    )
-}
-
-fun <T> emptyMutableList(): MutableList<T> {
-    return emptyList<T>().toMutableList()
-}
-
-fun getDimension(context: Context, @DimenRes res: Int): Float {
-    return context.resources.getDimension(res) / context.resources.displayMetrics.density
 }
 
 @ColorInt

@@ -2,7 +2,6 @@ package com.merseyside.merseyLib.features.adapters.racers.entity
 
 import com.merseyside.merseyLib.time.Millis
 import com.merseyside.merseyLib.time.TimeUnit
-import com.merseyside.utils.emptyMutableList
 import com.merseyside.utils.ext.*
 import com.merseyside.merseyLib.time.*
 
@@ -14,7 +13,7 @@ class Statistics(
     private val racersStats: MutableMap<RacerModel, MutableList<MutableList<TimeUnit>>> = LinkedHashMap()
 
     init {
-        racers.forEach { racersStats[it] = mutableListOf(emptyMutableList()) }
+        racers.forEach { racersStats[it] = mutableListOf() }
     }
 
     fun setCheckpointTime(racer: RacerModel, time: TimeUnit) {

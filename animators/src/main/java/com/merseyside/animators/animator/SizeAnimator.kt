@@ -9,6 +9,7 @@ import com.merseyside.animators.BaseSingleAnimator
 import com.merseyside.merseyLib.time.TimeUnit
 import com.merseyside.utils.Logger
 import com.merseyside.utils.ext.log
+import com.merseyside.utils.safeLet
 
 class SizeAnimator(
     builder: Builder
@@ -106,11 +107,9 @@ class SizeAnimator(
         }
 
         override fun build(): Animator {
-            if (values != null && axis != null) {
-                return changeSizeAnimation(values!!.copyOf(), axis!!, duration)
-            } else {
-                throw IllegalArgumentException("Points haven't been set")
-            }
+            return safeLet(values, axis) { values, axis ->
+                changeSizeAnimation(values.copyOf(), axis, duration)
+            } ?: throw IllegalArgumentException("Points haven't been set")
         }
 
         override fun getCurrentValue(): Int {

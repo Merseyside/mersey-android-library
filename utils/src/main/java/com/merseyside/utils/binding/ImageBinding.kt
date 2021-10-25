@@ -9,13 +9,12 @@ import androidx.databinding.BindingAdapter
 import coil.load
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
-import com.merseyside.utils.getDrawableResourceIdByName
+import com.merseyside.utils.ext.getDrawableResourceIdByName
 
 @BindingAdapter("app:drawableName")
 fun ImageView.loadDrawableByName(name: String?) {
     if (name != null) {
-        val drawableRes = getDrawableResourceIdByName(context, name)
-
+        val drawableRes = context.getDrawableResourceIdByName(name)
         loadImageDrawable(drawableRes)
     }
 }
@@ -23,8 +22,7 @@ fun ImageView.loadDrawableByName(name: String?) {
 @BindingAdapter("app:vectorDrawableName")
 fun ImageView.loadVectorDrawableByName(name: String?) {
     if (name != null) {
-        val drawableRes = getDrawableResourceIdByName(context, name)
-
+        val drawableRes = context.getDrawableResourceIdByName(name)
         loadImageDrawable(drawableRes)
     }
 }

@@ -100,11 +100,9 @@ class AlphaAnimator(
         }
 
         override fun build(): Animator {
-            if (values != null) {
-                return alphaAnimation(values!!.copyOf(), duration)
-            } else {
-                throw IllegalArgumentException("Points haven't been set")
-            }
+            return values?.let {
+                alphaAnimation(it.copyOf(), duration)
+            } ?: throw IllegalArgumentException("Points haven't been set")
         }
 
         override fun getCurrentValue(): Float {

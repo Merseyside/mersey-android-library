@@ -5,8 +5,10 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.NavHostFragment
 import com.merseyside.archy.BaseApplication
@@ -20,12 +22,12 @@ import com.merseyside.archy.presentation.view.localeViews.ILocaleManager
 import com.merseyside.archy.utils.SnackbarManager
 import com.merseyside.utils.LocaleManager
 import com.merseyside.utils.Logger
+import com.merseyside.utils.ext.getLocalizedContext
 import com.merseyside.utils.ext.log
-import com.merseyside.utils.getLocalizedContext
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.Unregistrar
 
-abstract class BaseActivity : NavigationBaseActivity(),
+abstract class BaseActivity : AppCompatActivity(),
     IActivityView, OrientationHandler, ILocaleManager {
 
     override var keyboardUnregistrar: Any? = null
@@ -47,7 +49,8 @@ abstract class BaseActivity : NavigationBaseActivity(),
         if (newBase != null) {
             val localeManager = LocaleManager(newBase)
 
-            super.attachBaseContext(getLocalizedContext(localeManager).also { mainContext = it })
+            super.attachBaseContext(localeManager.getLocalizedContext()
+                .also { mainContext = it })
         }
     }
 
@@ -167,6 +170,9 @@ abstract class BaseActivity : NavigationBaseActivity(),
     }
 
     override fun handleError(throwable: Throwable) {}
+
+    @IdRes
+    abstract fun getFragmentContainer(): Int?
 
     protected fun getCurrentFragment(res: Int? = getFragmentContainer().log(prefix = "container")): BaseFragment? {
 

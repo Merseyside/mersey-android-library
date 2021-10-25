@@ -11,6 +11,7 @@ import com.merseyside.animators.MainPoint
 import com.merseyside.merseyLib.time.TimeUnit
 import com.merseyside.utils.Logger
 import com.merseyside.utils.ext.log
+import com.merseyside.utils.safeLet
 
 class TransitionAnimator (
     builder: Builder
@@ -22,7 +23,7 @@ class TransitionAnimator (
     ): BaseAnimatorBuilder<TransitionAnimator, Float>(duration) {
 
         private var viewWidth: Float = -1F
-        private var viewHeight: Float = -1f
+        private var viewHeight: Float = -1F
 
         init {
             if (view.visibility == View.GONE) {
@@ -54,13 +55,11 @@ class TransitionAnimator (
 
         fun setInPercents(vararg pointPercents: Pair<Float, MainPoint>, axis: Axis) {
             this.axis = axis
-
             pointList = getPixelsFromPercents(pointPercents.toList())
         }
 
         fun setInPixels(vararg pointPixels: Pair<Float, MainPoint>, axis: Axis) {
             this.axis = axis
-
             pointList = pointPixels.toList()
         }
 
@@ -120,12 +119,8 @@ class TransitionAnimator (
         ): List<Pair<Float, MainPoint>> {
 
             val parentViewSize = when (axis!!) {
-                Axis.X -> {
-                    (view.parent as View).width
-                }
-                Axis.Y -> {
-                    (view.parent as View).height
-                }
+                Axis.X -> (view.parent as View).width
+                Axis.Y -> (view.parent as View).height
             }
 
             return pointPercents.toMutableList().let { list ->
@@ -147,12 +142,8 @@ class TransitionAnimator (
         private fun recalculateValues(values: MutableList<Pair<Float, MainPoint>>, axis: Axis) : FloatArray {
 
             val viewSize = when (axis) {
-                Axis.X -> {
-                    viewWidth
-                }
-                Axis.Y -> {
-                    viewHeight
-                }
+                Axis.X -> viewWidth
+                Axis.Y -> viewHeight
             }
 
             val floatArray = FloatArray(values.size)
@@ -169,8 +160,7 @@ class TransitionAnimator (
 
                     MainPoint.TOP_RIGHT -> {
                         when (axis) {
-                            Axis.X ->
-                                floatArray[i] = value + viewSize
+                            Axis.X -> floatArray[i] = value + viewSize
                             Axis.Y -> {}
                         }
                     }
@@ -178,23 +168,14 @@ class TransitionAnimator (
                     MainPoint.BOTTOM_LEFT -> {
                         when (axis) {
                             Axis.X -> {}
-
-                            Axis.Y -> {
-                                Logger.log(null, "value = ${value} viewSize = $viewSize")
-                                floatArray[i] = value - viewSize
-                                floatArray[i].log(prefix = "bottom left =")
-                            }
+                            Axis.Y -> floatArray[i] = value - viewSize
                         }
                     }
 
                     MainPoint.BOTTOM_RIGHT -> {
                         when (axis) {
-                            Axis.X -> {
-                                floatArray[i] = value - viewSize
-                            }
-                            Axis.Y -> {
-                                floatArray[i] = value - viewSize
-                            }
+                            Axis.X -> floatArray[i] = value - viewSize
+                            Axis.Y -> floatArray[i] = value - viewSize
                         }
                     }
 
@@ -215,21 +196,17 @@ class TransitionAnimator (
 
         override fun calculateCurrentValue(): Pair<Float, MainPoint> {
             return when (axis) {
-                Axis.Y ->
-                    view.y to MainPoint.TOP_LEFT
-                Axis.X ->
-                    view.x to MainPoint.TOP_LEFT
+                Axis.Y -> view.y to MainPoint.TOP_LEFT
+                Axis.X -> view.x to MainPoint.TOP_LEFT
                 null -> throw NullPointerException()
             }
         }
 
         @Throws(IllegalArgumentException::class)
         override fun build(): Animator {
-            if (pointList != null && axis != null) {
-                return translateAnimation(pointList!!, axis!!, duration)
-            } else {
-                throw IllegalArgumentException("Points haven't been set")
-            }
+            safeLet(pointList, axis) { pointList, axis ->
+                return translateAnimation(pointList, axis, duration)
+            } ?: throw IllegalArgumentException("Points haven't been set")
         }
     }
 }
