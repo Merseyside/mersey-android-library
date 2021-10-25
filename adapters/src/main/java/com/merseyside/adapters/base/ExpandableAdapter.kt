@@ -77,10 +77,11 @@ abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, SubI
     private fun addExpandableItems(adapter: InnerAdapter, list: List<SubItem>) {
         if (adapter.isEmpty()) {
             adapter.add(list)
-        } else adapter.update(UpdateRequest.Builder(list)
-            .isAddNew(true)
-            .isDeleteOld(true)
-            .build()
+        } else adapter.update(
+            UpdateRequest.Builder(list)
+                .isAddNew(true)
+                .isDeleteOld(true)
+                .build()
         )
     }
 
@@ -120,7 +121,7 @@ abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, SubI
             val adapter = getAdapterIfExists(model)
             adapter?.let {
                 val hasSubItems = try {
-                     it.setFilter(filterPattern)
+                    it.setFilter(filterPattern) > 0
                 } catch (e: NotImplementedError) {
                     true
                 }
@@ -131,7 +132,44 @@ abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, SubI
         }.also { isFiltered = true }
     }
 
+    override fun addFilter(key: String, obj: Any) {
+        super.addFilter(key, obj)
+        getFilterableAdapters()
+            .forEach { subAdapter ->
+                subAdapter.addFilter(key, obj)
+            }
+    }
+
+    override fun removeFilter(key: String) {
+        super.removeFilter(key)
+        getFilterableAdapters()
+            .forEach { subAdapter ->
+                subAdapter.removeFilter(key)
+            }
+    }
+
+    override fun applyFilters(models: List<T>): List<T>? {
+        val expandableModels = super.applyFilters(models)
+        return expandableModels?.filter { model ->
+            val subAdapter = getAdapterIfExists(model)
+            if (subAdapter is SortedAdapter<*, *>) {
+                subAdapter.applyFilters() > 0
+            } else true
+        }
+    }
+
+    override fun clearFilters() {
+        super.clearFilters()
+        getFilterableAdapters().forEach { it.clearFilters() }
+    }
+
     fun removeOnAdapterInitializedCallback() {
         onAdapterInitializedCallback = {}
+    }
+
+    private fun getFilterableAdapters(): List<SortedAdapter<SubItem, *>> {
+        return adapterList
+            .map { it.second }
+            .filterIsInstance<SortedAdapter<SubItem, *>>()
     }
 }

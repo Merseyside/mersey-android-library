@@ -7,12 +7,16 @@ import android.graphics.Rect
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.TypedValue
+import android.view.MotionEvent
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
+import com.merseyside.utils.view.ViewBaseline
+import com.merseyside.utils.view.ext.contains
+import com.merseyside.utils.view.ext.getRawCoordPoint
 
 fun View.getResourceFromAttr(
     @AttrRes attrColor: Int,
@@ -186,4 +190,65 @@ fun View.setHorizontalPadding(size: Int) {
 
 fun View.setVerticalPadding(size: Int) {
     padding(top = size, bottom = size)
+}
+
+fun View.setSize(topLeft: Point, bottomRight: Point) {
+    layoutParams = layoutParams.apply {
+        width = bottomRight.x - topLeft.x
+        height = bottomRight.y - topLeft.y
+    }
+}
+
+fun View.setCoords(
+    point: Point,
+    baseline: Int = ViewBaseline.UNSPECIFIED
+) {
+    this.x = when(ViewBaseline.getHorizontalBaseline(baseline)) {
+        ViewBaseline.HORIZONTAL_CENTER -> x - width / 2F
+        ViewBaseline.HORIZONTAL_END -> x - width.toFloat()
+        else -> point.x.toFloat()
+    }
+
+    this.y = when(ViewBaseline.getVerticalBaseline(baseline)) {
+        ViewBaseline.VERTICAL_CENTER -> y - height / 2F
+        ViewBaseline.VERTICAL_BOTTOM -> y - height.toFloat()
+        else -> point.y.toFloat()
+    }
+}
+
+fun View.setCoordPoint(
+    point: Point,
+    baseline: Int = ViewBaseline.UNSPECIFIED
+) {
+    setCoords(point, baseline)
+}
+
+fun View.getCoordPoint(): Point =
+    Point(x.toInt(), y.toInt())
+
+fun View.getRightBottomPoint(): Point =
+    Point(x.toInt() + width, y.toInt() + height)
+
+fun View.isInViewBounds(event: MotionEvent): Boolean {
+    val rect = android.graphics.Rect()
+    getDrawingRect(rect)
+
+    val location = getLocationOnScreen()
+    rect.offset(location.x, location.y)
+
+    return rect.contains(event.getRawCoordPoint())
+}
+
+fun View.getLocationOnScreen(): Point {
+    val location = IntArray(2)
+    getLocationOnScreen(location)
+
+    return Point(location[0], location[1])
+}
+
+fun View.isSizeChanged(
+    size: Point
+): Boolean {
+    return layoutParams.width != size.x ||
+            layoutParams.height != size.y
 }

@@ -43,7 +43,7 @@ class RacingFragment : BaseSampleFragment<FragmentRacingBinding, RacingViewModel
 
         viewModel.getCheckpointFlow().asLiveData().observe(viewLifecycleOwner) {
             it.log()
-            adapter.updateAsync(UpdateRequest(it))
+            adapter.update(UpdateRequest(it))
         }
     }
 }

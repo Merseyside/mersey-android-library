@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="vertical"
-            app:layoutManager="com.merseyside.utils.layout.WrapContentLinearLayoutManager"
+            app:layoutManager="com.merseyside.utils.layout.LinearLayoutManager"
             app:layout_constraintBottom_toTopOf="@id/actions"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -39,20 +39,20 @@
                     android:id="@+id/async"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginHorizontal="@dimen/small_spacing"
                     android:layout_weight="1"
                     android:text="Async"
-                    android:textSize="14sp" />
+                    android:textSize="@dimen/text_size" />
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/filter"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginHorizontal="@dimen/small_spacing"
                     android:layout_weight="1"
                     android:checked="@={viewModel.isFilterObservableField()}"
                     android:text="Filter"
-                    android:textSize="14sp" />
+                    android:textSize="@dimen/text_size" />
 
             </LinearLayout>
 
@@ -65,21 +65,21 @@
                     android:id="@+id/add"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginHorizontal="@dimen/small_spacing"
                     android:layout_weight="1"
                     android:checked="@={viewModel.isAddingObservableField()}"
                     android:text="Add"
-                    android:textSize="14sp" />
+                    android:textSize="@dimen/text_size" />
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/update"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginHorizontal="@dimen/small_spacing"
                     android:layout_weight="1"
                     android:checked="@={!viewModel.isAddingObservableField()}"
                     android:text="Update"
-                    android:textSize="14sp" />
+                    android:textSize="@dimen/text_size" />
             </LinearLayout>
 
             <LinearLayout
@@ -92,19 +92,19 @@
                     android:id="@+id/update_add"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginHorizontal="@dimen/small_spacing"
                     android:layout_weight="1"
                     android:text="Add new items"
-                    android:textSize="14sp" />
+                    android:textSize="@dimen/text_size" />
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/update_remove"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginHorizontal="@dimen/small_spacing"
                     android:layout_weight="1"
                     android:text="Remove old items"
-                    android:textSize="14sp" />
+                    android:textSize="@dimen/text_size" />
 
             </LinearLayout>
 

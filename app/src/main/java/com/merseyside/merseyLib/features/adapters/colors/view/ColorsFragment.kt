@@ -3,6 +3,7 @@ package com.merseyside.merseyLib.features.adapters.colors.view
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import com.merseyside.adapters.base.UpdateRequest
@@ -23,7 +24,7 @@ class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel
 
     override fun getBindingVariable() = BR.viewModel
     override fun getLayoutId() = R.layout.fragment_colors
-    override fun getTitle(context: Context) = "Adapters"
+    override fun getTitle(context: Context) = "Colors"
     override fun hasTitleBackButton() = true
 
     override fun performInjection(bundle: Bundle?, vararg params: Any) {
@@ -42,24 +43,26 @@ class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel
             _: Int,
             _: Int ->
 
-        val filterName = when (view.id) {
-            requireBinding().rColor.id -> ColorsAdapter.R_COLOR_FILTER
-            requireBinding().gColor.id -> ColorsAdapter.G_COLOR_FILTER
-            requireBinding().bColor.id -> ColorsAdapter.B_COLOR_FILTER
-            else -> throw IllegalArgumentException()
-        }
+        if (newValue != null) {
+            val filterName = when (view.id) {
+                requireBinding().rColor.id -> ColorsAdapter.R_COLOR_FILTER
+                requireBinding().gColor.id -> ColorsAdapter.G_COLOR_FILTER
+                requireBinding().bColor.id -> ColorsAdapter.B_COLOR_FILTER
+                else -> throw IllegalArgumentException()
+            }
 
-        if (length in 1..2) {
-            adapter.addFilter(filterName, newValue!!)
-            true
-        } else {
-            if (length.isZero()) {
-                adapter.removeFilter(filterName)
+            if (length in 1..2) {
+                adapter.addFilter(filterName, newValue)
                 true
             } else {
-                false
-            }
-        }.also { adapter.applyFilters() }
+                if (length.isZero()) {
+                    adapter.removeFilter(filterName)
+                    true
+                } else {
+                    false
+                }
+            }.also { adapter.applyFilters() }
+        } else false
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

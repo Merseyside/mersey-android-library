@@ -75,11 +75,10 @@ inline fun <M> BaseAdapter<M, *>.findAll(predicate: (M) -> Boolean): List<M> {
     return list
 }
 
-@Throws(NoSuchElementException::class)
 internal inline fun <T> SortedList<T>.indexOf(predicate: (T) -> Boolean): Int {
     forEachIndexed { index, obj -> if (predicate(obj)) return index }
 
-    throw NoSuchElementException()
+    return SortedList.INVALID_POSITION
 }
 
 internal fun <T> SortedList<T>.removeAll(list: List<T>) {

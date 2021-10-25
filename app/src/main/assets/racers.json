@@ -4,7 +4,7 @@
     "racers": [
       {
         "name": "Kimi Räikkönen",
-        "image": "https://pbs.twimg.com/profile_images/1230075928606277632/cvJ_FW8Z_400x400.jpg"
+        "image": "https://www.formula1.com/content/fom-website/en/drivers/kimi-raikkonen/_jcr_content/image16x9.img.1536.high.jpg"
       },
       {
         "name": "Antonio Giovinazzi",
@@ -47,7 +47,7 @@
       },
       {
         "name": "Pietro Fittipaldi",
-        "image": "https://www.thecheckeredflag.co.uk/wp-content/uploads/2020/11/Fittipaldi-Haas-1280x720.jpg"
+        "image": "https://digbza2f4g9qo.cloudfront.net/-/media/IndyCar/Drivers/IndyCar-Series/Headshot/PietroFittipaldi.jpg?h=470&la=en&w=585&vs=1&d=20210413T142941Z"
       },
       {
         "name": "Kevin Magnussen",
@@ -107,7 +107,7 @@
     "racers": [
       {
         "name": "Alexander Albon",
-        "image": "https://www.formula1.com/content/fom-website/en/drivers/alexander-albon/_jcr_content/image16x9.img.1536.high.jpg"
+        "image": "https://thesportsgrail.com/wp-content/uploads/2021/09/alex-albon-png-logo-stock-2@2x.jpg"
       },
       {
         "name": "Max Verstappen",
@@ -137,7 +137,7 @@
       },
       {
         "name": "Jack Aitken",
-        "image": "https://az732437.vo.msecnd.net/-/media/williamsf1/racing/about/our-people/thumbnailjackaitken.ashx?revision=655fad8d-e3b9-4c47-8e9a-6b6e8d179b40"
+        "image": "https://www.gt-world-challenge-europe.com/timthumb.php?w=320&src=%2Fimages%2Fdrivers%2Fphoto_2670.jpg"
       }
     ]
   }

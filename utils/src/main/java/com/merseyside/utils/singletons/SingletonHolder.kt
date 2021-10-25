@@ -1,4 +1,4 @@
-package com.merseyside.archy.utils.singletons
+package com.merseyside.utils.singletons
 
 /**
  * Example:

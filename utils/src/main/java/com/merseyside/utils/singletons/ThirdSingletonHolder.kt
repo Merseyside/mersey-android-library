@@ -1,13 +1,13 @@
-package com.merseyside.archy.utils.singletons
+package com.merseyside.utils.singletons
 
 open class ThirdSingletonHolder<out T: Any, in A, in B, in C>(creator: (A, B, C) -> T) {
     private var creator: ((A, B, C) -> T)? = creator
     @Volatile private var instance: T? = null
 
-    fun getInstance(arg1: A, arg2: B, arg3: C): T {
+    fun init(arg1: A, arg2: B, arg3: C): T {
         val i = instance
         if (i != null) {
-            return i
+            throw Exception("Already initialized!")
         }
 
         return synchronized(this) {
@@ -21,5 +21,11 @@ open class ThirdSingletonHolder<out T: Any, in A, in B, in C>(creator: (A, B, C)
                 created
             }
         }
+    }
+
+    fun getInstance(): T {
+        if (instance != null) {
+            return instance!!
+        } else throw Exception("Not initialized!")
     }
 }

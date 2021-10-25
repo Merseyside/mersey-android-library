@@ -119,18 +119,13 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
         return getModelByPosition(position).getItem()
     }
 
-    @Throws(NoSuchElementException::class)
     override fun getPositionOfItem(obj: M): Int {
-        try {
-            return sortedList.indexOf { item -> item.areItemsTheSame(obj) }
-        } catch (e: NoSuchElementException) {
-            throw e
-        }
+        return sortedList.indexOf { item -> item.areItemsTheSame(obj) }
     }
 
     @Throws(IllegalArgumentException::class)
     override fun getPositionOfModel(model: T): Int {
-        return sortedList.indexOf(model).let { position ->
+        return getPositionOfItem(model.getItem()).let { position ->
             if (position != SortedList.INVALID_POSITION) position
             else throw IllegalArgumentException("No data found")
         }
@@ -266,7 +261,7 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
         sortedList.endBatchedUpdates()
     }
 
-    fun addFilter(key: String, obj: Any) {
+    open fun addFilter(key: String, obj: Any) {
         notAppliedFiltersMap[key] = obj
 
         if (filtersMap.containsKey(key)) {
@@ -278,7 +273,7 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
         }
     }
 
-    fun removeFilter(key: String) {
+    open fun removeFilter(key: String) {
         notAppliedFiltersMap.remove(key)
         if (filtersMap.containsKey(key)) {
             filtersMap.remove(key)
@@ -289,21 +284,15 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
         }
     }
 
-    private fun applyFilters(models: List<T>): List<T>? {
+    internal open fun applyFilters(models: List<T>): List<T>? {
         try {
             if (notAppliedFiltersMap.isNotEmpty()) {
                 notAppliedFiltersMap.forEach { entry ->
-                    val filteredByKeyList = models.mapNotNull {
-                        if (filter(it, entry.key, entry.value)) it
-                        else null
-                    }
+                    val filteredByKeyList = applyFilter(models, entry.key, entry.value)
 
-                    filterKeyMap[entry.key] = if (filterKeyMap.contains(entry.key)) {
-                        filterKeyMap[entry.key]!!.toMutableList()
-                            .apply { addAll(filteredByKeyList) }
-                    } else {
-                        filteredByKeyList
-                    }
+                    filterKeyMap[entry.key] = filterKeyMap[entry.key]?.let {
+                        it.toMutableList().apply { addAll(filteredByKeyList) }
+                    } ?: filteredByKeyList
                 }
 
                 filtersMap.putAll(notAppliedFiltersMap)
@@ -327,6 +316,11 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
         return null
     }
 
+    @Throws(NotImplementedError::class)
+    internal open fun applyFilter(models: List<T>, key: String, filterObj: Any): List<T> {
+        return models.filter { filter(it, key, filterObj) }
+    }
+
     private fun applyFilterToNewModels(models: List<T>) {
         val filteredList = if (filtersMap.isNotEmpty()) {
             swapFilters()
@@ -340,7 +334,10 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
         }
     }
 
-    fun applyFilters() {
+    /**
+    * @return true if filtered list is not empty, false otherwise.
+    **/
+    open fun applyFilters(): Int {
         val listToSet =
             if (notAppliedFiltersMap.isNullOrEmpty() && filtersMap.isNullOrEmpty()) modelList
             else applyFilters(modelList)
@@ -348,13 +345,17 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
         if (listToSet != null &&
             this.sortedList.isNotEquals(listToSet)
         ) setList(listToSet)
+
+        return listToSet?.size ?: 0
     }
 
-    fun applyFiltersAsync() {
+    fun applyFiltersAsync(callback: (filteredCount: Int) -> Unit = {}) {
         filterJob = scope.asynchronously {
-            withLock {
+            val count = withLock {
                 applyFilters()
             }
+
+            callback(count)
         }
     }
 
@@ -375,9 +376,9 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
 
     /**
      * Don't forget to override areItemsTheSame method with real value
-     * @return true if filtered list is not empty, false otherwise.
+     * @return filtered items count.
      */
-    override fun setFilter(query: String): Boolean {
+    override fun setFilter(query: String): Int {
         if (filterPattern != query) {
             filterPattern = query
 
@@ -392,17 +393,18 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
             }
         }
 
-        return sortedList.isNotEmpty()
+        return sortedList.size()
     }
 
-    override fun setFilterAsync(query: String, func: () -> Unit) {
+    override fun setFilterAsync(query: String, callback: (filteredCount: Int) -> Unit) {
         filterJob?.cancel()
 
         filterJob = scope.asynchronously {
-            withLock {
+            val count = withLock {
                 setFilter(query)
-                func.invoke()
             }
+
+            callback(count)
         }
     }
 
@@ -423,7 +425,7 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
         }
     }
 
-    fun clearFilters() {
+    open fun clearFilters() {
         isFiltered = false
 
         filtersMap.clear()

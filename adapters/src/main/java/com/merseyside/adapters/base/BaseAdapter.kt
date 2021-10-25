@@ -226,12 +226,12 @@ abstract class BaseAdapter<M, T : AdapterViewModel<M>>
     }
 
     @Throws(NotImplementedError::class)
-    open fun setFilter(query: String): Boolean {
+    open fun setFilter(query: String): Int {
         throw NotImplementedError()
     }
 
     @Throws(NotImplementedError::class)
-    open fun setFilterAsync(query: String, func: () -> Unit = {}) {
+    open fun setFilterAsync(query: String, callback: (filteredCount: Int) -> Unit = {}) {
         throw NotImplementedError()
     }
 

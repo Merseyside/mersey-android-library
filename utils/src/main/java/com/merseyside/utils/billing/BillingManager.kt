@@ -125,7 +125,7 @@ class BillingManager(
     /**
      * Get subscriptions from Google Play
      *
-     * Returns null if something went wrong
+     * @return null if something went wrong, sku details list otherwise
      */
     suspend fun getSkuDetails(skuList: List<String>? = null): List<SkuDetails>? {
 
