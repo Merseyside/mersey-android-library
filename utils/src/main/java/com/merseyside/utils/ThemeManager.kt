@@ -56,7 +56,7 @@ object ThemeManager {
 
     fun getSavedTheme(): Theme {
         return preferenceManager?.let {
-            Theme.getThemeById(preferenceManager!!.getInt(THEME_KEY, Theme.DEFAULT.themeId))
+            Theme.getThemeById(it.getInt(THEME_KEY, Theme.DEFAULT.themeId))
         } ?: throw IllegalStateException("Preference manager hasn't been set")
     }
 

@@ -11,11 +11,13 @@ import com.merseyside.utils.convertDpToPixel
 import com.merseyside.utils.ext.*
 
 class AttributeHelper(
-    view: View,
+    private val context: Context,
     private val attrSet: AttributeSet,
     val defNamespace: Namespace = Namespace.DEFAULT
 ) {
-    val context: Context = view.getActivity()
+
+    constructor(view: View, attrSet: AttributeSet, defNamespace: Namespace = Namespace.DEFAULT)
+            : this(view.getActivity(), attrSet, defNamespace)
 
     fun getBool(
         resName: String,

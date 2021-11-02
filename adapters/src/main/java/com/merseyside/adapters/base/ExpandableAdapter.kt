@@ -116,6 +116,19 @@ abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, SubI
         return updated
     }
 
+    override fun setFilter(query: String): Int {
+        return try {
+            super.setFilter(query)
+        } finally {
+            if (query.isEmpty()) {
+                getAllModels().forEach { model ->
+                    val adapter = getAdapterIfExists(model)
+                    adapter?.setFilter(query)
+                }
+            }
+        }
+    }
+
     override fun setFilter(models: List<T>): List<T>? {
         return models.filter { model ->
             val adapter = getAdapterIfExists(model)
