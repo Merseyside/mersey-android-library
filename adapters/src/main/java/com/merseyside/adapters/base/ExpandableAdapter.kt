@@ -136,7 +136,7 @@ abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, SubI
                 val hasSubItems = try {
                     it.setFilter(filterPattern) > 0
                 } catch (e: NotImplementedError) {
-                    true
+                    false
                 }
 
                 val passedFilter = filter(model, filterPattern)
