@@ -84,6 +84,7 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
         }
 
         override fun areItemsTheSame(obj1: T, obj2: T): Boolean {
+            "here".log()
             return obj1.areItemsTheSame(obj2.getItem())
         }
     }
@@ -247,18 +248,16 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
         }
     }
 
-    internal fun replaceAll(models: List<T>) {
-        sortedList.beginBatchedUpdates()
+    private fun replaceAll(models: List<T>) {
+        sortedList.batchedUpdate {
+            val sortedModels = getAll().toSet()
+            val subtract = models.subtract(sortedModels)
 
-        for (i in sortedList.size() - 1 downTo 0) {
-            val model = sortedList[i]
-            if (!models.contains(model)) {
-                sortedList.remove(model)
-            }
+            val subtractSorted = sortedModels.subtract(models.toSet()).toList()
+            removeAll(subtractSorted)
+
+            addAll(subtract)
         }
-
-        sortedList.addAll(models)
-        sortedList.endBatchedUpdates()
     }
 
     open fun addFilter(key: String, obj: Any) {
@@ -335,8 +334,8 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
     }
 
     /**
-    * @return true if filtered list is not empty, false otherwise.
-    **/
+     * @return true if filtered list is not empty, false otherwise.
+     **/
     open fun applyFilters(): Int {
         val listToSet =
             if (notAppliedFiltersMap.isNullOrEmpty() && filtersMap.isNullOrEmpty()) modelList
@@ -409,19 +408,15 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
     }
 
     private fun setList(list: List<T>) {
-        sortedList.apply {
-            beginBatchedUpdates()
+        sortedList.batchedUpdate {
             clear()
             addAll(list)
-            endBatchedUpdates()
         }
     }
 
     private fun addList(list: List<T>) {
-        sortedList.apply {
-            beginBatchedUpdates()
+        sortedList.batchedUpdate {
             addAll(list)
-            endBatchedUpdates()
         }
     }
 
@@ -448,13 +443,11 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
     fun getAllItemCount() = modelList.size
 
     override fun clear() {
-        sortedList.apply {
-            beginBatchedUpdates()
+        sortedList.batchedUpdate {
             clear()
-            endBatchedUpdates()
         }
-        modelList.clear()
 
+        modelList.clear()
         clearFilters()
     }
 
@@ -482,10 +475,8 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
                 filterKeyMap[entry.key] = entry.value.toMutableList().apply { removeAll(list) }
             }
 
-            sortedList.apply {
-                beginBatchedUpdates()
+            sortedList.batchedUpdate {
                 removeAll(list)
-                endBatchedUpdates()
             }
         }
     }
@@ -507,6 +498,5 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
     open fun onPayloadable(
         holder: TypedBindingHolder<T>,
         payloads: List<ComparableAdapterViewModel.Payloadable>
-    ) {
-    }
+    ) {}
 }

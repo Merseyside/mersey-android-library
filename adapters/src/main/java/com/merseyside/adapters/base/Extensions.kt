@@ -142,5 +142,17 @@ fun <M: Any> List<SelectableAdapter<M, *>>.onItemSelected(
     return listener
 }
 
+fun <M> SortedList<M>.batchedUpdate(block: SortedList<M>.() -> Unit) {
+    beginBatchedUpdates()
+    block()
+    endBatchedUpdates()
+}
+
+fun <M> SortedList<M>.getAll(): List<M> {
+    val list = mutableListOf<M>()
+    forEach { list.add(it) }
+    return list
+}
+
 internal fun CoroutineScope.asynchronously(block: suspend CoroutineScope.() -> Unit) =
     launch(context = Dispatchers.Default, block = block)
