@@ -6,6 +6,8 @@ import androidx.annotation.CallSuper
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
+import com.merseyside.adapters.callback.HasOnItemClickListener
+import com.merseyside.adapters.callback.OnItemClickListener
 import com.merseyside.adapters.model.AdapterViewModel
 import com.merseyside.adapters.view.TypedBindingHolder
 import com.merseyside.utils.ext.isZero

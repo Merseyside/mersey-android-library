@@ -3,7 +3,7 @@ package com.merseyside.adapters.model
 import androidx.annotation.CallSuper
 import androidx.databinding.BaseObservable
 import com.merseyside.adapters.base.ItemCallback
-import com.merseyside.adapters.base.OnItemClickListener
+import com.merseyside.adapters.callback.OnItemClickListener
 
 abstract class AdapterViewModel<M>(
     var obj: M

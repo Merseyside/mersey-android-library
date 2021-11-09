@@ -1,5 +1,9 @@
 package com.merseyside.adapters.base
 
+import com.merseyside.adapters.callback.HasOnItemSelectedListener
+import com.merseyside.adapters.callback.OnItemClickListener
+import com.merseyside.adapters.callback.OnItemSelectedListener
+import com.merseyside.adapters.callback.OnSelectEnabledListener
 import com.merseyside.adapters.model.SelectableAdapterViewModel
 import com.merseyside.utils.Logger
 import kotlinx.coroutines.CoroutineScope
@@ -14,6 +18,15 @@ abstract class SelectableAdapter<M: Any, T: SelectableAdapterViewModel<M>>(
 ) : SortedAdapter<M, T>(scope), HasOnItemSelectedListener<M> {
 
     enum class SelectableMode { SINGLE, MULTIPLE }
+    internal var groupAdapter: Boolean = false
+    private var selectFirstOnAdd: Boolean = false
+        get() {
+            return try {
+                field
+            } finally {
+                field = false
+            }
+        }
 
     var selectableMode: SelectableMode = selectableMode
         set(value) {
@@ -58,8 +71,8 @@ abstract class SelectableAdapter<M: Any, T: SelectableAdapterViewModel<M>>(
         }
     }
 
-    override fun setOnItemSelectedListener(listener: OnItemSelectedListener<M>) {
-        super.setOnItemSelectedListener(listener)
+    override fun addOnItemSelectedListener(listener: OnItemSelectedListener<M>) {
+        super.addOnItemSelectedListener(listener)
 
         selectedList.forEach { item ->
             listener.onSelected(
@@ -109,10 +122,9 @@ abstract class SelectableAdapter<M: Any, T: SelectableAdapterViewModel<M>>(
     }
 
     private fun selectFirstSelectableItem() {
-        if (!isAllowToCancelSelection) {
-            getAllModels().forEach { item ->
-                setItemSelected(item)
-                return
+        if ((!isAllowToCancelSelection && !groupAdapter) || selectFirstOnAdd) {
+            sortedList.getAll().forEach { item ->
+                if (setItemSelected(item)) return
             }
         }
     }
@@ -176,8 +188,8 @@ abstract class SelectableAdapter<M: Any, T: SelectableAdapterViewModel<M>>(
         return (item != null && item.isSelectable())
     }
 
-    private fun setItemSelected(item: T?, isSelectedByUser: Boolean = false) {
-        if (item != null && canItemBeSelected(item)) {
+    private fun setItemSelected(item: T?, isSelectedByUser: Boolean = false): Boolean {
+        return if (item != null && canItemBeSelected(item)) {
             if (!item.isSelected()) {
                 if (selectableMode == SelectableMode.SINGLE) {
                     if (selectedList.isEmpty() || selectedList.first().areItemsNotTheSame(item.obj)) {
@@ -200,9 +212,12 @@ abstract class SelectableAdapter<M: Any, T: SelectableAdapterViewModel<M>>(
 
                 notifyItemSelected(item, isSelectedByUser)
             }
-        }
 
-        recyclerView.invalidateItemDecorations()
+            recyclerView.invalidateItemDecorations()
+            true
+        } else {
+            false
+        }
     }
 
     private fun notifyItemSelected(item: T, isSelectedByUser: Boolean) {
@@ -251,6 +266,10 @@ abstract class SelectableAdapter<M: Any, T: SelectableAdapterViewModel<M>>(
     override fun removeListeners() {
         super.removeListeners()
         selectedListeners.clear()
+    }
+
+    internal fun selectFirstOnAdd() {
+        selectFirstOnAdd = true
     }
 
     companion object {

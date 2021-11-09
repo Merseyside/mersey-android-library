@@ -1,7 +1,12 @@
 package com.merseyside.adapters.base
 
 import androidx.recyclerview.widget.SortedList
+import com.merseyside.adapters.callback.HasOnItemClickListener
+import com.merseyside.adapters.callback.HasOnItemSelectedListener
+import com.merseyside.adapters.callback.OnItemClickListener
+import com.merseyside.adapters.callback.OnItemSelectedListener
 import com.merseyside.adapters.model.ComparableAdapterViewModel
+import com.merseyside.adapters.utils.SelectableAdapterGroup
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -84,7 +89,7 @@ internal fun <T> SortedList<T>.removeAll(list: List<T>) {
     list.forEach { remove(it) }
 }
 
-fun <M: Any> List<BaseAdapter<M, *>>.onItemClicked(onClick: (item: M) -> Unit): OnItemClickListener<M> {
+fun <M : Any> List<BaseAdapter<M, *>>.onItemClicked(onClick: (item: M) -> Unit): OnItemClickListener<M> {
     val listener = object : OnItemClickListener<M> {
         override fun onItemClicked(obj: M) {
             onClick.invoke(obj)
@@ -119,12 +124,12 @@ fun <M> HasOnItemSelectedListener<M>.onItemSelected(
             onSelected.invoke(item, isSelected, isSelectedByUser)
         }
     }
-    setOnItemSelectedListener(listener)
+    addOnItemSelectedListener(listener)
 
     return listener
 }
 
-fun <M: Any> List<SelectableAdapter<M, *>>.onItemSelected(
+fun <M : Any> List<SelectableAdapter<M, *>>.onItemSelected(
     onSelected: (
         item: M,
         isSelected: Boolean,
@@ -137,7 +142,7 @@ fun <M: Any> List<SelectableAdapter<M, *>>.onItemSelected(
         }
     }
 
-    forEach { it.setOnItemSelectedListener(listener) }
+    forEach { it.addOnItemSelectedListener(listener) }
 
     return listener
 }

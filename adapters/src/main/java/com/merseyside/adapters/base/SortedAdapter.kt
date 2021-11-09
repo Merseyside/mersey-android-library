@@ -89,7 +89,7 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
         }
     }
 
-    private val sortedList: SortedList<T> = SortedList(persistentClass, listCallback)
+    internal val sortedList: SortedList<T> = SortedList(persistentClass, listCallback)
 
     override fun onBindViewHolder(
         holder: TypedBindingHolder<T>,

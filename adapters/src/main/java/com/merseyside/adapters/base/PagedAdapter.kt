@@ -7,6 +7,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
+import com.merseyside.adapters.callback.HasOnItemClickListener
+import com.merseyside.adapters.callback.OnItemClickListener
 import com.merseyside.adapters.model.AdapterViewModel
 import com.merseyside.adapters.view.BaseBindingHolder
 import com.merseyside.utils.Logger

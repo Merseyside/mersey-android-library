@@ -1,4 +1,4 @@
-package com.merseyside.adapters.base
+package com.merseyside.adapters.callback
 
 interface OnItemClickListener<M> {
 
