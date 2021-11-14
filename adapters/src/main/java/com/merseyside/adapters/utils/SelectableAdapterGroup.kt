@@ -14,11 +14,16 @@ class SelectableAdapterGroup<M : Any>(
         override fun onSelected(item: M, isSelected: Boolean, isSelectedByUser: Boolean) {
             when (selectableMode) {
                 SelectableAdapter.SelectableMode.SINGLE -> {
-                    val adaptersWithSelectedItems = getAdaptersWithSelectedItems()
+                    if (isSelected) {
+                        val adaptersWithSelectedItems = getAdaptersWithSelectedItems()
 
-                    if (adaptersWithSelectedItems.isNotEmpty()) {
-                        val oldAdapter = adaptersWithSelectedItems.find { it.getSelectedItem() != item }
-                        oldAdapter?.clearSelections()
+                        if (adaptersWithSelectedItems.isNotEmpty()) {
+                            val oldAdapter =
+                                adaptersWithSelectedItems.find { it.getSelectedItem() != item }
+                            oldAdapter?.run {
+                                clearSelections()
+                            }
+                        }
                     }
                 }
 
@@ -26,7 +31,13 @@ class SelectableAdapterGroup<M : Any>(
 
                 }
             }
+        }
 
+        override fun onSelectedRemoved(
+            adapter: SelectableAdapter<M, *>,
+            items: List<M>
+        ) {
+            selectMostAppropriateItem(adapter)
         }
     }
 
@@ -47,6 +58,10 @@ class SelectableAdapterGroup<M : Any>(
 
     fun remove(adapter: SelectableAdapter<M, *>) {
         adapters.remove(adapter)
+        if (adapter.getSelectedItemsCount().isNotZero() &&
+            !isAllowToCancelSelection && selectableMode == SelectableAdapter.SelectableMode.SINGLE) {
+            selectFirstItem()
+        }
     }
 
     override fun addOnItemSelectedListener(listener: OnItemSelectedListener<M>) {
@@ -69,7 +84,26 @@ class SelectableAdapterGroup<M : Any>(
         }
     }
 
+    private fun selectFirstItem() {
+        adapters.forEach { adapter ->
+            if (adapter.isSelectEnabled) {
+                adapter.selectFirstSelectableItem(force = true)
+                return
+            }
+        }
+    }
+
     private fun getAdaptersWithSelectedItems(): List<SelectableAdapter<M, *>> {
         return adapters.filter { it.getSelectedItemsCount().isNotZero() }
+    }
+
+    private fun selectMostAppropriateItem(adapter: SelectableAdapter<M, *>) {
+        if (!isAllowToCancelSelection) {
+            if (adapter.getAllItemCount().isNotZero()) {
+                adapter.selectFirstSelectableItem(force = true)
+            } else {
+                selectFirstItem()
+            }
+        }
     }
 }

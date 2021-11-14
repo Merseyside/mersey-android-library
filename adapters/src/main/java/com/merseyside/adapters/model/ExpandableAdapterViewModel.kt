@@ -63,7 +63,7 @@ abstract class ExpandableAdapterViewModel<M, T: Any>(
         }
     }
 
-    internal fun getData(): List<T>? {
+    internal fun getExpandableData(): List<T>? {
         val data = getExpandedData()
 
         if (data.isNullOrEmpty()) {

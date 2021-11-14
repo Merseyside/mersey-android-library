@@ -6,6 +6,7 @@ import com.merseyside.adapters.callback.OnItemSelectedListener
 import com.merseyside.adapters.callback.OnSelectEnabledListener
 import com.merseyside.adapters.model.SelectableAdapterViewModel
 import com.merseyside.utils.Logger
+import com.merseyside.utils.ext.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -121,8 +122,8 @@ abstract class SelectableAdapter<M: Any, T: SelectableAdapterViewModel<M>>(
         }
     }
 
-    private fun selectFirstSelectableItem() {
-        if ((!isAllowToCancelSelection && !groupAdapter) || selectFirstOnAdd) {
+    internal fun selectFirstSelectableItem(force: Boolean = false) {
+        if (force || (!isAllowToCancelSelection && !groupAdapter) || selectFirstOnAdd) {
             sortedList.getAll().forEach { item ->
                 if (setItemSelected(item)) return
             }
@@ -194,7 +195,10 @@ abstract class SelectableAdapter<M: Any, T: SelectableAdapterViewModel<M>>(
                 if (selectableMode == SelectableMode.SINGLE) {
                     if (selectedList.isEmpty() || selectedList.first().areItemsNotTheSame(item.obj)) {
                         if (selectedList.isNotEmpty()) {
-                            selectedList.first().setSelected(false)
+                            with(selectedList.first()) {
+                                setSelected(false)
+                                notifyItemSelected(this, isSelectedByUser = false)
+                            }
                             selectedList.clear()
                         }
 
@@ -226,6 +230,10 @@ abstract class SelectableAdapter<M: Any, T: SelectableAdapterViewModel<M>>(
         }
     }
 
+    private fun notifyItemsSelected(items: List<T>, isSelectedByUser: Boolean) {
+        items.forEach { notifyItemSelected(it, isSelectedByUser) }
+    }
+
     private fun findSelectedItems(): List<T> {
         return if (selectedList.isEmpty()) {
             modelList.filter { model ->
@@ -250,7 +258,7 @@ abstract class SelectableAdapter<M: Any, T: SelectableAdapterViewModel<M>>(
         selectedList.forEach { model ->
             model.setSelected(false)
         }
-
+        notifyItemsSelected(selectedList, isSelectedByUser = false)
         selectedList.clear()
     }
 
@@ -268,8 +276,64 @@ abstract class SelectableAdapter<M: Any, T: SelectableAdapterViewModel<M>>(
         selectedListeners.clear()
     }
 
+    override fun remove(obj: M) {
+        return try {
+            super.remove(obj)
+        } finally {
+            getModelByObj(obj)?.let {
+                removeSelected(listOf(it))
+            }
+        }
+    }
+
+    override fun removeModels(list: List<T>): Boolean {
+        return try {
+            super.removeModels(list)
+        } finally {
+            removeSelected(list)
+        }
+    }
+
+    private fun removeSelected(list: List<T>) {
+        if (list.isNotEmpty()) {
+            val selectedItemsGoingToRemove =
+                selectedList.intersect(list).toList()
+
+            if (selectedItemsGoingToRemove.isNotEmpty()) {
+                selectedItemsGoingToRemove.forEach { model ->
+                    model.setSelected(false, notifyItem = false)
+                }
+
+                notifyItemsSelected(selectedItemsGoingToRemove, isSelectedByUser = true)
+                selectedList.removeAll(selectedItemsGoingToRemove)
+                notifyItemsRemoved(selectedItemsGoingToRemove)
+
+                if (!groupAdapter && !isAllowToCancelSelection) {
+                    selectFirstSelectableItem()
+                }
+            }
+        }
+    }
+
+    private fun notifyItemsRemoved(items: List<T>) {
+        selectedListeners.forEach { it.onSelectedRemoved(this, items.map { it.obj }) }
+    }
+
     internal fun selectFirstOnAdd() {
         selectFirstOnAdd = true
+    }
+
+    override fun notifyAdapterRemoved() {
+        with(selectedList) {
+            val clone = selectedList.toList()
+
+            if (isNotEmpty()) {
+                clearSelections()
+            }
+
+            clear()
+            notifyItemsRemoved(clone)
+        }
     }
 
     companion object {

@@ -102,7 +102,7 @@ abstract class BaseAdapter<M, T : AdapterViewModel<M>>
         notifyItemRangeChanged(startPosition, models.size)
     }
 
-    open fun update(updateRequest: UpdateRequest<M>) {
+    open fun update(updateRequest: UpdateRequest<M>): Boolean {
         TODO("Not implemented")
     }
 
@@ -299,6 +299,10 @@ abstract class BaseAdapter<M, T : AdapterViewModel<M>>
         return list.map { initItemViewModel(it) }
     }
 
+    internal fun getModelsByItems(list: List<M>): List<T> {
+        return list.mapNotNull { item -> modelList.find { model -> model.areItemsTheSame(item) } }
+    }
+
     internal open fun initItemViewModel(obj: M): T {
         return createItemViewModel(obj).apply {
             setItemPositionInterface(this@BaseAdapter)
@@ -308,6 +312,8 @@ abstract class BaseAdapter<M, T : AdapterViewModel<M>>
     open fun removeListeners() {
         listener = null
     }
+
+    open fun notifyAdapterRemoved() {}
 
     protected abstract fun createItemViewModel(obj: M): T
 }

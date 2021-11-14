@@ -1,14 +1,17 @@
 package com.merseyside.adapters.callback
 
-interface OnItemSelectedListener<M> {
+import com.merseyside.adapters.base.SelectableAdapter
+
+interface OnItemSelectedListener<M : Any> {
     fun onSelected(item: M, isSelected: Boolean, isSelectedByUser: Boolean)
+    fun onSelectedRemoved(adapter: SelectableAdapter<M, *>, items: List<M>)
 }
 
 interface OnSelectEnabledListener {
     fun onEnabled(isEnabled: Boolean)
 }
 
-interface HasOnItemSelectedListener<M> {
+interface HasOnItemSelectedListener<M : Any> {
     val selectedListeners: MutableList<OnItemSelectedListener<M>>
 
     fun addOnItemSelectedListener(listener: OnItemSelectedListener<M>) {

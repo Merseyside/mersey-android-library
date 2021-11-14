@@ -15,6 +15,14 @@ fun Collection<*>?.isNotNullAndEmpty(): Boolean {
     return this != null && this.isNotEmpty()
 }
 
+fun <T, R> List<T>?.isNotNullAndEmpty(block: List<T>.() -> R): R? {
+    return if (this.isNotNullAndEmpty()) {
+        block()
+    } else {
+        null
+    }
+}
+
 fun <T: Any> List<T>.removeEqualItems(): List<T> {
     return this.toSet().toList()
 }
@@ -38,6 +46,16 @@ fun <T: Any> List<T>.unique(predicate: (T, T) -> Boolean): List<T> {
     } else {
         this
     }
+}
+
+fun <T : Any> MutableList<T>.remove(predicate: (T) -> Boolean): Boolean {
+    forEach {
+        if (predicate(it)) {
+            return remove(it)
+        }
+    }
+
+    return false
 }
 
 fun <T: Any, R : Comparable<R>> List<T>.minByNullable(selector: (T) -> R?): T? {

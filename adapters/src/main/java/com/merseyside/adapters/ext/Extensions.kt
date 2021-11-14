@@ -6,7 +6,6 @@ import com.merseyside.adapters.callback.HasOnItemSelectedListener
 import com.merseyside.adapters.callback.OnItemClickListener
 import com.merseyside.adapters.callback.OnItemSelectedListener
 import com.merseyside.adapters.model.ComparableAdapterViewModel
-import com.merseyside.adapters.utils.SelectableAdapterGroup
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -112,7 +111,7 @@ fun <M> HasOnItemClickListener<M>.onItemClicked(onClick: (item: M) -> Unit): OnI
     return listener
 }
 
-fun <M> HasOnItemSelectedListener<M>.onItemSelected(
+fun <M : Any> HasOnItemSelectedListener<M>.onItemSelected(
     onSelected: (
         item: M,
         isSelected: Boolean,
@@ -123,6 +122,8 @@ fun <M> HasOnItemSelectedListener<M>.onItemSelected(
         override fun onSelected(item: M, isSelected: Boolean, isSelectedByUser: Boolean) {
             onSelected.invoke(item, isSelected, isSelectedByUser)
         }
+
+        override fun onSelectedRemoved(adapter: SelectableAdapter<M, *>, items: List<M>) {}
     }
     addOnItemSelectedListener(listener)
 
@@ -140,6 +141,8 @@ fun <M : Any> List<SelectableAdapter<M, *>>.onItemSelected(
         override fun onSelected(item: M, isSelected: Boolean, isSelectedByUser: Boolean) {
             onSelected.invoke(item, isSelected, isSelectedByUser)
         }
+
+        override fun onSelectedRemoved(adapter: SelectableAdapter<M, *>, items: List<M>) {}
     }
 
     forEach { it.addOnItemSelectedListener(listener) }

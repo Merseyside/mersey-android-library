@@ -84,7 +84,6 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
         }
 
         override fun areItemsTheSame(obj1: T, obj2: T): Boolean {
-            "here".log()
             return obj1.areItemsTheSame(obj2.getItem())
         }
     }
@@ -188,8 +187,8 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
         }
     }
 
-    override fun update(updateRequest: UpdateRequest<M>) {
-        if (updateRequest.isDeleteOld) {
+    override fun update(updateRequest: UpdateRequest<M>): Boolean {
+        val removed = if (updateRequest.isDeleteOld) {
             val removeList = modelList
                 .filter { model ->
                     if (model.isDeletable()) {
@@ -201,8 +200,8 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
                     }
                 }
 
-            removeList(removeList)
-        }
+            removeModels(removeList)
+        } else false
 
         val addList = ArrayList<M>()
         for (obj in updateRequest.list) {
@@ -218,6 +217,8 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
         if (addList.isNotEmpty()) {
             add(addList)
         }
+
+        return addList.isNotEmpty() || removed
     }
 
     override fun update(obj: M): Boolean {
@@ -250,13 +251,13 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
 
     private fun replaceAll(models: List<T>) {
         sortedList.batchedUpdate {
-            val sortedModels = getAll().toSet()
+            val sortedModels = sortedList.getAll().toSet()
             val subtract = models.subtract(sortedModels)
 
             val subtractSorted = sortedModels.subtract(models.toSet()).toList()
-            removeAll(subtractSorted)
 
-            addAll(subtract)
+            sortedList.removeAll(subtractSorted)
+            sortedList.addAll(subtract)
         }
     }
 
@@ -343,7 +344,7 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
 
         if (listToSet != null &&
             this.sortedList.isNotEquals(listToSet)
-        ) setList(listToSet)
+        ) replaceAll(listToSet)
 
         return listToSet?.size ?: 0
     }
@@ -427,7 +428,7 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
         notAppliedFiltersMap.clear()
         filterKeyMap.clear()
 
-        setList(modelList)
+        replaceAll(modelList)
     }
 
     override fun filter(obj: T, query: String): Boolean {
@@ -461,14 +462,14 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
 
     override fun remove(list: List<M>) {
         val modelList = list.mapNotNull { getModelByObj(it) }
-        removeList(modelList)
+        removeModels(modelList)
     }
 
     /**
      * Be sure your model's compareTo method handles equal items!
      */
-    private fun removeList(list: List<T>) {
-        if (list.isNotEmpty()) {
+    internal open fun removeModels(list: List<T>): Boolean {
+        return if (list.isNotEmpty()) {
             modelList.removeAll(list)
             filterKeyMap.clear()
             filterKeyMap.forEach { entry ->
@@ -478,7 +479,8 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
             sortedList.batchedUpdate {
                 removeAll(list)
             }
-        }
+            true
+        } else false
     }
 
     private fun remove(model: T) {

@@ -10,17 +10,7 @@ class ColorItemViewModel(obj: HexColor) : ComparableAdapterViewModel<HexColor>(o
     }
 
     override fun compareTo(obj: HexColor): Int {
-        return when {
-            obj.color < this.obj.color -> {
-                1
-            }
-            obj.color > this.obj.color -> {
-                -1
-            }
-            else -> {
-                0
-            }
-        }
+        return this.obj.color.compareTo(obj.color)
     }
 
     override fun areItemsTheSame(obj: HexColor): Boolean {
