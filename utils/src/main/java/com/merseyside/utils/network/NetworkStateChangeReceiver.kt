@@ -4,21 +4,29 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 
-class NetworkStateChangeReceiver() : BroadcastReceiver() {
+class NetworkStateChangeReceiver : BroadcastReceiver() {
 
-    private var listener: NetworkStateListener? = null
+    private var listeners: MutableList<NetworkStateListener> = mutableListOf()
 
     fun setStateListener(listener: NetworkStateListener) {
-        this.listener = listener
+        listeners.add(listener)
     }
 
     override fun onReceive(context: Context, intent: Intent) {
         if ("android.net.conn.CONNECTIVITY_CHANGE" == intent.action) {
             if (isOnline(context)) {
-                listener?.onConnectionState(true)
+                notifyListeners(true)
             } else {
-                listener?.onConnectionState(false)
+                notifyListeners(false)
             }
         }
+    }
+
+    private fun notifyListeners(state: Boolean) {
+        listeners.forEach { it.onConnectionState(state) }
+    }
+
+    fun removeStateListener(listener: NetworkStateListener) {
+        listeners.remove(listener)
     }
 }

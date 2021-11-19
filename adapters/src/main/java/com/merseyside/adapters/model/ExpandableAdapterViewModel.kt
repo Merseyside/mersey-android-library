@@ -2,7 +2,6 @@ package com.merseyside.adapters.model
 
 import androidx.annotation.CallSuper
 import androidx.databinding.ObservableBoolean
-import androidx.databinding.ObservableField
 import com.merseyside.utils.mainThreadIfNeeds
 
 abstract class ExpandableAdapterViewModel<M, T: Any>(
@@ -11,7 +10,7 @@ abstract class ExpandableAdapterViewModel<M, T: Any>(
     private var isExpandable: Boolean = IS_EXPANDABLE_DEFAULT
 ): SelectableAdapterViewModel<M>(obj, isExpanded && isExpandable) {
 
-    val isExpandedObservable = ObservableField<Boolean>(isExpanded)
+    val isExpandedObservable = ObservableBoolean(isExpanded)
     val isExpandableObservable = ObservableBoolean()
 
     init {
@@ -21,20 +20,21 @@ abstract class ExpandableAdapterViewModel<M, T: Any>(
 
     fun setExpanded(isExpanded: Boolean) {
         mainThreadIfNeeds {
-            this.isExpanded = isExpanded
+            if (this.isExpanded != isExpanded) {
+                this.isExpanded = isExpanded
 
-            if (isExpandedObservable() != isExpanded) {
                 this.isExpandedObservable.set(isExpanded)
-            }
 
-            onExpanded(isExpanded)
+                onExpanded(isExpanded)
+            }
         }
     }
 
     fun setExpandable(isExpandable: Boolean) {
         mainThreadIfNeeds {
+            if (this.isExpandable != isExpandable) {
+                this.isExpandable = isExpandable
 
-            if (this.isExpandableObservable() != isExpandable) {
                 this.isExpandableObservable.set(isExpandable)
             }
         }
@@ -46,14 +46,6 @@ abstract class ExpandableAdapterViewModel<M, T: Any>(
 
     fun isExpandable(): Boolean {
         return isExpandable
-    }
-
-    fun isExpandedObservable(): Boolean {
-        return isExpandedObservable.get() ?: IS_EXPANDED_DEFAULT
-    }
-
-    fun isExpandableObservable(): Boolean {
-        return isExpandableObservable.get()
     }
 
     @CallSuper
@@ -83,5 +75,4 @@ abstract class ExpandableAdapterViewModel<M, T: Any>(
         private const val IS_EXPANDED_DEFAULT = false
         private const val IS_EXPANDABLE_DEFAULT = true
     }
-
 }

@@ -142,3 +142,7 @@ fun <T: Any, R: Any> Collection<T?>.whenAnyNotNull(block: (List<T>) -> R) {
         block(this.filterNotNull())
     }
 }
+
+inline fun <T, R> Iterable<T>.flatMapNotNull(transform: (T) -> Iterable<R>?): List<R> {
+    return flatMap { transform(it) ?: emptyList()  }
+}

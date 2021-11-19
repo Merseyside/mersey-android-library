@@ -71,12 +71,12 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
             notifyItemMoved(fromPosition, toPosition)
         }
 
-        override fun compare(o1: T, o2: T): Int {
-            return o1.compareTo(o2.getItem())
-        }
-
         override fun onChanged(position: Int, count: Int) {
             notifyItemRangeChanged(position, count)
+        }
+
+        override fun compare(o1: T, o2: T): Int {
+            return o1.compareTo(o2.getItem())
         }
 
         override fun areContentsTheSame(obj1: T, obj2: T): Boolean {

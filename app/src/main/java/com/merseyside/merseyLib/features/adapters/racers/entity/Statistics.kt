@@ -13,7 +13,7 @@ class Statistics(
     private val racersStats: MutableMap<RacerModel, MutableList<MutableList<TimeUnit>>> = LinkedHashMap()
 
     init {
-        racers.forEach { racersStats[it] = mutableListOf() }
+        racers.forEach { racersStats[it] = mutableListOf(mutableListOf()) }
     }
 
     fun setCheckpointTime(racer: RacerModel, time: TimeUnit) {

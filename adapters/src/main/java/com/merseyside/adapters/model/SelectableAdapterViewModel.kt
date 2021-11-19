@@ -11,8 +11,7 @@ abstract class SelectableAdapterViewModel<M>(
     private var isSelectable: Boolean = IS_SELECTABLE_DEFAULT
 ) : ComparableAdapterViewModel<M>(obj) {
 
-    private var isSelectEnabled: Boolean =
-        IS_SELECT_ENABLE_DEFAULT
+    private var isSelectEnabled: Boolean = IS_SELECT_ENABLE_DEFAULT
 
     var selectedObservable = ObservableField(isSelected).apply {
         onChange { _, value, isInitial ->
@@ -22,8 +21,8 @@ abstract class SelectableAdapterViewModel<M>(
         }
     }
 
-    var selectableObservable = ObservableBoolean()
-    var selectEnabledObservable = ObservableBoolean(isSelectEnabled)
+    val selectableObservable = ObservableBoolean()
+    val selectEnabledObservable = ObservableBoolean(isSelectEnabled)
 
     init {
         setSelectable(isSelectable)
@@ -32,28 +31,28 @@ abstract class SelectableAdapterViewModel<M>(
 
     fun setSelected(isSelected: Boolean, notifyItem: Boolean = true) {
         mainThreadIfNeeds {
-            this.isSelected = isSelected
+            if (this.isSelected != isSelected) {
+                this.isSelected = isSelected
 
-            if (isSelectedObservable() != isSelected) {
                 this.selectedObservable.set(isSelected)
-            }
 
-            if (notifyItem) {
-                onSelectedChanged(isSelected)
+                if (notifyItem) {
+                    onSelectedChanged(isSelected)
+                }
             }
         }
     }
 
     fun setSelectable(isSelectable: Boolean, isNotifyItem: Boolean = false) {
         mainThreadIfNeeds {
-            this.isSelectable = isSelectable
+            if (this.isSelectable != isSelectable) {
+                this.isSelectable = isSelectable
 
-            if (isSelectableObservable() != isSelectable) {
                 this.selectableObservable.set(isSelectable)
-            }
 
-            if (isNotifyItem) {
-                onSelectableChanged(isSelectable)
+                if (isNotifyItem) {
+                    onSelectableChanged(isSelectable)
+                }
             }
         }
     }
@@ -62,7 +61,7 @@ abstract class SelectableAdapterViewModel<M>(
         mainThreadIfNeeds {
             this.isSelectEnabled = isSelectEnabled
 
-            if (isSelectEnabledObservable() != isSelectEnabled) {
+            if (selectEnabledObservable.get() != isSelectEnabled) {
                 this.selectEnabledObservable.set(isSelectEnabled)
             }
 
@@ -70,18 +69,6 @@ abstract class SelectableAdapterViewModel<M>(
                 notifySelectEnabled(isSelectEnabled)
             }
         }
-    }
-
-    private fun isSelectedObservable(): Boolean {
-        return selectedObservable.get() ?: IS_SELECTED_DEFAULT
-    }
-
-    private fun isSelectableObservable(): Boolean {
-        return selectableObservable.get()
-    }
-
-    private fun isSelectEnabledObservable(): Boolean {
-        return selectEnabledObservable.get()
     }
 
     fun isSelected(): Boolean {

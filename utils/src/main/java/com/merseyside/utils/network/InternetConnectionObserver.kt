@@ -1,5 +1,6 @@
 package com.merseyside.utils.network
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.IntentFilter
 import android.net.ConnectivityManager
@@ -9,43 +10,62 @@ import android.os.Build
 import androidx.annotation.RequiresPermission
 import com.merseyside.utils.mainThread
 
+
+@SuppressLint("MissingPermission")
 class InternetConnectionObserver(private val context: Context) {
 
     private var broadcastReceiver: NetworkStateChangeReceiver? = null
 
-    @RequiresPermission(android.Manifest.permission.ACCESS_NETWORK_STATE)
-    fun registerReceiver(listener: NetworkStateListener) {
+    private var listeners: MutableList<NetworkStateListener> = mutableListOf()
 
+
+    init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 
             getConnectivityManager(context).registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {
                 override fun onAvailable(network: Network) {
                     mainThread {
-                        listener.onConnectionState(true)
+                        notifyListeners(true)
                     }
                 }
 
                 override fun onLost(network: Network) {
                     mainThread {
-                        listener.onConnectionState(false)
+                        notifyListeners(false)
                     }
                 }
             })
-        } else {
-            broadcastReceiver = NetworkStateChangeReceiver()
-            broadcastReceiver!!.setStateListener(listener)
+        }
+    }
 
-            val intentFilter = IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
-            context.registerReceiver(broadcastReceiver!!, intentFilter)
+    fun registerReceiver(listener: NetworkStateListener) {
+        listeners.add(listener)
+
+        if (broadcastReceiver == null && Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            broadcastReceiver = NetworkStateChangeReceiver().apply {
+                setStateListener(listener)
+
+                val intentFilter = IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
+                context.registerReceiver(this, intentFilter)
+            }
         }
     }
 
     @Deprecated("On API >= 24 DefaultNetworkCallback is used and doesn't need to be unregistered")
-    fun unregisterReceiver() {
-        if (broadcastReceiver != null) {
-            context.unregisterReceiver(broadcastReceiver)
-            broadcastReceiver = null
+    fun unregisterReceiver(listener: NetworkStateListener) {
+        listeners.remove(listener)
+
+        broadcastReceiver?.let {
+            it.removeStateListener(listener)
+            if (listeners.isEmpty()) {
+                context.unregisterReceiver(broadcastReceiver)
+                broadcastReceiver = null
+            }
         }
+    }
+
+    private fun notifyListeners(state: Boolean) {
+        listeners.forEach { it.onConnectionState(state) }
     }
 
     companion object {

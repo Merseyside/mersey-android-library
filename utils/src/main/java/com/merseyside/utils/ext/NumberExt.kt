@@ -7,6 +7,10 @@ fun Float.trimTrailingZero(): String {
     return this.toString().trimTrailingZero()
 }
 
+fun Double.trimTrailingZero(): String {
+    return this.toString().trimTrailingZero()
+}
+
 fun Number.toBoolean(): Boolean {
     return this != 0
 }
@@ -84,3 +88,6 @@ fun Short.isNotZero() = !this.isZero()
 fun Number.getNumberOfDigits(): Int {
     return toString().length
 }
+
+fun Double.round(decimals: Int = 2): Double = "%.${decimals}f".format(this).toDouble()
+fun Float.round(decimals: Int = 2): Float = "%.${decimals}f".format(this).toFloat()

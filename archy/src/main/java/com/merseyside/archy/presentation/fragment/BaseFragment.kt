@@ -70,26 +70,40 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
     @CallSuper
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(RESULT_CODE_KEY)) {
-                val resultCode = savedInstanceState.getInt(RESULT_CODE_KEY)
-                this.requestCode = savedInstanceState.getInt(REQUEST_CODE_KEY)
+            with(savedInstanceState) {
+                if (savedInstanceState.containsKey(RESULT_CODE_KEY)) {
 
-                var bundle: Bundle? = null
-                if (savedInstanceState.containsKey(RESULT_BUNDLE_KEY)) {
-                    bundle = savedInstanceState.getBundle(RESULT_BUNDLE_KEY)
+                    val bundle = if (containsKey(RESULT_BUNDLE_KEY)) {
+                        getBundle(RESULT_BUNDLE_KEY)
+                    } else null
+
+                    setOnResultFragmentCodes(
+                        requestCode = getInt(REQUEST_CODE_KEY),
+                        resultCode = getInt(RESULT_CODE_KEY),
+                        bundle = bundle
+                    )
+
+                } else if (containsKey(REQUEST_CODE_KEY)) {
+                    requestCode = savedInstanceState.getInt(REQUEST_CODE_KEY)
                 }
-
-                this.fragmentResult = FragmentResult(resultCode, requestCode, bundle)
-            } else if (savedInstanceState.containsKey(REQUEST_CODE_KEY)) {
-                this.requestCode = savedInstanceState.getInt(REQUEST_CODE_KEY)
             }
+
+            restoreLanguage(savedInstanceState)
         }
 
-        restoreLanguage(savedInstanceState)
         setOrientation(resources, savedInstanceState)
         snackbarManager = baseActivity.snackbarManager
 
         return inflateView(inflater, container)
+    }
+
+    protected fun setOnResultFragmentCodes(
+        requestCode: Int,
+        resultCode: Int,
+        bundle: Bundle? = null
+    ) {
+        setRequestCode(requestCode)
+        this.fragmentResult = FragmentResult(resultCode, requestCode, bundle)
     }
     
     protected open fun inflateView(
@@ -286,8 +300,8 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         outState.putString(LANGUAGE_KEY, currentLanguage)
     }
 
-    private fun restoreLanguage(savedInstanceState: Bundle?) {
-        if (savedInstanceState != null && savedInstanceState.containsKey(LANGUAGE_KEY)) {
+    private fun restoreLanguage(savedInstanceState: Bundle) {
+        if (savedInstanceState.containsKey(LANGUAGE_KEY)) {
             currentLanguage = savedInstanceState.getString(LANGUAGE_KEY, "")
         }
     }
@@ -297,7 +311,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
     }
 
     open fun goBack() {
-        requireActivity().onBackPressed()
+        baseActivity.goBack()
     }
 
     open fun onFragmentResult(resultCode: Int, requestCode: Int, bundle: Bundle? = null) {}

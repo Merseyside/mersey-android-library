@@ -16,7 +16,7 @@ interface IActivityView : IView {
 
     fun registerKeyboardListener(listener: OnKeyboardStateListener): Unregistrar
 
-    fun onBackPressed()
+    fun goBack()
 
     fun getLanguage(): String?
 

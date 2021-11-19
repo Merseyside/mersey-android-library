@@ -23,7 +23,6 @@ import com.merseyside.archy.utils.SnackbarManager
 import com.merseyside.utils.LocaleManager
 import com.merseyside.utils.Logger
 import com.merseyside.utils.ext.getLocalizedContext
-import com.merseyside.utils.ext.log
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.Unregistrar
 
@@ -154,7 +153,7 @@ abstract class BaseActivity : AppCompatActivity(),
     }
 
     override fun onBackPressed() {
-        val fragment = getCurrentFragment().log(prefix = "current")
+        val fragment = getCurrentFragment()
 
         if (fragment != null && fragment is OnBackPressedListener) {
             if (fragment.onBackPressed()) {
@@ -169,29 +168,25 @@ abstract class BaseActivity : AppCompatActivity(),
         }
     }
 
+    override fun goBack() {
+        super.onBackPressed()
+    }
+
     override fun handleError(throwable: Throwable) {}
 
     @IdRes
     abstract fun getFragmentContainer(): Int?
 
-    protected fun getCurrentFragment(res: Int? = getFragmentContainer().log(prefix = "container")): BaseFragment? {
-
-        return res?.let {
-            with(supportFragmentManager.findFragmentById(res)) {
-                when (this) {
-                    is BaseFragment -> {
-                        this
-                    }
-                    is NavHostFragment -> {
-                        this.getChildFragmentManager().fragments[0] as BaseFragment
-                    }
-                    else -> {
-                        null
-                    }
-                }
+    fun getCurrentFragment(res: Int? = getFragmentContainer()) = res?.let {
+        with(supportFragmentManager.findFragmentById(res)) {
+            when (this) {
+                is BaseFragment -> this
+                is NavHostFragment -> this.getChildFragmentManager().fragments[0] as BaseFragment
+                else -> null
             }
         }
     }
+
 
     override fun showAlertDialog(
         title: String?,
