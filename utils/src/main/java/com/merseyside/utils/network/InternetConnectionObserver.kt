@@ -10,14 +10,10 @@ import android.os.Build
 import androidx.annotation.RequiresPermission
 import com.merseyside.utils.mainThread
 
-
 @SuppressLint("MissingPermission")
 class InternetConnectionObserver(private val context: Context) {
-
     private var broadcastReceiver: NetworkStateChangeReceiver? = null
-
     private var listeners: MutableList<NetworkStateListener> = mutableListOf()
-
 
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -40,6 +36,7 @@ class InternetConnectionObserver(private val context: Context) {
 
     fun registerReceiver(listener: NetworkStateListener) {
         listeners.add(listener)
+        listener.onConnectionState(isOnline(context))
 
         if (broadcastReceiver == null && Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             broadcastReceiver = NetworkStateChangeReceiver().apply {

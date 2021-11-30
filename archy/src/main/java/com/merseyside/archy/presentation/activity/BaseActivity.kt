@@ -23,6 +23,7 @@ import com.merseyside.archy.utils.SnackbarManager
 import com.merseyside.utils.LocaleManager
 import com.merseyside.utils.Logger
 import com.merseyside.utils.ext.getLocalizedContext
+import com.merseyside.utils.ext.log
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.Unregistrar
 

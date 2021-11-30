@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
+import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import com.merseyside.utils.attributes.AttributeHelper
@@ -17,10 +18,14 @@ class RoundTextView(
     style: Int
 ) : AppCompatTextView(context, attributeSet, style) {
 
-    private var cornerRadius: Float = 0F
-    private var strokeWidth: Float = 0F
-    private var fillColor: Int = 0
-    private var strokeColor: Int = 2
+    var cornerRadius: Float = 0F
+        private set
+    var strokeWidth: Float = 0F
+        private set
+    var fillColor: Int = 0
+        private set
+    var strokeColor: Int = 2
+        private set
 
     constructor(
         context: Context,
@@ -100,5 +105,25 @@ class RoundTextView(
         canvas.drawRoundRect(rect, cornerRadius, cornerRadius, paint)
         canvas.drawRoundRect(strokeRect, cornerRadius, cornerRadius, strokePaint)
         super.onDraw(canvas)
+    }
+
+    fun setCornerRadius(radius: Float) {
+        this.cornerRadius = radius
+        invalidate()
+    }
+
+    fun setStrokeWidth(width: Float) {
+        this.strokeWidth = width
+        invalidate()
+    }
+
+    fun setFillColor(@ColorInt color: Int) {
+        this.fillColor = color
+        invalidate()
+    }
+
+    fun strokeColor(@ColorInt color: Int) {
+        this.strokeColor = color
+        invalidate()
     }
 }

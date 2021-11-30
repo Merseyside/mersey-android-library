@@ -13,7 +13,7 @@ abstract class SelectableAdapterViewModel<M>(
 
     private var isSelectEnabled: Boolean = IS_SELECT_ENABLE_DEFAULT
 
-    var selectedObservable = ObservableField(isSelected).apply {
+    val selectedObservable = ObservableField(isSelected).apply {
         onChange { _, value, isInitial ->
             if (!isInitial && value != isSelected) {
                 onClick()

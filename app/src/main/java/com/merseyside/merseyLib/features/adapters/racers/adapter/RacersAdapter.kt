@@ -12,6 +12,7 @@ import com.merseyside.merseyLib.features.adapters.racers.model.CheckpointItemVie
 import com.merseyside.merseyLib.time.Millis
 import com.merseyside.utils.ext.setTextColorAttr
 import com.merseyside.merseyLib.time.compareTo
+import com.merseyside.utils.ext.log
 import kotlinx.coroutines.CoroutineScope
 
 class RacersAdapter(scope: CoroutineScope) :

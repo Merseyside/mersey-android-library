@@ -10,8 +10,8 @@ abstract class ExpandableAdapterViewModel<M, T: Any>(
     private var isExpandable: Boolean = IS_EXPANDABLE_DEFAULT
 ): SelectableAdapterViewModel<M>(obj, isExpanded && isExpandable) {
 
-    val isExpandedObservable = ObservableBoolean(isExpanded)
-    val isExpandableObservable = ObservableBoolean()
+    val expandedObservable = ObservableBoolean(isExpanded)
+    val expandableObservable = ObservableBoolean()
 
     init {
         setExpanded(isExpanded)
@@ -23,7 +23,7 @@ abstract class ExpandableAdapterViewModel<M, T: Any>(
             if (this.isExpanded != isExpanded) {
                 this.isExpanded = isExpanded
 
-                this.isExpandedObservable.set(isExpanded)
+                this.expandedObservable.set(isExpanded)
 
                 onExpanded(isExpanded)
             }
@@ -35,7 +35,7 @@ abstract class ExpandableAdapterViewModel<M, T: Any>(
             if (this.isExpandable != isExpandable) {
                 this.isExpandable = isExpandable
 
-                this.isExpandableObservable.set(isExpandable)
+                this.expandableObservable.set(isExpandable)
             }
         }
     }
