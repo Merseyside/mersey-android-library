@@ -110,15 +110,11 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         inflater: LayoutInflater,
         container: ViewGroup?,
         @LayoutRes layoutId: Int = getLayoutId()
-    ): View? {
-        return inflater.inflate(layoutId, container, false)
-    }
+    ) = inflater.inflate(layoutId, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getToolbar()?.let {
-            baseActivity.setFragmentToolbar(it)
-        }
+        baseActivity.setFragmentToolbar(getToolbar())
 
         baseActivity.getLanguage().run {
             if (currentLanguage.isNotNullAndEmpty() && this != currentLanguage) {

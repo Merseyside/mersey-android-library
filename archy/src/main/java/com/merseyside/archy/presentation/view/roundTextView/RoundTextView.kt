@@ -114,16 +114,19 @@ class RoundTextView(
 
     fun setStrokeWidth(width: Float) {
         this.strokeWidth = width
+        strokePaint.strokeWidth = width
         invalidate()
     }
 
     fun setFillColor(@ColorInt color: Int) {
         this.fillColor = color
+        paint.color = color
         invalidate()
     }
 
     fun strokeColor(@ColorInt color: Int) {
         this.strokeColor = color
+        strokePaint.color = color
         invalidate()
     }
 }

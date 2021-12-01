@@ -23,7 +23,6 @@ import com.merseyside.archy.utils.SnackbarManager
 import com.merseyside.utils.LocaleManager
 import com.merseyside.utils.Logger
 import com.merseyside.utils.ext.getLocalizedContext
-import com.merseyside.utils.ext.log
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.Unregistrar
 
@@ -164,13 +163,18 @@ abstract class BaseActivity : AppCompatActivity(),
             super.onBackPressed()
         }
 
-        if (fragment?.getToolbar() != null) {
-            setFragmentToolbar(null)
-        }
+        onGoBack()
     }
 
     override fun goBack() {
         super.onBackPressed()
+        onGoBack()
+    }
+
+    private fun onGoBack() {
+        if (getCurrentFragment()?.getToolbar() != null) {
+            setFragmentToolbar(null)
+        }
     }
 
     override fun handleError(throwable: Throwable) {}

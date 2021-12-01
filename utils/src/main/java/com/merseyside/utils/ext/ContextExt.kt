@@ -148,6 +148,10 @@ fun Context.getDimension(@DimenRes res: Int): Float {
     return resources.getDimension(res)
 }
 
+fun Context.getDimensionPixelSize(@DimenRes res: Int): Int {
+    return resources.getDimensionPixelSize(res)
+}
+
 fun Context.getDrawableByName(name: String): Drawable? {
     return ContextCompat.getDrawable(this, getDrawableResourceIdByName(name))
 }

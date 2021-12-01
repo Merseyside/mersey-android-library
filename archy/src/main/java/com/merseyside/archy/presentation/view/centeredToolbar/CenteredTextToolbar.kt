@@ -8,8 +8,9 @@ import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.widget.TextViewCompat
 import com.merseyside.archy.R
+import java.lang.Exception
 
-class CenteredToolbar(context: Context, attributeSet: AttributeSet) :
+class CenteredTextToolbar(context: Context, attributeSet: AttributeSet) :
     Toolbar(context, attributeSet) {
     private var centeredTitleTextView: TextView? = null
 
@@ -42,6 +43,7 @@ class CenteredToolbar(context: Context, attributeSet: AttributeSet) :
                 }
             }
         }
-        return centeredTitleTextView as TextView
+
+        return centeredTitleTextView ?: throw Exception()
     }
 }

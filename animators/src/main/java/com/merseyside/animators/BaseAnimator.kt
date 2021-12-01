@@ -58,7 +58,7 @@ abstract class BaseAnimator {
     fun start() {
         isReverse = false
 
-        delayedMainThread(Millis("10")) {
+        delayedMainThread(Millis(10)) {
             play()
         }
     }

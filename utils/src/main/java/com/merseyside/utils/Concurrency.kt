@@ -24,23 +24,23 @@ fun runThread(onThread: () -> Unit): Thread {
     return Thread { onThread() }.apply { start() }
 }
 
-fun delayedMainThread(delay: TimeUnit, runnable: Runnable): HandlerCanceller {
+fun delayedMainThread(delay: TimeUnit, runnable: Runnable): CancellableHandler {
     val handler = Handler(Looper.getMainLooper())
     handler.postDelayed(runnable, delay.millis)
     return handler.toHandlerCanceller(runnable)
 }
 
-fun delayedMainThread(delay: TimeUnit, onMain: () -> Unit): HandlerCanceller {
+fun delayedMainThread(delay: TimeUnit, onMain: () -> Unit): CancellableHandler {
     return delayedMainThread(delay, Runnable { onMain.invoke() })
 }
 
-fun delayedThread(delay: TimeUnit, runnable: Runnable): HandlerCanceller {
+fun delayedThread(delay: TimeUnit, runnable: Runnable): CancellableHandler {
     val handler = Handler()
     handler.postDelayed(runnable, delay.millis)
     return handler.toHandlerCanceller(runnable)
 }
 
-fun delayedThread(delay: TimeUnit, onThread: () -> Unit): HandlerCanceller {
+fun delayedThread(delay: TimeUnit, onThread: () -> Unit): CancellableHandler {
     return delayedThread(delay, Runnable { onThread.invoke() })
 }
 

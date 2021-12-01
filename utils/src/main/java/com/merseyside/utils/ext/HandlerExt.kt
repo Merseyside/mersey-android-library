@@ -1,8 +1,8 @@
 package com.merseyside.utils.ext
 
 import android.os.Handler
-import com.merseyside.utils.HandlerCanceller
+import com.merseyside.utils.CancellableHandler
 
-fun Handler.toHandlerCanceller(runnable: Runnable): HandlerCanceller {
-    return HandlerCanceller(this, runnable)
+fun Handler.toHandlerCanceller(runnable: Runnable): CancellableHandler {
+    return CancellableHandler(this, runnable)
 }
