@@ -8,7 +8,7 @@ abstract class BundleAwareViewModelFactory<T: ParcelableViewModel> (
 ) : BaseViewModelFactory<T>() {
 
     @Suppress("UNCHECKED_CAST")
-    override fun <M: ViewModel?> create(modelClass: Class<M>): M {
+    override fun <M: ViewModel> create(modelClass: Class<M>): M {
         val viewModel = getViewModel()
 
         if (bundle != null && !bundle.isEmpty) {
