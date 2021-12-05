@@ -1,5 +1,5 @@
 plugins {
-    id(Plugins.androidLibrary)
+    id(Plugins.androidConvention)
     id(Plugins.kotlinAndroid)
     id(Plugins.kotlinKapt)
     id(Plugins.kotlinSerialization)
@@ -10,28 +10,6 @@ group = Application.groupId
 version = Application.version
 
 android {
-    compileSdkVersion(Application.compileSdk)
-
-    defaultConfig {
-        minSdkVersion(Application.minSdk)
-        targetSdkVersion(Application.targetSdk)
-        versionCode = Application.versionCode
-        versionName = Application.version
-    }
-
-    buildTypes {
-        getByName("debug") {
-            isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-        }
-
-        getByName("release") {
-            isMinifyEnabled = false
-            consumerProguardFiles("proguard-rules.pro")
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-        }
-    }
-
     buildFeatures.dataBinding = true
 }
 

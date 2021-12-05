@@ -16,6 +16,10 @@ android {
 
         multiDexEnabled = true
         vectorDrawables.useSupportLibrary = true
+
+        lintOptions {
+            isAbortOnError = false
+        }
     }
 
     buildTypes {
@@ -65,8 +69,8 @@ android {
 }
 
 val android = listOf(
-    androidLibs.coroutines,
     common.serialization,
+    androidLibs.coroutines,
     androidLibs.recyclerView,
     androidLibs.navigation,
     androidLibs.navigationUi,

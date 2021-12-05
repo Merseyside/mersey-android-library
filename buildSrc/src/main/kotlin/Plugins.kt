@@ -1,8 +1,9 @@
 object Plugins {
-    val androidApplication = "com.android.application"
-    val kotlinKapt = "kotlin-kapt"
-    val kotlinAndroid = "kotlin-android"
-    val mavenPublish = "maven-publish"
-    val androidLibrary = "com.android.library"
-    val kotlinSerialization = "kotlinx-serialization"
+    const val androidApplication = "com.android.application"
+    const val androidConvention = "android-convention"
+    const val kotlinKapt = "kotlin-kapt"
+    const val kotlinAndroid = "kotlin-android"
+    const val mavenPublish = "maven-publish"
+    const val androidLibrary = "com.android.library"
+    const val kotlinSerialization = "kotlinx-serialization"
 }

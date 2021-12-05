@@ -1,5 +1,5 @@
 plugins {
-    id(Plugins.androidLibrary)
+    id(Plugins.androidConvention)
     id(Plugins.kotlinAndroid)
     id(Plugins.kotlinKapt)
     id(Plugins.kotlinSerialization)
@@ -8,28 +8,6 @@ plugins {
 
 group = Application.groupId
 version = Application.version
-
-android {
-    compileSdkVersion(Application.compileSdk)
-
-    defaultConfig {
-        minSdkVersion(Application.minSdk)
-        targetSdkVersion(Application.targetSdk)
-        versionCode = Application.versionCode
-        versionName = Application.version
-    }
-
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-            consumerProguardFiles("proguard-rules.pro")
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
-}
 
 val android = listOf(
     androidLibs.appCompat,
