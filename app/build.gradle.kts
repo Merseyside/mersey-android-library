@@ -1,6 +1,6 @@
 plugins {
     id(Plugins.androidApplication)
-    id(Plugins.kotlinAndroid)
+    id(Plugins.kotlinConvention)
     id(Plugins.kotlinKapt)
     id(Plugins.kotlinSerialization)
 }
@@ -17,7 +17,7 @@ android {
         multiDexEnabled = true
         vectorDrawables.useSupportLibrary = true
 
-        lintOptions {
+        lint {
             isAbortOnError = false
         }
     }
@@ -33,7 +33,6 @@ android {
 
         getByName("release") {
             isMinifyEnabled = false
-            consumerProguardFiles("proguard-rules.pro")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -53,9 +52,7 @@ android {
         exclude("META-INF/*.kotlin_module")
     }
 
-    buildFeatures {
-        dataBinding = true
-    }
+    buildFeatures.dataBinding = true
 
     sourceSets.getByName("main") {
         res.srcDir("src/main/res/")

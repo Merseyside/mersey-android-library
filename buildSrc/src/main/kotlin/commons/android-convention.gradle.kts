@@ -8,8 +8,6 @@ android {
     defaultConfig {
         minSdkVersion(Application.minSdk)
         targetSdkVersion(Application.targetSdk)
-        versionCode = Application.versionCode
-        versionName = Application.version
     }
 
     lintOptions {
@@ -33,5 +31,10 @@ android {
                 "proguard-rules.pro"
             )
         }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 }

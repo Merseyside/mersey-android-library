@@ -1,6 +1,6 @@
 plugins {
     id(Plugins.androidConvention)
-    id(Plugins.kotlinAndroid)
+    id(Plugins.kotlinConvention)
     id(Plugins.kotlinKapt)
     id(Plugins.kotlinSerialization)
     id(Plugins.mavenPublish)
