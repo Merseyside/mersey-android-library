@@ -3,9 +3,9 @@ package com.merseyside.archy.presentation.view
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Bundle
-import com.merseyside.utils.serialization.deserialize
-import com.merseyside.utils.serialization.serialize
 import com.merseyside.archy.presentation.activity.Orientation
+import com.merseyside.merseyLib.kotlin.serialization.deserialize
+import com.merseyside.merseyLib.kotlin.serialization.serialize
 
 interface OrientationHandler {
 

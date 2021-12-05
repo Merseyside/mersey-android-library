@@ -19,7 +19,7 @@ import com.merseyside.archy.presentation.view.OnKeyboardStateListener
 import com.merseyside.archy.presentation.view.OrientationHandler
 import com.merseyside.archy.presentation.view.localeViews.ILocaleManager
 import com.merseyside.archy.utils.SnackbarManager
-import com.merseyside.utils.ext.isNotNullAndEmpty
+import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
 
 abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleManager {
 

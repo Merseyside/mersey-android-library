@@ -3,7 +3,7 @@ package com.merseyside.adapters.utils
 import com.merseyside.adapters.base.SelectableAdapter
 import com.merseyside.adapters.callback.HasOnItemSelectedListener
 import com.merseyside.adapters.callback.OnItemSelectedListener
-import com.merseyside.utils.ext.isNotZero
+import com.merseyside.merseyLib.kotlin.extensions.isNotZero
 
 class SelectableAdapterGroup<M : Any>(
     var selectableMode: SelectableAdapter.SelectableMode = SelectableAdapter.SelectableMode.SINGLE,

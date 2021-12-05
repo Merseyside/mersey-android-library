@@ -8,8 +8,8 @@ import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
+import com.merseyside.merseyLib.kotlin.extensions.isZero
 import com.merseyside.utils.attributes.AttributeHelper
-import com.merseyside.utils.ext.isZero
 import kotlin.math.min
 
 class RoundTextView(

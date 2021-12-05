@@ -46,6 +46,7 @@ val android = listOf(
 )
 
 dependencies {
+    api("io.github.merseyside:kotlin-ext:1.0.1")
     api(common.merseyLib.time)
     android.forEach { lib -> implementation(lib) }
 }

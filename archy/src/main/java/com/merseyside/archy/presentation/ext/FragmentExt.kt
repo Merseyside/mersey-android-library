@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.merseyside.archy.presentation.model.ParcelableViewModel
+import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
 import com.merseyside.utils.ext.isNotNullAndEmpty
 
 @Suppress("UNCHECKED_CAST")

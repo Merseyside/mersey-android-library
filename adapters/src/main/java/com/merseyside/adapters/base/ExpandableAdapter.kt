@@ -4,8 +4,8 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.model.ExpandableAdapterViewModel
 import com.merseyside.adapters.view.TypedBindingHolder
-import com.merseyside.utils.ext.isNotNullAndEmpty
-import com.merseyside.utils.ext.remove
+import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
+import com.merseyside.merseyLib.kotlin.extensions.remove
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

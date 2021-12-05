@@ -2,9 +2,9 @@ package com.merseyside.utils.ext
 
 import android.os.Bundle
 import android.os.Parcelable
-import com.merseyside.utils.serialization.JsonConfigurator
-import com.merseyside.utils.serialization.deserialize
-import com.merseyside.utils.serialization.serialize
+import com.merseyside.merseyLib.kotlin.serialization.JsonConfigurator
+import com.merseyside.merseyLib.kotlin.serialization.deserialize
+import com.merseyside.merseyLib.kotlin.serialization.serialize
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.json.Json

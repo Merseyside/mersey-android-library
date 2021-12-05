@@ -10,18 +10,6 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-fun randomBool(positiveProbability: Float = 0.5F): Boolean {
-    return when {
-        positiveProbability >= 1f -> true
-        positiveProbability <= 0f -> false
-
-        else -> {
-            val rand = Random()
-            rand.nextFloat() <= positiveProbability
-        }
-    }
-}
-
 fun convertPixelsToDp(context: Context, px: Int): Float {
     val density = context.resources.displayMetrics.density
     return px / density
@@ -32,38 +20,9 @@ fun convertDpToPixel(context: Context, dp: Float): Int {
     return (dp * density).toInt()
 }
 
-fun generateRandomString(length: Int): String {
-    if (length > 0) {
-        val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
-
-        return (1..length)
-            .map { kotlin.random.Random.nextInt(0, charPool.size) }
-            .map(charPool::get)
-            .joinToString("")
-    }
-
-    return ""
-}
-
 fun isExternalStorageReadable(): Boolean {
     val state = Environment.getExternalStorageState()
     return Environment.MEDIA_MOUNTED == state || Environment.MEDIA_MOUNTED_READ_ONLY == state
-}
-
-fun shrinkNumber(number: Number): String {
-    val long = number.toLong()
-
-    return when {
-        long < 1000 -> {
-            long.toString()
-        }
-        long < 1_000_000 -> {
-            "${long / 1000}K+"
-        }
-        else -> {
-            "${long / 1_000_000}M+"
-        }
-    }
 }
 
 @ColorInt

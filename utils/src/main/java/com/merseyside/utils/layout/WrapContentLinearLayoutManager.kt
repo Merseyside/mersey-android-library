@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.merseyside.utils.ext.isNotZero
+import com.merseyside.merseyLib.kotlin.extensions.isNotZero
 import kotlin.math.min
 
 open class WrapContentLinearLayoutManager : LinearLayoutManager {

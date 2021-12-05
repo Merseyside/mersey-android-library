@@ -4,10 +4,8 @@ import androidx.annotation.AttrRes
 import androidx.cardview.widget.CardView
 import androidx.databinding.BindingAdapter
 import com.google.android.material.textfield.TextInputLayout
+import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
 import com.merseyside.utils.ext.getColorFromAttr
-import com.merseyside.utils.ext.isNotNullAndEmpty
-
-
 
 @BindingAdapter("app:attrCardBackgroundColor")
 fun setCardViewBackgroundColor(cardView: CardView, @AttrRes attrId: Int?) {

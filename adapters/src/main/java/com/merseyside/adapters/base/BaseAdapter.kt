@@ -10,8 +10,8 @@ import com.merseyside.adapters.callback.HasOnItemClickListener
 import com.merseyside.adapters.callback.OnItemClickListener
 import com.merseyside.adapters.model.AdapterViewModel
 import com.merseyside.adapters.view.TypedBindingHolder
-import com.merseyside.utils.ext.isZero
-import com.merseyside.utils.ext.minByNullable
+import com.merseyside.merseyLib.kotlin.extensions.isZero
+import com.merseyside.merseyLib.kotlin.extensions.minByNullable
 
 abstract class BaseAdapter<M, T : AdapterViewModel<M>>
     : RecyclerView.Adapter<TypedBindingHolder<T>>(),

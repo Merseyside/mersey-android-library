@@ -7,6 +7,9 @@ import android.view.View
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
+import com.merseyside.merseyLib.kotlin.extensions.containsDigits
+import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
+import com.merseyside.merseyLib.kotlin.extensions.replace
 import com.merseyside.utils.convertDpToPixel
 import com.merseyside.utils.ext.*
 

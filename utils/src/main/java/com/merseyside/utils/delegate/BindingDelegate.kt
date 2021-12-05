@@ -25,10 +25,17 @@ operator fun <B : ViewDataBinding> Binding<B>.getValue(view: ViewGroup, property
 fun <B: ViewDataBinding> ViewGroup.viewBinding(
     @LayoutRes layoutRes: Int,
     attachToParent: Boolean = true
-): Binding<B> =
-    LazyBindingImpl(layoutRes, this, attachToParent)
+): Binding<B> = LazyBindingImpl(layoutRes, this, attachToParent)
 
-private class LazyBindingImpl<B: ViewDataBinding>(
+fun <B: ViewDataBinding> ViewGroup.dataBinding(
+    @LayoutRes layoutRes: Int,
+    variableId: Int,
+    data: Any,
+    attachToParent: Boolean = true
+): Binding<B> = LazyDataBindingImpl(layoutRes, this, attachToParent, variableId, data)
+
+
+private open class LazyBindingImpl<B: ViewDataBinding>(
     @LayoutRes private val layoutRes: Int,
     private val view: ViewGroup,
     private val attachToParent: Boolean
@@ -45,11 +52,30 @@ private class LazyBindingImpl<B: ViewDataBinding>(
         initBinding()
     }
 
-    private fun initBinding(): B {
+    protected fun initBinding(): B {
         if (_value == null) {
             return view.getBinding<B>(layoutRes, attachToParent).also { _value = it }
         } else {
             throw IllegalStateException("Binding already initialized")
+        }
+    }
+}
+
+private class LazyDataBindingImpl<B: ViewDataBinding>(
+    @LayoutRes layoutRes: Int,
+    view: ViewGroup,
+    attachToParent: Boolean,
+    private val variableId: Int,
+    private val data: Any
+): LazyBindingImpl<B>(layoutRes, view, attachToParent) {
+
+    init {
+        initDataBinding()
+    }
+
+    private fun initDataBinding(): B {
+        return value.apply {
+            setVariable(variableId, data)
         }
     }
 }

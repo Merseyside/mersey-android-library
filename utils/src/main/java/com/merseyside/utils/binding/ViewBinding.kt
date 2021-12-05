@@ -12,6 +12,8 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
+import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndZero
 import com.merseyside.utils.ext.*
 
 fun <Binding: ViewDataBinding> View.getBinding(
