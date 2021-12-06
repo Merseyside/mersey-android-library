@@ -13,13 +13,11 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
-class LocationManagerImpl(private val context: Context)
-    : LocationManager, DefaultLifecycleObserver {
+class LocationManagerImpl(private val context: Context) : LocationManager,
+    DefaultLifecycleObserver {
 
     private val isRunning: Boolean
-        get() {
-            return LocationUpdatesService.isRunning
-        }
+        get() = LocationUpdatesService.isRunning
 
     private val intent = Intent(context, LocationUpdatesService::class.java)
     private var broadcastReceiver: LocationBroadcastReceiver? = null
@@ -33,23 +31,22 @@ class LocationManagerImpl(private val context: Context)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun getLocationFlow() = callbackFlow<Location> {
-        startService()
-
+    override fun getLocationFlow() = callbackFlow {
+        registerReceiver()
         broadcastReceiver?.addCallback(object : LocationBroadcastReceiver.LocationCallback {
             override fun onReceive(location: Location) {
                 trySend(location)
             }
         })
 
+        startService()
         awaitClose {
             stopService()
         }
     }
 
     override suspend fun getLastLocation(): Location = suspendCancellableCoroutine { continuation ->
-        startService()
-
+        registerReceiver()
         broadcastReceiver?.addLastLocationCallback(object :
             LocationBroadcastReceiver.LocationCallback {
             override fun onReceive(location: Location) {
@@ -58,11 +55,12 @@ class LocationManagerImpl(private val context: Context)
                 stopService()
             }
         })
+
+        startService()
     }
 
     override suspend fun getLocation(): Location = suspendCancellableCoroutine { continuation ->
-        startService()
-
+        registerReceiver()
         broadcastReceiver?.addCallback(object : LocationBroadcastReceiver.LocationCallback {
             override fun onReceive(location: Location) {
                 broadcastReceiver?.removeCallback(this)
@@ -70,6 +68,8 @@ class LocationManagerImpl(private val context: Context)
                 stopService()
             }
         })
+
+        startService()
     }
 
     private fun registerReceiver() {
@@ -106,9 +106,9 @@ class LocationManagerImpl(private val context: Context)
     }
 
     override fun hasRequestedPermissions(): Boolean {
-        with(context) {
-            return isPermissionsGranted(Manifest.permission.ACCESS_FINE_LOCATION) ||
-                isPermissionsGranted(Manifest.permission.ACCESS_COARSE_LOCATION)
+        return with(context) {
+            isPermissionsGranted(Manifest.permission.ACCESS_FINE_LOCATION) ||
+                    isPermissionsGranted(Manifest.permission.ACCESS_COARSE_LOCATION)
         }
     }
 
