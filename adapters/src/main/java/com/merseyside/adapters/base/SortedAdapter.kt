@@ -5,7 +5,7 @@ import com.merseyside.adapters.model.ComparableAdapterViewModel
 import com.merseyside.adapters.view.TypedBindingHolder
 import com.merseyside.merseyLib.kotlin.concurency.Locker
 import com.merseyside.merseyLib.kotlin.extensions.intersect
-import com.merseyside.merseyLib.kotlin.reflection.ReflectionUtils
+import com.merseyside.utils.reflection.ReflectionUtils
 import com.merseyside.utils.Logger
 import com.merseyside.utils.ext.*
 import com.merseyside.utils.getMinMax

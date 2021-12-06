@@ -10,7 +10,7 @@ android {
         targetSdkVersion(Application.targetSdk)
     }
 
-    lintOptions {
+    lint {
         lintConfig = rootProject.file(".lint/config.xml")
         isCheckAllWarnings = true
         isWarningsAsErrors = true

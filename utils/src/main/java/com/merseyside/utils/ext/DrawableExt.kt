@@ -9,7 +9,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
-import com.merseyside.merseyLib.kotlin.reflection.callMethodByName
+import com.merseyside.utils.reflection.callMethodByName
 
 fun Drawable.setColor(@ColorInt color: Int) {
     if (this is VectorDrawable || this is RippleDrawable) {

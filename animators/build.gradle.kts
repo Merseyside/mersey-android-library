@@ -21,9 +21,7 @@ dependencies {
     android.forEach { lib -> implementation(lib) }
 }
 
-//java {
-//    withSourcesJar()
-//}
+
 
 afterEvaluate {
     publishing.publications {

@@ -44,10 +44,6 @@ dependencies {
     kapt(androidLibs.roomCompiler)
 }
 
-//java {
-//    withSourcesJar()
-//}
-
 afterEvaluate {
     publishing.publications {
         create<MavenPublication>("release") {

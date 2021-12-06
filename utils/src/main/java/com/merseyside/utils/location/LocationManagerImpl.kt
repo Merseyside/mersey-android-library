@@ -5,9 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.location.Location
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.*
 import com.merseyside.utils.isPermissionsGranted
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -15,7 +13,8 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
-class LocationManagerImpl(private val context: Context) : LocationManager, LifecycleObserver {
+class LocationManagerImpl(private val context: Context)
+    : LocationManager, DefaultLifecycleObserver {
 
     private val isRunning: Boolean
         get() {
@@ -25,13 +24,11 @@ class LocationManagerImpl(private val context: Context) : LocationManager, Lifec
     private val intent = Intent(context, LocationUpdatesService::class.java)
     private var broadcastReceiver: LocationBroadcastReceiver? = null
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    fun onCreate() {
+    override fun onCreate(owner: LifecycleOwner) {
         registerReceiver()
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun onDestroy() {
+    override fun onDestroy(owner: LifecycleOwner) {
         stopAndUnregisterReceiver()
     }
 
