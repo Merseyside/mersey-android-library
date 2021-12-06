@@ -7,4 +7,5 @@ object Plugins {
     const val mavenPublish = "maven-publish"
     const val androidLibrary = "com.android.library"
     const val kotlinSerialization = "kotlinx-serialization"
+
 }

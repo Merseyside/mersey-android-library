@@ -1,6 +1,13 @@
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+}
+
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(common.plugins.versionChecker)
+    `nexus-config`
 }
 
 allprojects {

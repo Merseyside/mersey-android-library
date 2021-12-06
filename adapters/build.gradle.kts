@@ -3,11 +3,8 @@ plugins {
     id(Plugins.kotlinConvention)
     id(Plugins.kotlinKapt)
     id(Plugins.kotlinSerialization)
-    id(Plugins.mavenPublish)
+    `maven-publish-config`
 }
-
-group = Application.groupId
-version = Application.version
 
 val android = listOf(
     androidLibs.appCompat,
@@ -24,12 +21,16 @@ dependencies {
     implementation(projects.utils)
 }
 
+//java {
+//    withSourcesJar()
+//}
+
 afterEvaluate {
     publishing.publications {
         create<MavenPublication>("release") {
-            groupId = group.toString()
+            groupId = Metadata.groupId
             artifactId = project.name
-            version = rootProject.version.toString()
+            version = Metadata.version
             from(components["release"])
         }
     }

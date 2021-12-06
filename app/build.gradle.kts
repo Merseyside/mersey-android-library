@@ -11,8 +11,8 @@ android {
     defaultConfig {
         minSdkVersion(Application.minSdk)
         targetSdkVersion(Application.targetSdk)
-        versionCode = Application.versionCode
-        versionName = Application.version
+        versionCode = Metadata.versionCode
+        versionName = Metadata.version
 
         multiDexEnabled = true
         vectorDrawables.useSupportLibrary = true
