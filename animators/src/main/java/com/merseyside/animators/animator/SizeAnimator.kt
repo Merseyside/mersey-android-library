@@ -6,9 +6,9 @@ import android.view.View
 import com.merseyside.animators.Axis
 import com.merseyside.animators.BaseAnimatorBuilder
 import com.merseyside.animators.BaseSingleAnimator
+import com.merseyside.merseyLib.kotlin.Logger
 import com.merseyside.merseyLib.kotlin.safeLet
 import com.merseyside.merseyLib.time.TimeUnit
-import com.merseyside.utils.Logger
 
 class SizeAnimator(
     builder: Builder

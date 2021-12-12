@@ -11,7 +11,7 @@ import com.merseyside.adapters.callback.HasOnItemClickListener
 import com.merseyside.adapters.callback.OnItemClickListener
 import com.merseyside.adapters.model.AdapterViewModel
 import com.merseyside.adapters.view.BaseBindingHolder
-import com.merseyside.utils.Logger
+import com.merseyside.merseyLib.kotlin.Logger
 
 abstract class PagedAdapter<M: Any, T : AdapterViewModel<M>>(diffUtil: DiffUtil.ItemCallback<M>)
     : PagedListAdapter<M, BaseBindingHolder>(diffUtil),

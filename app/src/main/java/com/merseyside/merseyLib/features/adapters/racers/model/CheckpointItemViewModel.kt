@@ -10,7 +10,7 @@ import com.merseyside.merseyLib.time.Millis
 import com.merseyside.merseyLib.time.compareTo
 import com.merseyside.merseyLib.time.ext.toFormattedDate
 import com.merseyside.merseyLib.time.minus
-import com.merseyside.utils.ext.log
+import com.merseyside.merseyLib.kotlin.extensions.log
 
 class CheckpointItemViewModel(obj: Checkpoint) : ComparableAdapterViewModel<Checkpoint>(obj) {
 

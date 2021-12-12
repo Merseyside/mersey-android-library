@@ -2,6 +2,7 @@ package com.merseyside.utils
 
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
+import com.merseyside.merseyLib.kotlin.Logger
 import com.merseyside.utils.preferences.PreferenceManager
 
 object ThemeManager {

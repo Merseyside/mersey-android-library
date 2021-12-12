@@ -10,7 +10,7 @@ import com.merseyside.utils.delayedMainThread
 import com.merseyside.utils.ext.getColorFromAttr
 import com.merseyside.utils.ext.getResourceFromAttr
 import com.merseyside.utils.ext.getStringFromAttr
-import com.merseyside.utils.ext.log
+import com.merseyside.merseyLib.kotlin.extensions.log
 
 class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
 

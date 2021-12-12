@@ -6,7 +6,6 @@ import com.merseyside.adapters.view.TypedBindingHolder
 import com.merseyside.merseyLib.kotlin.concurency.Locker
 import com.merseyside.merseyLib.kotlin.extensions.intersect
 import com.merseyside.utils.reflection.ReflectionUtils
-import com.merseyside.utils.Logger
 import com.merseyside.utils.ext.*
 import com.merseyside.utils.getMinMax
 import com.merseyside.utils.isMainThread
@@ -14,6 +13,7 @@ import com.merseyside.utils.mainThreadIfNeeds
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlin.collections.set
+import com.merseyside.merseyLib.kotlin.Logger
 
 @Suppress("UNCHECKED_CAST")
 abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(

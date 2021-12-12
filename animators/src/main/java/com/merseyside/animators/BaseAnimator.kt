@@ -6,9 +6,9 @@ import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.os.Build
 import com.merseyside.merseyLib.time.Millis
-import com.merseyside.utils.Logger
 import com.merseyside.utils.delayedMainThread
-import com.merseyside.utils.ext.log
+import com.merseyside.merseyLib.kotlin.extensions.log
+import com.merseyside.merseyLib.kotlin.Logger
 
 abstract class BaseAnimator {
 

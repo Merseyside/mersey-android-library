@@ -1,11 +1,11 @@
 package com.merseyside.archy.domain.interactor.coroutines
 
-import com.merseyside.utils.Logger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import kotlin.coroutines.CoroutineContext
+import com.merseyside.merseyLib.kotlin.Logger
 
 @FlowPreview
 abstract class FlowUseCase<T, Params> : CoroutineScope by CoroutineScope(applicationContext) {

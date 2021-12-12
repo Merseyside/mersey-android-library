@@ -2,7 +2,7 @@ package com.merseyside.utils.delegate
 
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
-import com.merseyside.utils.Logger
+import com.merseyside.merseyLib.kotlin.Logger
 import com.merseyside.utils.attributes.AttributeHelper
 import com.merseyside.utils.attributes.AttributeHelper.Companion.NO_VALUE
 import com.merseyside.utils.attributes.Namespace

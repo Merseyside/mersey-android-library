@@ -1,7 +1,6 @@
 package com.merseyside.utils
 
 import android.app.Activity
-import android.util.Log
 import com.google.android.play.core.appupdate.AppUpdateInfo
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
@@ -11,6 +10,7 @@ import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.android.play.core.install.model.ActivityResult
+import com.merseyside.merseyLib.kotlin.Logger
 import kotlin.IllegalStateException
 
 class UpdateManager(private val activity: Activity) {
@@ -60,12 +60,12 @@ class UpdateManager(private val activity: Activity) {
                     } else {
                         if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
                             if (appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {
-                                Log.d(TAG, "Immediate updating is available")
+                                Logger.log(TAG, "Immediate updating is available")
                                 this@UpdateManager.onAppUpdateListener?.immediateUpdateAvailable()
                             }
 
                             if (appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
-                                Log.d(TAG, "Flexible updating is available")
+                                Logger.log(TAG, "Flexible updating is available")
                                 this@UpdateManager.onAppUpdateListener?.flexibleUpdateAvailable()
                             }
                         } else {

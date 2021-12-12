@@ -1,7 +1,7 @@
 package com.merseyside.utils.view.canvas.ext
 
 import android.graphics.*
-import com.merseyside.utils.Logger
+import com.merseyside.merseyLib.kotlin.Logger
 import com.merseyside.utils.view.canvas.Background
 import com.merseyside.utils.view.canvas.CircleCorners
 import com.merseyside.utils.view.canvas.HorizontalAlign

@@ -2,11 +2,11 @@ package com.merseyside.utils.billing
 
 import android.text.TextUtils
 import android.util.Base64
-import com.merseyside.utils.Logger
 import java.io.IOException
 import java.security.*
 import java.security.spec.InvalidKeySpecException
 import java.security.spec.X509EncodedKeySpec
+import com.merseyside.merseyLib.kotlin.Logger
 
 
 object Security {

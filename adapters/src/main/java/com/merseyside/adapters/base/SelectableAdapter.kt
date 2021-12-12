@@ -5,11 +5,10 @@ import com.merseyside.adapters.callback.OnItemClickListener
 import com.merseyside.adapters.callback.OnItemSelectedListener
 import com.merseyside.adapters.callback.OnSelectEnabledListener
 import com.merseyside.adapters.model.SelectableAdapterViewModel
-import com.merseyside.utils.Logger
-import com.merseyside.utils.ext.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import com.merseyside.merseyLib.kotlin.Logger
 
 abstract class SelectableAdapter<M: Any, T: SelectableAdapterViewModel<M>>(
     selectableMode: SelectableMode = SelectableMode.SINGLE,

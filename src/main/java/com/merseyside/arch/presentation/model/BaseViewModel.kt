@@ -7,7 +7,7 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.merseyside.archy.interfaces.IStringHelper
-import com.merseyside.utils.Logger
+import com.merseyside.merseyLib.kotlin.Logger
 import com.merseyside.utils.PermissionManager
 import com.merseyside.utils.mvvm.SingleLiveEvent
 import com.merseyside.utils.ext.clear

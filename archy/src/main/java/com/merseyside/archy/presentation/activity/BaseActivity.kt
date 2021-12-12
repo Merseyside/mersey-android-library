@@ -21,10 +21,10 @@ import com.merseyside.archy.presentation.view.OrientationHandler
 import com.merseyside.archy.presentation.view.localeViews.ILocaleManager
 import com.merseyside.archy.utils.SnackbarManager
 import com.merseyside.utils.LocaleManager
-import com.merseyside.utils.Logger
 import com.merseyside.utils.ext.getLocalizedContext
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.Unregistrar
+import com.merseyside.merseyLib.kotlin.Logger
 
 abstract class BaseActivity : AppCompatActivity(),
     IActivityView, OrientationHandler, ILocaleManager {

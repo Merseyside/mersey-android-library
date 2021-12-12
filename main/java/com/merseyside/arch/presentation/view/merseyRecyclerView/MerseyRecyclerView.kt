@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.archy.R
-import com.merseyside.utils.ext.log
+import com.merseyside.merseyLib.kotlin.extensions.log
 
 class MerseyRecyclerView(context: Context, attrSet: AttributeSet) : RecyclerView(context, attrSet) {
     private var mMaxHeight = 0
