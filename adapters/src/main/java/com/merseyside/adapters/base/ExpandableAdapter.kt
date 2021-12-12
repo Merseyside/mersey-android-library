@@ -208,13 +208,13 @@ abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, SubI
     }
 
     private fun addExpandableItems(adapter: InnerAdapter, list: List<SubItem>?) {
-        if (adapter.isEmpty()) {
-            if (list != null) {
-                adapter.add(list)
-            }
-        } else {
-            getExpandableAdapterUpdateRequest(list)?.let { request ->
-                adapter.update(request)
+        with(adapter) {
+            if (isEmpty()) {
+                if (list != null) {
+                    add(this, list)
+                }
+            } else {
+                update(this, list)
             }
         }
     }
@@ -226,4 +226,34 @@ abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, SubI
     }
 
     open fun onAdaptersRemoved(adapters: List<InnerAdapter>) {}
+
+    private fun add(adapter: InnerAdapter, list: List<SubItem>) {
+        with(adapter) {
+            if (addJob?.isActive == true) {
+                if (this is SortedAdapter<*, *>) {
+                    this as SortedAdapter<SubItem, *>
+                    addAsync(list)
+                    return
+                }
+            }
+            adapter.add(list)
+        }
+    }
+
+    private fun update(adapter: InnerAdapter, list: List<SubItem>?) {
+        with(adapter) {
+            getExpandableAdapterUpdateRequest(list)?.let { request ->
+                adapter.update(request)
+
+                if (updateJob?.isActive == true) {
+                    if (this is SortedAdapter<*, *>) {
+                        this as SortedAdapter<SubItem, *>
+                        updateAsync(request)
+                        return
+                    }
+                }
+                adapter.update(request)
+            }
+        }
+    }
 }

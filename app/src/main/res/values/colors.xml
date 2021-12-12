@@ -20,4 +20,6 @@
     <color name="cyan">#00bcd4</color>
     <color name="pink">#D81B60</color>
 
+    <color name="transparent_white">#34ffffff</color>
+
 </resources>

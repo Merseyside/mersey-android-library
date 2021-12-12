@@ -35,6 +35,7 @@ class MainFragment : BaseSampleFragment<FragmentMainBinding, MainViewModel>() {
             racingButton.onClick { navigate(R.id.action_mainFragment_to_racingFragment) }
             locationButton.onClick { navigate(R.id.action_mainFragment_to_locationFragment) }
             concatButton.onClick { navigate(R.id.action_mainFragment_to_concatFragment) }
+            contactsButton.onClick { navigate(R.id.action_mainFragment_to_contactsFragment) }
         }
     }
 }

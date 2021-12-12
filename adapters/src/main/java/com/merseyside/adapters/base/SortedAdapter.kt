@@ -31,9 +31,9 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
 
     override val modelList: MutableList<T> = ArrayList()
 
-    private var addJob: Job? = null
-    private var updateJob: Job? = null
-    private var filterJob: Job? = null
+    internal var addJob: Job? = null
+    internal var updateJob: Job? = null
+    internal var filterJob: Job? = null
 
     private val lock = Any()
 
@@ -73,7 +73,7 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
         }
 
         override fun onChanged(position: Int, count: Int) {
-            notifyItemRangeChanged(position, count)
+            mainThreadIfNeeds { notifyItemRangeChanged(position, count) }
         }
 
         override fun compare(o1: T, o2: T): Int {

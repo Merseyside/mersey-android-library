@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="obj"
+            type="com.merseyside.merseyLib.features.adapters.contacts.model.ContactItemViewModel" />
+    </data>
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/small_spacing"
+        android:paddingVertical="@dimen/very_small_spacing">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{obj.obj}"/>
+
+    </FrameLayout>
+
+</layout>
