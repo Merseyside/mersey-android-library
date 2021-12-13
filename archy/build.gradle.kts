@@ -3,7 +3,7 @@ plugins {
     id(Plugins.kotlinConvention)
     id(Plugins.kotlinKapt)
     id(Plugins.kotlinSerialization)
-    `maven-publish-config`
+    id(Plugins.mavenPublishConfig)
 }
 
 android {
@@ -42,19 +42,4 @@ dependencies {
 
     kapt(androidLibs.daggerCompiler)
     kapt(androidLibs.roomCompiler)
-}
-
-afterEvaluate {
-    publishing.publications {
-        create<MavenPublication>("release") {
-            groupId = Metadata.groupId
-            artifactId = project.name
-            version = Metadata.version
-            from(components["release"])
-        }
-    }
-
-    repositories {
-        mavenCentral()
-    }
 }

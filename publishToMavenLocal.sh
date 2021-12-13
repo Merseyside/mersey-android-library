@@ -1,2 +1,4 @@
-./gradlew -PlibraryPublish :kmp-clean-mvvm-arch:publishToMavenLocal
-./gradlew -PlibraryPublish :kmp-utils:publishToMavenLocal
+./gradlew -PlibraryPublish :archy:publishToMavenLocal
+./gradlew -PlibraryPublish :adapters:publishToMavenLocal
+./gradlew -PlibraryPublish :animators:publishToMavenLocal
+./gradlew -PlibraryPublish :utils:publishToMavenLocal

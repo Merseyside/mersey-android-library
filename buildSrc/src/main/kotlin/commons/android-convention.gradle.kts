@@ -38,3 +38,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 }
+
+tasks {
+    register<Jar>("withSourcesJar") {
+        archiveClassifier.set("sources")
+        from(android.sourceSets.getByName("main").java.srcDirs)
+    }
+}

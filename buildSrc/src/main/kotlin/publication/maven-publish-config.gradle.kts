@@ -22,6 +22,7 @@ publishing {
     publications {
         withType<MavenPublication>().all {
             val projectGitUrl = "https://github.com/Merseyside/mersey-kotlin-ext"
+            artifact(tasks.named<Jar>("withSourcesJar"))
             artifact(javadocJar)
             pom {
                 name.set("Mersey kotlin extensions")
@@ -74,5 +75,20 @@ signing {
     if (signingKeyId != null) {
         useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
         sign(publishing.publications)
+    }
+}
+
+afterEvaluate {
+    publishing.publications {
+        create<MavenPublication>("release") {
+            groupId = Metadata.groupId
+            artifactId = project.name
+            version = Metadata.version
+            from(components["release"])
+        }
+    }
+
+    repositories {
+        mavenCentral()
     }
 }

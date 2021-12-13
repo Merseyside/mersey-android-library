@@ -3,7 +3,7 @@ plugins {
     id(Plugins.kotlinConvention)
     id(Plugins.kotlinKapt)
     id(Plugins.kotlinSerialization)
-    `maven-publish-config`
+    id(Plugins.mavenPublishConfig)
 }
 
 android {
@@ -29,19 +29,4 @@ dependencies {
     api(common.merseyLib.kotlin.ext)
     api(common.merseyLib.time)
     android.forEach { lib -> implementation(lib) }
-}
-
-afterEvaluate {
-    publishing.publications {
-        create<MavenPublication>("release") {
-            groupId = Metadata.groupId
-            artifactId = project.name
-            version = Metadata.version
-            from(components["release"])
-        }
-    }
-
-    repositories {
-        mavenCentral()
-    }
 }
