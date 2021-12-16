@@ -1,6 +1,10 @@
 package com.merseyside.adapters.base
 
 import androidx.recyclerview.widget.SortedList
+import com.merseyside.adapters.ext.*
+import com.merseyside.adapters.ext.find
+import com.merseyside.adapters.ext.indexOf
+import com.merseyside.adapters.ext.removeAll
 import com.merseyside.adapters.model.ComparableAdapterViewModel
 import com.merseyside.adapters.view.TypedBindingHolder
 import com.merseyside.merseyLib.kotlin.concurency.Locker
@@ -14,6 +18,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlin.collections.set
 import com.merseyside.merseyLib.kotlin.Logger
+import com.merseyside.merseyLib.kotlin.extensions.log
 
 @Suppress("UNCHECKED_CAST")
 abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
@@ -73,6 +78,7 @@ abstract class SortedAdapter<M : Any, T : ComparableAdapterViewModel<M>>(
         }
 
         override fun onChanged(position: Int, count: Int) {
+            "changed".log()
             mainThreadIfNeeds { notifyItemRangeChanged(position, count) }
         }
 

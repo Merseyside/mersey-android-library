@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.model.ExpandableAdapterViewModel
 import com.merseyside.adapters.view.TypedBindingHolder
 import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
+import com.merseyside.merseyLib.kotlin.extensions.log
 import com.merseyside.merseyLib.kotlin.extensions.remove
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,29 +23,31 @@ abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, SubI
     private var adapterList: MutableList<Pair<T, InnerAdapter>> = ArrayList()
     private var updateRequest: UpdateRequest<M>? = null
 
-    /*Inner adapters add out of sync, so we have to be sure when can work with them */
-    var onAdapterInitializedCallback: (InnerAdapter) -> Unit = {}
-
     override fun onBindViewHolder(holder: TypedBindingHolder<T>, position: Int) {
         super.onBindViewHolder(holder, position)
         val model = getModelByPosition(position)
-        val data = model.getExpandableData()
 
         val recyclerView: RecyclerView? = getExpandableView(holder.binding)
         recyclerView?.apply {
-
-            val newAdapter = getAdapterIfExists(model) == null
             val adapter = getExpandableAdapter(model)
-
-            this.adapter = adapter
-
-            data.isNotNullAndEmpty {
-                addExpandableItems(adapter, this)
+            if (this.adapter != adapter) {
+                this.adapter = adapter
             }
+        }
+    }
 
-            if (newAdapter) {
-                onAdapterInitializedCallback(adapter)
-            }
+    override fun addModels(list: List<T>) {
+        super.addModels(list)
+        addModelsToAdapters(list)
+    }
+
+    private fun addModelsToAdapters(list: List<T>) {
+        list.forEach { model ->
+            model.getExpandableData().log()
+            val adapter = getExpandableAdapter(model)
+            val data = model.getExpandableData()
+
+            addExpandableItems(adapter, data)
         }
     }
 
@@ -164,10 +167,6 @@ abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, SubI
         getFilterableAdapters().forEach { it.clearFilters() }
     }
 
-    fun removeOnAdapterInitializedCallback() {
-        onAdapterInitializedCallback = {}
-    }
-
     override fun remove(list: List<M>) {
         removeAdaptersByItems(list)
         super.remove(list)
@@ -230,11 +229,9 @@ abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, SubI
     private fun add(adapter: InnerAdapter, list: List<SubItem>) {
         with(adapter) {
             if (addJob?.isActive == true) {
-                if (this is SortedAdapter<*, *>) {
-                    this as SortedAdapter<SubItem, *>
-                    addAsync(list)
-                    return
-                }
+                (this as? SortedAdapter<SubItem, *>) ?: throw Exception()
+                addAsync(list)
+                return
             }
             adapter.add(list)
         }
@@ -243,14 +240,10 @@ abstract class ExpandableAdapter<M : Any, T : ExpandableAdapterViewModel<M, SubI
     private fun update(adapter: InnerAdapter, list: List<SubItem>?) {
         with(adapter) {
             getExpandableAdapterUpdateRequest(list)?.let { request ->
-                adapter.update(request)
-
                 if (updateJob?.isActive == true) {
-                    if (this is SortedAdapter<*, *>) {
-                        this as SortedAdapter<SubItem, *>
-                        updateAsync(request)
-                        return
-                    }
+                    (this as? SortedAdapter<SubItem, *>) ?: throw Exception()
+                    updateAsync(request)
+                    return
                 }
                 adapter.update(request)
             }

@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Environment
 import androidx.annotation.ColorInt
-import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -15,9 +14,9 @@ fun convertPixelsToDp(context: Context, px: Int): Float {
     return px / density
 }
 
-fun convertDpToPixel(context: Context, dp: Float): Int {
+fun convertDpToPixel(context: Context, dp: Float): Float {
     val density = context.resources.displayMetrics.density
-    return (dp * density).toInt()
+    return (dp * density)
 }
 
 fun isExternalStorageReadable(): Boolean {

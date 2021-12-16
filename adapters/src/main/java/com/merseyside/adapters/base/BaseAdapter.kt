@@ -316,4 +316,8 @@ abstract class BaseAdapter<M, T : AdapterViewModel<M>>
     open fun notifyAdapterRemoved() {}
 
     protected abstract fun createItemViewModel(obj: M): T
+
+    companion object {
+        const val NO_ITEM = -1
+    }
 }

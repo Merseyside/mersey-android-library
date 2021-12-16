@@ -1,6 +1,8 @@
-package com.merseyside.adapters.base
+package com.merseyside.adapters.ext
 
 import androidx.recyclerview.widget.SortedList
+import com.merseyside.adapters.base.BaseAdapter
+import com.merseyside.adapters.base.SelectableAdapter
 import com.merseyside.adapters.callback.HasOnItemClickListener
 import com.merseyside.adapters.callback.HasOnItemSelectedListener
 import com.merseyside.adapters.callback.OnItemClickListener
@@ -60,7 +62,7 @@ internal inline fun <T> SortedList<T>.find(predicate: (model: T) -> Boolean): T?
 inline fun <M> BaseAdapter<M, *>.findPosition(predicate: (item: M) -> Boolean): Int {
     return getAll().find { predicate(it) }?.run {
         getPositionOfItem(this)
-    } ?: -1
+    } ?: BaseAdapter.NO_ITEM
 }
 
 inline fun <M> BaseAdapter<M, *>.findFirst(predicate: (item: M) -> Boolean): M? {

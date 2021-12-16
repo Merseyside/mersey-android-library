@@ -12,7 +12,7 @@ class CheckpointItemDecorator(context: Context, spacing: Float) : RecyclerView.I
 
     constructor(context: Context, @DimenRes res: Int): this(context, context.getDimension(res))
 
-    private val mPadding: Int = convertDpToPixel(context, spacing)
+    private val mPadding: Int = convertDpToPixel(context, spacing).toInt()
 
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
         val itemPosition = parent.getChildAdapterPosition(view)

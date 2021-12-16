@@ -11,7 +11,9 @@ import com.merseyside.merseyLib.kotlin.extensions.containsDigits
 import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
 import com.merseyside.merseyLib.kotlin.extensions.replace
 import com.merseyside.utils.convertDpToPixel
-import com.merseyside.utils.ext.*
+import com.merseyside.utils.ext.getActivity
+import com.merseyside.utils.ext.getResourceFromAttr
+import com.merseyside.utils.ext.getStringFromAttr
 
 class AttributeHelper(
     private val context: Context,
@@ -74,7 +76,7 @@ class AttributeHelper(
             }
         } catch (e: RuntimeException) {
             parseDimensionToFloat(resName, namespace)?.let {
-                convertDpToPixel(context, it).toFloat()
+                convertDpToPixel(context, it)
             }
         }
     }
@@ -94,11 +96,11 @@ class AttributeHelper(
         try {
             with(attrSet.getAttributeFloatValue(namespace.namespace, resName, NO_VALUE_FLOAT)) {
                 if (this == NO_VALUE_FLOAT) null
-                else convertDpToPixel(context, this)
+                else convertDpToPixel(context, this).toInt()
             }
         } catch (e: RuntimeException) {
             parseDimensionToFloat(resName, namespace)?.let {
-                convertDpToPixel(context, it)
+                convertDpToPixel(context, it).toInt()
             }
         }
     }

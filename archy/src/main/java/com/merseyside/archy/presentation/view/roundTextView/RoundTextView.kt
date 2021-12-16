@@ -97,7 +97,7 @@ class RoundTextView(
 
         strokeRect.apply {
             set(rect)
-            inset(strokeWidth / 2F, strokeWidth / 2F)
+            inset(strokeWidth / 2, strokeWidth / 2)
         }
     }
 

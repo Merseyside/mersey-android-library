@@ -276,7 +276,7 @@ fun AttributeHelper.dimensionPixelSizeOrNull(
     }
 
     private fun getValue(resName: String): Int? {
-        return getDimensionPixelSizeOrNull(resName, namespace)?.also { value = it }
+        return getDimensionPixelSizeOrNull(resName, namespace).also { value = it }
     }
 }
 
