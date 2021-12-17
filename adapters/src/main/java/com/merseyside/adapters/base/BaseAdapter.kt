@@ -24,7 +24,7 @@ abstract class BaseAdapter<M, T : AdapterViewModel<M>>
 
     internal open val modelList: MutableList<T> = ArrayList()
     private val bindItemList: MutableList<T> = ArrayList()
-    lateinit var recyclerView: RecyclerView
+    protected var recyclerView: RecyclerView? = null
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         this.recyclerView = recyclerView

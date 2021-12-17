@@ -6,10 +6,10 @@ import com.merseyside.adapters.callback.OnItemSelectedListener
 import com.merseyside.adapters.callback.OnSelectEnabledListener
 import com.merseyside.adapters.ext.getAll
 import com.merseyside.adapters.model.SelectableAdapterViewModel
+import com.merseyside.merseyLib.kotlin.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import com.merseyside.merseyLib.kotlin.Logger
 
 abstract class SelectableAdapter<M: Any, T: SelectableAdapterViewModel<M>>(
     selectableMode: SelectableMode = SelectableMode.SINGLE,
@@ -217,7 +217,7 @@ abstract class SelectableAdapter<M: Any, T: SelectableAdapterViewModel<M>>(
                 notifyItemSelected(item, isSelectedByUser)
             }
 
-            recyclerView.invalidateItemDecorations()
+            recyclerView?.invalidateItemDecorations()
             true
         } else {
             false

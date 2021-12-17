@@ -1,7 +1,7 @@
 package com.merseyside.merseyLib.features.adapters.colors.adapter
 
 import com.merseyside.adapters.base.SortedAdapter
-import com.merseyside.adapters.base.onItemClicked
+import com.merseyside.adapters.ext.onItemClicked
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.features.adapters.colors.entity.HexColor
