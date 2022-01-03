@@ -26,7 +26,14 @@ val android = listOf(
 )
 
 dependencies {
-    api(common.merseyLib.kotlin.ext)
+
     api(common.merseyLib.time)
+
+    if (isLocalKotlinExtLibrary()) {
+        api(project(Modules.MultiPlatform.MerseyLibs.kotlinExt))
+    } else {
+        api(common.merseyLib.kotlin.ext)
+    }
+
     android.forEach { lib -> implementation(lib) }
 }

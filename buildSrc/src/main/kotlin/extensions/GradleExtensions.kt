@@ -1,5 +1,3 @@
-package extensions
-
 import org.gradle.api.Project
 import org.gradle.internal.impldep.com.amazonaws.services.kms.model.NotFoundException
 
@@ -19,3 +17,6 @@ inline fun <reified T> Project.findTypedProperty(propertyName: String): T {
 
 fun Project.isLocalDependencies(): Boolean =
     findTypedProperty("build.localDependencies")
+
+fun Project.isLocalKotlinExtLibrary(): Boolean =
+    findTypedProperty("build.localKotlinExtLibrary")

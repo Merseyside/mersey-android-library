@@ -11,8 +11,8 @@ repositories {
     gradlePluginPortal()
 }
 
-val kotlin = "1.6.0"
-val gradle = "7.0.3"
+val kotlin = "1.6.10"
+val gradle = "7.0.4"
 val nexus = "1.1.0"
 
 dependencies {
