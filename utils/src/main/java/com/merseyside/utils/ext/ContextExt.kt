@@ -1,5 +1,6 @@
 package com.merseyside.utils.ext
 
+import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -165,14 +166,14 @@ fun Context.getDrawableResourceIdByName(name: String): Int {
     )
 }
 
-fun Context.openUrl(url: String) {
-    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-    ContextCompat.startActivity(this, browserIntent, null)
-}
-
 fun Context.copyToClipboard(text: String, label: String = "Copied text") {
     val clipboard: ClipboardManager? =
         getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
     val clip: ClipData = ClipData.newPlainText(label, text)
     clipboard?.setPrimaryClip(clip)
+}
+
+fun Activity.openUrl(url: String) {
+    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+    ContextCompat.startActivity(this, browserIntent, null)
 }

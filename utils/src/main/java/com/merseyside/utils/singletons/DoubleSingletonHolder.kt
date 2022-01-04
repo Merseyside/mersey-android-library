@@ -1,4 +1,4 @@
-package com.merseyside.merseyLib.kotlin.singletons
+package com.merseyside.utils.singletons
 
 
 /**

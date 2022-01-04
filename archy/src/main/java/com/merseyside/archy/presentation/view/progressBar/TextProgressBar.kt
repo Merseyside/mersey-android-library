@@ -3,6 +3,7 @@ package com.merseyside.archy.presentation.view.progressBar
 import android.content.Context
 import android.content.res.ColorStateList
 import android.util.AttributeSet
+import android.view.Gravity
 import android.widget.LinearLayout
 import com.merseyside.archy.R
 import com.merseyside.archy.databinding.ViewProgressBarBinding
@@ -27,6 +28,7 @@ class TextProgressBar(context: Context, attributeSet: AttributeSet) :
         R.color.default_progress_text_color,
         namespace = Namespace.ANDROID
     )
+
     private var progressColor: Int by attrs.color(R.color.default_progress_color)
 
     init {
@@ -35,6 +37,9 @@ class TextProgressBar(context: Context, attributeSet: AttributeSet) :
 
     private fun doLayout() {
         orientation = VERTICAL
+        gravity = Gravity.CENTER
+        isClickable = true
+        isFocusable = true
 
         binding.textProgress.indeterminateTintList = ColorStateList.valueOf(progressColor)
 

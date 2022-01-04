@@ -51,6 +51,10 @@ fun Context.isPermissionsGranted(
     return true
 }
 
+fun Fragment.isPermissionsGranted(vararg permissions: String): Boolean {
+    return requireContext().isPermissionsGranted(*permissions)
+}
+
 private fun isRequestCodeValid(code: Int): Boolean {
     return code <= (2.0.pow(16.0)) - 1
 }

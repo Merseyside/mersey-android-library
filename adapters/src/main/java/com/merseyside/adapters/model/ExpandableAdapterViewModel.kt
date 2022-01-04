@@ -4,11 +4,11 @@ import androidx.annotation.CallSuper
 import androidx.databinding.ObservableBoolean
 import com.merseyside.utils.mainThreadIfNeeds
 
-abstract class ExpandableAdapterViewModel<M, T: Any>(
+abstract class ExpandableAdapterViewModel<M, T : Any>(
     obj: M,
     private var isExpanded: Boolean = IS_EXPANDED_DEFAULT,
     private var isExpandable: Boolean = IS_EXPANDABLE_DEFAULT
-): SelectableAdapterViewModel<M>(obj, isExpanded && isExpandable) {
+) : SelectableAdapterViewModel<M>(obj, isExpanded && isExpandable) {
 
     val expandedObservable = ObservableBoolean(isExpanded)
     val expandableObservable = ObservableBoolean()
@@ -57,12 +57,7 @@ abstract class ExpandableAdapterViewModel<M, T: Any>(
 
     internal fun getExpandableData(): List<T>? {
         val data = getExpandedData()
-
-        if (data.isNullOrEmpty()) {
-            setExpandable(false)
-        } else {
-            setExpandable(true)
-        }
+        setExpandable(!data.isNullOrEmpty())
 
         return data
     }

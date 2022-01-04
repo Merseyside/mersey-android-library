@@ -5,7 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
-import com.merseyside.merseyLib.kotlin.singletons.SingletonHolder
+import com.merseyside.utils.singletons.SingletonHolder
 import com.merseyside.merseyLib.time.Millis
 import com.merseyside.merseyLib.time.TimeUnit
 

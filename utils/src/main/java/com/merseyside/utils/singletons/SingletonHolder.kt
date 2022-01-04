@@ -1,4 +1,4 @@
-package com.merseyside.merseyLib.kotlin.singletons
+package com.merseyside.utils.singletons
 
 /**
  * Example:
@@ -13,7 +13,7 @@ open class SingletonHolder<out T: Any, in A>(creator: (A) -> T) {
     private var creator: ((A) -> T)? = creator
     @Volatile private var instance: T? = null
 
-    fun init(arg: A) {
+    fun init(arg: A): T {
         val i = instance
         if (i != null) {
             throw Exception("Already initialized!")
@@ -27,6 +27,7 @@ open class SingletonHolder<out T: Any, in A>(creator: (A) -> T) {
                 val created = creator!!(arg)
                 instance = created
                 creator = null
+                created
             }
         }
     }
