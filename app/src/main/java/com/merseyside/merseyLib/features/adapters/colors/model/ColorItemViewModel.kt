@@ -5,16 +5,16 @@ import com.merseyside.merseyLib.features.adapters.colors.entity.HexColor
 
 class ColorItemViewModel(obj: HexColor) : ComparableAdapterViewModel<HexColor>(obj) {
 
-    override fun areContentsTheSame(obj: HexColor): Boolean {
-        return this.obj.color == obj.color
+    override fun areContentsTheSame(other: HexColor): Boolean {
+        return this.item.color == other.color
     }
 
-    override fun compareTo(obj: HexColor): Int {
-        return this.obj.color.compareTo(obj.color)
+    override fun compareTo(other: HexColor): Int {
+        return this.item.color.compareTo(other.color)
     }
 
-    override fun areItemsTheSame(obj: HexColor): Boolean {
-        return this.obj.color == obj.color
+    override fun areItemsTheSame(other: HexColor): Boolean {
+        return this.item.color == other.color
     }
 
     override fun notifyUpdate() {
@@ -22,10 +22,11 @@ class ColorItemViewModel(obj: HexColor) : ComparableAdapterViewModel<HexColor>(o
     }
 
     fun getColor(): Int {
-        return obj.color
+        return item.color
     }
 
     fun getColorHex(): String {
-        return obj.getHex()
+        return item.getHex()
     }
+
 }

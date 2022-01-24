@@ -23,9 +23,9 @@ class ColorsAdapter(scope: CoroutineScope) : SortedAdapter<HexColor, ColorItemVi
     override fun filter(obj: ColorItemViewModel, key: String, filterObj: Any): Boolean {
         val query = filterObj as String
         return when (key) {
-            R_COLOR_FILTER -> obj.getItem().getRHexColor().startsWith(query, ignoreCase = true)
-            G_COLOR_FILTER -> obj.getItem().getGHexColor().startsWith(query, ignoreCase = true)
-            B_COLOR_FILTER -> obj.getItem().getBHexColor().startsWith(query, ignoreCase = true)
+            R_COLOR_FILTER -> obj.item.getRHexColor().startsWith(query, ignoreCase = true)
+            G_COLOR_FILTER -> obj.item.getGHexColor().startsWith(query, ignoreCase = true)
+            B_COLOR_FILTER -> obj.item.getBHexColor().startsWith(query, ignoreCase = true)
             else -> false
         }
     }

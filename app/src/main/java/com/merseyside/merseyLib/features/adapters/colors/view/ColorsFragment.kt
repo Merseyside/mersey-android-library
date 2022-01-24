@@ -3,7 +3,6 @@ package com.merseyside.merseyLib.features.adapters.colors.view
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import android.widget.TextView
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import com.merseyside.adapters.base.UpdateRequest

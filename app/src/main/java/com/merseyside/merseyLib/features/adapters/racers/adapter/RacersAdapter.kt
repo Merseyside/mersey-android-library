@@ -1,6 +1,7 @@
 package com.merseyside.merseyLib.features.adapters.racers.adapter
 
 import com.merseyside.adapters.base.SortedAdapter
+import com.merseyside.adapters.model.ComparableAdapterParentViewModel
 import com.merseyside.adapters.model.ComparableAdapterViewModel
 import com.merseyside.adapters.view.TypedBindingHolder
 import com.merseyside.animators.template.SetTextFadeOutInAnimator
@@ -23,7 +24,7 @@ class RacersAdapter(scope: CoroutineScope) :
 
     override fun onPayloadable(
         holder: TypedBindingHolder<CheckpointItemViewModel>,
-        payloads: List<ComparableAdapterViewModel.Payloadable>
+        payloads: List<ComparableAdapterParentViewModel.Payloadable>
     ) {
         payloads.forEach {
             when (it) {

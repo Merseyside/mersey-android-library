@@ -11,7 +11,6 @@ class ColorProducer {
     private val colorsFlow = MutableSharedFlow<List<HexColor>>()
     fun getColorsSharedFlow(): SharedFlow<List<HexColor>> = colorsFlow
 
-
     suspend fun generateRandomColors(count: Int = 10) {
         val colors = (0 until count).map {
 

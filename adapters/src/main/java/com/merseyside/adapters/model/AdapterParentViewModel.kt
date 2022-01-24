@@ -5,27 +5,31 @@ import androidx.databinding.BaseObservable
 import com.merseyside.adapters.base.ItemCallback
 import com.merseyside.adapters.callback.OnItemClickListener
 
-abstract class AdapterViewModel<M>(
-    var obj: M
-) : BaseObservable() {
+abstract class AdapterParentViewModel<Item: Parent, Parent>(
+    item: Item
+): BaseObservable() {
+
+    var item: Item = item
+        internal set
 
     private var pos: Int = NO_ITEM_POSITION
-    private lateinit var itemPosition: ItemCallback<AdapterViewModel<M>>
+    private lateinit var itemPosition: ItemCallback<AdapterViewModel<Parent>>
+    internal var priority: Int = 0
 
-    internal fun setItemPositionInterface(i: ItemCallback<AdapterViewModel<M>>) {
+    internal fun setItemPositionInterface(i: ItemCallback<AdapterViewModel<Parent>>) {
         itemPosition = i
     }
 
-    private val listeners: ArrayList<OnItemClickListener<M>>
-            by lazy { ArrayList<OnItemClickListener<M>>() }
+    private val listeners: ArrayList<OnItemClickListener<Parent>>
+            by lazy { ArrayList() }
 
-    fun setOnItemClickListener(listener: OnItemClickListener<M>) {
+    fun setOnItemClickListener(listener: OnItemClickListener<Parent>) {
         if (!this.listeners.contains(listener)) {
             this.listeners.add(listener)
         }
     }
 
-    fun removeOnItemClickListener(listener: OnItemClickListener<M>) {
+    fun removeOnItemClickListener(listener: OnItemClickListener<Parent>) {
         if (listeners.isNotEmpty()) {
             listeners.remove(listener).toString()
         }
@@ -34,7 +38,7 @@ abstract class AdapterViewModel<M>(
     @CallSuper
     open fun onClick() {
         if (listeners.isNotEmpty()) {
-            listeners.forEach { it.onItemClicked(obj) }
+            listeners.forEach { it.onItemClicked(item) }
         }
     }
 
@@ -47,8 +51,6 @@ abstract class AdapterViewModel<M>(
         onClick()
         return null as Void?
     }
-
-    fun getItem(): M = obj
 
     @Throws(IllegalStateException::class)
     fun getPosition(): Int {
@@ -77,9 +79,21 @@ abstract class AdapterViewModel<M>(
 
     open fun onRecycled() {}
 
-    abstract fun areItemsTheSame(obj: M): Boolean
+    internal fun areItemsTheSame(parent: Parent): Boolean {
+        return try {
+            val another = parent as Item
+            areItemsTheSame(another)
+        } catch (e: ClassCastException) {
+            this.areParentItemsTheSame(parent)
+        }
+    }
 
-    fun areItemsNotTheSame(obj: M) = !areItemsTheSame(obj)
+    protected open fun areParentItemsTheSame(parent: Parent): Boolean {
+        throw NotImplementedError()
+    }
+
+    protected abstract fun areItemsTheSame(other: Item): Boolean
+    fun areItemsNotTheSame(other: Parent) = !this.areItemsTheSame(other)
 
     abstract fun notifyUpdate()
 

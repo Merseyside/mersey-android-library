@@ -17,16 +17,16 @@ class CheckpointItemViewModel(obj: Checkpoint) : ComparableAdapterViewModel<Chec
     private var gapChange: Millis = Millis()
     private var rank: Int = 0
 
-    override fun areContentsTheSame(obj: Checkpoint): Boolean {
-        return this.obj == obj
+    override fun areContentsTheSame(other: Checkpoint): Boolean {
+        return this.item == other
     }
 
-    override fun compareTo(obj: Checkpoint): Int {
-        return this.obj.gap.compareTo(obj.gap)
+    override fun compareTo(other: Checkpoint): Int {
+        return this.item.gap.compareTo(other.gap)
     }
 
-    override fun areItemsTheSame(obj: Checkpoint): Boolean {
-        return this.obj.racer == obj.racer
+    override fun areItemsTheSame(other: Checkpoint): Boolean {
+        return this.item.racer == other.racer
     }
 
     override fun notifyUpdate() {
@@ -35,15 +35,15 @@ class CheckpointItemViewModel(obj: Checkpoint) : ComparableAdapterViewModel<Chec
     }
 
     fun getRacer(): String {
-        return obj.racer.name
+        return item.racer.name
     }
 
     fun getTeam(): String {
-        return obj.team
+        return item.team
     }
 
     fun getImage(): String {
-        return obj.racer.image
+        return item.racer.image
     }
 
     override fun onPositionChanged(fromPosition: Int, toPosition: Int) {
@@ -58,7 +58,7 @@ class CheckpointItemViewModel(obj: Checkpoint) : ComparableAdapterViewModel<Chec
 
     @Bindable
     fun getGap(): String {
-        return obj.gap.toFormattedDate("ss:SSS").value
+        return item.gap.toFormattedDate("ss:SSS").value
     }
 
     fun getChangeGap(): String {
@@ -87,7 +87,7 @@ class CheckpointItemViewModel(obj: Checkpoint) : ComparableAdapterViewModel<Chec
         gapChange = if (newItem.gap.isEmpty()) {
             newItem.gap
         } else {
-            newItem.gap - obj.gap
+            newItem.gap - item.gap
         }
 
         super.payload(newItem)

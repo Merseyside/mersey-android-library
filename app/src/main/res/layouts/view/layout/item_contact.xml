@@ -3,7 +3,7 @@
 
     <data>
         <variable
-            name="obj"
+            name="model"
             type="com.merseyside.merseyLib.features.adapters.contacts.model.ContactItemViewModel" />
     </data>
 
@@ -17,7 +17,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{obj.obj}"/>
+            android:text="@{model.item}"/>
 
     </FrameLayout>
 

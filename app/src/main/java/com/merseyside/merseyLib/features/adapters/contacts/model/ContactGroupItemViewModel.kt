@@ -6,26 +6,26 @@ import com.merseyside.merseyLib.features.adapters.contacts.entity.ContactGroup
 class ContactGroupItemViewModel(
     obj: ContactGroup
 ): ExpandableAdapterViewModel<ContactGroup, String>(obj) {
-    override fun areItemsTheSame(obj: ContactGroup): Boolean {
-        return this.obj.group == obj.group
+    override fun areItemsTheSame(other: ContactGroup): Boolean {
+        return this.item.group == other.group
     }
 
     override fun notifyUpdate() {}
 
-    override fun areContentsTheSame(obj: ContactGroup): Boolean {
-        return this.obj == obj
+    override fun areContentsTheSame(other: ContactGroup): Boolean {
+        return this.item == other
     }
 
-    override fun compareTo(obj: ContactGroup): Int {
-        return this.obj.group.compareTo(obj.group)
+    override fun compareTo(other: ContactGroup): Int {
+        return this.item.group.compareTo(other.group)
     }
 
     override fun getExpandedData(): List<String> {
-        return obj.contacts
+        return item.contacts
     }
 
     override fun onExpanded(isExpanded: Boolean) {}
     override fun notifySelectEnabled(isEnabled: Boolean) {}
 
-    fun getGroup(): String = obj.group.toString()
+    fun getGroup(): String = item.group.toString()
 }

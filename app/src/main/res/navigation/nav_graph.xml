@@ -31,6 +31,10 @@
         <action
             android:id="@+id/action_mainFragment_to_contactsFragment"
             app:destination="@id/contactsFragment" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_delegatesFragment"
+            app:destination="@id/delegatesFragment" />
     </fragment>
 
     <fragment
@@ -38,33 +42,41 @@
         android:name="com.merseyside.merseyLib.features.adapters.colors.view.ColorsFragment"
         android:label="colors_fragment"
         tools:layout="@layout/fragment_colors"
-        app:navGraph="@navigation/nav_graph"/>
+        app:navGraph="@navigation/nav_graph" />
 
     <fragment
         android:id="@+id/racingFragment"
         android:name="com.merseyside.merseyLib.features.adapters.racers.view.RacingFragment"
         android:label="racing_fragment"
         tools:layout="@layout/fragment_racing"
-        app:navGraph="@navigation/nav_graph"/>
+        app:navGraph="@navigation/nav_graph" />
 
     <fragment
         android:id="@+id/locationFragment"
         android:name="com.merseyside.merseyLib.features.location.view.LocationFragment"
         android:label="location_fragment"
         tools:layout="@layout/fragment_location"
-        app:navGraph="@navigation/nav_graph"/>
+        app:navGraph="@navigation/nav_graph" />
 
     <fragment
         android:id="@+id/concatFragment"
         android:name="com.merseyside.merseyLib.features.adapters.concat.view.ConcatAdapterFragment"
         android:label="concat_fragment"
         tools:layout="@layout/fragment_concat_adapter"
-        app:navGraph="@navigation/nav_graph"/>
+        app:navGraph="@navigation/nav_graph" />
 
     <fragment
         android:id="@+id/contactsFragment"
         android:name="com.merseyside.merseyLib.features.adapters.contacts.view.ContactFragment"
         android:label="contacts_fragment"
         tools:layout="@layout/fragment_contacts"
-        app:navGraph="@navigation/nav_graph"/>
+        app:navGraph="@navigation/nav_graph" />
+
+    <fragment
+        android:id="@+id/delegatesFragment"
+        android:name="com.merseyside.merseyLib.features.adapters.delegate.view.DelegateFragment"
+        android:label="delegates_fragment"
+        tools:layout="@layout/fragment_delegate"
+        app:navGraph="@navigation/nav_graph" />
+
 </navigation>

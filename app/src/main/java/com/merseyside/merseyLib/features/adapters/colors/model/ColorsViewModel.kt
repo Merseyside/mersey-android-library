@@ -21,7 +21,7 @@ class ColorsViewModel(
 
     fun onPopulateClick() {
         viewModelScope.launch {
-            colorProducer.generateRandomColors(150)
+            colorProducer.generateRandomColors(15)
         }
     }
 }

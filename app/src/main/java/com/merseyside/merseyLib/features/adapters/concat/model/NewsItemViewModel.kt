@@ -6,15 +6,15 @@ import com.merseyside.merseyLib.features.adapters.concat.entity.News
 
 class NewsItemViewModel(obj: News): AdapterViewModel<News>(obj) {
 
-    override fun areItemsTheSame(obj: News): Boolean {
-        return this.obj.id == obj.id
+    override fun areItemsTheSame(other: News): Boolean {
+        return this.item.id == other.id
     }
 
     override fun notifyUpdate() {}
 
     @Bindable
-    fun getTitle(): String = this.obj.title
+    fun getTitle(): String = this.item.title
 
     @Bindable
-    fun getDescription(): String = this.obj.description
+    fun getDescription(): String = this.item.description
 }

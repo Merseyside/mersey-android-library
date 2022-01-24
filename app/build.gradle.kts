@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    compileSdkVersion(Application.compileSdk)
+    compileSdk = Application.compileSdk
 
     defaultConfig {
-        minSdkVersion(Application.minSdk)
-        targetSdkVersion(Application.targetSdk)
+        minSdk = Application.minSdk
+        targetSdk = Application.targetSdk
         versionCode = Metadata.versionCode
         versionName = Metadata.version
 
@@ -21,6 +21,8 @@ android {
             isAbortOnError = false
         }
     }
+
+    buildFeatures.dataBinding = true
 
     buildTypes {
         getByName("debug") {
@@ -41,27 +43,31 @@ android {
     }
 
     packagingOptions {
-        exclude("META-INF/DEPENDENCIES")
-        exclude("META-INF/LICENSE")
-        exclude("META-INF/LICENSE.txt")
-        exclude("META-INF/license.txt")
-        exclude("META-INF/NOTICE")
-        exclude("META-INF/NOTICE.txt")
-        exclude("META-INF/notice.txt")
-        exclude("META-INF/ASL2.0")
-        exclude("META-INF/*.kotlin_module")
+        resources.excludes.addAll(
+            listOf(
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/license.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt",
+                "META-INF/notice.txt",
+                "META-INF/ASL2.0",
+                "META-INF/*.kotlin_module"
+            )
+        )
     }
 
-    buildFeatures.dataBinding = true
-
     sourceSets.getByName("main") {
-        res.srcDir("src/main/res/")
-        res.srcDir("src/main/res/layouts/fragment")
-        res.srcDir("src/main/res/layouts/activity")
-        res.srcDir("src/main/res/layouts/dialog")
-        res.srcDir("src/main/res/layouts/view")
-        res.srcDir("src/main/res/value/values-light")
-        res.srcDir("src/main/res/value/values-night")
+        res.srcDirs(
+            "src/main/res/",
+            "src/main/res/layouts/fragment",
+            "src/main/res/layouts/activity",
+            "src/main/res/layouts/dialog",
+            "src/main/res/layouts/view",
+            "src/main/res/value/values-light",
+            "src/main/res/value/values-night"
+        )
     }
 }
 
@@ -96,5 +102,4 @@ dependencies {
     }
 
     kapt(androidLibs.daggerCompiler)
-    compileOnly("javax.annotation:jsr250-api:1.0")
 }

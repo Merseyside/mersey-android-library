@@ -34,10 +34,10 @@ class SelectableAdapterGroup<M : Any>(
         }
 
         override fun onSelectedRemoved(
-            adapter: SelectableAdapter<M, *>,
+            adapterList: SelectableAdapterListUtils<M, *>,
             items: List<M>
         ) {
-            selectMostAppropriateItem(adapter)
+            selectMostAppropriateItem(adapterList)
         }
     }
 
@@ -97,7 +97,7 @@ class SelectableAdapterGroup<M : Any>(
         return adapters.filter { it.getSelectedItemsCount().isNotZero() }
     }
 
-    private fun selectMostAppropriateItem(adapter: SelectableAdapter<M, *>) {
+    private fun selectMostAppropriateItem(adapter: SelectableAdapterListUtils<M, *>) {
         if (!isAllowToCancelSelection) {
             if (adapter.getAllItemCount().isNotZero()) {
                 adapter.selectFirstSelectableItem(force = true)
