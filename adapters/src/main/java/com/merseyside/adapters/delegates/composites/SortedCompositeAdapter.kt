@@ -6,7 +6,7 @@ import com.merseyside.adapters.model.ComparableAdapterParentViewModel
 import com.merseyside.adapters.model.ComparableAdapterViewModel
 import com.merseyside.adapters.utils.SortedAdapterListUtils
 import com.merseyside.adapters.view.TypedBindingHolder
-import com.merseyside.utils.getMinMax
+import com.merseyside.merseyLib.kotlin.getMinMax
 import com.merseyside.utils.mainThreadIfNeeds
 import com.merseyside.utils.reflection.ReflectionUtils
 import kotlinx.coroutines.CoroutineScope

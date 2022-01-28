@@ -15,17 +15,11 @@ class ColorsModule(private val fragment: ColorsFragment) {
     @Provides
     fun provideNewsViewModel(
         @ApplicationContext application: Application,
-        colorProducer: ColorProducer,
-        testInteractor: TestInteractor
-    ) = fragment.viewModel { ColorsViewModel(application, colorProducer, testInteractor) }
+        colorProducer: ColorProducer
+    ) = fragment.viewModel { ColorsViewModel(application, colorProducer) }
 
     @Provides
     fun provideColorProducer(): ColorProducer {
         return ColorProducer()
-    }
-
-    @Provides
-    fun provideTestInteractor(): TestInteractor {
-        return TestInteractor()
     }
 }

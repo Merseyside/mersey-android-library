@@ -9,7 +9,7 @@ import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.SortedAdapterListUtils
 import com.merseyside.adapters.view.TypedBindingHolder
 import com.merseyside.merseyLib.kotlin.concurency.Locker
-import com.merseyside.utils.getMinMax
+import com.merseyside.merseyLib.kotlin.getMinMax
 import com.merseyside.utils.mainThreadIfNeeds
 import com.merseyside.utils.reflection.ReflectionUtils
 import kotlinx.coroutines.CoroutineScope
