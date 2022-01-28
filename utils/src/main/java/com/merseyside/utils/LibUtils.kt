@@ -5,8 +5,6 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Environment
 import androidx.annotation.ColorInt
-import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.roundToInt
 
 fun convertPixelsToDp(context: Context, px: Int): Float {
@@ -31,11 +29,4 @@ fun adjustAlpha(@ColorInt color: Int, factor: Float): Int {
     val green: Int = Color.green(color)
     val blue: Int = Color.blue(color)
     return Color.argb(alpha, red, green, blue)
-}
-
-fun <T: Number> getMinMax(first: T, second: T): Pair<T, T> {
-    val min = min(first.toInt(), second.toInt())
-    val max = max(first.toInt(), second.toInt())
-
-    return min as T to max as T
 }

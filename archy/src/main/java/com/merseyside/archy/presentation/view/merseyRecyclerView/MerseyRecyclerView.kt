@@ -9,11 +9,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.archy.R
-import com.merseyside.merseyLib.kotlin.extensions.log
 
-open class MerseyRecyclerView(context: Context, attrSet: AttributeSet? = null) : RecyclerView(context, attrSet) {
+open class MerseyRecyclerView(context: Context, attrSet: AttributeSet? = null)
+    : RecyclerView(context, attrSet) {
     private var mMaxHeight = 0
-    private var isSaveScrollPosition = true
+    var isSaveScrollPosition = true
 
     init {
         loadAttributes(attrSet)
@@ -57,7 +57,7 @@ open class MerseyRecyclerView(context: Context, attrSet: AttributeSet? = null) :
                     else -> 0
                 }
 
-                newState.mScrollPosition = scrollPosition.log("position = ")
+                newState.scrollPosition = scrollPosition
             }
         }
 
@@ -70,7 +70,7 @@ open class MerseyRecyclerView(context: Context, attrSet: AttributeSet? = null) :
             if (state is SavedState) {
                 super.onRestoreInstanceState(state.superState)
 
-                val mScrollPosition = state.mScrollPosition
+                val mScrollPosition = state.scrollPosition
                 val layoutManager = layoutManager
                 if (layoutManager != null) {
                     val count = layoutManager.itemCount
@@ -87,17 +87,28 @@ open class MerseyRecyclerView(context: Context, attrSet: AttributeSet? = null) :
     }
 
     internal class SavedState : BaseSavedState {
-        var mScrollPosition = 0
+        var scrollPosition = 0
 
-        constructor(`in`: Parcel) : super(`in`) {
-            mScrollPosition = `in`.readInt()
+        constructor(parcel: Parcel) : super(parcel) {
+
+            scrollPosition = parcel.readInt()
         }
 
         constructor(superState: Parcelable?) : super(superState)
 
         override fun writeToParcel(dest: Parcel, flags: Int) {
             super.writeToParcel(dest, flags)
-            dest.writeInt(mScrollPosition)
+            dest.writeInt(scrollPosition)
+        }
+
+        companion object {
+            @Suppress("UNUSED")
+            @JvmField
+            val CREATOR = object : Parcelable.Creator<SavedState> {
+                override fun createFromParcel(source: Parcel) = SavedState(source)
+                override fun newArray(size: Int): Array<SavedState?> =
+                    arrayOfNulls(size)
+            }
         }
 
     }

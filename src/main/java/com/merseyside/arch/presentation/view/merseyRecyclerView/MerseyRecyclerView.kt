@@ -57,7 +57,7 @@ class MerseyRecyclerView(context: Context, attrSet: AttributeSet) : RecyclerView
                     else -> 0
                 }
 
-                newState.mScrollPosition = scrollPosition.log("position = ")
+                newState.mScrollPosition = scrollPosition
             }
         }
 

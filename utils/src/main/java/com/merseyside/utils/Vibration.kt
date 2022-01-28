@@ -5,14 +5,23 @@ import android.content.Context
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
-import com.merseyside.utils.singletons.SingletonHolder
+import android.os.VibratorManager
 import com.merseyside.merseyLib.time.Millis
 import com.merseyside.merseyLib.time.TimeUnit
+import com.merseyside.utils.singletons.SingletonHolder
 
 @SuppressLint("MissingPermission")
 class Vibration private constructor(context: Context) {
 
-    private var vibrator: Vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+    private val vibrator: Vibrator by lazy {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val manager =
+                context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            manager.defaultVibrator
+        } else {
+            context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        }
+    }
 
     fun vibrate(timeUnit: TimeUnit = Millis(100)) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

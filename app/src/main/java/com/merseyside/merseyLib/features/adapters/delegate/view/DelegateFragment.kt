@@ -3,6 +3,7 @@ package com.merseyside.merseyLib.features.adapters.delegate.view
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import com.merseyside.adapters.base.UpdateRequest
 import com.merseyside.adapters.ext.onItemClicked
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
@@ -11,16 +12,16 @@ import com.merseyside.merseyLib.databinding.FragmentDelegateBinding
 import com.merseyside.merseyLib.features.adapters.delegate.adapter.AnimalsAdapter
 import com.merseyside.merseyLib.features.adapters.delegate.di.DaggerDelegateComponent
 import com.merseyside.merseyLib.features.adapters.delegate.di.DelegateModule
-import com.merseyside.merseyLib.features.adapters.delegate.entity.ButtonItem
+import com.merseyside.merseyLib.features.adapters.delegate.entity.Animal
 import com.merseyside.merseyLib.features.adapters.delegate.entity.Cat
 import com.merseyside.merseyLib.features.adapters.delegate.entity.Dog
 import com.merseyside.merseyLib.features.adapters.delegate.model.DelegateViewModel
+import com.merseyside.utils.ext.onClick
 
-class DelegateFragment: BaseSampleFragment<FragmentDelegateBinding, DelegateViewModel>() {
+class DelegateFragment : BaseSampleFragment<FragmentDelegateBinding, DelegateViewModel>() {
 
     private val adapter = AnimalsAdapter().apply {
         onItemClicked { showMsg("Clicked!") }
-        //delegatesManager.addDelegates(ButtonDelegateAdapter())
     }
 
     override fun hasTitleBackButton() = true
@@ -39,12 +40,19 @@ class DelegateFragment: BaseSampleFragment<FragmentDelegateBinding, DelegateView
         super.onViewCreated(view, savedInstanceState)
 
         requireBinding().recycler.adapter = adapter
-        adapter.add(listOf(
+        adapter.add(Cat("Squirty", 5, "abc"))
+
+        requireBinding().populate.onClick {
+            adapter.update(UpdateRequest.Builder(getData()).build())
+        }
+    }
+
+    private fun getData(): List<Animal> {
+        return listOf(
             Cat("Squirty", 5, "abc"),
             Cat("Mary", 12, "def"),
-            ButtonItem("Button"),
-            Dog("Woof", 1, "ghi"),
-        ))
+            Dog("Woof", 1, "ghi")
+        )
     }
 
     private fun getDelegateModule(): DelegateModule {

@@ -28,7 +28,7 @@ class DelegatesManager<Parent, Model : AdapterViewModel<Parent>>(
     constructor() : this(*arrayOf<DelegateAdapter<*, Parent, Model>>())
 
     @Synchronized
-    fun addDelegates(vararg delegates: DelegateAdapter<*, *, *>) {
+    fun addDelegates(vararg delegates: DelegateAdapter<*, Parent, *>) {
         val size = count
         delegates.forEachIndexed { index, delegate ->
             addDelegate(
