@@ -4,7 +4,7 @@ import android.graphics.Point
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
-import com.merseyside.utils.buffer.BufferQueue
+import com.merseyside.merseyLib.kotlin.collection.BufferQueue
 import com.merseyside.utils.gestures.ClickGestureListener
 import com.merseyside.utils.gestures.SwipeGestureListener
 import com.merseyside.utils.view.ext.inverse
