@@ -6,8 +6,8 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
-import com.merseyside.merseyLib.time.Millis
-import com.merseyside.merseyLib.time.TimeUnit
+import com.merseyside.merseyLib.time.units.Millis
+import com.merseyside.merseyLib.time.units.TimeUnit
 import com.merseyside.utils.singletons.SingletonHolder
 
 @SuppressLint("MissingPermission")

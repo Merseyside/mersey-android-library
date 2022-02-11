@@ -7,8 +7,8 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import com.merseyside.animators.BaseAnimatorBuilder
 import com.merseyside.animators.BaseSingleAnimator
-import com.merseyside.merseyLib.time.Millis
-import com.merseyside.merseyLib.time.TimeUnit
+import com.merseyside.merseyLib.time.units.Millis
+import com.merseyside.merseyLib.time.units.TimeUnit
 
 class AlphaAnimator(
     builder: Builder

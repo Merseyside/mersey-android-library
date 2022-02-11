@@ -12,7 +12,7 @@ repositories {
 }
 
 val kotlin = "1.6.10"
-val gradle = "7.0.4"
+val gradle = "7.3.0-alpha01"
 val nexus = "1.1.0"
 
 dependencies {

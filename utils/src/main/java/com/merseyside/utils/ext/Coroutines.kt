@@ -1,6 +1,6 @@
 package com.merseyside.utils.ext
 
-import com.merseyside.merseyLib.time.TimeUnit
+import com.merseyside.merseyLib.time.units.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

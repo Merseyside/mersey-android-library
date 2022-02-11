@@ -1,7 +1,7 @@
 package com.merseyside.utils.billing
 
-import com.merseyside.merseyLib.time.Days as DaysUnit
-import com.merseyside.merseyLib.time.TimeUnit
+import com.merseyside.merseyLib.time.units.Days as DaysUnit
+import com.merseyside.merseyLib.time.units.TimeUnit
 
 sealed class Period {
 

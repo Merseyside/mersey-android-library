@@ -15,7 +15,7 @@ import android.widget.TextView
 import androidx.annotation.ColorInt
 import com.merseyside.animators.BaseAnimatorBuilder
 import com.merseyside.animators.BaseSingleAnimator
-import com.merseyside.merseyLib.time.TimeUnit
+import com.merseyside.merseyLib.time.units.TimeUnit
 import com.merseyside.utils.ext.getColor
 import com.merseyside.utils.ext.setColor
 import java.lang.UnsupportedOperationException

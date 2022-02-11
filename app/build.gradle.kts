@@ -16,10 +16,6 @@ android {
 
         multiDexEnabled = true
         vectorDrawables.useSupportLibrary = true
-
-        lint {
-            isAbortOnError = false
-        }
     }
 
     buildFeatures.dataBinding = true
@@ -82,7 +78,6 @@ val android = listOf(
     androidLibs.appCompat,
     androidLibs.material,
     androidLibs.cardView,
-    androidLibs.annotation,
     androidLibs.dagger
 )
 

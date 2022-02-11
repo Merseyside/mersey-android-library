@@ -1,8 +1,8 @@
 package com.merseyside.utils.ext
 
-import com.merseyside.merseyLib.time.Millis
-import com.merseyside.merseyLib.time.TimeUnit
-import com.merseyside.merseyLib.time.plus
+import com.merseyside.merseyLib.time.units.Millis
+import com.merseyside.merseyLib.time.units.TimeUnit
+import com.merseyside.merseyLib.time.units.plus
 
 fun List<TimeUnit>.sum(): TimeUnit {
     var sum = Millis()

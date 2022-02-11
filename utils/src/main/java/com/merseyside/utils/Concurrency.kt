@@ -2,7 +2,7 @@ package com.merseyside.utils
 
 import android.os.Handler
 import android.os.Looper
-import com.merseyside.merseyLib.time.TimeUnit
+import com.merseyside.merseyLib.time.units.TimeUnit
 import com.merseyside.utils.ext.toHandlerCanceller
 
 fun mainThread(onMain: () -> Unit): Handler {

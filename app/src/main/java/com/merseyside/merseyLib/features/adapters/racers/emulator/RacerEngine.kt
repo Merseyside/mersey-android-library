@@ -1,10 +1,10 @@
 package com.merseyside.merseyLib.features.adapters.racers.emulator
 
 import com.merseyside.merseyLib.features.adapters.racers.entity.RacerModel
-import com.merseyside.merseyLib.time.Millis
-import com.merseyside.merseyLib.time.TimeUnit
+import com.merseyside.merseyLib.time.units.Millis
+import com.merseyside.merseyLib.time.units.TimeUnit
+import com.merseyside.merseyLib.time.units.plus
 import com.merseyside.utils.ext.delay
-import com.merseyside.merseyLib.time.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive

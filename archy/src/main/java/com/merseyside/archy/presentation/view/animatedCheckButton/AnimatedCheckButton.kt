@@ -14,7 +14,7 @@ import com.merseyside.animators.Approach
 import com.merseyside.animators.animator.ColorAnimator
 import com.merseyside.merseyLib.kotlin.extensions.forEachNotNull
 import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
-import com.merseyside.merseyLib.time.Millis
+import com.merseyside.merseyLib.time.units.Millis
 import com.merseyside.merseyLib.kotlin.Logger
 import com.merseyside.utils.ext.*
 

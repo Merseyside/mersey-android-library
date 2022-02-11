@@ -3,10 +3,11 @@ package com.merseyside.merseyLib.features.adapters.racers.entity
 import com.merseyside.merseyLib.kotlin.extensions.forEachEntry
 import com.merseyside.merseyLib.kotlin.extensions.log
 import com.merseyside.merseyLib.kotlin.extensions.minByNullable
-import com.merseyside.merseyLib.time.Millis
-import com.merseyside.merseyLib.time.TimeUnit
-import com.merseyside.utils.ext.*
-import com.merseyside.merseyLib.time.*
+import com.merseyside.merseyLib.time.units.Millis
+import com.merseyside.merseyLib.time.units.TimeUnit
+import com.merseyside.merseyLib.time.units.minus
+import com.merseyside.merseyLib.time.units.plus
+import com.merseyside.utils.ext.sum
 
 class Statistics(
     racers: List<RacerModel>,

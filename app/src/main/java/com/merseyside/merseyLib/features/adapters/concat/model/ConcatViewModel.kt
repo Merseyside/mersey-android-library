@@ -4,7 +4,7 @@ import android.app.Application
 import com.merseyside.archy.presentation.model.AndroidViewModel
 import com.merseyside.merseyLib.features.adapters.concat.producer.AdsProducer
 import com.merseyside.merseyLib.features.adapters.concat.producer.NewsProducer
-import com.merseyside.merseyLib.time.Seconds
+import com.merseyside.merseyLib.time.units.Seconds
 
 class ConcatViewModel(
     application: Application,

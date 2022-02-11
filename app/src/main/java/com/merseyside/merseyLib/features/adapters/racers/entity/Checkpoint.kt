@@ -1,6 +1,6 @@
 package com.merseyside.merseyLib.features.adapters.racers.entity
 
-import com.merseyside.merseyLib.time.Millis
+import com.merseyside.merseyLib.time.units.Millis
 
 data class Checkpoint(
     val racer: RacerModel,

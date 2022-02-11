@@ -2,7 +2,6 @@ package com.merseyside.merseyLib.features.adapters.racers.adapter
 
 import com.merseyside.adapters.base.SortedAdapter
 import com.merseyside.adapters.model.ComparableAdapterParentViewModel
-import com.merseyside.adapters.model.ComparableAdapterViewModel
 import com.merseyside.adapters.view.TypedBindingHolder
 import com.merseyside.animators.template.SetTextFadeOutInAnimator
 import com.merseyside.merseyLib.BR
@@ -10,10 +9,9 @@ import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.databinding.ItemCheckpointBinding
 import com.merseyside.merseyLib.features.adapters.racers.entity.Checkpoint
 import com.merseyside.merseyLib.features.adapters.racers.model.CheckpointItemViewModel
-import com.merseyside.merseyLib.time.Millis
+import com.merseyside.merseyLib.time.units.Millis
 import com.merseyside.utils.ext.setTextColorAttr
-import com.merseyside.merseyLib.time.compareTo
-import com.merseyside.merseyLib.kotlin.extensions.log
+import com.merseyside.merseyLib.time.units.compareTo
 import kotlinx.coroutines.CoroutineScope
 
 class RacersAdapter(scope: CoroutineScope) :

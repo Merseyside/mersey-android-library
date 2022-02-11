@@ -1,8 +1,8 @@
 package com.merseyside.utils.billing
 
 import com.google.api.services.androidpublisher.model.SubscriptionPurchase
-import com.merseyside.merseyLib.time.Millis
 import com.merseyside.merseyLib.time.Time
+import com.merseyside.merseyLib.time.units.Millis
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -131,7 +131,7 @@ sealed class Subscription {
                     return subscriptionPurchase.let {
 
 
-                        if (it.expiryTimeMillis < Time.now.millis) {
+                        if (it.expiryTimeMillis < Time.nowGMT.millis) {
                             CanceledSubscription(
                                 orderId = it.orderId,
                                 purchaseToken = it.linkedPurchaseToken,
