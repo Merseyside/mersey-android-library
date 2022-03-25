@@ -3,7 +3,7 @@
 package com.merseyside.adapters.base
 
 import androidx.recyclerview.widget.SortedList
-import com.merseyside.adapters.model.ComparableAdapterParentViewModel
+import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.ComparableAdapterViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.SortedAdapterListUtils
@@ -19,9 +19,9 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.sync.Mutex
 
 @Suppress("UNCHECKED_CAST")
-abstract class SortedAdapter<Item, Model : ComparableAdapterViewModel<Item>>(
+abstract class SortedAdapter<Parent, Model : ComparableAdapterViewModel<Parent>>(
     override val scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-) : BaseAdapter<Item, Model>(), SortedAdapterListUtils<Item, Item, Model>, Locker {
+) : BaseAdapter<Parent, Model>(), SortedAdapterListUtils<Parent, Model>, Locker {
 
     override val modelList: MutableList<Model> = ArrayList()
 
@@ -83,22 +83,6 @@ abstract class SortedAdapter<Item, Model : ComparableAdapterViewModel<Item>>(
     }
 
     override val sortedList: SortedList<Model> by lazy { SortedList(persistentClass, listCallback) }
-
-    override fun onBindViewHolder(
-        holder: TypedBindingHolder<Model>,
-        position: Int,
-        payloads: List<Any>
-    ) {
-        if (payloads.isNotEmpty()) {
-            val payloadable = payloads[0] as List<ComparableAdapterParentViewModel.Payloadable>
-
-            if (isPayloadsValid(payloadable)) {
-                onPayloadable(holder, payloadable)
-            }
-        } else {
-            super.onBindViewHolder(holder, position, payloads)
-        }
-    }
 
     override fun getItemCount() = sortedList.size()
 

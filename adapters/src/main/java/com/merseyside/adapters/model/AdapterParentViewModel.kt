@@ -97,6 +97,20 @@ abstract class AdapterParentViewModel<Item: Parent, Parent>(
 
     abstract fun notifyUpdate()
 
+    internal fun payload(newItem: Parent): List<Payloadable> {
+        return payload(newItem as Item)
+    }
+
+    open fun payload(newItem: Item): List<Payloadable> {
+        this.item = newItem
+        notifyUpdate()
+        return listOf(Payloadable.None)
+    }
+
+    interface Payloadable {
+        object None: Payloadable
+    }
+
     companion object {
         internal const val NO_ITEM_POSITION = -1
     }

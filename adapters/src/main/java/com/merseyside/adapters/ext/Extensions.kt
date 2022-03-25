@@ -22,7 +22,7 @@ fun SortedList<*>.isNotEmpty(): Boolean {
 }
 
 @Throws(IllegalArgumentException::class)
-fun <Model : ComparableAdapterParentViewModel<Item, Parent>, Item : Parent, Parent> SortedList<Model>.isEquals(
+fun <Model : ComparableAdapterParentViewModel<out Parent, Parent>, Parent> SortedList<Model>.isEquals(
     list: List<Model>
 ): Boolean {
 
@@ -41,7 +41,7 @@ fun <Model : ComparableAdapterParentViewModel<Item, Parent>, Item : Parent, Pare
     }
 }
 
-fun <Model : ComparableAdapterParentViewModel<Item, Parent>, Item : Parent, Parent> SortedList<Model>.isNotEquals(
+fun <Model : ComparableAdapterParentViewModel<out Parent, Parent>, Parent> SortedList<Model>.isNotEquals(
     list: List<Model>
 ): Boolean = !this.isEquals(list)
 

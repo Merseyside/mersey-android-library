@@ -8,11 +8,12 @@ import com.merseyside.adapters.base.UpdateRequest
 import com.merseyside.adapters.callback.HasOnItemClickListener
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.view.TypedBindingHolder
+import com.merseyside.merseyLib.kotlin.Logger
 import com.merseyside.merseyLib.kotlin.extensions.isZero
 import com.merseyside.merseyLib.kotlin.extensions.minByNullable
 
 @SuppressLint("NotifyDataSetChanged")
-interface AdapterListUtils<Item: Parent, Parent, Model: AdapterParentViewModel<Item, Parent>> :
+interface AdapterListUtils<Parent, Model: AdapterParentViewModel<out Parent, Parent>> :
     HasOnItemClickListener<Parent> {
 
     @InternalAdaptersApi
@@ -20,14 +21,14 @@ interface AdapterListUtils<Item: Parent, Parent, Model: AdapterParentViewModel<I
     val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>
 
     @InternalAdaptersApi
-    fun createModels(items: List<Item>): List<Model>
+    fun createModels(items: List<Parent>): List<Model>
 
-    fun add(item: Item) {
+    fun add(item: Parent) {
         addModels(createModels(listOf(item)))
         adapter.notifyItemInserted(adapter.itemCount - 1)
     }
 
-    fun add(items: List<Item>) {
+    fun add(items: List<Parent>) {
         val startPosition = adapter.itemCount - 1
         addModels(createModels(items))
         adapter.notifyItemRangeChanged(startPosition, items.size)
@@ -38,11 +39,11 @@ interface AdapterListUtils<Item: Parent, Parent, Model: AdapterParentViewModel<I
         modelList.add(model)
     }
 
-    fun update(updateRequest: UpdateRequest<Item>): Boolean {
+    fun update(updateRequest: UpdateRequest<Parent>): Boolean {
         TODO("Not implemented")
     }
 
-    fun update(item: Item): Boolean {
+    fun update(item: Parent): Boolean {
         TODO("Not implemented")
     }
 
@@ -65,7 +66,21 @@ interface AdapterListUtils<Item: Parent, Parent, Model: AdapterParentViewModel<I
     }
 
     @Throws(IllegalArgumentException::class)
-    fun getPositionOfItem(item: Item): Int {
+    @InternalAdaptersApi
+    open fun notifyModelChanged(
+        model: Model,
+        payloads: List<AdapterParentViewModel.Payloadable> = emptyList()
+    ): Int = try {
+        val position = getPositionOfModel(model)
+        adapter.notifyItemChanged(position, payloads)
+        position
+    } catch (e: IllegalArgumentException) {
+        Logger.log("Skip notify item change!")
+        throw e
+    }
+
+    @Throws(IllegalArgumentException::class)
+    fun getPositionOfItem(item: Parent): Int {
         modelList.forEachIndexed { index, t ->
             if (t.areItemsTheSame(item)) return index
         }
@@ -83,7 +98,7 @@ interface AdapterListUtils<Item: Parent, Parent, Model: AdapterParentViewModel<I
     }
 
     @InternalAdaptersApi
-    fun find(item: Item): Model? {
+    fun find(item: Parent): Model? {
         modelList.forEach {
             if (it.areItemsTheSame(item)) {
                 return it
@@ -97,7 +112,7 @@ interface AdapterListUtils<Item: Parent, Parent, Model: AdapterParentViewModel<I
         return modelList[position]
     }
 
-    fun getItemByPosition(position: Int): Item {
+    fun getItemByPosition(position: Int): Parent {
         return getModelByPosition(position).item
     }
 
@@ -107,11 +122,11 @@ interface AdapterListUtils<Item: Parent, Parent, Model: AdapterParentViewModel<I
     }
 
     @InternalAdaptersApi
-    fun getModelByItem(item: Item): Model? {
+    fun getModelByItem(item: Parent): Model? {
         return modelList.firstOrNull { it.areItemsTheSame(item) }
     }
 
-    fun remove(item: Item): Boolean {
+    fun remove(item: Parent): Boolean {
         val foundObj = getModelByItem(item)
 
         return if (foundObj != null) {
@@ -119,7 +134,7 @@ interface AdapterListUtils<Item: Parent, Parent, Model: AdapterParentViewModel<I
         } else false
     }
 
-    fun remove(items: List<Item>): Boolean {
+    fun remove(items: List<Parent>): Boolean {
         val removeList = items.mapNotNull { getModelByItem(it) }
 
         val removed = modelList.removeAll(removeList)
@@ -164,24 +179,6 @@ interface AdapterListUtils<Item: Parent, Parent, Model: AdapterParentViewModel<I
         }
     }
 
-    /**
-     * -1 means item has removed.
-     */
-    fun notifyItemMoved(
-        toPosition: Int
-    ) {
-        getModelByPosition(toPosition).onPositionChanged(toPosition)
-    }
-
-    /**
-     * Call this when actual object has already changed
-     * @param item is changed object
-     */
-    @Throws(IllegalArgumentException::class)
-    fun notifyItemChanged(item: Item) {
-        find(item)?.notifyUpdate()
-    }
-
     fun notifyItemsRemoved(startsWithPosition: Int) {
         if (startsWithPosition < adapter.itemCount - 1) {
             (startsWithPosition until adapter.itemCount).forEach { index ->
@@ -209,7 +206,7 @@ interface AdapterListUtils<Item: Parent, Parent, Model: AdapterParentViewModel<I
     fun isNotEmpty(): Boolean = !isEmpty()
 
     @Throws(IndexOutOfBoundsException::class)
-    fun first(): Item {
+    fun first(): Parent {
         try {
             return getModelByPosition(0).item
         } catch (e: Exception) {
@@ -218,7 +215,7 @@ interface AdapterListUtils<Item: Parent, Parent, Model: AdapterParentViewModel<I
     }
 
     @Throws(IndexOutOfBoundsException::class)
-    fun last(): Item {
+    fun last(): Parent {
         try {
             return getModelByPosition(adapter.itemCount - 1).item
         } catch (e: Exception) {
@@ -227,11 +224,11 @@ interface AdapterListUtils<Item: Parent, Parent, Model: AdapterParentViewModel<I
     }
 
     @InternalAdaptersApi
-    private fun getModelsByItems(items: List<Item>): List<Model> {
+    private fun getModelsByItems(items: List<Parent>): List<Model> {
         return items.mapNotNull { item -> modelList.find { model -> model.areItemsTheSame(item) } }
     }
 
-    fun getAll(): List<Item> {
+    fun getAll(): List<Parent> {
         return modelList.map { it.item }
     }
 
@@ -240,4 +237,14 @@ interface AdapterListUtils<Item: Parent, Parent, Model: AdapterParentViewModel<I
     }
 
     fun notifyAdapterRemoved() {}
+
+    fun isPayloadsValid(payloads: List<AdapterParentViewModel.Payloadable>): Boolean {
+        return payloads.isNotEmpty() &&
+                !payloads.contains(AdapterParentViewModel.Payloadable.None)
+    }
+
+    fun onPayloadable(
+        holder: TypedBindingHolder<Model>,
+        payloads: List<AdapterParentViewModel.Payloadable>
+    ) {}
 }

@@ -1,7 +1,5 @@
 plugins {
     `kotlin-dsl`
-    kotlin("jvm") version "1.6.10"
-    kotlin("plugin.serialization") version "1.6.10"
 }
 
 repositories {
@@ -11,8 +9,8 @@ repositories {
     gradlePluginPortal()
 }
 
-val kotlin = "1.6.10"
-val gradle = "7.3.0-alpha01"
+val kotlin = "1.6.20-RC2"
+val gradle = "7.3.0-alpha05"
 val nexus = "1.1.0"
 
 dependencies {
@@ -20,5 +18,5 @@ dependencies {
     implementation("com.android.tools.build:gradle:$gradle")
     implementation("org.jetbrains.kotlin:kotlin-serialization:$kotlin")
     implementation("io.github.gradle-nexus:publish-plugin:$nexus")
-    implementation("org.jetbrains.dokka:dokka-gradle-plugin:$kotlin")
+    implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.6.10")
 }

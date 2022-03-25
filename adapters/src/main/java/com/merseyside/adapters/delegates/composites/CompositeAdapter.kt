@@ -14,11 +14,11 @@ import com.merseyside.adapters.utils.AdapterListUtils
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.view.TypedBindingHolder
 
-abstract class CompositeAdapter<Parent, Model : AdapterParentViewModel<Parent, Parent>>(
+abstract class CompositeAdapter<Parent, Model : AdapterParentViewModel<out Parent, Parent>>(
     val delegatesManager: DelegatesManager<Parent, Model> = DelegatesManager()
 ) : RecyclerView.Adapter<TypedBindingHolder<Model>>(),
     ItemCallback<AdapterViewModel<Parent>>,
-    AdapterListUtils<Parent, Parent, Model> {
+    AdapterListUtils<Parent, Model> {
 
     override var listener: OnItemClickListener<Parent>? = null
 

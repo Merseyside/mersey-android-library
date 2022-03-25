@@ -7,13 +7,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.base.SortedAdapter
 import com.merseyside.adapters.base.UpdateRequest
-import com.merseyside.adapters.model.ExpandableAdapterViewModel
+import com.merseyside.adapters.model.ExpandableAdapterParentViewModel
 import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
 import com.merseyside.merseyLib.kotlin.extensions.remove
 
-interface ExpandableAdapterListUtils<Item, Model : ExpandableAdapterViewModel<Item, Data>,
+interface ExpandableAdapterListUtils<Parent, Model : ExpandableAdapterParentViewModel<out Parent, Parent, Data>,
         Data, InnerAdapter : BaseAdapter<Data, *>>
-    : SelectableAdapterListUtils<Item, Model> {
+    : SelectableAdapterListUtils<Parent, Model> {
     var adapterList: MutableList<Pair<Model, InnerAdapter>>
 
     fun initExpandableList(model: Model): InnerAdapter
@@ -34,7 +34,7 @@ interface ExpandableAdapterListUtils<Item, Model : ExpandableAdapterViewModel<It
         }
     }
 
-    fun getAdapterByItem(item: Item): InnerAdapter? {
+    fun getAdapterByItem(item: Parent): InnerAdapter? {
         val model = getModelByItem(item)
         return model?.let {
             getAdapterIfExists(it)
@@ -54,7 +54,7 @@ interface ExpandableAdapterListUtils<Item, Model : ExpandableAdapterViewModel<It
     }
 
 
-    override fun update(updateRequest: UpdateRequest<Item>): Boolean {
+    override fun update(updateRequest: UpdateRequest<Parent>): Boolean {
         if (updateRequest.isDeleteOld) {
             adapterList = adapterList.filter { adapter ->
                 updateRequest.list.find { adapter.first.areItemsTheSame(it) } != null
@@ -68,7 +68,7 @@ interface ExpandableAdapterListUtils<Item, Model : ExpandableAdapterViewModel<It
         }
     }
 
-    override fun update(item: Item): Boolean {
+    override fun update(item: Parent): Boolean {
         val updated = super.update(item)
 
         if (updated) {
@@ -145,17 +145,17 @@ interface ExpandableAdapterListUtils<Item, Model : ExpandableAdapterViewModel<It
         getFilterableAdapters().forEach { it.clearFilters() }
     }
 
-    override fun remove(items: List<Item>): Boolean {
+    override fun remove(items: List<Parent>): Boolean {
         removeAdaptersByItems(items)
         return super.remove(items)
     }
 
-    override fun remove(item: Item): Boolean {
+    override fun remove(item: Parent): Boolean {
         removeAdaptersByItems(listOf(item))
         return super.remove(item)
     }
 
-    private fun removeAdaptersByItems(list: List<Item>) {
+    private fun removeAdaptersByItems(list: List<Parent>) {
         val adapters = list.mapNotNull { getAdapterByItem(it) }
         adapterList.remove { adapters.find { second -> it == second } != null }
 
@@ -208,7 +208,7 @@ interface ExpandableAdapterListUtils<Item, Model : ExpandableAdapterViewModel<It
     private fun add(adapter: InnerAdapter, list: List<Data>) {
         with(adapter) {
             if (addJob?.isActive == true) {
-                (this as? SortedAdapterListUtils<Data, Data, *>) ?: throw Exception()
+                (this as? SortedAdapterListUtils<Data, *>) ?: throw Exception()
                 addAsync(list)
                 return
             }
@@ -220,7 +220,7 @@ interface ExpandableAdapterListUtils<Item, Model : ExpandableAdapterViewModel<It
         with(adapter) {
             getExpandableAdapterUpdateRequest(list)?.let { request ->
                 if (updateJob?.isActive == true) {
-                    (this as? SortedAdapterListUtils<Data, Data, *>) ?: throw Exception()
+                    (this as? SortedAdapterListUtils<Data, *>) ?: throw Exception()
                     updateAsync(request)
                     return
                 }

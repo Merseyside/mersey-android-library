@@ -1,7 +1,7 @@
 package com.merseyside.merseyLib.features.adapters.racers.adapter
 
 import com.merseyside.adapters.base.SortedAdapter
-import com.merseyside.adapters.model.ComparableAdapterParentViewModel
+import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.view.TypedBindingHolder
 import com.merseyside.animators.template.SetTextFadeOutInAnimator
 import com.merseyside.merseyLib.BR
@@ -10,8 +10,8 @@ import com.merseyside.merseyLib.databinding.ItemCheckpointBinding
 import com.merseyside.merseyLib.features.adapters.racers.entity.Checkpoint
 import com.merseyside.merseyLib.features.adapters.racers.model.CheckpointItemViewModel
 import com.merseyside.merseyLib.time.units.Millis
-import com.merseyside.utils.ext.setTextColorAttr
 import com.merseyside.merseyLib.time.units.compareTo
+import com.merseyside.utils.ext.setTextColorAttr
 import kotlinx.coroutines.CoroutineScope
 
 class RacersAdapter(scope: CoroutineScope) :
@@ -22,7 +22,7 @@ class RacersAdapter(scope: CoroutineScope) :
 
     override fun onPayloadable(
         holder: TypedBindingHolder<CheckpointItemViewModel>,
-        payloads: List<ComparableAdapterParentViewModel.Payloadable>
+        payloads: List<AdapterParentViewModel.Payloadable>
     ) {
         payloads.forEach {
             when (it) {

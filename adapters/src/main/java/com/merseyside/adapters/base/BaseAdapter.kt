@@ -10,6 +10,7 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.callback.HasOnItemClickListener
 import com.merseyside.adapters.callback.OnItemClickListener
+import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.AdapterViewModel
 import com.merseyside.adapters.utils.AdapterListUtils
 import com.merseyside.adapters.utils.InternalAdaptersApi
@@ -19,7 +20,7 @@ abstract class BaseAdapter<Item, Model : AdapterViewModel<Item>>
     : RecyclerView.Adapter<TypedBindingHolder<Model>>(),
     ItemCallback<AdapterViewModel<Item>>,
     HasOnItemClickListener<Item>,
-    AdapterListUtils<Item, Item, Model> {
+    AdapterListUtils<Item, Model> {
 
     override val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>
         get() = this
@@ -66,6 +67,22 @@ abstract class BaseAdapter<Item, Model : AdapterViewModel<Item>>
 
         if (!isRecyclable || isRecyclable && !holder.isRecyclable) {
             holder.setIsRecyclable(isRecyclable)
+        }
+    }
+
+    override fun onBindViewHolder(
+        holder: TypedBindingHolder<Model>,
+        position: Int,
+        payloads: List<Any>
+    ) {
+        if (payloads.isNotEmpty()) {
+            val payloadable = payloads[0] as List<AdapterParentViewModel.Payloadable>
+
+            if (isPayloadsValid(payloadable)) {
+                onPayloadable(holder, payloadable)
+            }
+        } else {
+            super.onBindViewHolder(holder, position, payloads)
         }
     }
 

@@ -2,8 +2,8 @@ package com.merseyside.adapters.delegates.composites
 
 import androidx.recyclerview.widget.SortedList
 import com.merseyside.adapters.delegates.DelegatesManager
+import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.ComparableAdapterParentViewModel
-import com.merseyside.adapters.model.ComparableAdapterViewModel
 import com.merseyside.adapters.utils.SortedAdapterListUtils
 import com.merseyside.adapters.view.TypedBindingHolder
 import com.merseyside.merseyLib.kotlin.getMinMax
@@ -15,11 +15,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.sync.Mutex
 
-abstract class SortedCompositeAdapter<Parent, Model : ComparableAdapterViewModel<Parent>>(
+abstract class SortedCompositeAdapter<Parent, Model : ComparableAdapterParentViewModel<out Parent, Parent>>(
     delegatesManager: DelegatesManager<Parent, Model> = DelegatesManager(),
     override val scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 ) : CompositeAdapter<Parent, Model>(delegatesManager),
-    SortedAdapterListUtils<Parent, Parent, Model> {
+    SortedAdapterListUtils<Parent, Model> {
 
     override var addJob: Job? = null
     override var updateJob: Job? = null
@@ -88,8 +88,7 @@ abstract class SortedCompositeAdapter<Parent, Model : ComparableAdapterViewModel
         payloads: List<Any>
     ) {
         if (payloads.isNotEmpty()) {
-            val payloadable = payloads[0]
-                    as List<ComparableAdapterParentViewModel.Payloadable>
+            val payloadable = payloads[0] as List<AdapterParentViewModel.Payloadable>
 
             if (isPayloadsValid(payloadable)) {
                 onPayloadable(holder, payloadable)

@@ -8,11 +8,11 @@ import com.merseyside.adapters.callback.OnItemClickListener
 import com.merseyside.adapters.callback.OnItemSelectedListener
 import com.merseyside.adapters.callback.OnSelectEnabledListener
 import com.merseyside.adapters.ext.getAll
-import com.merseyside.adapters.model.SelectableAdapterViewModel
+import com.merseyside.adapters.model.SelectableAdapterParentViewModel
 import com.merseyside.merseyLib.kotlin.Logger
 
-interface SelectableAdapterListUtils<Item, Model: SelectableAdapterViewModel<Item>>
-    : SortedAdapterListUtils<Item, Item, Model>, HasOnItemSelectedListener<Item> {
+interface SelectableAdapterListUtils<Parent, Model: SelectableAdapterParentViewModel<out Parent, Parent>>
+    : SortedAdapterListUtils<Parent, Model>, HasOnItemSelectedListener<Parent> {
 
     var selectableMode: SelectableAdapter.SelectableMode
     var isSelectEnabled: Boolean
@@ -25,7 +25,7 @@ interface SelectableAdapterListUtils<Item, Model: SelectableAdapterViewModel<Ite
 
     var selectFirstOnAdd: Boolean
 
-    override fun addOnItemSelectedListener(listener: OnItemSelectedListener<Item>) {
+    override fun addOnItemSelectedListener(listener: OnItemSelectedListener<Parent>) {
         super.addOnItemSelectedListener(listener)
 
         selectedList.forEach { model ->
@@ -37,15 +37,15 @@ interface SelectableAdapterListUtils<Item, Model: SelectableAdapterViewModel<Ite
         }
     }
 
-    fun removeOnItemClickListener(listener: OnItemSelectedListener<Item>) {
+    fun removeOnItemClickListener(listener: OnItemSelectedListener<Parent>) {
         selectedListeners.remove(listener)
     }
 
-    override fun add(item: Item) {
+    override fun add(item: Parent) {
         add(listOf(item))
     }
 
-    override fun add(items: List<Item>) {
+    override fun add(items: List<Parent>) {
         val isNoData = isEmpty()
 
         val models = createModels(items)
@@ -76,8 +76,8 @@ interface SelectableAdapterListUtils<Item, Model: SelectableAdapterViewModel<Ite
 
     private fun addItemToGroup(item: Model) {
         item.setOnItemClickListener(object :
-            OnItemClickListener<Item> {
-            override fun onItemClicked(obj: Item) {
+            OnItemClickListener<Parent> {
+            override fun onItemClicked(obj: Parent) {
                 if (isSelectEnabled) {
                     setItemSelected(item, true)
                 }
@@ -85,7 +85,7 @@ interface SelectableAdapterListUtils<Item, Model: SelectableAdapterViewModel<Ite
         })
     }
 
-    fun selectItem(item: Item) {
+    fun selectItem(item: Parent) {
         find(item)?.let {
             setItemSelected(it)
         } ?: Logger.logErr("Item for selection not found!")
@@ -97,7 +97,7 @@ interface SelectableAdapterListUtils<Item, Model: SelectableAdapterViewModel<Ite
         setItemSelected(item)
     }
 
-    fun selectItems(items: List<Item>) {
+    fun selectItems(items: List<Parent>) {
         if (selectableMode == SelectableAdapter.SelectableMode.MULTIPLE) {
             items.forEach { selectItem(it) }
         } else {
@@ -105,7 +105,7 @@ interface SelectableAdapterListUtils<Item, Model: SelectableAdapterViewModel<Ite
         }
     }
 
-    fun getSelectedItem(): Item? {
+    fun getSelectedItem(): Parent? {
         return if (selectedList.isNotEmpty()) {
             selectedList.first().item
         } else {
@@ -119,7 +119,7 @@ interface SelectableAdapterListUtils<Item, Model: SelectableAdapterViewModel<Ite
         } ?: SelectableAdapter.NO_SELECTIONS
     }
 
-    fun getSelectedItems(): List<Item> {
+    fun getSelectedItems(): List<Parent> {
         return selectedList.map { it.item }
     }
 
@@ -207,7 +207,7 @@ interface SelectableAdapterListUtils<Item, Model: SelectableAdapterViewModel<Ite
         clearSelections()
     }
 
-    override fun remove(item: Item): Boolean {
+    override fun remove(item: Parent): Boolean {
         return try {
             super.remove(item)
         } finally {

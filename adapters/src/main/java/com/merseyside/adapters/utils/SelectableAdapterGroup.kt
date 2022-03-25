@@ -5,7 +5,7 @@ import com.merseyside.adapters.callback.HasOnItemSelectedListener
 import com.merseyside.adapters.callback.OnItemSelectedListener
 import com.merseyside.merseyLib.kotlin.extensions.isNotZero
 
-class SelectableAdapterGroup<M : Any>(
+class SelectableAdapterGroup<M>(
     var selectableMode: SelectableAdapter.SelectableMode = SelectableAdapter.SelectableMode.SINGLE,
     var isAllowToCancelSelection: Boolean = selectableMode == SelectableAdapter.SelectableMode.MULTIPLE
 ) : HasOnItemSelectedListener<M> {

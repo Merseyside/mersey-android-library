@@ -1,8 +1,8 @@
 package com.merseyside.merseyLib.features.adapters.delegate.entity
 
 abstract class Animal(
-    val name: String,
-    val age: Int
+    open val name: String,
+    open val age: Int
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -5,8 +5,8 @@ package com.merseyside.adapters.utils
 import androidx.recyclerview.widget.SortedList
 import com.merseyside.adapters.base.UpdateRequest
 import com.merseyside.adapters.ext.*
+import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.ComparableAdapterParentViewModel
-import com.merseyside.adapters.view.TypedBindingHolder
 import com.merseyside.merseyLib.kotlin.Logger
 import com.merseyside.merseyLib.kotlin.concurency.Locker
 import com.merseyside.merseyLib.kotlin.extensions.intersect
@@ -16,9 +16,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.sync.Mutex
 
-interface SortedAdapterListUtils<Item : Parent,
-        Parent, Model : ComparableAdapterParentViewModel<Item, Parent>>
-    : AdapterListUtils<Item, Parent, Model>, Locker {
+interface SortedAdapterListUtils<Parent, Model : ComparableAdapterParentViewModel<out Parent, Parent>>
+    : AdapterListUtils<Parent, Model>, Locker {
 
     val sortedList: SortedList<Model>
 
@@ -46,21 +45,32 @@ interface SortedAdapterListUtils<Item : Parent,
         }
     }
 
-    override fun add(item: Item) {
+    override fun add(item: Parent) {
         addModels(createModels(listOf(item)))
     }
 
-    override fun add(items: List<Item>) {
+    override fun add(items: List<Parent>) {
         addModels(createModels(items))
     }
 
-    fun addAsync(list: List<Item>, func: () -> Unit = {}) {
+    fun addAsync(list: List<Parent>, func: () -> Unit = {}) {
         addJob = scope.asynchronously {
             withLock {
                 add(list)
                 func.invoke()
             }
         }
+    }
+
+    @Throws(IllegalArgumentException::class)
+    @InternalAdaptersApi
+    override fun notifyModelChanged(
+        model: Model,
+        payloads: List<AdapterParentViewModel.Payloadable>
+    ): Int {
+        val position = super.notifyModelChanged(model, payloads)
+        sortedList.recalculatePositionOfItemAt(position)
+        return position
     }
 
     @InternalAdaptersApi
@@ -78,7 +88,7 @@ interface SortedAdapterListUtils<Item : Parent,
         return modelList.size
     }
 
-    override fun update(updateRequest: UpdateRequest<Item>): Boolean {
+    override fun update(updateRequest: UpdateRequest<Parent>): Boolean {
         val removed = if (updateRequest.isDeleteOld) {
             val removeList = modelList
                 .filter { model ->
@@ -94,7 +104,7 @@ interface SortedAdapterListUtils<Item : Parent,
             removeModels(removeList)
         } else false
 
-        val addList = ArrayList<Item>()
+        val addList = ArrayList<Parent>()
         for (obj in updateRequest.list) {
             if (isMainThread() || updateJob?.isActive == true) {
                 if (!update(obj) && updateRequest.isAddNew) {
@@ -112,13 +122,13 @@ interface SortedAdapterListUtils<Item : Parent,
         return addList.isNotEmpty() || removed
     }
 
-    override fun update(item: Item): Boolean {
+    override fun update(item: Parent): Boolean {
         return run found@{
             modelList.forEach { model ->
                 if (model.areItemsTheSame(item)) {
                     if (!model.areContentsTheSame(item)) {
                         mainThreadIfNeeds {
-                            notifyItemChanged(model, model.payload(item))
+                            notifyModelChanged(model, model.payload(item))
                         }
                     }
                     return@found true
@@ -129,7 +139,7 @@ interface SortedAdapterListUtils<Item : Parent,
     }
 
     fun updateAsync(
-        updateRequest: UpdateRequest<Item>,
+        updateRequest: UpdateRequest<Parent>,
         onUpdated: () -> Unit = {}
     ) {
         updateJob = scope.asynchronously {
@@ -140,7 +150,7 @@ interface SortedAdapterListUtils<Item : Parent,
         }
     }
 
-    override fun remove(items: List<Item>): Boolean {
+    override fun remove(items: List<Parent>): Boolean {
         val modelList = items.mapNotNull { getModelByItem(it) }
         return removeModels(modelList)
     }
@@ -185,11 +195,11 @@ interface SortedAdapterListUtils<Item : Parent,
         }
     }
 
-    override fun getItemByPosition(position: Int): Item {
+    override fun getItemByPosition(position: Int): Parent {
         return getModelByPosition(position).item
     }
 
-    override fun getPositionOfItem(item: Item): Int {
+    override fun getPositionOfItem(item: Parent): Int {
         return sortedList.indexOf { it.areItemsTheSame(item) }
     }
 
@@ -202,23 +212,10 @@ interface SortedAdapterListUtils<Item : Parent,
     }
 
     @InternalAdaptersApi
-    override fun find(item: Item): Model? {
+    override fun find(item: Parent): Model? {
         return sortedList.find {
             it.areItemsTheSame(item)
         }
-    }
-
-    @Throws(IllegalArgumentException::class)
-    fun notifyItemChanged(
-        model: Model,
-        payloads: List<ComparableAdapterParentViewModel.Payloadable> = emptyList()
-    ) = try {
-        val position = getPositionOfModel(model)
-
-        adapter.notifyItemChanged(position, payloads)
-        sortedList.recalculatePositionOfItemAt(position)
-    } catch (e: IllegalArgumentException) {
-        Logger.log("Skip notify item change!")
     }
 
     override fun filter(model: Model, query: String): Boolean {
@@ -405,14 +402,4 @@ interface SortedAdapterListUtils<Item : Parent,
         modelList.clear()
         clearFilters()
     }
-
-    fun isPayloadsValid(payloads: List<ComparableAdapterParentViewModel.Payloadable>): Boolean {
-        return payloads.isNotEmpty() &&
-                !payloads.contains(ComparableAdapterParentViewModel.Payloadable.None)
-    }
-
-    fun onPayloadable(
-        holder: TypedBindingHolder<Model>,
-        payloads: List<ComparableAdapterParentViewModel.Payloadable>
-    ) {}
 }
