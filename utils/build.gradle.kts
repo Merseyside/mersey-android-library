@@ -68,7 +68,7 @@ dependencies {
     api(common.merseyLib.time)
 
     if (isLocalKotlinExtLibrary()) {
-        api(project(Modules.MultiPlatform.MerseyLibs.kotlinExt))
+        api(project(":kotlin-ext"))
     } else {
         api(common.merseyLib.kotlin.ext)
     }
