@@ -12,5 +12,4 @@ class AnimalsAdapter: SortedCompositeAdapter<Animal, AnimalItemViewModel<Animal>
             DogDelegateAdapter()
         )
     }
-
 }

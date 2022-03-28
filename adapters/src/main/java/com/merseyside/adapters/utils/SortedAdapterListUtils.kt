@@ -8,34 +8,13 @@ import com.merseyside.adapters.ext.*
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.ComparableAdapterParentViewModel
 import com.merseyside.merseyLib.kotlin.Logger
-import com.merseyside.merseyLib.kotlin.concurency.Locker
 import com.merseyside.merseyLib.kotlin.extensions.intersect
 import com.merseyside.utils.isMainThread
-import com.merseyside.utils.mainThreadIfNeeds
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.sync.Mutex
 
 interface SortedAdapterListUtils<Parent, Model : ComparableAdapterParentViewModel<out Parent, Parent>>
-    : AdapterListUtils<Parent, Model>, Locker {
+    : AdapterListUtils<Parent, Model> {
 
     val sortedList: SortedList<Model>
-
-    val scope: CoroutineScope
-    override val mutex: Mutex
-
-    var addJob: Job?
-    var updateJob: Job?
-    var filterJob: Job?
-
-    val lock: Any
-
-    var isFiltered: Boolean
-
-    val filtersMap: HashMap<String, Any>
-    val notAppliedFiltersMap: HashMap<String, Any>
-    var filterPattern: String
-    val filterKeyMap: MutableMap<String, List<Model>>
 
     override fun add(model: Model) {
         super.add(model)
@@ -51,15 +30,6 @@ interface SortedAdapterListUtils<Parent, Model : ComparableAdapterParentViewMode
 
     override fun add(items: List<Parent>) {
         addModels(createModels(items))
-    }
-
-    fun addAsync(list: List<Parent>, func: () -> Unit = {}) {
-        addJob = scope.asynchronously {
-            withLock {
-                add(list)
-                func.invoke()
-            }
-        }
     }
 
     @Throws(IllegalArgumentException::class)
@@ -88,55 +58,55 @@ interface SortedAdapterListUtils<Parent, Model : ComparableAdapterParentViewMode
         return modelList.size
     }
 
-    override fun update(updateRequest: UpdateRequest<Parent>): Boolean {
-        val removed = if (updateRequest.isDeleteOld) {
-            val removeList = modelList
-                .filter { model ->
-                    if (model.isDeletable()) {
-                        updateRequest.list.find {
-                            model.areItemsTheSame(it)
-                        } == null
-                    } else {
-                        false
-                    }
-                }
-
-            removeModels(removeList)
-        } else false
-
-        val addList = ArrayList<Parent>()
-        for (obj in updateRequest.list) {
-            if (isMainThread() || updateJob?.isActive == true) {
-                if (!update(obj) && updateRequest.isAddNew) {
-                    addList.add(obj)
-                }
-            } else {
-                break
-            }
-        }
-
-        if (addList.isNotEmpty()) {
-            add(addList)
-        }
-
-        return addList.isNotEmpty() || removed
-    }
-
-    override fun update(item: Parent): Boolean {
-        return run found@{
-            modelList.forEach { model ->
-                if (model.areItemsTheSame(item)) {
-                    if (!model.areContentsTheSame(item)) {
-                        mainThreadIfNeeds {
-                            notifyModelChanged(model, model.payload(item))
-                        }
-                    }
-                    return@found true
-                }
-            }
-            false
-        }
-    }
+//    override fun update(updateRequest: UpdateRequest<Parent>): Boolean {
+//        val removed = if (updateRequest.isDeleteOld) {
+//            val removeList = modelList
+//                .filter { model ->
+//                    if (model.isDeletable()) {
+//                        updateRequest.list.find {
+//                            model.areItemsTheSame(it)
+//                        } == null
+//                    } else {
+//                        false
+//                    }
+//                }
+//
+//            removeModels(removeList)
+//        } else false
+//
+//        val addList = ArrayList<Parent>()
+//        for (obj in updateRequest.list) {
+//            if (isMainThread() || updateJob?.isActive == true) {
+//                if (!update(obj) && updateRequest.isAddNew) {
+//                    addList.add(obj)
+//                }
+//            } else {
+//                break
+//            }
+//        }
+//
+//        if (addList.isNotEmpty()) {
+//            add(addList)
+//        }
+//
+//        return addList.isNotEmpty() || removed
+//    }
+//
+//    override fun update(item: Parent): Boolean {
+//        return run found@{
+//            modelList.forEach { model ->
+//                if (model.areItemsTheSame(item)) {
+//                    if (!model.areContentsTheSame(item)) {
+//                        mainThreadIfNeeds {
+//                            notifyModelChanged(model, model.payload(item))
+//                        }
+//                    }
+//                    return@found true
+//                }
+//            }
+//            false
+//        }
+//    }
 
     fun updateAsync(
         updateRequest: UpdateRequest<Parent>,
@@ -158,13 +128,8 @@ interface SortedAdapterListUtils<Parent, Model : ComparableAdapterParentViewMode
     /**
      * Be sure your model's compareTo method handles equal items!
      */
-    fun removeModels(list: List<Model>): Boolean {
-        return if (list.isNotEmpty()) {
-            modelList.removeAll(list)
-            filterKeyMap.clear()
-            filterKeyMap.forEach { entry ->
-                filterKeyMap[entry.key] = entry.value.toMutableList().apply { removeAll(list) }
-            }
+    override fun removeModels(list: List<Model>): Boolean {
+        return if (super.removeModels(list)) {
 
             sortedList.batchedUpdate {
                 removeAll(list)

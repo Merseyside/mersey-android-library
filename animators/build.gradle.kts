@@ -1,22 +1,60 @@
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    id(Plugins.androidConvention)
-    id(Plugins.kotlinConvention)
-    id(Plugins.kotlinKapt)
-    id(Plugins.kotlinSerialization)
-    id(Plugins.mavenPublishConfig)
+    with(catalogPlugins.plugins) {
+        plugin(android.library)
+        plugin(kotlin.android)
+        id(mersey.android.convention.id())
+        id(mersey.kotlin.convention.id())
+        plugin(kotlin.kapt)
+    }
+    `maven-publish-config`
 }
 
 android {
-    buildFeatures.dataBinding = true
+    compileSdk = Application.compileSdk
+
+    defaultConfig {
+        minSdk = Application.minSdk
+        targetSdk = Application.targetSdk
+    }
+
+    lint {
+        lintConfig = rootProject.file(".lint/config.xml")
+    }
+
+    buildTypes {
+        getByName("debug") {
+            isMinifyEnabled = false
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+
+        getByName("release") {
+            isMinifyEnabled = false
+            consumerProguardFiles("proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
 }
 
-val android = listOf(
-    androidLibs.appCompat
-)
+kotlinConvention {
+    setCompilerArgs(
+        "-opt-in=kotlin.RequiresOptIn",
+        "-Xcontext-receivers"
+    )
+}
 
 dependencies {
+    implementation(androidLibs.appCompat)
     implementation(projects.utils)
     api(common.merseyLib.time)
+}
 
-    android.forEach { lib -> implementation(lib) }
+tasks {
+    register<Jar>("withSourcesJar") {
+        archiveClassifier.set("sources")
+        from(android.sourceSets.getByName("main").java.srcDirs)
+    }
 }

@@ -3,40 +3,22 @@
 package com.merseyside.adapters.base
 
 import androidx.recyclerview.widget.SortedList
-import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.ComparableAdapterViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.SortedAdapterListUtils
-import com.merseyside.adapters.view.TypedBindingHolder
-import com.merseyside.merseyLib.kotlin.concurency.Locker
 import com.merseyside.merseyLib.kotlin.getMinMax
 import com.merseyside.utils.mainThreadIfNeeds
 import com.merseyside.utils.reflection.ReflectionUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.sync.Mutex
 
 @Suppress("UNCHECKED_CAST")
 abstract class SortedAdapter<Parent, Model : ComparableAdapterViewModel<Parent>>(
     override val scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-) : BaseAdapter<Parent, Model>(), SortedAdapterListUtils<Parent, Model>, Locker {
+) : BaseAdapter<Parent, Model>(), SortedAdapterListUtils<Parent, Model> {
 
     override val modelList: MutableList<Model> = ArrayList()
-
-    override var addJob: Job? = null
-    override var updateJob: Job? = null
-    override var filterJob: Job? = null
-
-    override var isFiltered: Boolean = false
-    override val filtersMap: HashMap<String, Any> by lazy { HashMap() }
-    override val notAppliedFiltersMap: HashMap<String, Any> by lazy { HashMap() }
-    override var filterPattern: String = ""
-    override val filterKeyMap: MutableMap<String, List<Model>> by lazy { HashMap() }
-
-    override val lock = Any()
-    override val mutex: Mutex = Mutex()
 
     private val listCallback = object : SortedList.Callback<Model>() {
         override fun onInserted(position: Int, count: Int) {

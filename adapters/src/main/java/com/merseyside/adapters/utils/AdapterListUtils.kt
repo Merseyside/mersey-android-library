@@ -6,19 +6,43 @@ import android.annotation.SuppressLint
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.base.UpdateRequest
 import com.merseyside.adapters.callback.HasOnItemClickListener
+import com.merseyside.adapters.ext.asynchronously
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.view.TypedBindingHolder
 import com.merseyside.merseyLib.kotlin.Logger
+import com.merseyside.merseyLib.kotlin.concurency.Locker
 import com.merseyside.merseyLib.kotlin.extensions.isZero
 import com.merseyside.merseyLib.kotlin.extensions.minByNullable
+import com.merseyside.utils.isMainThread
+import com.merseyside.utils.mainThreadIfNeeds
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.sync.Mutex
 
 @SuppressLint("NotifyDataSetChanged")
 interface AdapterListUtils<Parent, Model: AdapterParentViewModel<out Parent, Parent>> :
-    HasOnItemClickListener<Parent> {
+    HasOnItemClickListener<Parent>, Locker {
 
     @InternalAdaptersApi
     val modelList: MutableList<Model>
     val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>
+
+    var addJob: Job?
+    var updateJob: Job?
+
+    val scope: CoroutineScope
+    override val mutex: Mutex
+
+    var filterJob: Job?
+
+    val lock: Any
+
+    var isFiltered: Boolean
+
+    val filtersMap: HashMap<String, Any>
+    val notAppliedFiltersMap: HashMap<String, Any>
+    var filterPattern: String
+    val filterKeyMap: MutableMap<String, List<Model>>
 
     @InternalAdaptersApi
     fun createModels(items: List<Parent>): List<Model>
@@ -39,12 +63,63 @@ interface AdapterListUtils<Parent, Model: AdapterParentViewModel<out Parent, Par
         modelList.add(model)
     }
 
+    fun addAsync(list: List<Parent>, func: () -> Unit = {}) {
+        addJob = scope.asynchronously {
+            withLock {
+                add(list)
+                func.invoke()
+            }
+        }
+    }
+
     fun update(updateRequest: UpdateRequest<Parent>): Boolean {
-        TODO("Not implemented")
+        val removed = if (updateRequest.isDeleteOld) {
+            val removeList = modelList
+                .filter { model ->
+                    if (model.isDeletable()) {
+                        updateRequest.list.find {
+                            model.areItemsTheSame(it)
+                        } == null
+                    } else {
+                        false
+                    }
+                }
+
+            removeModels(removeList)
+        } else false
+
+        val addList = ArrayList<Parent>()
+        for (obj in updateRequest.list) {
+            if (isMainThread() || updateJob?.isActive == true) {
+                if (!update(obj) && updateRequest.isAddNew) {
+                    addList.add(obj)
+                }
+            } else {
+                break
+            }
+        }
+
+        if (addList.isNotEmpty()) {
+            add(addList)
+        }
+
+        return addList.isNotEmpty() || removed
     }
 
     fun update(item: Parent): Boolean {
-        TODO("Not implemented")
+        return run found@{
+            modelList.forEach { model ->
+                if (model.areItemsTheSame(item)) {
+                    if (!model.areContentsTheSame(item)) {
+                        mainThreadIfNeeds {
+                            notifyModelChanged(model, model.payload(item))
+                        }
+                    }
+                    return@found true
+                }
+            }
+            false
+        }
     }
 
     @Throws(NotImplementedError::class)
@@ -124,6 +199,18 @@ interface AdapterListUtils<Parent, Model: AdapterParentViewModel<out Parent, Par
     @InternalAdaptersApi
     fun getModelByItem(item: Parent): Model? {
         return modelList.firstOrNull { it.areItemsTheSame(item) }
+    }
+
+    fun removeModels(list: List<Model>): Boolean {
+        return if (list.isNotEmpty()) {
+            modelList.removeAll(list)
+            filterKeyMap.clear()
+            filterKeyMap.forEach { entry ->
+                filterKeyMap[entry.key] = entry.value.toMutableList().apply { removeAll(list) }
+            }
+
+            true
+        } else false
     }
 
     fun remove(item: Parent): Boolean {

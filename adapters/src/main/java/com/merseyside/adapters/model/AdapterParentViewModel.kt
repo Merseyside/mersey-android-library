@@ -88,11 +88,18 @@ abstract class AdapterParentViewModel<Item: Parent, Parent>(
         }
     }
 
+    internal fun areContentsTheSame(parent: Parent): Boolean {
+        val another = parent as Item
+        return areContentsTheSame(another)
+    }
+
     protected open fun areParentItemsTheSame(parent: Parent): Boolean {
         throw NotImplementedError()
     }
 
     protected abstract fun areItemsTheSame(other: Item): Boolean
+    protected open fun areContentsTheSame(other: Item) = item == other
+
     fun areItemsNotTheSame(other: Parent) = !this.areItemsTheSame(other)
 
     abstract fun notifyUpdate()

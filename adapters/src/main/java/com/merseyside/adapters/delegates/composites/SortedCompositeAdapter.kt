@@ -11,28 +11,13 @@ import com.merseyside.utils.mainThreadIfNeeds
 import com.merseyside.utils.reflection.ReflectionUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.sync.Mutex
 
 abstract class SortedCompositeAdapter<Parent, Model : ComparableAdapterParentViewModel<out Parent, Parent>>(
     delegatesManager: DelegatesManager<Parent, Model> = DelegatesManager(),
     override val scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 ) : CompositeAdapter<Parent, Model>(delegatesManager),
     SortedAdapterListUtils<Parent, Model> {
-
-    override var addJob: Job? = null
-    override var updateJob: Job? = null
-    override var filterJob: Job? = null
-
-    override var isFiltered: Boolean = false
-    override val filtersMap: HashMap<String, Any> by lazy { HashMap() }
-    override val notAppliedFiltersMap: HashMap<String, Any> by lazy { HashMap() }
-    override var filterPattern: String = ""
-    override val filterKeyMap: MutableMap<String, List<Model>> by lazy { HashMap() }
-
-    override val lock = Any()
-    override val mutex: Mutex = Mutex()
 
     private val listCallback = object : SortedList.Callback<Model>() {
         override fun onInserted(position: Int, count: Int) {

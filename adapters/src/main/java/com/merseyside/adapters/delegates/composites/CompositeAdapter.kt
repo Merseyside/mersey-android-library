@@ -13,12 +13,32 @@ import com.merseyside.adapters.model.AdapterViewModel
 import com.merseyside.adapters.utils.AdapterListUtils
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.view.TypedBindingHolder
+import com.merseyside.merseyLib.kotlin.concurency.Locker
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.sync.Mutex
 
 abstract class CompositeAdapter<Parent, Model : AdapterParentViewModel<out Parent, Parent>>(
-    val delegatesManager: DelegatesManager<Parent, Model> = DelegatesManager()
+    val delegatesManager: DelegatesManager<Parent, Model> = DelegatesManager(),
+    override val scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 ) : RecyclerView.Adapter<TypedBindingHolder<Model>>(),
     ItemCallback<AdapterViewModel<Parent>>,
-    AdapterListUtils<Parent, Model> {
+    AdapterListUtils<Parent, Model>, Locker {
+
+    override var addJob: Job? = null
+    override var updateJob: Job? = null
+    override var filterJob: Job? = null
+
+    override var isFiltered: Boolean = false
+    override val filtersMap: HashMap<String, Any> by lazy { HashMap() }
+    override val notAppliedFiltersMap: HashMap<String, Any> by lazy { HashMap() }
+    override var filterPattern: String = ""
+    override val filterKeyMap: MutableMap<String, List<Model>> by lazy { HashMap() }
+
+    override val lock = Any()
+    override val mutex: Mutex = Mutex()
 
     override var listener: OnItemClickListener<Parent>? = null
 

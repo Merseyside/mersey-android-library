@@ -1,8 +1,13 @@
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    id(Plugins.androidApplication)
-    id(Plugins.kotlinConvention)
-    id(Plugins.kotlinKapt)
-    id(Plugins.kotlinSerialization)
+    with(catalogPlugins.plugins) {
+        plugin(android.application)
+        plugin(kotlin.android)
+        id(mersey.android.convention.id())
+        id(mersey.kotlin.convention.id())
+        plugin(kotlin.serialization)
+        plugin(kotlin.kapt)
+    }
 }
 
 android {
@@ -67,8 +72,15 @@ android {
     }
 }
 
+kotlinConvention {
+    setCompilerArgs(
+        "-opt-in=kotlin.RequiresOptIn",
+        "-Xcontext-receivers",
+        "-Xskip-prerelease-check"
+    )
+}
+
 val android = listOf(
-    common.serialization,
     androidLibs.coroutines,
     androidLibs.recyclerView,
     androidLibs.navigation,
@@ -89,6 +101,7 @@ val modulez = listOf(
 )
 
 dependencies {
+    implementation(common.serialization)
     modulez.forEach { module -> implementation(module) }
     android.forEach { lib -> implementation(lib) }
 
