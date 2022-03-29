@@ -3,6 +3,7 @@ plugins {
     with(catalogPlugins.plugins) {
         plugin(android.library)
         plugin(kotlin.android)
+        plugin(kotlin.serialization)
         id(mersey.android.convention.id())
         id(mersey.kotlin.convention.id())
         plugin(kotlin.kapt)
