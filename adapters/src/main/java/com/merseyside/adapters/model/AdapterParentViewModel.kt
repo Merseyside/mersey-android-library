@@ -13,10 +13,10 @@ abstract class AdapterParentViewModel<Item: Parent, Parent>(
         internal set
 
     private var pos: Int = NO_ITEM_POSITION
-    private lateinit var itemPosition: ItemCallback<AdapterViewModel<Parent>>
+    private lateinit var itemPosition: ItemCallback<AdapterViewModel<Item>>
     internal var priority: Int = 0
 
-    internal fun setItemPositionInterface(i: ItemCallback<AdapterViewModel<Parent>>) {
+    internal fun setItemPositionInterface(i: ItemCallback<AdapterViewModel<Item>>) {
         itemPosition = i
     }
 

@@ -12,7 +12,7 @@ import com.merseyside.merseyLib.kotlin.extensions.log
 import com.merseyside.utils.reflection.ReflectionUtils
 
 abstract class DelegateAdapter<Item : Parent, Parent, Model : AdapterParentViewModel<Item, Parent>>(
-    internal val priority: Int = 0
+    private val priority: Int = 0
 ) {
 
     init {
