@@ -4,15 +4,15 @@ package com.merseyside.adapters.utils
 
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
-import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.base.SortedAdapter
 import com.merseyside.adapters.base.UpdateRequest
 import com.merseyside.adapters.model.ExpandableAdapterParentViewModel
 import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
+import com.merseyside.merseyLib.kotlin.extensions.log
 import com.merseyside.merseyLib.kotlin.extensions.remove
 
-interface ExpandableAdapterListUtils<Parent, Model : ExpandableAdapterParentViewModel<out Parent, Parent, Data>,
-        Data, InnerAdapter : BaseAdapter<Data, *>>
+interface ExpandableAdapterListUtils<Parent, Model : ExpandableAdapterParentViewModel<out Parent, Parent, InnerData>,
+        InnerData, InnerAdapter : AdapterListUtils<InnerData, *>>
     : SelectableAdapterListUtils<Parent, Model> {
     var adapterList: MutableList<Pair<Model, InnerAdapter>>
 
@@ -177,7 +177,7 @@ interface ExpandableAdapterListUtils<Parent, Model : ExpandableAdapterParentView
         }
     }
 
-    fun getExpandableAdapterUpdateRequest(data: List<Data>?): UpdateRequest<Data>? {
+    fun getExpandableAdapterUpdateRequest(data: List<InnerData>?): UpdateRequest<InnerData>? {
         if (data == null) return null
         return UpdateRequest.Builder(data)
             .isAddNew(true)
@@ -185,7 +185,7 @@ interface ExpandableAdapterListUtils<Parent, Model : ExpandableAdapterParentView
             .build()
     }
 
-    private fun addExpandableItems(adapter: InnerAdapter, list: List<Data>?) {
+    private fun addExpandableItems(adapter: InnerAdapter, list: List<InnerData>?) {
         with(adapter) {
             if (isEmpty()) {
                 if (list != null) {
@@ -197,34 +197,28 @@ interface ExpandableAdapterListUtils<Parent, Model : ExpandableAdapterParentView
         }
     }
 
-    private fun getFilterableAdapters(): List<SortedAdapter<Data, *>> {
+    private fun getFilterableAdapters(): List<SortedAdapter<InnerData, *>> {
         return adapterList
             .map { it.second }
-            .filterIsInstance<SortedAdapter<Data, *>>()
+            .filterIsInstance<SortedAdapter<InnerData, *>>()
     }
 
     fun onAdaptersRemoved(adapters: List<InnerAdapter>) {}
 
-    private fun add(adapter: InnerAdapter, list: List<Data>) {
+    private fun add(adapter: InnerAdapter, list: List<InnerData>) {
         with(adapter) {
             if (addJob?.isActive == true) {
-                (this as? SortedAdapterListUtils<Data, *>) ?: throw Exception()
                 addAsync(list)
                 return
             }
-            adapter.add(list)
+            add(list)
         }
     }
 
-    private fun update(adapter: InnerAdapter, list: List<Data>?) {
+    private fun update(adapter: InnerAdapter, list: List<InnerData>?) {
         with(adapter) {
             getExpandableAdapterUpdateRequest(list)?.let { request ->
-                if (updateJob?.isActive == true) {
-                    (this as? SortedAdapterListUtils<Data, *>) ?: throw Exception()
-                    updateAsync(request)
-                    return
-                }
-                adapter.update(request)
+                update(request)
             }
         }
     }

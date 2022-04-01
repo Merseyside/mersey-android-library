@@ -4,20 +4,20 @@ import com.merseyside.adapters.model.ExpandableAdapterViewModel
 import com.merseyside.merseyLib.features.adapters.contacts.entity.ContactGroup
 
 class ContactGroupItemViewModel(
-    obj: ContactGroup
-): ExpandableAdapterViewModel<ContactGroup, String>(obj) {
+    item: ContactGroup
+): ExpandableAdapterViewModel<ContactGroup, String>(item) {
     override fun areItemsTheSame(other: ContactGroup): Boolean {
-        return this.item.group == other.group
+        return item.group == other.group
     }
 
     override fun notifyUpdate() {}
 
     override fun areContentsTheSame(other: ContactGroup): Boolean {
-        return this.item == other
+        return item == other
     }
 
     override fun compareTo(other: ContactGroup): Int {
-        return this.item.group.compareTo(other.group)
+        return item.group.compareTo(other.group)
     }
 
     override fun getExpandedData(): List<String> {

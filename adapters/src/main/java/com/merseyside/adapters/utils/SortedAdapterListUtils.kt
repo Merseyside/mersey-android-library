@@ -3,7 +3,6 @@
 package com.merseyside.adapters.utils
 
 import androidx.recyclerview.widget.SortedList
-import com.merseyside.adapters.base.UpdateRequest
 import com.merseyside.adapters.ext.*
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.ComparableAdapterParentViewModel
@@ -56,68 +55,6 @@ interface SortedAdapterListUtils<Parent, Model : ComparableAdapterParentViewMode
 
     fun getAllItemCount(): Int {
         return modelList.size
-    }
-
-//    override fun update(updateRequest: UpdateRequest<Parent>): Boolean {
-//        val removed = if (updateRequest.isDeleteOld) {
-//            val removeList = modelList
-//                .filter { model ->
-//                    if (model.isDeletable()) {
-//                        updateRequest.list.find {
-//                            model.areItemsTheSame(it)
-//                        } == null
-//                    } else {
-//                        false
-//                    }
-//                }
-//
-//            removeModels(removeList)
-//        } else false
-//
-//        val addList = ArrayList<Parent>()
-//        for (obj in updateRequest.list) {
-//            if (isMainThread() || updateJob?.isActive == true) {
-//                if (!update(obj) && updateRequest.isAddNew) {
-//                    addList.add(obj)
-//                }
-//            } else {
-//                break
-//            }
-//        }
-//
-//        if (addList.isNotEmpty()) {
-//            add(addList)
-//        }
-//
-//        return addList.isNotEmpty() || removed
-//    }
-//
-//    override fun update(item: Parent): Boolean {
-//        return run found@{
-//            modelList.forEach { model ->
-//                if (model.areItemsTheSame(item)) {
-//                    if (!model.areContentsTheSame(item)) {
-//                        mainThreadIfNeeds {
-//                            notifyModelChanged(model, model.payload(item))
-//                        }
-//                    }
-//                    return@found true
-//                }
-//            }
-//            false
-//        }
-//    }
-
-    fun updateAsync(
-        updateRequest: UpdateRequest<Parent>,
-        onUpdated: () -> Unit = {}
-    ) {
-        updateJob = scope.asynchronously {
-            withLock {
-                update(updateRequest)
-                onUpdated.invoke()
-            }
-        }
     }
 
     override fun remove(items: List<Parent>): Boolean {

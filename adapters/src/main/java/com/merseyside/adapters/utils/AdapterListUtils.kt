@@ -122,6 +122,18 @@ interface AdapterListUtils<Parent, Model: AdapterParentViewModel<out Parent, Par
         }
     }
 
+    fun updateAsync(
+        updateRequest: UpdateRequest<Parent>,
+        onUpdated: () -> Unit = {}
+    ) {
+        updateJob = scope.asynchronously {
+            withLock {
+                update(updateRequest)
+                onUpdated.invoke()
+            }
+        }
+    }
+
     @Throws(NotImplementedError::class)
     fun setFilter(query: String): Int {
         throw NotImplementedError()
@@ -317,10 +329,6 @@ interface AdapterListUtils<Parent, Model: AdapterParentViewModel<out Parent, Par
 
     fun getAll(): List<Parent> {
         return modelList.map { it.item }
-    }
-
-    fun notifyUpdateAll() {
-        modelList.forEach { it.notifyUpdate() }
     }
 
     fun notifyAdapterRemoved() {}

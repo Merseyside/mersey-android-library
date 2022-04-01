@@ -102,15 +102,16 @@ abstract class AdapterParentViewModel<Item: Parent, Parent>(
 
     fun areItemsNotTheSame(other: Parent) = !this.areItemsTheSame(other)
 
-    abstract fun notifyUpdate()
+    open fun notifyUpdate() {}
 
     internal fun payload(newItem: Parent): List<Payloadable> {
-        return payload(newItem as Item)
-    }
-
-    open fun payload(newItem: Item): List<Payloadable> {
+        val payloads = payload(item, newItem as Item)
         this.item = newItem
         notifyUpdate()
+        return payloads
+    }
+
+    protected open fun payload(oldItem: Item, newItem: Item): List<Payloadable> {
         return listOf(Payloadable.None)
     }
 

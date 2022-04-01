@@ -8,7 +8,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.view.TypedBindingHolder
-import com.merseyside.merseyLib.kotlin.extensions.log
 import com.merseyside.utils.reflection.ReflectionUtils
 
 abstract class DelegateAdapter<Item : Parent, Parent, Model : AdapterParentViewModel<Item, Parent>>(
@@ -29,18 +28,24 @@ abstract class DelegateAdapter<Item : Parent, Parent, Model : AdapterParentViewM
 
     abstract fun createItemViewModel(item: Item): Model
 
+    @Suppress("UNCHECKED_CAST")
     internal fun createItemViewModel(parent: Parent): Model {
         val item = (parent as? Item) ?: throw IllegalArgumentException(
             "This delegate is not " +
                     "responsible for ${parent!!::class}"
         )
-        return createItemViewModel(item).also { it.priority = priority.log("priority") }
+        return createItemViewModel(item).also { it.priority = priority }
     }
 
     fun createViewHolder(parent: ViewGroup, viewType: Int): TypedBindingHolder<Model> {
         val layoutInflater: LayoutInflater = LayoutInflater.from(parent.context)
         val binding: ViewDataBinding =
-            DataBindingUtil.inflate(layoutInflater, getLayoutIdForItem(viewType), parent, false)
+            DataBindingUtil.inflate(
+                layoutInflater,
+                getLayoutIdForItem(viewType),
+                parent,
+                false
+            )
 
         return getBindingHolder(binding)
     }
@@ -62,6 +67,7 @@ abstract class DelegateAdapter<Item : Parent, Parent, Model : AdapterParentViewM
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     private val persistentClass: Class<Item> =
         ReflectionUtils.getGenericParameterClass(
             this.javaClass,

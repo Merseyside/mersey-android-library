@@ -31,7 +31,6 @@ class CheckpointItemViewModel(item: Checkpoint) : ComparableAdapterViewModel<Che
 
     override fun notifyUpdate() {
         notifyPropertyChanged(BR.gap)
-        notifyPropertyChanged(BR.rank)
     }
 
     fun getRacer(): String {
@@ -83,18 +82,14 @@ class CheckpointItemViewModel(item: Checkpoint) : ComparableAdapterViewModel<Che
         }
     }
 
-    override fun payload(newItem: Checkpoint): List<Payloadable> {
+    override fun payload(oldItem: Checkpoint, newItem: Checkpoint): List<Payloadable> {
         gapChange = if (newItem.gap.isEmpty()) {
             newItem.gap
         } else {
-            newItem.gap - item.gap
+            newItem.gap - oldItem.gap
         }
 
-        super.payload(newItem)
-
-        return listOf(
-            CheckpointPayloads.ChangeGap(gapChange = gapChange)
-        )
+        return listOf(CheckpointPayloads.ChangeGap(gapChange = gapChange))
     }
 
     sealed class CheckpointPayloads : Payloadable {
