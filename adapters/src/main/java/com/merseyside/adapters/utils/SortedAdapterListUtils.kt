@@ -31,6 +31,35 @@ interface SortedAdapterListUtils<Parent, Model : ComparableAdapterParentViewMode
         addModels(createModels(items))
     }
 
+    override fun add(position: Int, item: Parent) {
+        throw Exception("Can be used only with BaseAdapter")
+    }
+
+    override fun add(position: Int, items: List<Parent>) {
+        throw Exception("Can be used only with BaseAdapter")
+    }
+
+    override fun addBefore(beforeItem: Parent, item: Parent) {
+        throw Exception("Can be used only with BaseAdapter")
+    }
+
+    override fun addBefore(beforeItem: Parent, items: List<Parent>) {
+        throw Exception("Can be used only with BaseAdapter")
+    }
+
+    override fun addAfter(afterItem: Parent, item: Parent) {
+        throw Exception("Can be used only with BaseAdapter")
+    }
+
+    override fun addAfter(afterItem: Parent, item: List<Parent>) {
+        throw Exception("Can be used only with BaseAdapter")
+    }
+
+    @InternalAdaptersApi
+    override fun add(index: Int, model: Model) {
+        throw Exception("Can be used only with BaseAdapter")
+    }
+
     @Throws(IllegalArgumentException::class)
     @InternalAdaptersApi
     override fun notifyModelChanged(

@@ -55,12 +55,57 @@ interface AdapterListUtils<Parent, Model: AdapterParentViewModel<out Parent, Par
     fun add(items: List<Parent>) {
         val startPosition = adapter.itemCount - 1
         addModels(createModels(items))
-        adapter.notifyItemRangeChanged(startPosition, items.size)
+        adapter.notifyItemRangeInserted(startPosition, items.size)
+    }
+
+    fun add(position: Int, item: Parent) {
+        val size = modelList.size
+        if (position in 0..size) {
+            addModels(createModels(listOf(item)))
+            adapter.notifyItemInserted(position)
+        } else {
+            throw IndexOutOfBoundsException("List size is $size. Your index is $position")
+        }
+    }
+
+    fun add(position: Int, items: List<Parent>) {
+        val size = modelList.size
+        if (position in 0..size) {
+            addModels(createModels(items))
+            adapter.notifyItemRangeInserted(position, position + items.size)
+        } else {
+            throw IndexOutOfBoundsException("List size is $size. Your index is $position")
+        }
+    }
+
+    fun addBefore(beforeItem: Parent, item: Parent) {
+        val position = getPositionOfItem(beforeItem)
+        add(position, item)
+    }
+
+    fun addBefore(beforeItem: Parent, items: List<Parent>) {
+        val position = getPositionOfItem(beforeItem)
+        add(position, items)
+    }
+
+    fun addAfter(afterItem: Parent, item: Parent) {
+        val position = getPositionOfItem(afterItem)
+        add(position + 1, item)
+    }
+
+    fun addAfter(afterItem: Parent, item: List<Parent>) {
+        val position = getPositionOfItem(afterItem)
+        add(position + 1, item)
     }
 
     @InternalAdaptersApi
     fun add(model: Model) {
         modelList.add(model)
+    }
+
+    @InternalAdaptersApi
+    fun add(index: Int, model: Model) {
+        modelList.add(index, model)
     }
 
     fun addAsync(list: List<Parent>, func: () -> Unit = {}) {
@@ -168,8 +213,8 @@ interface AdapterListUtils<Parent, Model: AdapterParentViewModel<out Parent, Par
 
     @Throws(IllegalArgumentException::class)
     fun getPositionOfItem(item: Parent): Int {
-        modelList.forEachIndexed { index, t ->
-            if (t.areItemsTheSame(item)) return index
+        modelList.forEachIndexed { index, model ->
+            if (model.areItemsTheSame(item)) return index
         }
 
         throw IllegalArgumentException("No data found")
@@ -206,6 +251,10 @@ interface AdapterListUtils<Parent, Model: AdapterParentViewModel<out Parent, Par
     @InternalAdaptersApi
     fun addModels(list: List<Model>) {
         modelList.addAll(list)
+    }
+
+    private fun addModels(position: Int, list: List<Model>) {
+        modelList.addAll(position, list)
     }
 
     @InternalAdaptersApi

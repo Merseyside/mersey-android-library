@@ -16,12 +16,13 @@ dependencyResolutionManagement {
         gradlePluginPortal()
     }
 
-    val catalogVersions = "1.3.9"
+    val catalogVersions = "1.4.1"
     val group = "io.github.merseyside"
     versionCatalogs {
 
         val catalogGradle by creating {
             from("$group:catalog-version-gradle:$catalogVersions")
+            version("kotlinDokka", "1.6.10")
         }
     }
 }
