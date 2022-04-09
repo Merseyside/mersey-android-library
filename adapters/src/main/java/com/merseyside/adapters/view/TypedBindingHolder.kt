@@ -1,8 +1,9 @@
 package com.merseyside.adapters.view
 
 import androidx.databinding.ViewDataBinding
+import com.merseyside.adapters.model.AdapterParentViewModel
 
-open class TypedBindingHolder<T: Any>(binding: ViewDataBinding)
+open class TypedBindingHolder<T: AdapterParentViewModel<*, *>>(binding: ViewDataBinding)
     : BaseBindingHolder(binding) {
 
     @Suppress("UNCHECKED_CAST")

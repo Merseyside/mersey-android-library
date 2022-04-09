@@ -10,7 +10,7 @@ import com.merseyside.archy.databinding.ViewProgressBarBinding
 import com.merseyside.utils.attributes.AttributeHelper
 import com.merseyside.utils.attributes.Namespace
 import com.merseyside.utils.delegate.*
-import com.merseyside.utils.ext.getResourceFromAttr
+import com.merseyside.utils.view.ext.getResourceFromAttr
 
 class TextProgressBar(context: Context, attributeSet: AttributeSet) :
     LinearLayout(context, attributeSet) {

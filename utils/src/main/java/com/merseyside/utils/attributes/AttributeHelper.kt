@@ -11,9 +11,9 @@ import com.merseyside.merseyLib.kotlin.extensions.containsDigits
 import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
 import com.merseyside.merseyLib.kotlin.extensions.replace
 import com.merseyside.utils.convertDpToPixel
-import com.merseyside.utils.ext.getActivity
 import com.merseyside.utils.ext.getResourceFromAttr
 import com.merseyside.utils.ext.getStringFromAttr
+import com.merseyside.utils.view.ext.getActivity
 
 class AttributeHelper(
     private val context: Context,

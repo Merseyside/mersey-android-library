@@ -13,7 +13,7 @@ import com.merseyside.archy.R
 import com.merseyside.animators.animator.ColorAnimator
 import com.merseyside.merseyLib.kotlin.Logger
 import com.merseyside.merseyLib.time.units.Millis
-import com.merseyside.utils.ext.onClick
+import com.merseyside.utils.view.ext.onClick
 import com.merseyside.utils.ext.setColor
 
 class AnimatedCheckImageButton(context: Context, attributeSet: AttributeSet)

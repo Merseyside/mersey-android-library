@@ -1,4 +1,4 @@
-package com.merseyside.utils.ext
+package com.merseyside.utils.view.ext
 
 import android.content.Context
 import android.content.ContextWrapper
@@ -9,14 +9,17 @@ import android.text.TextWatcher
 import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
+import androidx.annotation.DimenRes
 import androidx.appcompat.app.AppCompatActivity
+import com.merseyside.utils.ext.getColorFromAttr
+import com.merseyside.utils.ext.getResourceFromAttr
+import com.merseyside.utils.ext.getStringFromAttr
 import com.merseyside.utils.view.ViewBaseline
-import com.merseyside.utils.view.ext.contains
-import com.merseyside.utils.view.ext.getRawCoordPoint
 
 fun View.getResourceFromAttr(
     @AttrRes attrColor: Int,
@@ -251,4 +254,31 @@ fun View.isSizeChanged(
 ): Boolean {
     return layoutParams.width != size.x ||
             layoutParams.height != size.y
+}
+
+fun View.setMarginsRes(
+    @DimenRes left: Int? = null,
+    @DimenRes top: Int? = null,
+    @DimenRes right: Int? = null,
+    @DimenRes bottom: Int? = null
+) {
+    setMargins(
+        left?.let { resources.getDimensionPixelSize(left) },
+        top?.let { resources.getDimensionPixelSize(top) },
+        right?.let { resources.getDimensionPixelSize(right) },
+        bottom?.let { resources.getDimensionPixelSize(bottom) },
+    )
+}
+
+fun View.setMargins(left: Int? = null, top: Int? = null, right: Int? = null, bottom: Int? = null) {
+    val params = (layoutParams as? ViewGroup.MarginLayoutParams)
+    if (params != null) {
+        params.setMargins(
+            left ?: params.leftMargin,
+            top ?: params.topMargin,
+            right ?: params.rightMargin,
+            bottom ?: params.bottomMargin
+        )
+        layoutParams = params
+    }
 }

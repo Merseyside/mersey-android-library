@@ -15,7 +15,7 @@ import com.merseyside.merseyLib.features.adapters.colors.di.ColorsModule
 import com.merseyside.merseyLib.features.adapters.colors.di.DaggerColorsComponent
 import com.merseyside.merseyLib.features.adapters.colors.model.ColorsViewModel
 import com.merseyside.merseyLib.kotlin.extensions.isZero
-import com.merseyside.utils.ext.addTextChangeListener
+import com.merseyside.utils.view.ext.addTextChangeListener
 
 class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel>() {
 

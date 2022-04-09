@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.asLiveData
+import com.merseyside.adapters.base.UpdateRequest
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.application.base.BaseSampleFragment
@@ -12,7 +13,7 @@ import com.merseyside.merseyLib.features.adapters.contacts.adapter.ContactExpand
 import com.merseyside.merseyLib.features.adapters.contacts.di.ContactsModule
 import com.merseyside.merseyLib.features.adapters.contacts.di.DaggerContactsComponent
 import com.merseyside.merseyLib.features.adapters.contacts.model.ContactViewModel
-import com.merseyside.utils.ext.onClick
+import com.merseyside.utils.view.ext.onClick
 
 class ContactFragment: BaseSampleFragment<FragmentContactsBinding, ContactViewModel>() {
 
@@ -37,7 +38,7 @@ class ContactFragment: BaseSampleFragment<FragmentContactsBinding, ContactViewMo
 
         requireBinding().recycler.adapter = adapter
         viewModel.contactsFlow.asLiveData().observe(viewLifecycleOwner) {
-            adapter.add(it)
+            adapter.update(UpdateRequest(it))
         }
 
         requireBinding().populate.onClick {

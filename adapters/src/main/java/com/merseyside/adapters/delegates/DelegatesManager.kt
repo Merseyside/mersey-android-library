@@ -76,14 +76,18 @@ class DelegatesManager<Parent, Model : AdapterParentViewModel<out Parent, Parent
         } else throw IllegalStateException("Delegates are empty. Please, add delegates before using this!")
     }
 
+    internal fun createModel(item: Parent): Model {
+        val delegate = requireDelegate {
+            delegates.findValue {
+                it.second.isResponsibleFor(item as Any)
+            }
+        }
+         return delegate.createItemViewModel(item)
+    }
+
     internal fun createModels(items: List<Parent>): List<Model> {
         return items.map { item ->
-            val delegate = requireDelegate {
-                delegates.findValue {
-                    it.second.isResponsibleFor(item as Any)
-                }
-            }
-            delegate.createItemViewModel(item)
+            createModel(item)
         }
     }
 

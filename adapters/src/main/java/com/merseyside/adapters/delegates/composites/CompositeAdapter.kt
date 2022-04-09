@@ -69,8 +69,10 @@ abstract class CompositeAdapter<Parent, Model : AdapterParentViewModel<out Paren
 
     override fun getItemCount() = modelList.size
 
-    override fun createModels(items: List<Parent>): List<Model> {
-        return delegatesManager.createModels(items).onEach { model -> onModelCreated(model) }
+    override fun createModel(item: Parent): Model {
+        val model = delegatesManager.createModel(item)
+        onModelCreated(model)
+        return model
     }
 
     @CallSuper

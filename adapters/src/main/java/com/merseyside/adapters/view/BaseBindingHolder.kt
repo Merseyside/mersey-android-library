@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.annotation.CallSuper
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
-import com.merseyside.utils.ext.getActivity
+import com.merseyside.utils.view.ext.getActivity
 
 open class BaseBindingHolder(val binding: ViewDataBinding)
     : RecyclerView.ViewHolder(binding.root) {

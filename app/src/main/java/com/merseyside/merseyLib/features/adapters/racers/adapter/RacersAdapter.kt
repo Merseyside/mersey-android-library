@@ -11,7 +11,7 @@ import com.merseyside.merseyLib.features.adapters.racers.entity.Checkpoint
 import com.merseyside.merseyLib.features.adapters.racers.model.CheckpointItemViewModel
 import com.merseyside.merseyLib.time.units.Millis
 import com.merseyside.merseyLib.time.units.compareTo
-import com.merseyside.utils.ext.setTextColorAttr
+import com.merseyside.utils.view.ext.setTextColorAttr
 import kotlinx.coroutines.CoroutineScope
 
 class RacersAdapter(scope: CoroutineScope) :

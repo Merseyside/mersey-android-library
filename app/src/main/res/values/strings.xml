@@ -8,6 +8,7 @@
     <string name="start_getting_location">Start getting location</string>
     <string name="stop_getting_location">Stop getting location</string>
     <string name="concat_title">Concat adapter</string>
+    <string name="news_title">News</string>
 
     <string name="name">Name: %1$s</string>
     <string name="age">Age: %1$d</string>

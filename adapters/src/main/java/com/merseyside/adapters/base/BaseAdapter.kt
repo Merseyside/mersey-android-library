@@ -131,8 +131,8 @@ abstract class BaseAdapter<Item, Model : AdapterViewModel<Item>>(
     }
 
     @InternalAdaptersApi
-    override fun createModels(items: List<Item>): List<Model> {
-        return items.map { initItemViewModel(it) }
+    override fun createModel(item: Item): Model {
+        return initItemViewModel(item)
     }
 
     internal open fun initItemViewModel(item: Item): Model {

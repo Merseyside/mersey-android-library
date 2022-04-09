@@ -6,7 +6,7 @@ import androidx.annotation.StringRes
 import com.google.android.material.textfield.TextInputLayout
 import com.merseyside.archy.R
 import com.merseyside.archy.presentation.activity.BaseActivity
-import com.merseyside.utils.ext.getActivity
+import com.merseyside.utils.view.ext.getActivity
 import com.merseyside.merseyLib.kotlin.extensions.log
 
 class LocaleTextInputLayout(

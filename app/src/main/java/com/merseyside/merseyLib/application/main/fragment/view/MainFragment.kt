@@ -4,14 +4,14 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import com.merseyside.archy.utils.ext.navigate
-import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.BR
+import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.application.base.BaseSampleFragment
 import com.merseyside.merseyLib.application.main.fragment.di.DaggerMainComponent
 import com.merseyside.merseyLib.application.main.fragment.di.MainModule
 import com.merseyside.merseyLib.application.main.fragment.model.MainViewModel
 import com.merseyside.merseyLib.databinding.FragmentMainBinding
-import com.merseyside.utils.ext.onClick
+import com.merseyside.utils.view.ext.onClick
 
 class MainFragment : BaseSampleFragment<FragmentMainBinding, MainViewModel>() {
 
@@ -31,6 +31,7 @@ class MainFragment : BaseSampleFragment<FragmentMainBinding, MainViewModel>() {
         super.onViewCreated(view, savedInstanceState)
 
         requireBinding().run {
+            newsButton.onClick { navigate(R.id.action_mainFragment_to_newsFragment) }
             colorsButton.onClick { navigate(R.id.action_mainFragment_to_colorsFragment) }
             racingButton.onClick { navigate(R.id.action_mainFragment_to_racingFragment) }
             locationButton.onClick { navigate(R.id.action_mainFragment_to_locationFragment) }

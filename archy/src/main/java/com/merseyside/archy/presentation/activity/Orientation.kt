@@ -2,7 +2,7 @@ package com.merseyside.archy.presentation.activity
 
 import android.app.Activity
 import android.view.View
-import com.merseyside.utils.ext.getActivity
+import com.merseyside.utils.view.ext.getActivity
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -3,6 +3,7 @@
 package com.merseyside.adapters.utils
 
 import androidx.recyclerview.widget.SortedList
+import com.merseyside.adapters.base.UpdateRequest
 import com.merseyside.adapters.ext.*
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.ComparableAdapterParentViewModel
@@ -58,6 +59,59 @@ interface SortedAdapterListUtils<Parent, Model : ComparableAdapterParentViewMode
     @InternalAdaptersApi
     override fun add(index: Int, model: Model) {
         throw Exception("Can be used only with BaseAdapter")
+    }
+
+    override fun update(items: List<Parent>): Boolean {
+        return update(UpdateRequest.Builder(items)
+            .isDeleteOld(true)
+            .build()
+        )
+    }
+
+    fun update(updateRequest: UpdateRequest<Parent>): Boolean {
+        val removed = if (updateRequest.isDeleteOld) {
+            val removeList = modelList
+                .filter { model ->
+                    if (model.isDeletable()) {
+                        updateRequest.list.find {
+                            model.areItemsTheSame(it)
+                        } == null
+                    } else {
+                        false
+                    }
+                }
+
+            removeModels(removeList)
+        } else false
+
+        val addList = ArrayList<Parent>()
+        for (obj in updateRequest.list) {
+            if (isMainThread() || updateJob?.isActive == true) {
+                if (!updateAndNotify(obj) && updateRequest.isAddNew) {
+                    addList.add(obj)
+                }
+            } else {
+                break
+            }
+        }
+
+        if (addList.isNotEmpty()) {
+            add(addList)
+        }
+
+        return addList.isNotEmpty() || removed
+    }
+
+    fun updateAsync(
+        updateRequest: UpdateRequest<Parent>,
+        onUpdated: () -> Unit = {}
+    ) {
+        updateJob = scope.asynchronously {
+            withLock {
+                update(updateRequest)
+                onUpdated.invoke()
+            }
+        }
     }
 
     @Throws(IllegalArgumentException::class)

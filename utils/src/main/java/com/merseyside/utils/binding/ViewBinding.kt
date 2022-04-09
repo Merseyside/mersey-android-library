@@ -14,7 +14,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
 import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndZero
-import com.merseyside.utils.ext.*
+import com.merseyside.utils.ext.setColor
+import com.merseyside.utils.view.ext.getActivity
+import com.merseyside.utils.view.ext.getColorFromAttr
 
 fun <Binding: ViewDataBinding> View.getBinding(
     @LayoutRes layoutRes: Int,

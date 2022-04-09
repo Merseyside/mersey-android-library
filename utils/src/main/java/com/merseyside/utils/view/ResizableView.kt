@@ -4,11 +4,10 @@ import android.annotation.SuppressLint
 import android.graphics.Point
 import android.view.MotionEvent
 import android.view.View
-import com.merseyside.utils.ext.getCoordPoint
-import com.merseyside.utils.ext.isInViewBounds
-import com.merseyside.utils.ext.isSizeChanged
-import com.merseyside.utils.ext.setCoordPoint
 import com.merseyside.utils.view.ext.getCoordPoint
+import com.merseyside.utils.view.ext.isInViewBounds
+import com.merseyside.utils.view.ext.isSizeChanged
+import com.merseyside.utils.view.ext.setCoordPoint
 import com.merseyside.utils.view.ext.isNotEmpty
 import com.merseyside.utils.view.ext.minus
 

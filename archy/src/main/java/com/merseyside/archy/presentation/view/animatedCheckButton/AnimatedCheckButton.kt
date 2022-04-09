@@ -16,7 +16,8 @@ import com.merseyside.merseyLib.kotlin.extensions.forEachNotNull
 import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
 import com.merseyside.merseyLib.time.units.Millis
 import com.merseyside.merseyLib.kotlin.Logger
-import com.merseyside.utils.ext.*
+import com.merseyside.utils.ext.setColor
+import com.merseyside.utils.view.ext.onClick
 
 class AnimatedCheckButton(context: Context, attributeSet: AttributeSet)
     : AppCompatButton(context, attributeSet), ICheckableView {

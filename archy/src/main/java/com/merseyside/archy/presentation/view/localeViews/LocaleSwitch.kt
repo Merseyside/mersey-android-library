@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.annotation.StringRes
 import com.merseyside.archy.R
 import com.merseyside.archy.presentation.activity.BaseActivity
-import com.merseyside.utils.ext.getActivity
+import com.merseyside.utils.view.ext.getActivity
 
 class LocaleSwitch(
     context: Context,

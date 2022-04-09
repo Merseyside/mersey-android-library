@@ -16,7 +16,7 @@ import com.merseyside.merseyLib.features.adapters.delegate.entity.Animal
 import com.merseyside.merseyLib.features.adapters.delegate.entity.Cat
 import com.merseyside.merseyLib.features.adapters.delegate.entity.Dog
 import com.merseyside.merseyLib.features.adapters.delegate.model.DelegateViewModel
-import com.merseyside.utils.ext.onClick
+import com.merseyside.utils.view.ext.onClick
 
 class DelegateFragment : BaseSampleFragment<FragmentDelegateBinding, DelegateViewModel>() {
 

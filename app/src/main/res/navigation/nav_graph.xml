@@ -13,6 +13,10 @@
         app:navGraph="@navigation/nav_graph">
 
         <action
+            android:id="@+id/action_mainFragment_to_newsFragment"
+            app:destination="@id/newsFragment" />
+
+        <action
             android:id="@+id/action_mainFragment_to_colorsFragment"
             app:destination="@id/colorsFragment" />
 
@@ -77,6 +81,13 @@
         android:name="com.merseyside.merseyLib.features.adapters.delegate.view.DelegateFragment"
         android:label="delegates_fragment"
         tools:layout="@layout/fragment_delegate"
+        app:navGraph="@navigation/nav_graph" />
+
+    <fragment
+        android:id="@+id/newsFragment"
+        android:name="com.merseyside.merseyLib.features.adapters.news.view.NewsFragment"
+        android:label="news_fragment"
+        tools:layout="@layout/fragment_news"
         app:navGraph="@navigation/nav_graph" />
 
 </navigation>

@@ -7,7 +7,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.widget.AppCompatEditText
 import com.merseyside.archy.R
 import com.merseyside.archy.presentation.activity.BaseActivity
-import com.merseyside.utils.ext.getActivity
+import com.merseyside.utils.view.ext.getActivity
 
 class LocaleEditText(
     context: Context,

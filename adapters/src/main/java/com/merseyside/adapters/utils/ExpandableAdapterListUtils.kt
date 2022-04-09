@@ -6,9 +6,9 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.base.SortedAdapter
 import com.merseyside.adapters.base.UpdateRequest
+import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.ExpandableAdapterParentViewModel
 import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
-import com.merseyside.merseyLib.kotlin.extensions.log
 import com.merseyside.merseyLib.kotlin.extensions.remove
 
 interface ExpandableAdapterListUtils<Parent, Model : ExpandableAdapterParentViewModel<out Parent, Parent, InnerData>,
@@ -53,7 +53,6 @@ interface ExpandableAdapterListUtils<Parent, Model : ExpandableAdapterParentView
         return adapterList.find { it.first.areItemsTheSame(model.item) }?.second
     }
 
-
     override fun update(updateRequest: UpdateRequest<Parent>): Boolean {
         if (updateRequest.isDeleteOld) {
             adapterList = adapterList.filter { adapter ->
@@ -61,27 +60,20 @@ interface ExpandableAdapterListUtils<Parent, Model : ExpandableAdapterParentView
             }.toMutableList()
         }
 
-        return try {
-            super.update(updateRequest)
-        } finally {
-            updateExpandableAdapters()
-        }
+        return super.update(updateRequest)
     }
 
-    override fun update(item: Parent): Boolean {
-        val updated = super.update(item)
+    override fun update(model: Model, item: Parent): List<AdapterParentViewModel.Payloadable>? {
+        val payloads = super.update(model, item)
 
-        if (updated) {
-            val model = getModelByItem(item)
-            if (model != null) {
-                val adapter = getExpandableAdapter(model)
-                model.getExpandableData().isNotNullAndEmpty {
-                    adapter.update(UpdateRequest(this))
-                }
+        if (payloads != null) {
+            val adapter = getExpandableAdapter(model)
+            model.getExpandableData().isNotNullAndEmpty {
+                adapter.update(this)
             }
         }
 
-        return updated
+        return payloads
     }
 
     override fun setFilter(query: String): Int {
@@ -101,14 +93,14 @@ interface ExpandableAdapterListUtils<Parent, Model : ExpandableAdapterParentView
         return models.filter { model ->
             val adapter = getAdapterIfExists(model)
             adapter?.let {
-                val hasDatas = try {
+                val hasData = try {
                     it.setFilter(filterPattern) > 0
                 } catch (e: NotImplementedError) {
                     false
                 }
 
                 val passedFilter = filter(model, filterPattern)
-                hasDatas || passedFilter
+                hasData || passedFilter
             } ?: false
         }.also { isFiltered = true }
     }
@@ -177,14 +169,6 @@ interface ExpandableAdapterListUtils<Parent, Model : ExpandableAdapterParentView
         }
     }
 
-    fun getExpandableAdapterUpdateRequest(data: List<InnerData>?): UpdateRequest<InnerData>? {
-        if (data == null) return null
-        return UpdateRequest.Builder(data)
-            .isAddNew(true)
-            .isDeleteOld(true)
-            .build()
-    }
-
     private fun addExpandableItems(adapter: InnerAdapter, list: List<InnerData>?) {
         with(adapter) {
             if (isEmpty()) {
@@ -217,9 +201,7 @@ interface ExpandableAdapterListUtils<Parent, Model : ExpandableAdapterParentView
 
     private fun update(adapter: InnerAdapter, list: List<InnerData>?) {
         with(adapter) {
-            getExpandableAdapterUpdateRequest(list)?.let { request ->
-                update(request)
-            }
+            update(list ?: emptyList())
         }
     }
 }

@@ -21,8 +21,4 @@ class ContactExpandableAdapter: ExpandableAdapter<ContactGroup, ContactGroupItem
     override fun getExpandableView(binding: ViewDataBinding): RecyclerView {
         return (binding as ItemGroupContactBinding).recycler
     }
-
-    override fun getExpandableAdapterUpdateRequest(data: List<String>?): UpdateRequest<String>? {
-        return data?.let { UpdateRequest(it) }
-    }
 }

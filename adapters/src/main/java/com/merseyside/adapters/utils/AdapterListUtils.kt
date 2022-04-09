@@ -4,7 +4,6 @@ package com.merseyside.adapters.utils
 
 import android.annotation.SuppressLint
 import androidx.recyclerview.widget.RecyclerView
-import com.merseyside.adapters.base.UpdateRequest
 import com.merseyside.adapters.callback.HasOnItemClickListener
 import com.merseyside.adapters.ext.asynchronously
 import com.merseyside.adapters.model.AdapterParentViewModel
@@ -13,14 +12,13 @@ import com.merseyside.merseyLib.kotlin.Logger
 import com.merseyside.merseyLib.kotlin.concurency.Locker
 import com.merseyside.merseyLib.kotlin.extensions.isZero
 import com.merseyside.merseyLib.kotlin.extensions.minByNullable
-import com.merseyside.utils.isMainThread
 import com.merseyside.utils.mainThreadIfNeeds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.sync.Mutex
 
 @SuppressLint("NotifyDataSetChanged")
-interface AdapterListUtils<Parent, Model: AdapterParentViewModel<out Parent, Parent>> :
+interface AdapterListUtils<Parent, Model : AdapterParentViewModel<out Parent, Parent>> :
     HasOnItemClickListener<Parent>, Locker {
 
     @InternalAdaptersApi
@@ -45,15 +43,20 @@ interface AdapterListUtils<Parent, Model: AdapterParentViewModel<out Parent, Par
     val filterKeyMap: MutableMap<String, List<Model>>
 
     @InternalAdaptersApi
-    fun createModels(items: List<Parent>): List<Model>
+    fun createModels(items: List<Parent>): List<Model> {
+        return items.map { createModel(it) }
+    }
+
+    @InternalAdaptersApi
+    fun createModel(item: Parent): Model
 
     fun add(item: Parent) {
-        addModels(createModels(listOf(item)))
-        adapter.notifyItemInserted(adapter.itemCount - 1)
+        addModel(createModel(item))
+        adapter.notifyItemInserted(adapter.itemCount)
     }
 
     fun add(items: List<Parent>) {
-        val startPosition = adapter.itemCount - 1
+        val startPosition = adapter.itemCount
         addModels(createModels(items))
         adapter.notifyItemRangeInserted(startPosition, items.size)
     }
@@ -61,7 +64,7 @@ interface AdapterListUtils<Parent, Model: AdapterParentViewModel<out Parent, Par
     fun add(position: Int, item: Parent) {
         val size = modelList.size
         if (position in 0..size) {
-            addModels(createModels(listOf(item)))
+            addModel(position, createModel(item))
             adapter.notifyItemInserted(position)
         } else {
             throw IndexOutOfBoundsException("List size is $size. Your index is $position")
@@ -71,8 +74,8 @@ interface AdapterListUtils<Parent, Model: AdapterParentViewModel<out Parent, Par
     fun add(position: Int, items: List<Parent>) {
         val size = modelList.size
         if (position in 0..size) {
-            addModels(createModels(items))
-            adapter.notifyItemRangeInserted(position, position + items.size)
+            addModels(position, createModels(items))
+            adapter.notifyItemRangeInserted(position, items.size)
         } else {
             throw IndexOutOfBoundsException("List size is $size. Your index is $position")
         }
@@ -117,66 +120,54 @@ interface AdapterListUtils<Parent, Model: AdapterParentViewModel<out Parent, Par
         }
     }
 
-    fun update(updateRequest: UpdateRequest<Parent>): Boolean {
-        val removed = if (updateRequest.isDeleteOld) {
-            val removeList = modelList
-                .filter { model ->
-                    if (model.isDeletable()) {
-                        updateRequest.list.find {
-                            model.areItemsTheSame(it)
-                        } == null
-                    } else {
-                        false
-                    }
-                }
+    /**
+     * Updates already existing items and remove oldItems
+     */
+    fun update(items: List<Parent>): Boolean {
+        removeOldItems(items)
+        items.forEachIndexed { index, item ->
 
-            removeModels(removeList)
-        } else false
-
-        val addList = ArrayList<Parent>()
-        for (obj in updateRequest.list) {
-            if (isMainThread() || updateJob?.isActive == true) {
-                if (!update(obj) && updateRequest.isAddNew) {
-                    addList.add(obj)
-                }
+            if (updateAndNotify(item)) {
+                val oldPosition = getPositionOfItem(item)
+                if (oldPosition != index) adapter.notifyItemMoved(oldPosition, index)
             } else {
-                break
+                add(index, item)
             }
         }
 
-        if (addList.isNotEmpty()) {
-            add(addList)
-        }
-
-        return addList.isNotEmpty() || removed
+        return true
     }
 
-    fun update(item: Parent): Boolean {
-        return run found@{
-            modelList.forEach { model ->
-                if (model.areItemsTheSame(item)) {
-                    if (!model.areContentsTheSame(item)) {
-                        mainThreadIfNeeds {
-                            notifyModelChanged(model, model.payload(item))
-                        }
-                    }
-                    return@found true
+    private fun removeOldItems(newList: List<Parent>) {
+        val removeList = ArrayList<Model>()
+        modelList.forEach { model ->
+            val item = newList.find { item -> model.areItemsTheSame(item) }
+            if (item == null) removeList.add(model)
+        }
+
+        removeModels(removeList)
+    }
+
+
+    @InternalAdaptersApi
+    fun update(model: Model, item: Parent): List<AdapterParentViewModel.Payloadable>? {
+        return if (!model.areContentsTheSame(item)) {
+            model.payload(item)
+        } else null
+    }
+
+    fun updateAndNotify(item: Parent): Boolean {
+        val model = find(item)
+        return if (model != null) {
+            val payloads = update(model, item)
+
+            if (payloads != null) {
+                mainThreadIfNeeds {
+                    notifyModelChanged(model, payloads)
                 }
             }
-            false
-        }
-    }
-
-    fun updateAsync(
-        updateRequest: UpdateRequest<Parent>,
-        onUpdated: () -> Unit = {}
-    ) {
-        updateJob = scope.asynchronously {
-            withLock {
-                update(updateRequest)
-                onUpdated.invoke()
-            }
-        }
+            true
+        } else false
     }
 
     @Throws(NotImplementedError::class)
@@ -199,7 +190,7 @@ interface AdapterListUtils<Parent, Model: AdapterParentViewModel<out Parent, Par
 
     @Throws(IllegalArgumentException::class)
     @InternalAdaptersApi
-    open fun notifyModelChanged(
+    fun notifyModelChanged(
         model: Model,
         payloads: List<AdapterParentViewModel.Payloadable> = emptyList()
     ): Int = try {
@@ -210,6 +201,17 @@ interface AdapterListUtils<Parent, Model: AdapterParentViewModel<out Parent, Par
         Logger.log("Skip notify item change!")
         throw e
     }
+
+//    @Throws(IllegalArgumentException::class)
+//    @InternalAdaptersApi
+//    fun notifyModelMoved(
+//        oldPosition: Int,
+//        newPosition: Int,
+//        model: Model,
+//        payloads: List<AdapterParentViewModel.Payloadable> = emptyList()
+//    ) {
+//        adapter.notifyItemMoved()
+//    }
 
     @Throws(IllegalArgumentException::class)
     fun getPositionOfItem(item: Parent): Int {
@@ -253,6 +255,16 @@ interface AdapterListUtils<Parent, Model: AdapterParentViewModel<out Parent, Par
         modelList.addAll(list)
     }
 
+    @InternalAdaptersApi
+    fun addModel(model: Model) {
+        modelList.add(model)
+    }
+
+    @InternalAdaptersApi
+    fun addModel(position: Int, model: Model) {
+        modelList.add(position, model)
+    }
+
     private fun addModels(position: Int, list: List<Model>) {
         modelList.addAll(position, list)
     }
@@ -264,7 +276,8 @@ interface AdapterListUtils<Parent, Model: AdapterParentViewModel<out Parent, Par
 
     fun removeModels(list: List<Model>): Boolean {
         return if (list.isNotEmpty()) {
-            modelList.removeAll(list)
+            list.forEach { remove(it) }
+            //modelList.removeAll(list)
             filterKeyMap.clear()
             filterKeyMap.forEach { entry ->
                 filterKeyMap[entry.key] = entry.value.toMutableList().apply { removeAll(list) }
@@ -284,57 +297,29 @@ interface AdapterListUtils<Parent, Model: AdapterParentViewModel<out Parent, Par
 
     fun remove(items: List<Parent>): Boolean {
         val removeList = items.mapNotNull { getModelByItem(it) }
+        removeModels(removeList)
 
-        val removed = modelList.removeAll(removeList)
-        if (removed) {
-            notifyItemsRemoved(getSmallestPosition(removeList))
-        }
-
-        return removed
+        return true
     }
 
     @InternalAdaptersApi
     fun remove(model: Model): Boolean {
         val position = getPositionOfModel(model)
         val removed = modelList.remove(model)
-        notifyItemsRemoved(position)
+        if (removed) {
+            adapter.notifyItemRemoved(position)
+        }
+        notifyPositionsChanged(position)
 
         return removed
     }
 
-    private fun removeList(models: List<Model>) {
-        if (models.isNotEmpty()) {
-            val smallestPosition = getSmallestPosition(models)
-            modelList.removeAll(models)
-
-            notifyItemsRemoved(smallestPosition)
-        }
-    }
-
-    private fun getSmallestPosition(models: List<Model>): Int {
-        return run minValue@{
-
-            models.minByNullable {
-                try {
-                    val position = getPositionOfModel(it)
-
-                    if (position.isZero()) return@minByNullable position
-                    else position
-                } catch (e: IllegalArgumentException) {
-                    null
-                }
-            }?.getPosition() ?: 0
-        }
-    }
-
-    fun notifyItemsRemoved(startsWithPosition: Int) {
+    fun notifyPositionsChanged(startsWithPosition: Int) {
         if (startsWithPosition < adapter.itemCount - 1) {
             (startsWithPosition until adapter.itemCount).forEach { index ->
                 modelList[index].onPositionChanged(index)
             }
         }
-
-        adapter.notifyDataSetChanged()
     }
 
     fun clear() {
@@ -371,11 +356,6 @@ interface AdapterListUtils<Parent, Model: AdapterParentViewModel<out Parent, Par
         }
     }
 
-    @InternalAdaptersApi
-    private fun getModelsByItems(items: List<Parent>): List<Model> {
-        return items.mapNotNull { item -> modelList.find { model -> model.areItemsTheSame(item) } }
-    }
-
     fun getAll(): List<Parent> {
         return modelList.map { it.item }
     }
@@ -390,5 +370,6 @@ interface AdapterListUtils<Parent, Model: AdapterParentViewModel<out Parent, Par
     fun onPayloadable(
         holder: TypedBindingHolder<Model>,
         payloads: List<AdapterParentViewModel.Payloadable>
-    ) {}
+    ) {
+    }
 }
