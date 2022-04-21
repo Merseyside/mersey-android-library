@@ -2,7 +2,6 @@ package com.merseyside.utils.layout
 
 import android.content.Context
 import android.util.AttributeSet
-import androidx.annotation.NonNull
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.min
 
@@ -26,7 +25,7 @@ class LinearAutofitLayoutManager : WrapContentLinearLayoutManager, SizeProviderL
     ) : super(context, attrs, defStyleAttr, defStyleRes)
 
     constructor(
-        @NonNull context: Context,
+        context: Context,
         desiredItemSize: Int = 0,
         orientation: Int = HORIZONTAL,
         reverseLayout: Boolean = false,

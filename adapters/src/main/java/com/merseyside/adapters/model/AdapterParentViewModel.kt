@@ -5,6 +5,7 @@ import androidx.databinding.BaseObservable
 import com.merseyside.adapters.base.ItemCallback
 import com.merseyside.adapters.callback.OnItemClickListener
 
+@Suppress("UNCHECKED_CAST")
 abstract class AdapterParentViewModel<Item: Parent, Parent>(
     item: Item
 ): BaseObservable() {
@@ -12,7 +13,7 @@ abstract class AdapterParentViewModel<Item: Parent, Parent>(
     var item: Item = item
         internal set
 
-    private var pos: Int = NO_ITEM_POSITION
+    private var position: Int = NO_ITEM_POSITION
     private lateinit var itemPosition: ItemCallback<AdapterViewModel<Item>>
     internal var priority: Int = 0
 
@@ -54,20 +55,20 @@ abstract class AdapterParentViewModel<Item: Parent, Parent>(
 
     @Throws(IllegalStateException::class)
     fun getPosition(): Int {
-        if (pos == NO_ITEM_POSITION) {
+        if (position == NO_ITEM_POSITION) {
             throw IllegalStateException("View has not initialized!")
         }
 
-        return pos
+        return position
     }
     fun getItemCount() = itemPosition.getItemCount()
     fun isLast() = getPosition() == getItemCount() - 1
     fun isFirst() = getPosition() == 0
 
     fun onPositionChanged(toPosition: Int) {
-        if (this.pos != toPosition) {
-            onPositionChanged(fromPosition = this.pos, toPosition = toPosition)
-            this.pos = toPosition
+        if (position != toPosition) {
+            onPositionChanged(fromPosition = position, toPosition = toPosition)
+            position = toPosition
         }
     }
 
@@ -84,17 +85,13 @@ abstract class AdapterParentViewModel<Item: Parent, Parent>(
             val another = parent as Item
             areItemsTheSame(another)
         } catch (e: ClassCastException) {
-            this.areParentItemsTheSame(parent)
+            false
         }
     }
 
     internal fun areContentsTheSame(parent: Parent): Boolean {
-        val another = parent as Item
-        return areContentsTheSame(another)
-    }
-
-    protected open fun areParentItemsTheSame(parent: Parent): Boolean {
-        throw NotImplementedError()
+        val other = parent as Item
+        return areContentsTheSame(other)
     }
 
     protected abstract fun areItemsTheSame(other: Item): Boolean

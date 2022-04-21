@@ -17,13 +17,13 @@ class GridAutofitLayoutManager : GridLayoutManager {
     private var lastHeight = 0
     private var maxColumnRowCount = 0
 
-    constructor(@NonNull context: Context, columnWidth: Int) : super(context, 1) {
+    constructor(context: Context, columnWidth: Int) : super(context, 1) {
         /* Initially set spanCount to 1, will be changed automatically later. */
         setColumnWidth(checkedColumnWidth(context, columnWidth))
     }
 
     constructor(
-        @NonNull context: Context,
+        context: Context,
         columnWidth: Int,
         orientation: Int,
         reverseLayout: Boolean,
@@ -35,7 +35,7 @@ class GridAutofitLayoutManager : GridLayoutManager {
         setColumnWidth(checkedColumnWidth(context, columnWidth))
     }
 
-    private fun checkedColumnWidth(@NonNull context: Context, columnWidth: Int): Int {
+    private fun checkedColumnWidth(context: Context, columnWidth: Int): Int {
         var mutColumnWidth = columnWidth
         if (mutColumnWidth <= 0) {
             /* Set default columnWidth value (48dp here). It is better to move this constant
@@ -57,8 +57,8 @@ class GridAutofitLayoutManager : GridLayoutManager {
     }
 
     override fun onLayoutChildren(
-        @NonNull recycler: RecyclerView.Recycler,
-        @NonNull state: RecyclerView.State
+        recycler: RecyclerView.Recycler,
+        state: RecyclerView.State
     ) {
         val width = width
         val height = height

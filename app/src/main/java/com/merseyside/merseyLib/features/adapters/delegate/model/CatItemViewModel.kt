@@ -9,8 +9,4 @@ class CatItemViewModel(item: Cat): AnimalItemViewModel<Cat>(item) {
     override fun areContentsTheSame(other: Cat): Boolean {
         return this.item == other
     }
-
-    override fun areItemsTheSame(other: Cat): Boolean {
-        return areParentItemsTheSame(other)
-    }
 }

@@ -6,8 +6,8 @@ import com.merseyside.merseyLib.features.adapters.delegate.entity.Animal
 abstract class AnimalItemViewModel<T : Animal>(item: T)
     : ComparableAdapterParentViewModel<T, Animal>(item) {
 
-    override fun areParentItemsTheSame(parent: Animal): Boolean {
-        return this.item.name == parent.name
+    override fun areItemsTheSame(other: T): Boolean {
+        return item.name == other.name
     }
 
     override fun compareTo(other: Animal): Int {
