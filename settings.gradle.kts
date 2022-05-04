@@ -13,10 +13,12 @@ dependencyResolutionManagement {
     versionCatalogs {
         val androidLibs by creating {
             from("$group:catalog-version-android:$catalogVersions")
+            version("coroutines", "1.6.0")
         }
 
         val common by creating {
             from("$group:catalog-version-common:$catalogVersions")
+            version("coroutines", "1.6.0")
         }
 
         val catalogPlugins by creating {
