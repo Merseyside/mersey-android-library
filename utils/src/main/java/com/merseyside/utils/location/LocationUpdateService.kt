@@ -28,7 +28,7 @@ class LocationUpdatesService : Service() {
     /**
      * Callback for changes in location.
      */
-    private var mLocationCallback: LocationCallback? = null
+    private lateinit var mLocationCallback: LocationCallback
     /**
      * The current location.
      */
@@ -73,11 +73,13 @@ class LocationUpdatesService : Service() {
         Log.i(TAG, "Requesting location updates")
         startService(Intent(applicationContext, LocationUpdatesService::class.java))
         try {
-            mFusedLocationClient.requestLocationUpdates(
-                mLocationRequest,
-                mLocationCallback,
-                Looper.myLooper()
-            )
+            Looper.myLooper()?.let {
+                mFusedLocationClient.requestLocationUpdates(
+                    mLocationRequest,
+                    mLocationCallback,
+                    it
+                )
+            }
 
             mNotificationManager?.notify(
                 NOTIFICATION_ID,

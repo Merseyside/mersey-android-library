@@ -28,7 +28,10 @@ android {
     buildTypes {
         getByName("debug") {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
 
         getByName("release") {
@@ -67,12 +70,7 @@ val androidLibz = listOf(
 dependencies {
 
     api(common.merseyLib.time)
-
-    if (isLocalKotlinExtLibrary()) {
-        api(project(":kotlin-ext"))
-    } else {
-        api(common.merseyLib.kotlin.ext)
-    }
+    api(common.merseyLib.kotlin.ext)
 
     androidLibz.forEach { lib -> implementation(lib) }
 }

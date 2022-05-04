@@ -131,7 +131,7 @@ interface SelectableAdapterListUtils<Parent, Model: SelectableAdapterParentViewM
         return if (item != null && canItemBeSelected(item)) {
             if (!item.isSelected()) {
                 if (selectableMode == SelectableAdapter.SelectableMode.SINGLE) {
-                    if (selectedList.isEmpty() || selectedList.first().areItemsNotTheSame(item.item)) {
+                    if (selectedList.isEmpty() || !selectedList.first().areItemsTheSame(item.item)) {
                         if (selectedList.isNotEmpty()) {
                             with(selectedList.first()) {
                                 setSelected(false)

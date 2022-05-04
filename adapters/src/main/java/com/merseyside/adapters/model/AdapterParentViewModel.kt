@@ -4,11 +4,12 @@ import androidx.annotation.CallSuper
 import androidx.databinding.BaseObservable
 import com.merseyside.adapters.base.ItemCallback
 import com.merseyside.adapters.callback.OnItemClickListener
+import com.merseyside.merseyLib.kotlin.contract.Identifiable
 
 @Suppress("UNCHECKED_CAST")
-abstract class AdapterParentViewModel<Item: Parent, Parent>(
+abstract class AdapterParentViewModel<Item : Parent, Parent>(
     item: Item
-): BaseObservable() {
+) : BaseObservable() {
 
     var item: Item = item
         internal set
@@ -61,6 +62,7 @@ abstract class AdapterParentViewModel<Item: Parent, Parent>(
 
         return position
     }
+
     fun getItemCount() = itemPosition.getItemCount()
     fun isLast() = getPosition() == getItemCount() - 1
     fun isFirst() = getPosition() == 0
@@ -94,11 +96,20 @@ abstract class AdapterParentViewModel<Item: Parent, Parent>(
         return areContentsTheSame(other)
     }
 
-    protected abstract fun areItemsTheSame(other: Item): Boolean
+    protected open fun areItemsTheSame(other: Item): Boolean = try {
+        (item as Identifiable<*>).getId() == (other as Identifiable<*>).getId()
+    } catch (e: ClassCastException) {
+        throw NotImplementedError(
+            "Items are not Identifiable. " +
+                    "Please extend it or override areItemsTheSame()"
+        )
+    }
+
     protected open fun areContentsTheSame(other: Item) = item == other
 
-    fun areItemsNotTheSame(other: Parent) = !this.areItemsTheSame(other)
-
+    /**
+     * Call notifyPropertyChanged(id) here.
+     */
     open fun notifyUpdate() {}
 
     internal fun payload(newItem: Parent): List<Payloadable> {
@@ -113,7 +124,7 @@ abstract class AdapterParentViewModel<Item: Parent, Parent>(
     }
 
     interface Payloadable {
-        object None: Payloadable
+        object None : Payloadable
     }
 
     companion object {
