@@ -10,7 +10,8 @@ import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.view.TypedBindingHolder
 import com.merseyside.utils.reflection.ReflectionUtils
 
-abstract class DelegateAdapter<Item : Parent, Parent, Model : AdapterParentViewModel<Item, Parent>>(
+abstract class DelegateAdapter<Item : Parent, Parent,
+        Model : AdapterParentViewModel<Item, out Parent>>(
     private val priority: Int = 0
 ) {
 
@@ -38,7 +39,7 @@ abstract class DelegateAdapter<Item : Parent, Parent, Model : AdapterParentViewM
     }
 
     fun createViewHolder(parent: ViewGroup, viewType: Int): TypedBindingHolder<Model> {
-        val layoutInflater: LayoutInflater = LayoutInflater.from(parent.context)
+        val layoutInflater = LayoutInflater.from(parent.context)
         val binding: ViewDataBinding =
             DataBindingUtil.inflate(
                 layoutInflater,

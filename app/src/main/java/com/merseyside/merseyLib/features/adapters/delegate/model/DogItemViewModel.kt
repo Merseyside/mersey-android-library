@@ -4,8 +4,6 @@ import com.merseyside.merseyLib.features.adapters.delegate.entity.Dog
 
 class DogItemViewModel(obj: Dog): AnimalItemViewModel<Dog>(obj) {
 
-    override fun notifyUpdate() {}
-
     override fun areContentsTheSame(other: Dog): Boolean {
         return item == other
     }

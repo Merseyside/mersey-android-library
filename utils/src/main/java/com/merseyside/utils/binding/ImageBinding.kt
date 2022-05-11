@@ -11,6 +11,11 @@ import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import com.merseyside.utils.ext.getDrawableResourceIdByName
 
+@BindingAdapter("app:srcCompat")
+fun setDrawableSrcCompat(view: ImageView, drawable: Drawable?) {
+    view.setImageDrawable(drawable)
+}
+
 @BindingAdapter("app:drawableName")
 fun ImageView.loadDrawableByName(name: String?) {
     if (name != null) {

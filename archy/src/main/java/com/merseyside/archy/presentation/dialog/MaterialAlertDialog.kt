@@ -88,25 +88,24 @@ class MaterialAlertDialog private constructor(val dialog: AlertDialog) {
         fun build(): MaterialAlertDialog {
             val builder = MaterialAlertDialogBuilder(context)
 
-            builder.setMessage(message)
-            builder.setCancelable(isCancelable)
-            builder.setTitle(title)
+            builder.apply {
+                setMessage(message)
+                setCancelable(isCancelable)
+                setTitle(title)
 
-            builder.setPositiveButton(
-                positiveButtonText
-            ) { dialog, _ ->
-                onPositiveClick()
-
-                dialog.cancel()
-            }
-
-            if (!isSingleAction) {
-                builder.setNegativeButton(
-                    negativeButtonText
+                setPositiveButton(
+                    positiveButtonText
                 ) { dialog, _ ->
-                    onNegativeClick()
+                    onPositiveClick()
 
                     dialog.cancel()
+                }
+
+                if (!isSingleAction) {
+                    setNegativeButton(negativeButtonText) { dialog, _ ->
+                        onNegativeClick()
+                        dialog.cancel()
+                    }
                 }
             }
 

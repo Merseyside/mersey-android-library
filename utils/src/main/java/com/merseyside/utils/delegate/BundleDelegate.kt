@@ -1,6 +1,7 @@
 package com.merseyside.utils.delegate
 
 import android.os.Bundle
+import com.merseyside.merseyLib.kotlin.serialization.deserialize
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -52,3 +53,10 @@ fun <T> Bundle.deserializable(
     deserialize: (String) -> T
 ): ReadOnlyProperty<Any, T?> =
     ReadOnlyProperty { _, property -> getString(key(property))?.let(deserialize) ?: defaultValue }
+
+inline fun <reified T> Bundle.deserializable(
+    crossinline key: (KProperty<*>) -> String = KProperty<*>::name
+): ReadOnlyProperty<Any, T> =
+    ReadOnlyProperty { _, property ->
+        getString(key(property))?.deserialize() ?: throw NullPointerException()
+    }
