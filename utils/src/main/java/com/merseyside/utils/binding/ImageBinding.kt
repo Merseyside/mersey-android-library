@@ -2,6 +2,7 @@ package com.merseyside.utils.binding
 
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
@@ -9,6 +10,7 @@ import androidx.databinding.BindingAdapter
 import coil.load
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
+import coil.transform.RoundedCornersTransformation
 import com.merseyside.utils.ext.getDrawableResourceIdByName
 
 @BindingAdapter("app:drawableName")
@@ -57,14 +59,24 @@ fun ImageView.imageUrl(url: String?, @DrawableRes placeholderId: Int?) {
     }
 }
 
-@BindingAdapter("imageUrl", "imagePlaceholder", "cropCircle", "crossfade", requireAll = false)
+@BindingAdapter(
+    "imageUrl",
+    "imagePlaceholder",
+    "cropCircle",
+    "crossfade",
+    "roundedCorners",
+    "radiusCorners",
+    requireAll = false
+)
 fun ImageView.imageUrlPlaceholder(
     url: String?,
     placeholder: Any?,
     isCropCircle: Boolean = false,
-    isCrossfade: Boolean = false
+    isCrossfade: Boolean = false,
+    isRoundedCorners: Boolean = false,
+    radiusCorners: Float = 0f
 ) {
-    val builder = build(isCrossfade, isCropCircle)
+    val builder = build(isCrossfade, isCropCircle, isRoundedCorners, radiusCorners)
     if (url.isNullOrEmpty()) {
         loadPlaceHolder(placeholder) {
             builder()
@@ -77,14 +89,54 @@ fun ImageView.imageUrlPlaceholder(
     }
 }
 
-@BindingAdapter("drawable", "imagePlaceholder", "cropCircle", "crossfade", requireAll = false)
+@BindingAdapter(
+    "imageUri",
+    "imagePlaceholder",
+    "cropCircle",
+    "crossfade",
+    "roundedCorners",
+    "radiusCorners",
+    requireAll = false
+)
+fun ImageView.imageUriPlaceholder(
+    uri: Uri?,
+    placeholder: Any?,
+    isCropCircle: Boolean = false,
+    isCrossfade: Boolean = false,
+    isRoundedCorners: Boolean = false,
+    radiusCorners: Float = 0f
+) {
+    val builder = build(isCrossfade, isCropCircle, isRoundedCorners, radiusCorners)
+    if (uri == null) {
+        loadPlaceHolder(placeholder) {
+            builder()
+        }
+    } else {
+        load(uri) {
+            builder()
+            this.placeholder(placeholder)
+        }
+    }
+}
+
+@BindingAdapter(
+    "drawable",
+    "imagePlaceholder",
+    "cropCircle",
+    "crossfade",
+    "roundedCorners",
+    "radiusCorners",
+    requireAll = false
+)
 fun ImageView.imageDrawablePlaceholder(
     drawable: Drawable?,
     placeholder: Any?,
     isCropCircle: Boolean = false,
-    isCrossfade: Boolean = false
+    isCrossfade: Boolean = false,
+    isRoundedCorners: Boolean = false,
+    radiusCorners: Float = 0f
 ) {
-    val builder = build(isCrossfade, isCropCircle)
+    val builder = build(isCrossfade, isCropCircle, isRoundedCorners, radiusCorners)
     if (drawable == null) {
         loadPlaceHolder(placeholder, builder)
     } else {
@@ -110,11 +162,14 @@ private fun ImageView.loadPlaceHolder(
 
 private fun build(
     crossfade: Boolean,
-    cropCircle: Boolean
+    cropCircle: Boolean,
+    roundedCorners: Boolean,
+    radiusCorners: Float
 ): ImageRequest.Builder.() -> Unit {
     return {
         if (crossfade) this.crossfade(crossfade)
         if (cropCircle) transformations(CircleCropTransformation())
+        if (roundedCorners) transformations(RoundedCornersTransformation(radius = radiusCorners))
     }
 }
 
