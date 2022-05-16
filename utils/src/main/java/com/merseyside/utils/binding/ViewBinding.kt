@@ -14,6 +14,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
 import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndZero
+import com.merseyside.merseyLib.kotlin.extensions.log
 import com.merseyside.utils.ext.setColor
 import com.merseyside.utils.view.ext.getActivity
 import com.merseyside.utils.view.ext.getColorFromAttr
@@ -86,10 +87,10 @@ fun isVisibleOrGone(view: View, obj: Any?) {
 }
 
 @BindingAdapter("app:isVisible")
-fun isVisible(view: View, isVisible: Boolean) {
+fun isVisible(view: View, isVisible: Boolean?) {
     when(isVisible) {
         true -> view.visibility = View.VISIBLE
-        false -> view.visibility = View.INVISIBLE
+        else -> view.visibility = View.INVISIBLE
     }
 }
 

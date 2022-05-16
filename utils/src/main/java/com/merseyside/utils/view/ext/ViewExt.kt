@@ -140,11 +140,15 @@ fun TextView.setTextSizePx(value: Number) {
     setTextSize(TypedValue.COMPLEX_UNIT_PX, value.toFloat())
 }
 
-fun View.onClick(onClick: () -> Unit): View.OnClickListener {
-    val listener = View.OnClickListener { onClick.invoke() }
+fun View.onClick(onClick: (View) -> Unit): View.OnClickListener {
+    val listener = View.OnClickListener { onClick(it) }
     this.setOnClickListener(listener)
 
     return listener
+}
+
+fun View.onClickSimple(onClick: () -> Unit): View.OnClickListener {
+    return onClick { onClick() }
 }
 
 fun View.isFullyVisible(): Boolean {

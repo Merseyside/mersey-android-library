@@ -36,7 +36,7 @@ fun setCheckable(button: AnimatedCheckButton, isCheckable: Boolean?) {
     }
 }
 
-@BindingAdapter("app:onClick")
+@BindingAdapter("app:onButtonClick")
 fun setOnClick(button: AnimatedCheckButton, click: (View) -> Unit) {
     button.setOnClick(click)
 }
