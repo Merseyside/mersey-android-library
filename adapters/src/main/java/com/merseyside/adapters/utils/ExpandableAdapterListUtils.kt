@@ -12,7 +12,7 @@ import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
 import com.merseyside.merseyLib.kotlin.extensions.remove
 
 interface ExpandableAdapterListUtils<Parent, Model : ExpandableAdapterParentViewModel<out Parent, Parent, InnerData>,
-        InnerData, InnerAdapter : AdapterListUtils<InnerData, *>>
+        InnerData, InnerAdapter : AdapterListUtils<InnerData, out AdapterParentViewModel<out InnerData, InnerData>>>
     : SelectableAdapterListUtils<Parent, Model> {
     var adapterList: MutableList<Pair<Model, InnerAdapter>>
 

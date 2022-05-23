@@ -20,7 +20,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.sync.Mutex
 
-abstract class CompositeAdapter<Parent, Model : AdapterParentViewModel<out Parent, Parent>>(
+open class CompositeAdapter<Parent, Model : AdapterParentViewModel<out Parent, Parent>>(
     val delegatesManager: DelegatesManager<Parent, Model> = DelegatesManager(),
     override val scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 ) : RecyclerView.Adapter<TypedBindingHolder<Model>>(),
@@ -48,6 +48,13 @@ abstract class CompositeAdapter<Parent, Model : AdapterParentViewModel<out Paren
 
     protected var recyclerView: RecyclerView? = null
 
+    init {
+        delegatesManager.setOnDelegateRemoveCallback { delegate ->
+            val removeList = modelList.filter { delegate.isResponsibleFor(it.item) }
+            removeModels(removeList)
+        }
+    }
+
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         this.recyclerView = recyclerView
         super.onAttachedToRecyclerView(recyclerView)
@@ -63,7 +70,7 @@ abstract class CompositeAdapter<Parent, Model : AdapterParentViewModel<out Paren
 
     @CallSuper
     override fun onBindViewHolder(holder: TypedBindingHolder<Model>, position: Int) {
-        delegatesManager.bindViewHolder(holder, getModelByPosition(position), position)
+        delegatesManager.onBindViewHolder(holder, getModelByPosition(position), position)
         listener?.let { holder.getModel().setOnItemClickListener(it) }
     }
 

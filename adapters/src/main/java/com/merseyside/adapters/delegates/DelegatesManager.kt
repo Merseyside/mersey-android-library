@@ -14,6 +14,7 @@ class DelegatesManager<Parent, Model : AdapterParentViewModel<out Parent, Parent
 ) {
 
     private val delegates = SparseArray<DelegateAdapter<out Parent, Parent, Model>>()
+    private lateinit var onDelegateRemoveCallback: (DelegateAdapter<out Parent, Parent, *>) -> Unit
 
     protected val count: Int
         get() = delegates.size()
@@ -48,13 +49,13 @@ class DelegatesManager<Parent, Model : AdapterParentViewModel<out Parent, Parent
         )
     }
 
-    fun bindViewHolder(holder: TypedBindingHolder<Model>, model: Model, position: Int) {
-        requireDelegate { getResponsibleDelegate(model) }.bindViewHolder(holder, model, position)
+    fun onBindViewHolder(holder: TypedBindingHolder<Model>, model: Model, position: Int) {
+        requireDelegate { getResponsibleDelegate(model) }.onBindViewHolder(holder, model, position)
     }
 
     fun getViewTypeByItem(model: Model): Int {
         return if (count.isNotZero()) {
-            delegates.findKey { it.second.isResponsibleFor(model.item as Any) }
+            delegates.findKey { it.second.isResponsibleFor(model.item) }
                 ?: throw IllegalArgumentException("No responsible delegates found!")
         } else throw IllegalStateException("Delegates are empty. Please, add delegates before using this!")
     }
@@ -63,32 +64,64 @@ class DelegatesManager<Parent, Model : AdapterParentViewModel<out Parent, Parent
         return requireDelegate { delegates.get(Int) }
     }
 
-    fun getDelegateViewType(delegate: DelegateAdapter<out Parent, Parent, Model>): Int {
+    fun getDelegateKey(delegate: DelegateAdapter<out Parent, Parent, Model>): Int {
         val index = delegates.indexOfValue(delegate)
         return if (index >= 0) {
             delegates.keyAt(index)
         } else throw IllegalArgumentException("View type of passed delegate not found!")
     }
 
+    fun hasDelegate(delegate: DelegateAdapter<out Parent, Parent, Model>): Boolean {
+        return delegates.findValue { it.second == delegate } != null
+    }
+
+    fun hasResponsibleDelegate(clazz: Class<out Parent>): Boolean {
+        return getResponsibleDelegate(clazz) != null
+    }
+
+    fun hasResponsibleDelegate(item: Parent): Boolean {
+        return getResponsibleDelegate(item) != null
+    }
+
+    fun getResponsibleDelegate(clazz: Class<out Parent>): DelegateAdapter<out Parent, Parent, Model>? {
+        return delegates.findValue { it.second.isResponsibleForItemClass(clazz) }
+    }
+
+    fun getResponsibleDelegate(item: Parent): DelegateAdapter<out Parent, Parent, Model>? {
+        return delegates.findValue { it.second.isResponsibleFor(item) }
+    }
+
+    fun removeResponsibleDelegate(clazz: Class<out Parent>): Boolean {
+        val delegate = getResponsibleDelegate(clazz)
+        return delegate?.let {
+            onDelegateRemoveCallback(delegate)
+            val key = getDelegateKey(delegate)
+            delegates.remove(key)
+            true
+        } ?: false
+    }
+
+    fun removeResponsibleDelegate(item: Parent): Boolean {
+        return removeResponsibleDelegate(item!!::class.java)
+    }
+
     private fun getResponsibleDelegate(model: Model): DelegateAdapter<out Parent, Parent, Model> {
         return if (count.isNotZero()) {
-            requireDelegate { delegates.findValue { it.second.isResponsibleFor(model.item as Any) } }
+            requireDelegate { delegates.findValue { it.second.isResponsibleFor(model.item) } }
         } else throw IllegalStateException("Delegates are empty. Please, add delegates before using this!")
     }
 
     internal fun createModel(item: Parent): Model {
         val delegate = requireDelegate {
             delegates.findValue {
-                it.second.isResponsibleFor(item as Any)
+                it.second.isResponsibleFor(item)
             }
         }
          return delegate.createItemViewModel(item)
     }
 
-    internal fun createModels(items: List<Parent>): List<Model> {
-        return items.map { item ->
-            createModel(item)
-        }
+    internal fun setOnDelegateRemoveCallback(callback: (DelegateAdapter<out Parent, Parent, *>) -> Unit) {
+        onDelegateRemoveCallback = callback
     }
 
     private fun requireDelegate(

@@ -6,14 +6,14 @@ import com.merseyside.adapters.base.SelectableAdapter
 import com.merseyside.adapters.callback.OnItemSelectedListener
 import com.merseyside.adapters.callback.OnSelectEnabledListener
 import com.merseyside.adapters.delegates.DelegatesManager
-import com.merseyside.adapters.model.SelectableAdapterViewModel
+import com.merseyside.adapters.model.SelectableAdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.SelectableAdapterListUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
-abstract class SelectableCompositeAdapter<Parent, Model: SelectableAdapterViewModel<Parent>>(
+abstract class SelectableCompositeAdapter<Parent, Model: SelectableAdapterParentViewModel<out Parent, Parent>>(
     delegatesManager: DelegatesManager<Parent, Model> = DelegatesManager(),
     selectableMode: SelectableAdapter.SelectableMode = SelectableAdapter.SelectableMode.SINGLE,
     override var isAllowToCancelSelection: Boolean =

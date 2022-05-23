@@ -16,6 +16,7 @@ import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.DimenRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.updateLayoutParams
 import com.merseyside.utils.ext.getColorFromAttr
 import com.merseyside.utils.ext.getResourceFromAttr
 import com.merseyside.utils.ext.getStringFromAttr
@@ -266,6 +267,19 @@ fun View.setMarginsRes(
     @DimenRes right: Int? = null,
     @DimenRes bottom: Int? = null
 ) {
+    updateLayoutParams {
+        setMargins(left, top, right, bottom)
+    }
+}
+
+fun ViewGroup.LayoutParams.setMarginsRes(
+    context: Context,
+    @DimenRes left: Int? = null,
+    @DimenRes top: Int? = null,
+    @DimenRes right: Int? = null,
+    @DimenRes bottom: Int? = null
+) {
+    val resources = context.resources
     setMargins(
         left?.let { resources.getDimensionPixelSize(left) },
         top?.let { resources.getDimensionPixelSize(top) },
@@ -274,15 +288,12 @@ fun View.setMarginsRes(
     )
 }
 
-fun View.setMargins(left: Int? = null, top: Int? = null, right: Int? = null, bottom: Int? = null) {
-    val params = (layoutParams as? ViewGroup.MarginLayoutParams)
-    if (params != null) {
-        params.setMargins(
-            left ?: params.leftMargin,
-            top ?: params.topMargin,
-            right ?: params.rightMargin,
-            bottom ?: params.bottomMargin
-        )
-        layoutParams = params
-    }
+fun ViewGroup.LayoutParams.setMargins(left: Int? = null, top: Int? = null, right: Int? = null, bottom: Int? = null) {
+    val params = (this as? ViewGroup.MarginLayoutParams)
+    params?.setMargins(
+        left ?: params.leftMargin,
+        top ?: params.topMargin,
+        right ?: params.rightMargin,
+        bottom ?: params.bottomMargin
+    )
 }

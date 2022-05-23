@@ -23,8 +23,12 @@ abstract class DelegateAdapter<Item : Parent, Parent,
     abstract fun getLayoutIdForItem(viewType: Int): Int
     protected abstract fun getBindingVariable(): Int
 
-    open fun isResponsibleFor(parent: Any): Boolean {
-        return persistentClass == parent::class.java
+    open fun isResponsibleFor(parent: Parent): Boolean {
+        return isResponsibleForItemClass(parent!!::class.java)
+    }
+
+    internal fun isResponsibleForItemClass(clazz: Class<out Parent>): Boolean {
+        return persistentClass == clazz
     }
 
     abstract fun createItemViewModel(item: Item): Model
@@ -51,7 +55,7 @@ abstract class DelegateAdapter<Item : Parent, Parent,
         return getBindingHolder(binding)
     }
 
-    open fun bindViewHolder(holder: TypedBindingHolder<Model>, model: Model, position: Int) {
+    open fun onBindViewHolder(holder: TypedBindingHolder<Model>, model: Model, position: Int) {
         bind(holder, model)
     }
 

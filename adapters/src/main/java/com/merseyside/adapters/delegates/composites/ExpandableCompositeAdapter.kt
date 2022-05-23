@@ -3,9 +3,10 @@
 package com.merseyside.adapters.delegates.composites
 
 import androidx.recyclerview.widget.RecyclerView
-import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.base.SelectableAdapter
-import com.merseyside.adapters.model.ExpandableAdapterViewModel
+import com.merseyside.adapters.model.AdapterParentViewModel
+import com.merseyside.adapters.model.ExpandableAdapterParentViewModel
+import com.merseyside.adapters.utils.AdapterListUtils
 import com.merseyside.adapters.utils.ExpandableAdapterListUtils
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.view.TypedBindingHolder
@@ -13,8 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
-abstract class ExpandableCompositeAdapter<Parent, Model : ExpandableAdapterViewModel<Parent, Data>,
-        Data, InnerAdapter : BaseAdapter<Data, *>>(
+abstract class ExpandableCompositeAdapter<Parent, Model, Data, InnerAdapter>(
     selectableMode: SelectableAdapter.SelectableMode = SelectableAdapter.SelectableMode.MULTIPLE,
     isAllowToCancelSelection: Boolean = true,
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
@@ -22,7 +22,11 @@ abstract class ExpandableCompositeAdapter<Parent, Model : ExpandableAdapterViewM
     selectableMode = selectableMode,
     isAllowToCancelSelection = isAllowToCancelSelection,
     scope = scope
-), ExpandableAdapterListUtils<Parent, Model, Data, InnerAdapter> {
+), ExpandableAdapterListUtils<Parent, Model, Data, InnerAdapter>
+        where Model : ExpandableAdapterParentViewModel<out Parent, Parent, Data>,
+              InnerAdapter :
+              RecyclerView.Adapter<out TypedBindingHolder<out AdapterParentViewModel<out Data, Data>>>,
+              InnerAdapter : AdapterListUtils<Data, out AdapterParentViewModel<out Data, Data>> {
 
     override var adapterList: MutableList<Pair<Model, InnerAdapter>> = ArrayList()
 

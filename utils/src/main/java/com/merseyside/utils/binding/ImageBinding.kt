@@ -3,12 +3,15 @@ package com.merseyside.utils.binding
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.widget.ImageView
+import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import coil.load
 import coil.request.ImageRequest
-import coil.transform.CircleCropTransformation
+import com.merseyside.merseyLib.kotlin.safeLet
+import com.merseyside.utils.coil.CircleCropStroke
+import com.merseyside.utils.coil.CircleCropTransformation
 import com.merseyside.utils.ext.getDrawableResourceIdByName
 
 @BindingAdapter("app:srcCompat")
@@ -62,40 +65,36 @@ fun ImageView.imageUrl(url: String?, @DrawableRes placeholderId: Int?) {
     }
 }
 
-@BindingAdapter("imageUrl", "imagePlaceholder", "cropCircle", "crossfade", requireAll = false)
-fun ImageView.imageUrlPlaceholder(
-    url: String?,
+@BindingAdapter(
+    "drawable",
+    "imageUrl",
+    "imagePlaceholder",
+    "cropCircle",
+    "strokeWidth",
+    "strokeColorRes",
+    "crossfade",
+    requireAll = false
+)
+fun ImageView.setImageWithCoil(
+    drawable: Drawable?,
+    imageUrl: String?,
     placeholder: Any?,
     isCropCircle: Boolean = false,
+    strokeWidth: Float? = null,
+    @ColorRes strokeColor: Int? = null,
     isCrossfade: Boolean = false
 ) {
-    val builder = build(isCrossfade, isCropCircle)
-    if (url.isNullOrEmpty()) {
+    val builder = build(isCrossfade, isCropCircle, strokeWidth, strokeColor)
+
+    try {
+        val data = firstNotNull(drawable, imageUrl)
+        load(data) {
+            builder()
+            placeholder(placeholder)
+        }
+    } catch(e: NullPointerException) {
         loadPlaceHolder(placeholder) {
             builder()
-        }
-    } else {
-        load(url) {
-            builder()
-            this.placeholder(placeholder)
-        }
-    }
-}
-
-@BindingAdapter("drawable", "imagePlaceholder", "cropCircle", "crossfade", requireAll = false)
-fun ImageView.imageDrawablePlaceholder(
-    drawable: Drawable?,
-    placeholder: Any?,
-    isCropCircle: Boolean = false,
-    isCrossfade: Boolean = false
-) {
-    val builder = build(isCrossfade, isCropCircle)
-    if (drawable == null) {
-        loadPlaceHolder(placeholder, builder)
-    } else {
-        load(drawable) {
-            builder()
-            this.placeholder(placeholder)
         }
     }
 }
@@ -104,22 +103,23 @@ private fun ImageView.loadPlaceHolder(
     placeholder: Any?,
     builder: ImageRequest.Builder.() -> Unit
 ) {
-    when (placeholder) {
-        null -> {}
-        is Drawable -> load(placeholder) { builder() }
-        is String -> load(placeholder) { builder() }
-        is Int -> load(drawableResId = placeholder) { builder() }
-        else -> throw IllegalArgumentException("Wrong placeholder type!")
-    }
+    load(placeholder) { builder() }
 }
 
 private fun build(
     crossfade: Boolean,
-    cropCircle: Boolean
+    cropCircle: Boolean,
+    strokeWidth: Float?,
+    @ColorRes strokeColor: Int?
 ): ImageRequest.Builder.() -> Unit {
     return {
-        if (crossfade) this.crossfade(crossfade)
-        if (cropCircle) transformations(CircleCropTransformation())
+        this.crossfade(crossfade)
+        if (cropCircle) {
+            val stroke = safeLet(strokeWidth, strokeColor) { width, color ->
+                CircleCropStroke(width, color)
+            }
+            transformations(CircleCropTransformation(stroke))
+        }
     }
 }
 
@@ -131,3 +131,14 @@ private fun ImageRequest.Builder.placeholder(holder: Any?) = apply {
         else -> throw IllegalArgumentException("Wrong placeholder type!")
     }
 }
+
+
+private fun <T> firstNotNull(vararg data: T): T {
+    return data.toList().firstNotNull()
+}
+
+@Throws(NullPointerException::class)
+private fun <T> Collection<T>.firstNotNull(): T {
+    return find { it != null } ?: throw NullPointerException("No non-null items found!")
+}
+

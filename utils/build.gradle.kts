@@ -57,6 +57,7 @@ val androidLibz = listOf(
     common.reflect,
     androidLibs.coroutines,
     androidLibs.appCompat,
+    androidLibs.androidx.core,
     androidLibs.material,
     androidLibs.paging,
     androidLibs.billing,
