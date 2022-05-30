@@ -12,7 +12,9 @@ import coil.request.ImageRequest
 import com.merseyside.merseyLib.kotlin.safeLet
 import com.merseyside.utils.coil.CircleCropStroke
 import com.merseyside.utils.coil.CircleCropTransformation
+import coil.transform.RoundedCornersTransformation
 import com.merseyside.utils.ext.getDrawableResourceIdByName
+import com.merseyside.merseyLib.kotlin.firstNotNull
 
 @BindingAdapter("app:srcCompat")
 fun setDrawableSrcCompat(view: ImageView, drawable: Drawable?) {
@@ -73,28 +75,33 @@ fun ImageView.imageUrl(url: String?, @DrawableRes placeholderId: Int?) {
     "strokeWidth",
     "strokeColorRes",
     "crossfade",
-    requireAll = false
-)
-fun ImageView.setImageWithCoil(
+    "roundedCorners",
+    "radiusCorners",
+    requireAll = false)
+fun setImageWithCoil(
+    imageView: ImageView,
     drawable: Drawable?,
     imageUrl: String?,
     placeholder: Any?,
     isCropCircle: Boolean = false,
     strokeWidth: Float? = null,
     @ColorRes strokeColor: Int? = null,
-    isCrossfade: Boolean = false
+    isCrossfade: Boolean = false,
+    isRoundedCorners: Boolean = false,
+    radiusCorners: Float = 0f
 ) {
-    val builder = build(isCrossfade, isCropCircle, strokeWidth, strokeColor)
+    val builder =
+        build(isCrossfade, isCropCircle, strokeWidth, strokeColor, isRoundedCorners, radiusCorners)
 
-    try {
-        val data = firstNotNull(drawable, imageUrl)
-        load(data) {
-            builder()
-            placeholder(placeholder)
-        }
-    } catch(e: NullPointerException) {
-        loadPlaceHolder(placeholder) {
-            builder()
+    with(imageView) {
+        try {
+            val data = firstNotNull(drawable, imageUrl)
+            load(data) {
+                builder()
+                placeholder(placeholder)
+            }
+        } catch (e: NullPointerException) {
+            loadPlaceHolder(placeholder) { builder() }
         }
     }
 }
@@ -110,7 +117,9 @@ private fun build(
     crossfade: Boolean,
     cropCircle: Boolean,
     strokeWidth: Float?,
-    @ColorRes strokeColor: Int?
+    @ColorRes strokeColor: Int?,
+    roundedCorners: Boolean,
+    radiusCorners: Float
 ): ImageRequest.Builder.() -> Unit {
     return {
         this.crossfade(crossfade)
@@ -119,6 +128,8 @@ private fun build(
                 CircleCropStroke(width, color)
             }
             transformations(CircleCropTransformation(stroke))
+        } else if (roundedCorners) {
+            transformations(RoundedCornersTransformation(radius = radiusCorners))
         }
     }
 }
@@ -130,15 +141,5 @@ private fun ImageRequest.Builder.placeholder(holder: Any?) = apply {
         is Int -> placeholder(holder)
         else -> throw IllegalArgumentException("Wrong placeholder type!")
     }
-}
-
-
-private fun <T> firstNotNull(vararg data: T): T {
-    return data.toList().firstNotNull()
-}
-
-@Throws(NullPointerException::class)
-private fun <T> Collection<T>.firstNotNull(): T {
-    return find { it != null } ?: throw NullPointerException("No non-null items found!")
 }
 
