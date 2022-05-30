@@ -65,7 +65,8 @@ val androidLibz = listOf(
     androidLibs.oauth2,
     androidLibs.playCore,
     androidLibs.coil,
-    androidLibs.location
+    androidLibs.location,
+    androidLibs.navigation
 )
 
 dependencies {

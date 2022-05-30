@@ -63,8 +63,8 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
     protected abstract fun performInjection(bundle: Bundle?, vararg params: Any)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         performInjection(savedInstanceState)
+        super.onCreate(savedInstanceState)
     }
 
     @CallSuper

@@ -2,13 +2,17 @@ package com.merseyside.utils.delegate
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavArgs
+import androidx.navigation.NavArgsLazy
+import androidx.navigation.fragment.navArgs
 import com.merseyside.utils.ext.getSerialize
 import com.merseyside.utils.ext.put
+import com.merseyside.utils.reflection.callMethodByName
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-abstract class FragmentArgumentProperty<T, V>(
-    val helper: FragmentArgumentHelper,
+abstract class ArgumentProperty<T, V>(
+    val helper: ArgumentHelper,
     val key: (KProperty<*>) -> String = KProperty<*>::name,
     var requireExistence: Boolean = helper.requireExistence
 ) : ReadWriteProperty<T, V> {
@@ -25,66 +29,89 @@ abstract class FragmentArgumentProperty<T, V>(
         key: String,
         block: (key: String, args: Bundle) -> R
     ): R {
-        return if (helper.args == null || !helper.contains(key))
+        return if (helper.arguments == null || !helper.contains(key))
             throw IllegalArgumentException("Non nullable value with key $key required!")
-
         else block(key, helper.requireArgs)
     }
 }
 
-class FragmentArgumentHelper(
-    private val fragment: Fragment,
-    val requireExistence: Boolean = false
-) {
-
-    val args: Bundle?
-        get() = fragment.arguments
+abstract class ArgumentHelper(internal val requireExistence: Boolean) {
+    abstract val arguments: Bundle?
 
     val requireArgs: Bundle
-        get() = fragment.requireArguments()
+        get() = arguments ?: throw NullPointerException()
 
     fun <T> put(
         key: String,
         value: T
     ) {
-        getOrCreateArguments().put(key, value)
+        arguments?.put(key, value)
+            ?: throw NullPointerException("Can not put value because arguments are null!")
     }
 
     fun contains(key: String): Boolean {
-        return fragment.arguments?.containsKey(key) ?: false
-    }
-
-    private fun getOrCreateArguments(): Bundle {
-        return if (fragment.arguments == null) {
-            if (requireExistence) throw IllegalArgumentException("Args are null!")
-            else Bundle().also { fragment.arguments = it }
-        } else fragment.requireArguments()
+        return arguments?.containsKey(key) ?: false
     }
 }
 
-fun FragmentArgumentHelper.string(
+class FragmentArgumentHelper(
+    internal val fragment: Fragment,
+    requireExistence: Boolean = false
+) : ArgumentHelper(requireExistence) {
+
+    override val arguments: Bundle?
+        get() = fragment.arguments
+
+}
+
+class NavArgsHelper<Args : NavArgs>(
+    private val lazyNavArgs: NavArgsLazy<Args>,
+    requireExistence: Boolean = false
+) : ArgumentHelper(requireExistence) {
+
+    lateinit var args: Args
+    var cached: Bundle? = null
+
+    override val arguments: Bundle?
+        get() {
+            if (cached == null) {
+                args = lazyNavArgs.value
+                cached = args.callMethodByName("toBundle") as Bundle?
+            }
+
+            return cached
+        }
+}
+
+inline fun <reified Args : NavArgs> Fragment.NavArgsHelper(
+    requireExistence: Boolean = false
+): NavArgsHelper<Args> {
+    return NavArgsHelper(navArgs(), requireExistence)
+}
+
+fun ArgumentHelper.string(
     defaultValue: String,
     key: (KProperty<*>) -> String = KProperty<*>::name
-): FragmentArgumentProperty<Any, String> =
-    object : FragmentArgumentProperty<Any, String>(this, key) {
+): ArgumentProperty<Any, String> =
+    object : ArgumentProperty<Any, String>(this, key) {
         override fun getValue(thisRef: Any, property: KProperty<*>): String {
-            return args?.getString(key(property)) ?: defaultValue
+            return arguments?.getString(key(property)) ?: defaultValue
         }
     }
 
-fun FragmentArgumentHelper.stringOrNull(
+fun ArgumentHelper.stringOrNull(
     key: (KProperty<*>) -> String = KProperty<*>::name
-): FragmentArgumentProperty<Any, String?> =
-    object : FragmentArgumentProperty<Any, String?>(this, key) {
+): ArgumentProperty<Any, String?> =
+    object : ArgumentProperty<Any, String?>(this, key) {
         override fun getValue(thisRef: Any, property: KProperty<*>): String? {
-            return args?.getString(key(property))
+            return arguments?.getString(key(property))
         }
     }
 
-fun FragmentArgumentHelper.string(
+fun ArgumentHelper.string(
     key: (KProperty<*>) -> String = KProperty<*>::name
-): FragmentArgumentProperty<Any, String> =
-    object : FragmentArgumentProperty<Any, String>(this, key) {
+): ArgumentProperty<Any, String> =
+    object : ArgumentProperty<Any, String>(this, key) {
         override fun getValue(thisRef: Any, property: KProperty<*>): String {
             return requireExistence(key(property)) { key, args ->
                 args.getString(key)!!
@@ -92,39 +119,39 @@ fun FragmentArgumentHelper.string(
         }
     }
 
-fun FragmentArgumentHelper.bool(
+fun ArgumentHelper.bool(
     defaultValue: Boolean,
     key: (KProperty<*>) -> String = KProperty<*>::name
-): FragmentArgumentProperty<Any, Boolean> =
-    object : FragmentArgumentProperty<Any, Boolean>(this, key) {
+): ArgumentProperty<Any, Boolean> =
+    object : ArgumentProperty<Any, Boolean>(this, key) {
         override fun getValue(thisRef: Any, property: KProperty<*>): Boolean {
-            return args?.getBoolean(key(property)) ?: defaultValue
+            return arguments?.getBoolean(key(property)) ?: defaultValue
         }
     }
 
-fun FragmentArgumentHelper.int(
+fun ArgumentHelper.int(
     defaultValue: Int,
     key: (KProperty<*>) -> String = KProperty<*>::name
-): FragmentArgumentProperty<Any, Int> =
-    object : FragmentArgumentProperty<Any, Int>(this, key) {
+): ArgumentProperty<Any, Int> =
+    object : ArgumentProperty<Any, Int>(this, key) {
         override fun getValue(thisRef: Any, property: KProperty<*>): Int {
-            return args?.getInt(key(property)) ?: defaultValue
+            return arguments?.getInt(key(property)) ?: defaultValue
         }
     }
 
-fun FragmentArgumentHelper.intOrNull(
+fun ArgumentHelper.intOrNull(
     key: (KProperty<*>) -> String = KProperty<*>::name
-): FragmentArgumentProperty<Any, Int?> =
-    object : FragmentArgumentProperty<Any, Int?>(this, key) {
+): ArgumentProperty<Any, Int?> =
+    object : ArgumentProperty<Any, Int?>(this, key) {
         override fun getValue(thisRef: Any, property: KProperty<*>): Int? {
-            return args?.getInt(key(property))
+            return arguments?.getInt(key(property))
         }
     }
 
-fun FragmentArgumentHelper.int(
+fun ArgumentHelper.int(
     key: (KProperty<*>) -> String = KProperty<*>::name
-): FragmentArgumentProperty<Any, Int> =
-    object : FragmentArgumentProperty<Any, Int>(this, key) {
+): ArgumentProperty<Any, Int> =
+    object : ArgumentProperty<Any, Int>(this, key) {
         override fun getValue(thisRef: Any, property: KProperty<*>): Int {
             return requireExistence(key(property)) { key, args ->
                 args.getInt(key)
@@ -132,29 +159,29 @@ fun FragmentArgumentHelper.int(
         }
     }
 
-fun FragmentArgumentHelper.float(
+fun ArgumentHelper.float(
     defaultValue: Float,
     key: (KProperty<*>) -> String = KProperty<*>::name
-): FragmentArgumentProperty<Any, Float> =
-    object : FragmentArgumentProperty<Any, Float>(this, key) {
+): ArgumentProperty<Any, Float> =
+    object : ArgumentProperty<Any, Float>(this, key) {
         override fun getValue(thisRef: Any, property: KProperty<*>): Float {
-            return args?.getFloat(key(property)) ?: defaultValue
+            return arguments?.getFloat(key(property)) ?: defaultValue
         }
     }
 
-fun FragmentArgumentHelper.floatOrNull(
+fun ArgumentHelper.floatOrNull(
     key: (KProperty<*>) -> String = KProperty<*>::name
-): FragmentArgumentProperty<Any, Float?> =
-    object : FragmentArgumentProperty<Any, Float?>(this, key) {
+): ArgumentProperty<Any, Float?> =
+    object : ArgumentProperty<Any, Float?>(this, key) {
         override fun getValue(thisRef: Any, property: KProperty<*>): Float? {
-            return args?.getFloat(key(property))
+            return arguments?.getFloat(key(property))
         }
     }
 
-fun FragmentArgumentHelper.float(
+fun ArgumentHelper.float(
     key: (KProperty<*>) -> String = KProperty<*>::name
-): FragmentArgumentProperty<Any, Float> =
-    object : FragmentArgumentProperty<Any, Float>(this, key) {
+): ArgumentProperty<Any, Float> =
+    object : ArgumentProperty<Any, Float>(this, key) {
         override fun getValue(thisRef: Any, property: KProperty<*>): Float {
             return requireExistence(key(property)) { key, args ->
                 args.getFloat(key)
@@ -162,29 +189,29 @@ fun FragmentArgumentHelper.float(
         }
     }
 
-fun FragmentArgumentHelper.double(
+fun ArgumentHelper.double(
     defaultValue: Double,
     key: (KProperty<*>) -> String = KProperty<*>::name
-): FragmentArgumentProperty<Any, Double> =
-    object : FragmentArgumentProperty<Any, Double>(this, key) {
+): ArgumentProperty<Any, Double> =
+    object : ArgumentProperty<Any, Double>(this, key) {
         override fun getValue(thisRef: Any, property: KProperty<*>): Double {
-            return args?.getDouble(key(property)) ?: defaultValue
+            return arguments?.getDouble(key(property)) ?: defaultValue
         }
     }
 
-fun FragmentArgumentHelper.doubleOrNull(
+fun ArgumentHelper.doubleOrNull(
     key: (KProperty<*>) -> String = KProperty<*>::name
-): FragmentArgumentProperty<Any, Double?> =
-    object : FragmentArgumentProperty<Any, Double?>(this, key) {
+): ArgumentProperty<Any, Double?> =
+    object : ArgumentProperty<Any, Double?>(this, key) {
         override fun getValue(thisRef: Any, property: KProperty<*>): Double? {
-            return args?.getDouble(key(property))
+            return arguments?.getDouble(key(property))
         }
     }
 
-fun FragmentArgumentHelper.double(
+fun ArgumentHelper.double(
     key: (KProperty<*>) -> String = KProperty<*>::name
-): FragmentArgumentProperty<Any, Double?> =
-    object : FragmentArgumentProperty<Any, Double?>(this, key) {
+): ArgumentProperty<Any, Double?> =
+    object : ArgumentProperty<Any, Double?>(this, key) {
         override fun getValue(thisRef: Any, property: KProperty<*>): Double? {
             return requireExistence(key(property)) { key, args ->
                 args.getDouble(key)
@@ -192,29 +219,29 @@ fun FragmentArgumentHelper.double(
         }
     }
 
-fun FragmentArgumentHelper.long(
+fun ArgumentHelper.long(
     defaultValue: Long,
     key: (KProperty<*>) -> String = KProperty<*>::name
-): FragmentArgumentProperty<Any, Long> =
-    object : FragmentArgumentProperty<Any, Long>(this, key) {
+): ArgumentProperty<Any, Long> =
+    object : ArgumentProperty<Any, Long>(this, key) {
         override fun getValue(thisRef: Any, property: KProperty<*>): Long {
-            return args?.getLong(key(property)) ?: defaultValue
+            return arguments?.getLong(key(property)) ?: defaultValue
         }
     }
 
-fun FragmentArgumentHelper.longOrNull(
+fun ArgumentHelper.longOrNull(
     key: (KProperty<*>) -> String = KProperty<*>::name
-): FragmentArgumentProperty<Any, Long?> =
-    object : FragmentArgumentProperty<Any, Long?>(this, key) {
+): ArgumentProperty<Any, Long?> =
+    object : ArgumentProperty<Any, Long?>(this, key) {
         override fun getValue(thisRef: Any, property: KProperty<*>): Long? {
-            return args?.getLong(key(property))
+            return arguments?.getLong(key(property))
         }
     }
 
-fun FragmentArgumentHelper.long(
+fun ArgumentHelper.long(
     key: (KProperty<*>) -> String = KProperty<*>::name
-): FragmentArgumentProperty<Any, Long> =
-    object : FragmentArgumentProperty<Any, Long>(this, key) {
+): ArgumentProperty<Any, Long> =
+    object : ArgumentProperty<Any, Long>(this, key) {
         override fun getValue(thisRef: Any, property: KProperty<*>): Long {
             return requireExistence(key(property)) { key, args ->
                 args.getLong(key)
@@ -222,9 +249,9 @@ fun FragmentArgumentHelper.long(
         }
     }
 
-inline fun <reified T> FragmentArgumentHelper.deserializable(
+inline fun <reified T> ArgumentHelper.deserializable(
     noinline key: (KProperty<*>) -> String = KProperty<*>::name
-): FragmentArgumentProperty<Any, T> = object : FragmentArgumentProperty<Any, T>(
+): ArgumentProperty<Any, T> = object : ArgumentProperty<Any, T>(
     this,
     key,
     requireExistence = true
@@ -236,18 +263,18 @@ inline fun <reified T> FragmentArgumentHelper.deserializable(
     }
 }
 
-inline fun <reified T> FragmentArgumentHelper.deserializableOrNull(
+inline fun <reified T> ArgumentHelper.deserializableOrNull(
     noinline key: (KProperty<*>) -> String = KProperty<*>::name
-): FragmentArgumentProperty<Any, T?> = object : FragmentArgumentProperty<Any, T?>(this, key) {
+): ArgumentProperty<Any, T?> = object : ArgumentProperty<Any, T?>(this, key) {
     override fun getValue(thisRef: Any, property: KProperty<*>): T? {
-        return args?.getSerialize(key(property))
+        return arguments?.getSerialize(key(property))
     }
 }
 
-inline fun <reified T> FragmentArgumentHelper.deserializable(
+inline fun <reified T> ArgumentHelper.deserializable(
     defaultValue: T,
     noinline key: (KProperty<*>) -> String = KProperty<*>::name
-): FragmentArgumentProperty<Any, T> = object : FragmentArgumentProperty<Any, T>(this, key) {
+): ArgumentProperty<Any, T> = object : ArgumentProperty<Any, T>(this, key) {
     override fun getValue(thisRef: Any, property: KProperty<*>): T {
         return requireArgs.getSerialize(key(property)) ?: defaultValue
     }
