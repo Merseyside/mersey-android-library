@@ -30,6 +30,10 @@ fun <T> Bundle.put(key: String, value: T) {
     }
 }
 
+fun <T> Bundle.putSafe(key: String, value: T?) {
+    value?.let { put(key, value) }
+}
+
 @OptIn(ExperimentalContracts::class)
 fun Bundle?.isNotNullAndEmpty(): Boolean {
     contract {

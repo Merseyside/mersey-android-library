@@ -20,11 +20,11 @@ import com.merseyside.archy.presentation.view.OnKeyboardStateListener
 import com.merseyside.archy.presentation.view.OrientationHandler
 import com.merseyside.archy.presentation.view.localeViews.ILocaleManager
 import com.merseyside.archy.utils.SnackbarManager
+import com.merseyside.merseyLib.kotlin.Logger
 import com.merseyside.utils.LocaleManager
 import com.merseyside.utils.ext.getLocalizedContext
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.Unregistrar
-import com.merseyside.merseyLib.kotlin.Logger
 
 abstract class BaseActivity : AppCompatActivity(),
     IActivityView, OrientationHandler, ILocaleManager {
@@ -64,9 +64,7 @@ abstract class BaseActivity : AppCompatActivity(),
         setOrientation(resources, savedInstanceState)
         performInjection(savedInstanceState)
         setView()
-        getToolbar()?.let {
-            setSupportActionBar(it)
-        }
+        getToolbar()?.let { setSupportActionBar(it) }
 
         snackbarManager = SnackbarManager(this)
     }
@@ -243,16 +241,16 @@ abstract class BaseActivity : AppCompatActivity(),
     abstract fun getToolbar(): Toolbar?
 
     override fun setFragmentToolbar(toolbar: Toolbar?) {
-        if (toolbar != null) {
-            supportActionBar?.hide()
-            setSupportActionBar(toolbar)
-
-        } else {
-            getToolbar()?.let {
-                setSupportActionBar(it)
-                supportActionBar?.show()
-            }
+        (toolbar ?: getToolbar())?.let {
+            setSupportActionBar(it)
         }
+//        if (toolbar != null) {
+//            setSupportActionBar(toolbar)
+//        } else {
+//            getToolbar()?.let {
+//                )
+//            }
+//        }
     }
 
     override fun getActualString(@StringRes id: Int?, vararg args: String): String? {

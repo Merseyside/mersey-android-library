@@ -44,6 +44,8 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         }
     }
 
+    open fun isBarVisible(): Boolean = true
+
     override fun getContext(): Context {
         return baseActivity.getContext()
     }
@@ -114,13 +116,25 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        baseActivity.setFragmentToolbar(getToolbar())
+        setupAppBar()
 
         baseActivity.getLanguage().run {
             if (currentLanguage.isNotNullAndEmpty() && this != currentLanguage) {
                 updateLanguage(baseActivity.getContext())
             }
             currentLanguage = this
+        }
+    }
+
+    private fun setupAppBar() {
+        baseActivity.setFragmentToolbar(getToolbar())
+        setActionBarVisibility(isBarVisible())
+    }
+
+    protected fun setActionBarVisibility(isVisible: Boolean) {
+        getActionBar()?.apply {
+            if (isVisible) show()
+            else hide()
         }
     }
 
@@ -215,9 +229,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         return baseActivity.supportActionBar
     }
 
-    open fun getToolbar(): Toolbar? {
-        return null
-    }
+    open fun getToolbar(): Toolbar? = null
 
     override fun showAlertDialog(
         title: String?,

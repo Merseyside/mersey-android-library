@@ -16,7 +16,8 @@ fun RecyclerView.attachSnapHelperWithListener(
     onSnapPositionChangeListener: SnapOnScrollListener.OnSnapPositionChangeListener?
 ) {
     snapHelper.attachToRecyclerView(this)
-    val snapOnScrollListener = SnapOnScrollListener(snapHelper, behavior, onSnapPositionChangeListener)
+    val snapOnScrollListener =
+        SnapOnScrollListener(snapHelper, behavior, onSnapPositionChangeListener)
     addOnScrollListener(snapOnScrollListener)
 }
 
@@ -41,5 +42,17 @@ fun RecyclerView.scrollToEnd() {
 fun RecyclerView.smoothScrollToEnd() {
     if (layoutManager != null) {
         smoothScrollToPosition(childCount - 1)
+    }
+}
+
+inline fun <reified Adapter : RecyclerView.Adapter<VH>,
+        VH : RecyclerView.ViewHolder> RecyclerView.getOrCreateAdapter(
+    initBlock: () -> Adapter
+): Adapter {
+    return if (adapter == null) {
+        return initBlock().also { adapter = it }
+    } else {
+        if (adapter is Adapter) adapter as Adapter
+        else throw IllegalArgumentException()
     }
 }

@@ -13,7 +13,7 @@ import com.merseyside.utils.view.ext.getColorFromAttr
 import com.merseyside.utils.view.ext.setTextWithCursor
 
 /**
- * It use only for setting cursor in right position
+ * Use it only for keeping cursor in right position
  */
 @BindingAdapter("app:text")
 fun setText(textView: TextView, text: String?) {
@@ -64,5 +64,28 @@ fun setCount(view: TextView, collection: Collection<*>?) {
         view.text = collection.size.toString()
     } else {
         view.text = "0"
+    }
+}
+
+@BindingAdapter("app:drawableWidth", "app:drawableHeight", requireAll = true)
+fun setTextViewDrawableSize(view: TextView, drawableWidth: Float, drawableHeight: Float) {
+    with(view) {
+        val drawables = compoundDrawablesRelative
+        val scaledDrawables = drawables.map { drawable ->
+            drawable?.let {
+                drawable.apply {
+                    setBounds(
+                        0,
+                        0,
+                        drawableWidth.toInt(),
+                        drawableHeight.toInt()
+                    )
+                }
+            }
+        }
+
+        with(scaledDrawables) {
+            setCompoundDrawables(get(0), get(1), get(2), get(3))
+        }
     }
 }
