@@ -11,6 +11,7 @@ plugins {
 }
 
 android {
+    namespace = "com.merseyside.animators"
     compileSdk = Application.compileSdk
 
     defaultConfig {

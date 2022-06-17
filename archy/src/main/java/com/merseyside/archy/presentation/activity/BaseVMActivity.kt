@@ -72,8 +72,8 @@ abstract class BaseVMActivity<B : ViewDataBinding, M : BaseViewModel> : BaseBind
         }
     }
 
-    override fun handleError(throwable: Throwable) {
-        viewModel.onError(throwable)
+    override fun handleError(throwable: Throwable): Boolean {
+        return viewModel.onError(throwable)
     }
 
     override fun updateLanguage(context: Context) {

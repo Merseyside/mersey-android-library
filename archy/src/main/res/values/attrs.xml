@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <declare-styleable name="ProgressBarAttr">
-        <attr name="text" format="string" />
-        <attr name="fillColor" />
-        <attr name="android:textColor" />
-        <attr name="progressColor" format="reference" />
+    <declare-styleable name="DefaultStylesTheme" format="reference">
+        <attr name="validationInputViewStyle" format="reference" />
+        <attr name="textProgressBarStyle" format="reference" />
+        <attr name="roundTextViewStyle" format="reference" />
+    </declare-styleable>
+
+    <attr name="validationInputLayoutStyle" format="reference" />
+
+    <declare-styleable name="TextProgressBar">
+        <attr name="progressText" format="string" />
+        <attr name="progressFillColor" format="color" />
+        <attr name="progressTextColor" format="color" />
+        <attr name="progressColor" format="color" />
     </declare-styleable>
 
     <declare-styleable name="LocaleTextView">
@@ -75,9 +83,61 @@
     </declare-styleable>
 
     <declare-styleable name="RoundTextView">
-        <attr name="fillColor" format="color" />
-        <attr name="cornerRadius" format="dimension" />
-        <attr name="strokeColor" format="color" />
-        <attr name="strokeWidth" format="dimension" />
+        <attr name="roundFillColor" format="color" />
+        <attr name="roundCornerRadius" format="dimension" />
+        <attr name="roundStrokeColor" format="color" />
+        <attr name="roundStrokeWidth" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="ValidationInputView">
+        <attr name="validInputWidth" format="dimension" />
+        <attr name="validInputHeight" format="dimension" />
+        <attr name="validForceState" format="boolean" />
+        <attr name="validHintText" format="string" />
+        <attr name="validTextEditText" format="string" />
+        <attr name="validTextSuccess" format="string" />
+        <attr name="validTextError" format="string" />
+        <attr name="validTextDefault" format="string" />
+        <attr name="validMaxLength" format="integer" />
+        <attr name="validCursorVisibility" format="boolean" />
+        <!-- взял с системных атрибутов -->
+        <attr name="validInputType">
+            <flag name="none" value="0x00000000" />
+            <flag name="text" value="0x00000001" />
+            <flag name="textEmailAddress" value="0x00000021" />
+            <flag name="textPersonName" value="0x00000061" />
+            <flag name="textPostalAddress" value="0x00000071" />
+            <flag name="textPassword" value="0x00000081" />
+            <flag name="number" value="0x00000002" />
+            <flag name="numberPassword" value="0x00000012" />
+            <flag name="phone" value="0x00000003" />
+            <flag name="datetime" value="0x00000004" />
+            <flag name="date" value="0x00000014" />
+            <flag name="time" value="0x00000024" />
+        </attr>
+
+        <attr name="validIconMode">
+            <enum name="custom" value="-1" />
+            <enum name="none" value="0" />
+            <enum name="password_toggle" value="1" />
+            <enum name="clear_text" value="2" />
+            <enum name="dropdown_menu" value="3" />
+        </attr>
+
+        <attr name="validStrokeColor" format="color" />
+        <attr name="validSuccessStrokeColor" format="color" />
+        <attr name="validErrorStrokeColor" format="color" />
+
+        <attr name="validHintColor" format="color" />
+        <attr name="validSuccessHintColor" format="color" />
+        <attr name="validErrorHintColor" format="color" />
+
+        <attr name="validIcon" format="reference" />
+        <attr name="validSuccessIcon" format="reference" />
+        <attr name="validErrorIcon" format="reference" />
+
+        <attr name="validMessageColor" format="color" />
+        <attr name="validSuccessMessageColor" format="color" />
+        <attr name="validErrorMessageColor" format="color" />
     </declare-styleable>
 </resources>

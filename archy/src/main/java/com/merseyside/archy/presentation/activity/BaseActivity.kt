@@ -175,7 +175,7 @@ abstract class BaseActivity : AppCompatActivity(),
         }
     }
 
-    override fun handleError(throwable: Throwable) {}
+    override fun handleError(throwable: Throwable): Boolean = false
 
     @IdRes
     abstract fun getFragmentContainer(): Int?

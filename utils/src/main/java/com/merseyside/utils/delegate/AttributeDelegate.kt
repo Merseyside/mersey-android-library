@@ -2,10 +2,10 @@ package com.merseyside.utils.delegate
 
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
-import com.merseyside.merseyLib.kotlin.Logger
 import com.merseyside.utils.attributes.AttributeHelper
 import com.merseyside.utils.attributes.AttributeHelper.Companion.NO_VALUE
-import com.merseyside.utils.attributes.Namespace
+import com.merseyside.utils.attributes.AttributeHelper.Companion.NO_VALUE_FLOAT
+import com.merseyside.utils.attributes.AttributeHelper.Companion.NO_VALUE_STRING
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -16,362 +16,337 @@ import kotlin.reflect.KProperty
 
 fun AttributeHelper.bool(
     defaultValue: Boolean = false,
-    namespace: Namespace = defNamespace,
     resName: String? = null
-): ReadWriteProperty<Any, Boolean> = object: ReadWriteProperty<Any, Boolean> {
+): ReadWriteProperty<Any, Boolean> = object : ReadWriteProperty<Any, Boolean> {
     var value: Boolean? = null
 
     init {
-        if (resName != null) value = getValue(resName)
+        if (resName != null) value = getBool(resName, defaultValue)
     }
 
     override fun getValue(thisRef: Any, property: KProperty<*>): Boolean {
-        return value ?: getValue(property.name).also { value = it }
+        return value ?: getBool(property.name, defaultValue).also { value = it }
     }
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: Boolean) {
         this.value = value
     }
-
-    private fun getValue(resName: String): Boolean {
-        return try {
-            getBool(resName, defaultValue, namespace).also { value = it }
-        } catch (e: NullPointerException) {
-            e.printStackTrace()
-            Logger.logErr("Are you sure you call it in init block or passed resName explicitly")
-            defaultValue
-        }
-    }
 }
 
 fun AttributeHelper.string(
-    defaultValue: String = "",
-    namespace: Namespace = defNamespace,
+    defaultValue: String = NO_VALUE_STRING,
     resName: String? = null
-): ReadWriteProperty<Any, String> = object: ReadWriteProperty<Any, String> {
+): ReadWriteProperty<Any, String> = object : ReadWriteProperty<Any, String> {
     var value: String? = null
 
     init {
-        if (resName != null) value = getValue(resName)
+        if (resName != null) value = getString(resName, defaultValue)
     }
 
     override fun getValue(thisRef: Any, property: KProperty<*>): String {
-        return value ?: getValue(property.name).also { value = it }
+        return value ?: getString(property.name, defaultValue).also { value = it }
     }
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: String) {
         this.value = value
     }
-
-    private fun getValue(resName: String): String {
-        return try {
-            getString(resName, namespace).also { value = it }
-        } catch (e: NullPointerException) {
-            e.printStackTrace()
-            Logger.logErr("Are you sure you call it in init block or passed resName explicitly")
-            defaultValue
-        }
-    }
 }
 
 fun AttributeHelper.stringOrNull(
-    namespace: Namespace = defNamespace,
     resName: String? = null
-): ReadWriteProperty<Any, String?> = object: ReadWriteProperty<Any, String?> {
+): ReadWriteProperty<Any, String?> = object : ReadWriteProperty<Any, String?> {
     var value: String? = null
 
     init {
-        if (resName != null) value = getValue(resName)
+        if (resName != null) value = getStringOrNull(resName)
     }
 
     override fun getValue(thisRef: Any, property: KProperty<*>): String? {
-        return value ?: getValue(property.name)?.also { value = it }
+        return value ?: getStringOrNull(property.name)?.also { value = it }
     }
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: String?) {
         this.value = value
     }
-
-    private fun getValue(resName: String): String? {
-        return try {
-            getString(resName, namespace).also { value = it }
-        } catch (e: NullPointerException) {
-            e.printStackTrace()
-            Logger.logErr("Are you sure you call it in init block or passed resName explicitly")
-            null
-        }
-    }
 }
 
 fun AttributeHelper.int(
-    defaultValue: Int = 0,
-    namespace: Namespace = defNamespace,
+    defaultValue: Int = NO_VALUE,
     resName: String? = null
-): ReadWriteProperty<Any, Int> = object: ReadWriteProperty<Any, Int> {
+): ReadWriteProperty<Any, Int> = object : ReadWriteProperty<Any, Int> {
     var value: Int? = null
 
     init {
-        if (resName != null) value = getValue(resName)
+        if (resName != null) value = getInt(resName, defaultValue)
     }
 
     override fun getValue(thisRef: Any, property: KProperty<*>): Int {
-        return value ?: getValue(property.name).also { value = it }
+        return value ?: getInt(property.name, defaultValue).also { value = it }
     }
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: Int) {
         this.value = value
     }
+}
 
-    private fun getValue(resName: String): Int {
-        return try {
-            getInt(resName, defaultValue, namespace).also { value = it }
-        } catch (e: NullPointerException) {
-            e.printStackTrace()
-            Logger.logErr("Are you sure you call it in init block or passed resName explicitly")
-            defaultValue
-        }
+fun AttributeHelper.intOrNull(
+    resName: String? = null
+): ReadWriteProperty<Any, Int?> = object : ReadWriteProperty<Any, Int?> {
+    var value: Int? = null
+
+    init {
+        if (resName != null) value = getIntOrNull(resName)
+    }
+
+    override fun getValue(thisRef: Any, property: KProperty<*>): Int? {
+        return value ?: getIntOrNull(property.name).also { value = it }
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: Int?) {
+        this.value = value
     }
 }
 
 fun AttributeHelper.float(
-    defaultValue: Float = 0F,
-    namespace: Namespace = defNamespace,
+    defaultValue: Float = NO_VALUE_FLOAT,
     resName: String? = null
-): ReadWriteProperty<Any, Float> = object: ReadWriteProperty<Any, Float> {
+): ReadWriteProperty<Any, Float> = object : ReadWriteProperty<Any, Float> {
     var value: Float? = null
 
     init {
-        if (resName != null) value = getValue(resName)
+        if (resName != null) value = getFloat(resName, defaultValue)
     }
 
     override fun getValue(thisRef: Any, property: KProperty<*>): Float {
-        return value ?: getValue(property.name).also { value = it }
+        return value ?: getFloat(property.name, defaultValue).also { value = it }
     }
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: Float) {
         this.value = value
     }
-
-    private fun getValue(resName: String): Float {
-        return try {
-            getFloat(resName, defaultValue, namespace).also { value = it }
-        } catch (e: NullPointerException) {
-            e.printStackTrace()
-            Logger.logErr("Are you sure you call it in init block or passed resName explicitly")
-            defaultValue
-        }
-    }
 }
 
-fun AttributeHelper.resource(
-    namespace: Namespace = defNamespace,
+fun AttributeHelper.floatOrNull(
     resName: String? = null
-): ReadWriteProperty<Any, Int> = object: ReadWriteProperty<Any, Int> {
-    var value: Int? = null
-
-    init {
-        if (resName != null) value = getValue(resName)
-    }
-
-    override fun getValue(thisRef: Any, property: KProperty<*>): Int {
-        return value ?: getValue(property.name).also { value = it }
-    }
-
-    override fun setValue(thisRef: Any, property: KProperty<*>, value: Int) {
-        this.value = value
-    }
-
-    private fun getValue(resName: String): Int {
-        return getResourceId(resName, namespace)?.also { value = it } ?: NO_VALUE
-    }
-}
-
-fun AttributeHelper.dimension(
-    defaultValue: Float,
-    namespace: Namespace = defNamespace,
-    resName: String? = null
-): ReadWriteProperty<Any, Float> = object: ReadWriteProperty<Any, Float> {
+): ReadWriteProperty<Any, Float?> = object : ReadWriteProperty<Any, Float?> {
     var value: Float? = null
 
     init {
-        if (resName != null) value = getValue(resName)
-    }
-
-    override fun getValue(thisRef: Any, property: KProperty<*>): Float {
-        return value ?: getValue(property.name).also { value = it }
-    }
-
-    override fun setValue(thisRef: Any, property: KProperty<*>, value: Float) {
-        this.value = value
-    }
-
-    private fun getValue(resName: String): Float {
-        return getDimension(resName, defaultValue, namespace).also { value = it }
-    }
-}
-
-fun AttributeHelper.dimensionOrNull(
-    namespace: Namespace = defNamespace,
-    resName: String? = null
-): ReadWriteProperty<Any, Float?> = object: ReadWriteProperty<Any, Float?> {
-    var value: Float? = null
-
-    init {
-        if (resName != null) value = getValue(resName)
+        if (resName != null) value = getFloatOrNull(resName)
     }
 
     override fun getValue(thisRef: Any, property: KProperty<*>): Float? {
-        return value ?: getValue(property.name)?.also { value = it }
+        return value ?: getFloatOrNull(property.name).also { value = it }
     }
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: Float?) {
         this.value = value
     }
+}
 
-    private fun getValue(resName: String): Float? {
-        return getDimensionOrNull(resName, namespace)?.also { value = it }
+fun AttributeHelper.resource(
+    defaultValue: Int = NO_VALUE,
+    resName: String? = null
+): ReadWriteProperty<Any, Int> = object : ReadWriteProperty<Any, Int> {
+    var value: Int? = null
+
+    init {
+        if (resName != null) value = getResourceId(resName, defaultValue)
+    }
+
+    override fun getValue(thisRef: Any, property: KProperty<*>): Int {
+        return value ?: getResourceId(property.name, defaultValue).also { value = it }
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: Int) {
+        this.value = value
+    }
+}
+
+fun AttributeHelper.resourceOrNull(
+    resName: String? = null
+): ReadWriteProperty<Any, Int?> = object : ReadWriteProperty<Any, Int?> {
+    var value: Int? = null
+
+    init {
+        if (resName != null) value = getResourceIdOrNull(resName)
+    }
+
+    override fun getValue(thisRef: Any, property: KProperty<*>): Int? {
+        return value ?: getResourceIdOrNull(property.name).also { value = it }
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: Int?) {
+        this.value = value
+    }
+}
+
+fun AttributeHelper.dimension(
+    defaultValue: Float = NO_VALUE_FLOAT,
+    resName: String? = null
+): ReadWriteProperty<Any, Float> = object : ReadWriteProperty<Any, Float> {
+    var value: Float? = null
+
+    init {
+        if (resName != null) value = getDimension(resName, defaultValue)
+    }
+
+    override fun getValue(thisRef: Any, property: KProperty<*>): Float {
+        return value ?: getDimension(property.name, defaultValue).also { value = it }
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: Float) {
+        this.value = value
+    }
+}
+
+fun AttributeHelper.dimensionOrNull(
+    resName: String? = null
+): ReadWriteProperty<Any, Float?> = object : ReadWriteProperty<Any, Float?> {
+    var value: Float? = null
+
+    init {
+        if (resName != null) value = getDimensionOrNull(resName)
+    }
+
+    override fun getValue(thisRef: Any, property: KProperty<*>): Float? {
+        return value ?: getDimensionOrNull(property.name)?.also { value = it }
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: Float?) {
+        this.value = value
     }
 }
 
 fun AttributeHelper.dimensionPixelSize(
-    defaultValue: Int,
-    namespace: Namespace = defNamespace,
+    defaultValue: Int = NO_VALUE,
     resName: String? = null
-): ReadWriteProperty<Any, Int> = object: ReadWriteProperty<Any, Int> {
+): ReadWriteProperty<Any, Int> = object : ReadWriteProperty<Any, Int> {
     var value: Int? = null
 
     init {
-        if (resName != null) value = getValue(resName)
+        if (resName != null) value = getDimensionPixelSize(resName, defaultValue)
     }
 
     override fun getValue(thisRef: Any, property: KProperty<*>): Int {
-        return value ?: getValue(property.name).also { value = it }
+        return value ?: getDimensionPixelSize(property.name, defaultValue).also { value = it }
     }
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: Int) {
         this.value = value
-    }
-
-    private fun getValue(resName: String): Int {
-        return getDimensionPixelSize(resName, defaultValue, namespace).also { value = it }
     }
 }
 
 fun AttributeHelper.dimensionPixelSizeOrNull(
-    namespace: Namespace = defNamespace,
     resName: String? = null
-): ReadWriteProperty<Any, Int?> = object: ReadWriteProperty<Any, Int?> {
+): ReadWriteProperty<Any, Int?> = object : ReadWriteProperty<Any, Int?> {
     var value: Int? = null
 
     init {
-        if (resName != null) value = getValue(resName)
+        if (resName != null) value = getDimensionPixelSizeOrNull(resName)
     }
 
     override fun getValue(thisRef: Any, property: KProperty<*>): Int? {
-        return value ?: getValue(property.name)?.also { value = it }
+        return value ?: getDimensionPixelSizeOrNull(property.name).also { value = it }
     }
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: Int?) {
         this.value = value
     }
-
-    private fun getValue(resName: String): Int? {
-        return getDimensionPixelSizeOrNull(resName, namespace).also { value = it }
-    }
 }
 
 fun AttributeHelper.color(
-    @ColorInt defaultValue: Int = 0,
-    namespace: Namespace = defNamespace,
+    @ColorInt defaultValue: Int = NO_VALUE,
     resName: String? = null
-): ReadWriteProperty<Any, Int> = object: ReadWriteProperty<Any, Int> {
+): ReadWriteProperty<Any, Int> = object : ReadWriteProperty<Any, Int> {
     var value: Int? = null
 
     init {
-        if (resName != null) value = getValue(resName)
+        if (resName != null) value = getColor(resName, defaultValue)
     }
 
     @ColorInt
     override fun getValue(thisRef: Any, property: KProperty<*>): Int {
-        return value ?: getValue(property.name).also { value = it }
+        return value ?: getColor(property.name, defaultValue)
+            .also { value = it }
     }
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: Int) {
         this.value = value
     }
+}
 
-    private fun getValue(resName: String): Int {
-        return getColor(resName, defaultValue, namespace).also { value = it }
+fun AttributeHelper.color(
+    resName: String? = null
+): ReadWriteProperty<Any, Int> = object : ReadWriteProperty<Any, Int> {
+    var value: Int? = null
+
+    init {
+        if (resName != null) value = getColor(resName)
+    }
+
+    @ColorInt
+    override fun getValue(thisRef: Any, property: KProperty<*>): Int {
+        return value ?: getColor(property.name).also { value = it }
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: Int) {
+        this.value = value
     }
 }
 
 fun AttributeHelper.colorOrNull(
-    namespace: Namespace = defNamespace,
     resName: String? = null
-): ReadWriteProperty<Any, Int?> = object: ReadWriteProperty<Any, Int?> {
+): ReadWriteProperty<Any, Int?> = object : ReadWriteProperty<Any, Int?> {
     var value: Int? = null
 
     init {
-        if (resName != null) value = getValue(resName)
+        if (resName != null) value = getColorOrNull(resName)
     }
 
     @ColorInt
     override fun getValue(thisRef: Any, property: KProperty<*>): Int? {
-        return value ?: getValue(property.name)?.also { value = it }
+        return value ?: getColorOrNull(property.name)?.also { value = it }
     }
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: Int?) {
         this.value = value
-    }
-
-    private fun getValue(resName: String): Int? {
-        return getColorOrNull(resName, namespace).also { value = it }
     }
 }
 
 fun AttributeHelper.drawable(
     defaultValue: Drawable,
-    namespace: Namespace = defNamespace,
     resName: String? = null
-): ReadWriteProperty<Any, Drawable> = object: ReadWriteProperty<Any, Drawable> {
+): ReadWriteProperty<Any, Drawable> = object : ReadWriteProperty<Any, Drawable> {
     var value: Drawable? = null
 
     init {
-        if (resName != null) value = getValue(resName)
+        if (resName != null) value = getDrawable(resName, defaultValue)
     }
 
     override fun getValue(thisRef: Any, property: KProperty<*>): Drawable {
-        return value ?: getValue(property.name).also { value = it }
+        return value ?: getDrawable(property.name, defaultValue).also { value = it }
     }
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: Drawable) {
         this.value = value
     }
-
-    private fun getValue(resName: String): Drawable {
-        return getDrawable(resName, defaultValue, namespace).also { value = it }
-    }
 }
 
 fun AttributeHelper.drawableOrNull(
-    namespace: Namespace = defNamespace,
     resName: String? = null
-): ReadWriteProperty<Any, Drawable?> = object: ReadWriteProperty<Any, Drawable?> {
+): ReadWriteProperty<Any, Drawable?> = object : ReadWriteProperty<Any, Drawable?> {
     var value: Drawable? = null
 
     init {
-        if (resName != null) value = getValue(resName)
+        if (resName != null) value = getDrawableOrNull(resName)
     }
 
     override fun getValue(thisRef: Any, property: KProperty<*>): Drawable? {
-        return value ?: getValue(property.name)?.also { value = it }
+        return value ?: getDrawableOrNull(property.name)?.also { value = it }
     }
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: Drawable?) {
         this.value = value
-    }
-
-    private fun getValue(resName: String): Drawable? {
-        return getDrawableOrNull(resName, namespace).also { value = it }
     }
 }

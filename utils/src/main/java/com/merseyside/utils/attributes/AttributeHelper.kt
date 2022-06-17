@@ -3,201 +3,230 @@ package com.merseyside.utils.attributes
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import android.view.View
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
-import androidx.core.content.ContextCompat
-import com.merseyside.merseyLib.kotlin.extensions.containsDigits
-import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
-import com.merseyside.merseyLib.kotlin.extensions.replace
-import com.merseyside.utils.convertDpToPixel
-import com.merseyside.utils.ext.getResourceFromAttr
-import com.merseyside.utils.ext.getStringFromAttr
-import com.merseyside.utils.view.ext.getActivity
+import androidx.annotation.StyleRes
+import androidx.annotation.StyleableRes
+import androidx.core.content.res.getColorOrThrow
+import com.merseyside.utils.ext.capitalize
+import java.lang.reflect.Field
+
 
 class AttributeHelper(
-    private val context: Context,
-    private val attrSet: AttributeSet,
-    val defNamespace: Namespace = Namespace.DEFAULT
+    val context: Context,
+    attributeSet: AttributeSet?,
+    @StyleableRes attrs: IntArray,
+    private val declareStyleableName: String,
+    @AttrRes defStyleAttr: Int = 0,
+    @StyleRes defStyleRes: Int = 0,
+    private val styleableNamePrefix: String = ""
 ) {
 
-    constructor(view: View, attrSet: AttributeSet, defNamespace: Namespace = Namespace.DEFAULT)
-            : this(view.getActivity(), attrSet, defNamespace)
+    private val ta = context.obtainStyledAttributes(attributeSet, attrs, defStyleAttr, defStyleRes)
 
-    fun getBool(
-        resName: String,
-        defValue: Boolean,
-        namespace: Namespace = Namespace.DEFAULT
+    fun getBool(name: String, defValue: Boolean): Boolean {
+        return requireDefValueIfEmpty(name, defValue) { id ->
+            ta.getBoolean(id, defValue)
+        }
+    }
 
-    ) = attrSet.getAttributeBooleanValue(namespace.namespace, resName, defValue)
+    fun getInt(name: String, defValue: Int = NO_VALUE): Int {
+        return requireDefValueIfEmpty(name, defValue) { id ->
+            ta.getInt(id, defValue)
+        }
+    }
 
-    fun getString(
-        resName: String,
-        namespace: Namespace = Namespace.DEFAULT
+    fun getIntOrNull(name: String): Int? {
+        return convertNoValueToNull(name, NO_VALUE) { id ->
+            ta.getInt(id, NO_VALUE)
+        }
+    }
+
+    fun getFloat(name: String, defValue: Float = NO_VALUE_FLOAT): Float {
+        return requireDefValueIfEmpty(name, defValue) { id ->
+            ta.getFloat(id, defValue)
+        }
+    }
+
+    fun getFloatOrNull(name: String): Float? {
+        return convertNoValueToNull(name, NO_VALUE) { id ->
+            ta.getFloat(id, NO_VALUE_FLOAT)
+        }
+    }
+
+    fun getString(name: String, defValue: String = NO_VALUE_STRING): String {
+        return requireDefValueIfEmpty(name, defValue) { id ->
+            ta.getString(id) ?: defValue
+        }
+    }
+
+    fun getStringOrNull(name: String): String? {
+        return convertNoValueToNull(name, NO_VALUE_STRING) { id ->
+            ta.getString(id) ?: NO_VALUE_STRING
+        }
+    }
+
+    fun getDimension(name: String, defValue: Float = NO_VALUE_FLOAT): Float {
+        return requireDefValueIfEmpty(name, defValue) { id ->
+            ta.getDimension(id, defValue)
+        }
+    }
+
+    fun getDimensionOrNull(name: String): Float? {
+        return convertNoValueToNull(name, NO_VALUE_FLOAT) { id ->
+            ta.getDimension(id, NO_VALUE_FLOAT)
+        }
+    }
+
+    fun getDimensionPixelSize(name: String, defValue: Int = NO_VALUE): Int {
+        return requireDefValueIfEmpty(name, defValue) { id ->
+            ta.getDimensionPixelSize(id, defValue)
+        }
+    }
+
+    fun getDimensionPixelSizeOrNull(name: String): Int? {
+        return convertNoValueToNull(name, NO_VALUE) { id ->
+            ta.getDimensionPixelSize(id, NO_VALUE)
+        }
+    }
+
+    fun getResourceId(name: String, defValue: Int = NO_VALUE): Int {
+        return requireDefValueIfEmpty(name, defValue) { id ->
+            ta.getResourceId(id, defValue)
+        }
+    }
+
+    fun getResourceIdOrNull(name: String): Int? {
+        return convertNoValueToNull(name, NO_VALUE) { id ->
+            ta.getResourceId(id, NO_VALUE)
+        }
+    }
+
+    @ColorInt
+    fun getColor(name: String, @ColorInt defValue: Int): Int {
+        return requireDefValueIfEmpty(name, defValue) { id ->
+            ta.getColor(id, defValue)
+        }
+    }
+
+    @ColorInt
+    fun getColor(name: String): Int {
+        return ta.getColorOrThrow(getIdentifier(name))
+    }
+
+    @ColorInt
+    fun getColorOrNull(name: String): Int? {
+        return convertNoValueToNull(name, NO_VALUE) { id ->
+            ta.getColor(id, NO_VALUE)
+        }
+    }
+
+    fun getDrawable(name: String, defValue: Drawable): Drawable {
+        return getDrawableOrNull(name) ?: defValue
+    }
+
+    fun getDrawableOrNull(name: String): Drawable? {
+        val id = getIdentifierOrNull(name)
+        return id?.let { ta.getDrawable(id) }
+    }
+
+    fun recycle() {
+        ta.recycle()
+    }
+
+    @Throws(IllegalArgumentException::class)
+    private fun getIdentifier(name: String, dsn: String = declareStyleableName): Int {
+
+        fun tryAndroidNamespace(): Int {
+            val fullName = StringBuilder().apply {
+                append(dsn).append("_")
+                append("android").append("_")
+                append(name)
+            }.toString()
+
+            return getStyleableId(fullName)
+        }
+
+        val index = getStyleableId(buildFullName(name, dsn))
+        return if (index < 0) {
+            val id = tryAndroidNamespace()
+            if (id < 0) {
+                throw IllegalArgumentException("Resource with name $name not found in $defPackage." +
+                        " Had look for ${buildFullName(name, dsn)}")
+            } else id
+        } else index
+    }
+
+
+    private fun buildFullName(
+        name: String,
+        dsn: String = declareStyleableName,
+        prefix: String = styleableNamePrefix
     ): String {
-        val attrId = getAttributeId(resName, namespace)
-        return attrId?.let {
-            context.getStringFromAttr(it)
-        } ?: with(getResourceId(resName, namespace)) {
-            this?.let {
-                context.resources.getString(this)
-            } ?: attrSet.getAttributeValue(namespace.namespace, resName)
-        }
+        return StringBuilder().apply {
+            append(dsn)
+
+            val nameWithPrefix = if (prefix.isNotEmpty()) {
+                "${prefix}${name.capitalize()}"
+            } else name
+
+            append("_").append(nameWithPrefix)
+        }.toString()
     }
 
-    fun getInt(
-        resName: String,
-        defValue: Int,
-        namespace: Namespace = Namespace.DEFAULT
-    ) = attrSet.getAttributeIntValue(namespace.namespace, resName, defValue)
-
-    fun getFloat(
-        resName: String,
-        defValue: Float,
-        namespace: Namespace = Namespace.DEFAULT
-    ) = attrSet.getAttributeFloatValue(namespace.namespace, resName, defValue)
-
-    fun getDimension(
-        resName: String,
-        defValue: Float,
-        namespace: Namespace = Namespace.DEFAULT,
-    ) = getDimensionOrNull(resName, namespace) ?: defValue
-
-    fun getDimensionOrNull(
-        resName: String,
-        namespace: Namespace = Namespace.DEFAULT
-    ) = getResourceId(resName, namespace)?.let {
-        context.resources.getDimension(it)
-    } ?: let {
-        try {
-            with(attrSet.getAttributeFloatValue(namespace.namespace, resName, NO_VALUE_FLOAT)) {
-                if (this == NO_VALUE_FLOAT) null
-                else this
-            }
-        } catch (e: RuntimeException) {
-            parseDimensionToFloat(resName, namespace)?.let {
-                convertDpToPixel(context, it)
-            }
-        }
-    }
-
-    fun getDimensionPixelSize(
-        resName: String,
-        defValue: Int,
-        namespace: Namespace = Namespace.DEFAULT
-    ) = getDimensionPixelSizeOrNull(resName, namespace) ?: defValue
-
-    fun getDimensionPixelSizeOrNull(
-        resName: String,
-        namespace: Namespace = Namespace.DEFAULT
-    ) = getResourceId(resName, namespace)?.let {
-        context.resources.getDimensionPixelSize(it)
-    } ?: let {
-        try {
-            with(attrSet.getAttributeFloatValue(namespace.namespace, resName, NO_VALUE_FLOAT)) {
-                if (this == NO_VALUE_FLOAT) null
-                else convertDpToPixel(context, this).toInt()
-            }
-        } catch (e: RuntimeException) {
-            parseDimensionToFloat(resName, namespace)?.let {
-                convertDpToPixel(context, it).toInt()
-            }
-        }
-    }
-
-    fun getResourceId(
-        resName: String,
-        namespace: Namespace = Namespace.DEFAULT
-    ): Int? {
+    private fun <T> convertNoValueToNull(name: String, noValue: Any, block: (Int) -> T): T? {
         return try {
-            val possibleResId =
-                attrSet.getAttributeResourceValue(namespace.namespace, resName, NO_VALUE)
-
-            if (possibleResId == NO_VALUE) {
-                getAttributeId(resName, namespace)?.let {
-                    context.getResourceFromAttr(it)
-                }
-            } else {
-                possibleResId
-            }
-        } catch (e: NullPointerException) {
+            requireDefValueIfEmpty(name, noValue) { id -> block(id) }
+        } catch (e: IllegalArgumentException) {
             null
         }
     }
 
-    @AttrRes
-    private fun getAttributeId(
-        resName: String,
-        namespace: Namespace = Namespace.DEFAULT,
-    ): Int? {
-        return try {
-            val value = attrSet.getAttributeValue(namespace.namespace, resName)
+    @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalArgumentException::class)
+    private fun <T> requireDefValueIfEmpty(name: String, defValue: Any, block: ((Int) -> T)? = null): T {
+        val id = getIdentifierOrNull(name)
 
-            if (value.isNotNullAndEmpty() && value.startsWith("?")) {
-                val attrRes = value.substring(1)
-                if (attrRes.containsDigits()) {
-                    return attrRes.toInt()
-                } else {
-                    null
-                }
-            } else {
-                null
+        val value = if (id == null) {
+           defValue
+        } else if (block != null) {
+            block(id)
+        } else defValue
+
+        return if (value == NO_VALUE || value == NO_VALUE_FLOAT
+            || value == NO_VALUE_STRING
+        ) {
+            throw IllegalArgumentException("Default value not passed and attribute is null!")
+        } else value as T
+    }
+
+    private fun getStyleableId(name: String): Int {
+        for (f in fields) {
+            if (f.name == name) {
+                return f.get(null) as Int
             }
-        } catch (e: NullPointerException) {
-            null
         }
+
+        return -1
     }
 
-    @ColorInt
-    fun getColor(
-        resName: String,
-        @ColorInt defValue: Int,
-        namespace: Namespace = Namespace.DEFAULT
-    ) = getColorOrNull(resName, namespace) ?: defValue
-
-    @ColorInt
-    fun getColorOrNull(
-        resName: String,
-        namespace: Namespace = Namespace.DEFAULT
-    ) = getResourceId(resName, namespace)?.let {
-        ContextCompat.getColor(context, it)
-    } ?: with(attrSet.getAttributeIntValue(namespace.namespace, resName, NO_VALUE)) {
-        if (this == NO_VALUE) null
-        else this
-    }
-
-    fun getDrawable(
-        resName: String,
-        defValue: Drawable,
-        namespace: Namespace = Namespace.DEFAULT
-    ) = getDrawableOrNull(resName, namespace) ?: defValue
-
-    fun getDrawableOrNull(
-        resName: String,
-        namespace: Namespace = Namespace.DEFAULT
-    ) = getResourceId(resName, namespace)?.let {
-        ContextCompat.getDrawable(context, it)
-    }
-
-    private fun parseDimensionToFloat(resName: String, namespace: Namespace): Float? {
+    private fun getIdentifierOrNull(name: String, dsn: String = declareStyleableName): Int? {
         return try {
-            attrSet.getAttributeValue(namespace.namespace, resName)?.run {
-                replace("dip", "sp", newValue = "")
-            }?.toFloatOrNull()
-        } catch (e: NullPointerException) {
+            getIdentifier(name, dsn)
+        } catch (e: IllegalArgumentException) {
             null
         }
     }
+
+    private val fields: Array<Field> by lazy { Class.forName(context.packageName + ".R\$styleable").fields }
 
     companion object {
-        internal const val NO_VALUE = -999
-        internal const val NO_VALUE_FLOAT = -999F
-    }
-}
+        private const val defPackage = "styleable"
 
-enum class Namespace(
-    val namespace: String
-) {
-    ANDROID("xmlns:android=\"http://schemas.android.com/apk/res/android"),
-    DEFAULT("http://schemas.android.com/apk/res-auto")
+        internal const val NO_VALUE = Int.MIN_VALUE
+        internal const val NO_VALUE_FLOAT = Float.MIN_VALUE
+        internal const val NO_VALUE_STRING = "attribute_helper_no_value"
+
+    }
+
 }

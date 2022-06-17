@@ -30,3 +30,7 @@ fun adjustAlpha(@ColorInt color: Int, factor: Float): Int {
     val blue: Int = Color.blue(color)
     return Color.argb(alpha, red, green, blue)
 }
+
+inline fun <reified Clazz> Clazz.getClassName(): String {
+    return this!!::class.simpleName ?: throw IllegalArgumentException("No class name")
+}

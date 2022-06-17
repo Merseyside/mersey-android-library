@@ -41,15 +41,14 @@ abstract class BaseDialog : DialogFragment(), IView, OrientationHandler, ILocale
     @LayoutRes
     abstract fun getLayoutId(): Int
 
-    override fun onCreate(onSavedInstanceState: Bundle?) {
-        super.onCreate(onSavedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        performInjection(savedInstanceState)
         data = arguments
-
-        performInjection(onSavedInstanceState)
+        super.onCreate(savedInstanceState)
     }
 
-    override fun handleError(throwable: Throwable) {
-        baseActivity.handleError(throwable)
+    override fun handleError(throwable: Throwable): Boolean {
+        return baseActivity.handleError(throwable)
     }
 
     override fun setLanguage(lang: String?) {

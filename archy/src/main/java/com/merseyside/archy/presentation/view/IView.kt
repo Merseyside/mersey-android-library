@@ -22,7 +22,7 @@ interface IView {
 
     fun dismissMsg()
 
-    fun handleError(throwable: Throwable)
+    fun handleError(throwable: Throwable): Boolean
 
     fun setLanguage(lang: String? = null)
     

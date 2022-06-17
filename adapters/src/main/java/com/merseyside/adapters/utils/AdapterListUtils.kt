@@ -10,8 +10,6 @@ import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.view.TypedBindingHolder
 import com.merseyside.merseyLib.kotlin.Logger
 import com.merseyside.merseyLib.kotlin.concurency.Locker
-import com.merseyside.merseyLib.kotlin.extensions.isZero
-import com.merseyside.merseyLib.kotlin.extensions.minByNullable
 import com.merseyside.utils.mainThreadIfNeeds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -109,6 +107,11 @@ interface AdapterListUtils<Parent, Model : AdapterParentViewModel<out Parent, Pa
     @InternalAdaptersApi
     fun add(index: Int, model: Model) {
         modelList.add(index, model)
+    }
+
+    fun addOrUpdate(items: List<Parent>) {
+        if (isEmpty()) add(items)
+        else update(items)
     }
 
     fun addAsync(list: List<Parent>, func: () -> Unit = {}) {
@@ -370,6 +373,5 @@ interface AdapterListUtils<Parent, Model : AdapterParentViewModel<out Parent, Pa
     fun onPayloadable(
         holder: TypedBindingHolder<Model>,
         payloads: List<AdapterParentViewModel.Payloadable>
-    ) {
-    }
+    ) {}
 }

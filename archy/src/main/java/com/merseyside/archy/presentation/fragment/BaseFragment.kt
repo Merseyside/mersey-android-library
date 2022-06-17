@@ -171,8 +171,8 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         baseActivity.hideKeyboard(context, view)
     }
 
-    override fun handleError(throwable: Throwable) {
-        baseActivity.handleError(throwable)
+    override fun handleError(throwable: Throwable): Boolean {
+        return baseActivity.handleError(throwable)
     }
 
     override fun showMsg(msg: String, view: View?, actionMsg: String?, onClick: () -> Unit) {

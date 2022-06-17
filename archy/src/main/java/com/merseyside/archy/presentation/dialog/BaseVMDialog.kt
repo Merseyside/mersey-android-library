@@ -30,9 +30,9 @@ abstract class BaseVMDialog<B : ViewDataBinding, M : BaseViewModel> : BaseBindin
 
     abstract fun getBindingVariable(): Int
 
-    override fun onCreate(onSavedInstanceState: Bundle?) {
-        performInjection(onSavedInstanceState)
-        super.onCreate(onSavedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        performInjection(savedInstanceState)
+        super.onCreate(savedInstanceState)
 
         setHasOptionsMenu(false)
     }

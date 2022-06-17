@@ -105,7 +105,7 @@ abstract class BaseViewModel protected constructor() : ViewModel(), IStringHelpe
         messageLiveEvent.value = textMessage
     }
 
-    open fun onError(throwable: Throwable) {}
+    open fun onError(throwable: Throwable): Boolean = false
 
     fun showProgress(text: String? = null) {
         Logger.log(this, text ?: "Empty")

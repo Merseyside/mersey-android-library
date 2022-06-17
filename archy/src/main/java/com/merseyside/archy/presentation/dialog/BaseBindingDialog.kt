@@ -16,7 +16,7 @@ abstract class BaseBindingDialog<B: ViewDataBinding> : BaseDialog() {
     }
 
     protected val isBindingInit: Boolean
-        get() { return binding != null }
+        get() = binding != null
 
     override fun setView(dialog: Dialog, layoutId: Int) {
         binding = DataBindingUtil.inflate<B>(

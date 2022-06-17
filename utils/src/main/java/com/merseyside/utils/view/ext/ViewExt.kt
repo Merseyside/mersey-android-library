@@ -30,6 +30,14 @@ fun View.getResourceFromAttr(
     return this.getActivity().getResourceFromAttr(attrColor, typedValue, resolveRefs)
 }
 
+fun View.requireResourceFromAttr(
+    @AttrRes attrColor: Int,
+    typedValue: TypedValue = TypedValue(),
+    resolveRefs: Boolean = true
+): Int {
+    return getResourceFromAttr(attrColor, typedValue, resolveRefs) ?: throw NullPointerException()
+}
+
 @ColorInt
 fun View.getColorFromAttr(
     @AttrRes attrColor: Int,

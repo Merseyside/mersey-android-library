@@ -12,6 +12,7 @@ plugins {
 }
 
 android {
+    namespace = "com.merseyside.adapters"
     compileSdk = Application.compileSdk
 
     defaultConfig {

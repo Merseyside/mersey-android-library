@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Mersey.ValidationInputView.InputLayout.Theme" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox"/>
+
+    <style name="Widget.Mersey.ValidationInputView.Theme" parent="android:Widget">
+        <item name="validStrokeColor">?attr/colorPrimary</item>
+        <item name="validSuccessStrokeColor">?attr/colorAccent</item>
+        <item name="validErrorStrokeColor">?attr/colorError</item>
+
+        <item name="validHintColor">?attr/colorPrimary</item>
+        <item name="validSuccessHintColor">?attr/colorAccent</item>
+        <item name="validErrorHintColor">?attr/colorError</item>
+
+        <item name="validMessageColor">?attr/colorPrimary</item>
+        <item name="validSuccessMessageColor">?attr/colorAccent</item>
+        <item name="validErrorMessageColor">?attr/colorError</item>
+    </style>
+</resources>

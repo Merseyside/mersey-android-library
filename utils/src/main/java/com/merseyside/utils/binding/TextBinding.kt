@@ -15,7 +15,7 @@ import com.merseyside.utils.view.ext.setTextWithCursor
 /**
  * Use it only for keeping cursor in right position
  */
-@BindingAdapter("app:text")
+@BindingAdapter("text")
 fun setText(textView: TextView, text: String?) {
     if (textView is EditText) {
         textView.setTextWithCursor(text)
@@ -24,7 +24,7 @@ fun setText(textView: TextView, text: String?) {
     }
 }
 
-@BindingAdapter(value = ["app:textAttrChanged"]) // AttrChanged required postfix
+@BindingAdapter(value = ["textAttrChanged"]) // AttrChanged required postfix
 fun setTextListener(textView: TextView, listener: InverseBindingListener?) {
     textView.addTextChangeListener { _, _, _, _, _, _, _ ->
         listener?.onChange()
@@ -32,33 +32,33 @@ fun setTextListener(textView: TextView, listener: InverseBindingListener?) {
     }
 }
 
-@InverseBindingAdapter(attribute = "app:text")
+@InverseBindingAdapter(attribute = "text")
 fun getText(textView: TextView): String {
     return textView.text.toString()
 }
 
-@BindingAdapter("app:resTextColor")
+@BindingAdapter("resTextColor")
 fun setTextColor(view: TextView, @ColorRes colorRes: Int?) {
     if (colorRes != null) {
         view.setTextColor(ContextCompat.getColor(view.context, colorRes))
     }
 }
 
-@BindingAdapter("app:attrTextColor")
+@BindingAdapter("attrTextColor")
 fun setCustomTextColor(view: TextView, @AttrRes attrId: Int?) {
     if (attrId != null) {
         view.setTextColor(view.getColorFromAttr(attrId))
     }
 }
 
-@BindingAdapter("app:spanned")
+@BindingAdapter("spanned")
 fun setSpannedText(view: TextView, charSequence: CharSequence?) {
     if (charSequence != null) {
         view.text = charSequence
     }
 }
 
-@BindingAdapter("app:count")
+@BindingAdapter("count")
 fun setCount(view: TextView, collection: Collection<*>?) {
     if (collection != null) {
         view.text = collection.size.toString()
@@ -67,7 +67,7 @@ fun setCount(view: TextView, collection: Collection<*>?) {
     }
 }
 
-@BindingAdapter("app:drawableWidth", "app:drawableHeight", requireAll = true)
+@BindingAdapter("drawableWidth", "drawableHeight", requireAll = true)
 fun setTextViewDrawableSize(view: TextView, drawableWidth: Float, drawableHeight: Float) {
     with(view) {
         val drawables = compoundDrawablesRelative
