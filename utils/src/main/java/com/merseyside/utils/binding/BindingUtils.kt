@@ -6,6 +6,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.merseyside.merseyLib.kotlin.extensions.flatWithAnd
 import com.merseyside.merseyLib.kotlin.extensions.flatWithOr
+import com.merseyside.utils.view.ext.getActivity
 
 /**
  * BU for BindingUtils, truncated for the sake of shortening in xml files
@@ -58,11 +59,13 @@ object BU {
     @JvmStatic
     fun isNotEmpty(list: List<*>) = list.isNotEmpty()
 
-    private fun getViewById(view: View, id: Int): View {
-        val viewGroup: ViewGroup =
-            if (view is ViewGroup) view
-            else view.rootView as ViewGroup
+    @JvmStatic
+    fun getTag(view: View, id: Int): Any? {
+        return getViewById(view, id).tag
+    }
 
-        return viewGroup.findViewById(id)
+    private fun getViewById(view: View, id: Int): View {
+        val activityRootView = view.getActivity().findViewById<ViewGroup>(android.R.id.content)
+        return activityRootView.findViewById(id)
     }
 }

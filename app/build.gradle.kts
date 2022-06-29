@@ -11,13 +11,14 @@ plugins {
 }
 
 android {
+    namespace = "com.merseyside.merseyLib"
     compileSdk = Application.compileSdk
 
     defaultConfig {
         minSdk = Application.minSdk
         targetSdk = Application.targetSdk
-        versionCode = Metadata.versionCode
-        versionName = Metadata.version
+        versionCode = 1
+        versionName = "0.1.0"
 
         multiDexEnabled = true
         vectorDrawables.useSupportLibrary = true
@@ -105,7 +106,7 @@ dependencies {
     modulez.forEach { module -> implementation(module) }
     android.forEach { lib -> implementation(lib) }
 
-    implementation(androidLibs.merseyLib.filemanager) {
+    implementation(androidLibs.mersey.filemanager) {
         exclude(group = "com.github.Merseyside.mersey-android-library", module = "utils")
     }
 

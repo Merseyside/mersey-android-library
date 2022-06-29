@@ -1,5 +1,7 @@
 buildscript {
     repositories {
+        mavenCentral()
+        google()
         gradlePluginPortal()
     }
 }
@@ -11,14 +13,8 @@ plugins {
 }
 
 allprojects {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        gradlePluginPortal()
-        google()
-
-        maven { url = uri("https://jitpack.io") }
-    }
+    group = "io.github.merseyside"
+    version = "1.9.9"
 }
 
 tasks.register("clean", Delete::class).configure {

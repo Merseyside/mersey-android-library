@@ -11,6 +11,7 @@ import androidx.core.view.updateLayoutParams
 import com.merseyside.archy.R
 import com.merseyside.archy.databinding.ViewValidationInputBinding
 import com.merseyside.archy.presentation.view.validationInputView.ValidationState.*
+import com.merseyside.merseyLib.kotlin.Logger
 import com.merseyside.utils.attributes.AttributeHelper
 import com.merseyside.utils.colorStateList.colorToSimpleStateList
 import com.merseyside.utils.delegate.*
@@ -262,8 +263,10 @@ open class ValidationInputView(
 
     private fun validate(text: String) {
         applyState(
-            validator?.invoke(text)
-                ?: throw NullPointerException("Validator haven't been set!")
+            validator?.invoke(text) ?: run {
+                Logger.logInfo("Validator not set")
+                FILLING
+            }
         )
     }
 

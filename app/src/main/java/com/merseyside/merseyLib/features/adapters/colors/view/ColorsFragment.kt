@@ -60,7 +60,13 @@ class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel
                 } else {
                     false
                 }
-            }.also { adapter.applyFilters() }
+            }.also {
+                if (requireBinding().async.isChecked) {
+                    adapter.applyFiltersAsync()
+                } else {
+                    adapter.applyFilters()
+                }
+            }
         } else false
     }
 

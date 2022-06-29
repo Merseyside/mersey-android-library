@@ -16,7 +16,9 @@ import android.provider.Settings
 import android.util.TypedValue
 import android.view.KeyCharacterMap
 import android.view.KeyEvent
+import android.view.View
 import android.view.ViewConfiguration
+import android.view.inputmethod.InputMethodManager
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.DimenRes
@@ -164,6 +166,12 @@ fun Context.getDrawableResourceIdByName(name: String): Int {
         name, "drawable",
         packageName
     )
+}
+
+fun Context.hideKeyboard(view: View) {
+    val inputMethodManager =
+        getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+    inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 }
 
 fun Context.copyToClipboard(text: String, label: String = "Copied text") {

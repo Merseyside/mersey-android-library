@@ -7,6 +7,9 @@ import android.view.animation.DecelerateInterpolator
 import com.merseyside.utils.view.ext.*
 import kotlin.math.abs
 
+/**
+ * Implements scrolling in custom view
+ */
 class ScrollInterpolator(
     var maxWidth: Int,
     var maxHeight: Int

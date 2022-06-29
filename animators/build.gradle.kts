@@ -7,7 +7,7 @@ plugins {
         id(mersey.kotlin.convention.id())
         plugin(kotlin.kapt)
     }
-    `maven-publish-config`
+    `android-maven-publish-config`
 }
 
 android {
@@ -50,12 +50,5 @@ kotlinConvention {
 dependencies {
     implementation(androidLibs.appCompat)
     implementation(projects.utils)
-    api(common.merseyLib.time)
-}
-
-tasks {
-    register<Jar>("withSourcesJar") {
-        archiveClassifier.set("sources")
-        from(android.sourceSets.getByName("main").java.srcDirs)
-    }
+    api(common.mersey.time)
 }

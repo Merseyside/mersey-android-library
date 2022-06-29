@@ -8,7 +8,7 @@ plugins {
         id(mersey.kotlin.convention.id())
         plugin(kotlin.kapt)
     }
-    `maven-publish-config`
+    `android-maven-publish-config`
 }
 
 android {
@@ -75,7 +75,7 @@ val modulez = listOf(
 
 dependencies {
     implementation(common.serialization)
-    api(common.merseyLib.time)
+    api(common.mersey.time)
 
     modulez.forEach { module -> implementation(module) }
     
@@ -84,12 +84,4 @@ dependencies {
 
     kapt(androidLibs.daggerCompiler)
     kapt(androidLibs.roomCompiler)
-}
-
-
-tasks {
-    register<Jar>("withSourcesJar") {
-        archiveClassifier.set("sources")
-        from(android.sourceSets.getByName("main").java.srcDirs)
-    }
 }

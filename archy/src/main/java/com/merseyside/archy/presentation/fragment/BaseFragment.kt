@@ -70,7 +70,11 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
     }
 
     @CallSuper
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         if (savedInstanceState != null) {
             with(savedInstanceState) {
                 if (savedInstanceState.containsKey(RESULT_CODE_KEY)) {
@@ -165,10 +169,6 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         super.onStop()
         dismissMsg()
         unregisterKeyboardListener()
-    }
-
-    fun hideKeyboard(view: View) {
-        baseActivity.hideKeyboard(context, view)
     }
 
     override fun handleError(throwable: Throwable): Boolean {

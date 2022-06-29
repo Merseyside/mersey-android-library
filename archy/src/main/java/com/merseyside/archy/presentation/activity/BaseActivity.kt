@@ -1,10 +1,8 @@
 package com.merseyside.archy.presentation.activity
 
-import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
@@ -142,12 +140,6 @@ abstract class BaseActivity : AppCompatActivity(),
                 onClick = onClick
             )
         }
-    }
-
-    override fun hideKeyboard(context: Context?, view: View) {
-        val inputMethodManager =
-            getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     override fun onBackPressed() {

@@ -38,16 +38,16 @@
 
         <ImageView
             android:id="@+id/image"
-            imagePlaceholder="@{@drawable/ic_person}"
-            imageUrl="@{viewModel.image}"
-            cropCircle="@{true}"
-            crossfade="@{true}"
             android:layout_width="42dp"
             android:layout_height="42dp"
             android:layout_marginStart="@dimen/normal_spacing"
             app:layout_constraintStart_toEndOf="@id/ranks"
             app:layout_constraintTop_toTopOf="parent"
             android:scaleType="centerCrop"
+            placeholder="@{@drawable/ic_person}"
+            imageUrl="@{viewModel.image}"
+            cropCircle="@{true}"
+            crossfade="@{true}"
             tools:ignore="ContentDescription" />
 
         <LinearLayout

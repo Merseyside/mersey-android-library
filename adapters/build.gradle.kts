@@ -8,7 +8,7 @@ plugins {
         id(mersey.kotlin.convention.id())
         plugin(kotlin.kapt)
     }
-    `maven-publish-config`
+    `android-maven-publish-config`
 }
 
 android {
@@ -59,14 +59,7 @@ dependencies {
     ).forEach { lib -> implementation(lib) }
 
     api(androidLibs.paging)
-    api(common.merseyLib.time)
+    api(common.mersey.time)
 
     implementation(projects.utils)
-}
-
-tasks {
-    register<Jar>("withSourcesJar") {
-        archiveClassifier.set("sources")
-        from(android.sourceSets.getByName("main").java.srcDirs)
-    }
 }

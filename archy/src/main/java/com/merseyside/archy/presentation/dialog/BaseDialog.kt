@@ -41,22 +41,83 @@ abstract class BaseDialog : DialogFragment(), IView, OrientationHandler, ILocale
     @LayoutRes
     abstract fun getLayoutId(): Int
 
+    open fun doLayout() {}
+    open fun getCancelable(): Boolean = true
+    open fun getTitle(context: Context): String? = null
+    @StyleRes
+    open fun getStyle(): Int = 0
+    open fun onBackPressed(): Boolean = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         performInjection(savedInstanceState)
         data = arguments
         super.onCreate(savedInstanceState)
     }
 
-    override fun handleError(throwable: Throwable): Boolean {
-        return baseActivity.handleError(throwable)
-    }
-
-    override fun setLanguage(lang: String?) {
-        baseActivity.setLanguage(lang)
-    }
-
     protected fun getDialogView(): View? {
         return dialog?.window?.decorView
+    }
+
+    @CallSuper
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        isCancelable = getCancelable()
+        snackbarManager = baseActivity.snackbarManager
+
+        setOrientation(resources, savedInstanceState)
+
+        return object : Dialog(requireContext(), getStyle()) {
+
+            init {
+                val title = getTitle(context)
+
+                if (title.isNullOrEmpty()) requestWindowFeature(Window.FEATURE_NO_TITLE)
+                else setTitle(title)
+
+                setCanceledOnTouchOutside(getCancelable())
+                setView(this)
+            }
+
+            override fun onBackPressed() {
+                if (this@BaseDialog.onBackPressed()) {
+                    super.onBackPressed()
+                }
+            }
+        }
+    }
+
+    protected open fun setView(dialog: Dialog, @LayoutRes layoutId: Int = getLayoutId()) {
+        dialog.setContentView(layoutId)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        doLayout()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        saveOrientation(outState)
+    }
+
+    @Deprecated("This method doesn't call in dialog classes. Use onCreateDialog()")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun show(fragmentManager: FragmentManager, tag: String?) {
+        val transaction = fragmentManager.beginTransaction()
+        val prevFragment = fragmentManager.findFragmentByTag(tag)
+
+        prevFragment?.let {
+            transaction.remove(prevFragment)
+        }
+
+        transaction.addToBackStack(null)
+
+        try {
+            show(transaction, tag)
+        } catch (e: IllegalStateException) {
+        }
     }
 
     override fun showAlertDialog(
@@ -87,91 +148,6 @@ abstract class BaseDialog : DialogFragment(), IView, OrientationHandler, ILocale
 
     override fun getActualString(id: Int?, vararg args: String): String? {
         return baseActivity.getActualString(id, *args)
-    }
-
-    override fun onOrientationChanged(orientation: Orientation, savedInstanceState: Bundle?) {}
-
-    @CallSuper
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        isCancelable = getCancelable()
-        snackbarManager = baseActivity.snackbarManager
-
-        setOrientation(resources, savedInstanceState)
-
-        return object: Dialog(requireContext(), getStyle()) {
-
-            override fun onBackPressed() {
-                if (this@BaseDialog.onBackPressed()) {
-                    super.onBackPressed()
-                }
-            }
-
-        }.apply<Dialog> {
-            val title = getTitle(context)
-
-            if (title.isNullOrEmpty()) requestWindowFeature(Window.FEATURE_NO_TITLE)
-            else setTitle(title)
-
-            setCanceledOnTouchOutside(getCancelable())
-            setView(this)
-        }
-    }
-    
-    protected open fun setView(dialog: Dialog, @LayoutRes layoutId: Int = getLayoutId()) {
-        dialog.setContentView(layoutId)
-    }
-
-    open fun onBackPressed(): Boolean {
-        return true
-    }
-
-    override fun onStart() {
-        super.onStart()
-        doLayout()
-    }
-
-    open fun doLayout() {}
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-
-        saveOrientation(outState)
-    }
-
-    open fun getCancelable(): Boolean {
-        return true
-    }
-
-    @Deprecated("This method doesn't call in dialog classes. Use onCreateDialog()")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
-
-    open fun getTitle(context: Context): String? {
-        return null
-    }
-
-    @StyleRes open fun getStyle(): Int {
-        return 0
-    }
-
-    override fun show(fragmentManager: FragmentManager, tag: String?) {
-        val transaction = fragmentManager.beginTransaction()
-        val prevFragment = fragmentManager.findFragmentByTag(tag)
-
-        prevFragment?.let {
-            transaction.remove(prevFragment)
-        }
-
-        transaction.addToBackStack(null)
-
-        try {
-            show(transaction, tag)
-        } catch (e: IllegalStateException) {}
-    }
-
-    fun hideKeyboard(view: View) {
-        baseActivity.hideKeyboard(context, view)
     }
 
     override fun showMsg(msg: String, view: View?, actionMsg: String?, onClick: () -> Unit) {
@@ -208,6 +184,14 @@ abstract class BaseDialog : DialogFragment(), IView, OrientationHandler, ILocale
 
     override fun getRootView(): View? {
         return getDialogView()
+    }
+
+    override fun handleError(throwable: Throwable): Boolean {
+        return baseActivity.handleError(throwable)
+    }
+
+    override fun setLanguage(lang: String?) {
+        baseActivity.setLanguage(lang)
     }
 
     fun setLayoutSize(width: Int? = null, height: Int? = null) {
