@@ -1,5 +1,7 @@
 package com.merseyside.utils.binding
 
+import android.annotation.SuppressLint
+import android.view.MotionEvent
 import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.AttrRes
@@ -88,4 +90,21 @@ fun setTextViewDrawableSize(view: TextView, drawableWidth: Float, drawableHeight
             setCompoundDrawables(get(0), get(1), get(2), get(3))
         }
     }
+}
+
+@SuppressLint("ClickableViewAccessibility")
+@BindingAdapter("scrollable")
+fun TextView.setTextScrollable(isScrollable: Boolean) {
+    if (isScrollable) {
+        setOnTouchListener { view, event ->
+            if (view.isFocused) {
+                view.parent.requestDisallowInterceptTouchEvent(true)
+                if ((event.action and MotionEvent.ACTION_MASK) == MotionEvent.ACTION_SCROLL) {
+                    view.parent.requestDisallowInterceptTouchEvent(false)
+                }
+            }
+            return@setOnTouchListener false
+        }
+    }
+    return
 }
