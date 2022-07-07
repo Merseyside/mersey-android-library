@@ -13,6 +13,7 @@ import com.merseyside.merseyLib.databinding.FragmentLocationBinding
 import com.merseyside.merseyLib.features.location.di.DaggerLocationComponent
 import com.merseyside.merseyLib.features.location.di.LocationModule
 import com.merseyside.merseyLib.features.location.model.LocationViewModel
+import com.merseyside.utils.BuildConfig
 import com.merseyside.utils.view.ext.onClick
 import com.merseyside.utils.isPermissionsGranted
 import com.merseyside.utils.requestPermissions

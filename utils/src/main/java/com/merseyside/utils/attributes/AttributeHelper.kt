@@ -8,9 +8,9 @@ import androidx.annotation.ColorInt
 import androidx.annotation.StyleRes
 import androidx.annotation.StyleableRes
 import androidx.core.content.res.getColorOrThrow
+import com.merseyside.merseyLib.kotlin.Logger
 import com.merseyside.utils.ext.capitalize
 import java.lang.reflect.Field
-
 
 class AttributeHelper(
     val context: Context,
@@ -19,7 +19,8 @@ class AttributeHelper(
     private val declareStyleableName: String,
     @AttrRes defStyleAttr: Int = 0,
     @StyleRes defStyleRes: Int = 0,
-    private val styleableNamePrefix: String = ""
+    private val styleableNamePrefix: String = "",
+    private val packageName: String = context.packageName
 ) {
 
     private val ta = context.obtainStyledAttributes(attributeSet, attrs, defStyleAttr, defStyleRes)
@@ -151,8 +152,10 @@ class AttributeHelper(
         return if (index < 0) {
             val id = tryAndroidNamespace()
             if (id < 0) {
-                throw IllegalArgumentException("Resource with name $name not found in $defPackage." +
-                        " Had look for ${buildFullName(name, dsn)}")
+                throw IllegalArgumentException(
+                    "Resource with name $name not found in $defPackage." +
+                            " Had look for ${buildFullName(name, dsn)}"
+                )
             } else id
         } else index
     }
@@ -184,11 +187,15 @@ class AttributeHelper(
 
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalArgumentException::class)
-    private fun <T> requireDefValueIfEmpty(name: String, defValue: Any, block: ((Int) -> T)? = null): T {
+    private fun <T> requireDefValueIfEmpty(
+        name: String,
+        defValue: Any,
+        block: ((Int) -> T)? = null
+    ): T {
         val id = getIdentifierOrNull(name)
 
         val value = if (id == null) {
-           defValue
+            defValue
         } else if (block != null) {
             block(id)
         } else defValue
@@ -218,7 +225,7 @@ class AttributeHelper(
         }
     }
 
-    private val fields: Array<Field> by lazy { Class.forName(context.packageName + ".R\$styleable").fields }
+    private val fields: Array<Field> by lazy { getStyleableClass(packageName).fields }
 
     companion object {
         private const val defPackage = "styleable"
@@ -227,6 +234,22 @@ class AttributeHelper(
         internal const val NO_VALUE_FLOAT = Float.MIN_VALUE
         internal const val NO_VALUE_STRING = "attribute_helper_no_value"
 
+        private fun getStyleableClass(packageName: String): Class<*> {
+            var mutPackage = packageName
+            var index: Int
+            do {
+                try {
+                    return Class.forName("$mutPackage.R\$styleable")
+                } catch (ignored: ClassNotFoundException) {
+                    Logger.logErr("Tried to get R class with $mutPackage package but failed!")
+                    index = mutPackage.indexOfLast { it == '.' }
+
+                    if (index != -1) mutPackage = mutPackage.substring(0, index)
+                }
+            } while (index != -1)
+
+            throw ClassNotFoundException("Can not find R class with passed $packageName package name")
+        }
     }
 
 }

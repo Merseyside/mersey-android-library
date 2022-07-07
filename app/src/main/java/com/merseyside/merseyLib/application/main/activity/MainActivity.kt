@@ -12,8 +12,4 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
     override fun getLayoutId() = R.layout.activity_main
     override fun getToolbar(): Toolbar = requireBinding().toolbar
     override fun getFragmentContainer() = R.id.nav_host_fragment
-
-    override fun onResume() {
-        super.onResume()
-    }
 }

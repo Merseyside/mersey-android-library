@@ -131,15 +131,11 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
     }
 
     private fun setupAppBar() {
-        baseActivity.setFragmentToolbar(getToolbar())
-        setActionBarVisibility(isBarVisible())
+        notifyToolbarChanged()
     }
 
-    protected fun setActionBarVisibility(isVisible: Boolean) {
-        getActionBar()?.apply {
-            if (isVisible) show()
-            else hide()
-        }
+    protected fun notifyToolbarChanged() {
+        baseActivity.setFragmentToolbar(getToolbar(), isBarVisible())
     }
 
     override fun onStart() {

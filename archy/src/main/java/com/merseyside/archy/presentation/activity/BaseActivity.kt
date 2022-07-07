@@ -8,6 +8,7 @@ import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isGone
 import androidx.navigation.fragment.NavHostFragment
 import com.merseyside.archy.BaseApplication
 import com.merseyside.archy.presentation.dialog.MaterialAlertDialog
@@ -162,9 +163,9 @@ abstract class BaseActivity : AppCompatActivity(),
     }
 
     private fun onGoBack() {
-        if (getCurrentFragment()?.getToolbar() != null) {
-            setFragmentToolbar(null)
-        }
+//        if (getCurrentFragment()?.getToolbar() != null) {
+//            setFragmentToolbar(null)
+//        }
     }
 
     override fun handleError(throwable: Throwable): Boolean = false
@@ -232,17 +233,22 @@ abstract class BaseActivity : AppCompatActivity(),
 
     abstract fun getToolbar(): Toolbar?
 
-    override fun setFragmentToolbar(toolbar: Toolbar?) {
+    override fun setFragmentToolbar(toolbar: Toolbar?, isVisible: Boolean) {
         (toolbar ?: getToolbar())?.let {
             setSupportActionBar(it)
         }
-//        if (toolbar != null) {
-//            setSupportActionBar(toolbar)
-//        } else {
-//            getToolbar()?.let {
-//                )
-//            }
-//        }
+
+        val isFragmentBar = toolbar != null
+        getToolbar()?.isGone = isFragmentBar
+
+        setToolbarVisibility(isVisible)
+    }
+
+    private fun setToolbarVisibility(isVisible: Boolean) {
+        supportActionBar?.apply {
+            if (isVisible) show()
+            else hide()
+        }
     }
 
     override fun getActualString(@StringRes id: Int?, vararg args: String): String? {

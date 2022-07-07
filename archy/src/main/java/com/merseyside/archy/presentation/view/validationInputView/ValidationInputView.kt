@@ -232,7 +232,7 @@ open class ValidationInputView(
         )
     }
 
-    fun setState(
+    private fun setState(
         msg: String,
         @ColorInt messageColor: Int,
         @ColorInt hintTextColor: Int,
