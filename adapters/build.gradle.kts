@@ -59,7 +59,7 @@ dependencies {
     ).forEach { lib -> implementation(lib) }
 
     api(androidLibs.paging)
-    api(common.mersey.time)
+    api(common.bundles.mersey.time)
 
     implementation(projects.utils)
 }

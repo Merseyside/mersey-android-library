@@ -75,7 +75,7 @@ val modulez = listOf(
 
 dependencies {
     implementation(common.serialization)
-    api(common.mersey.time)
+    api(common.bundles.mersey.time)
 
     modulez.forEach { module -> implementation(module) }
     

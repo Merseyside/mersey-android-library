@@ -9,7 +9,7 @@ import com.merseyside.adapters.callback.OnItemSelectedListener
 import com.merseyside.adapters.callback.OnSelectEnabledListener
 import com.merseyside.adapters.ext.getAll
 import com.merseyside.adapters.model.SelectableAdapterParentViewModel
-import com.merseyside.merseyLib.kotlin.Logger
+import com.merseyside.merseyLib.kotlin.logger.Logger
 
 interface SelectableAdapterListUtils<Parent, Model: SelectableAdapterParentViewModel<out Parent, Parent>>
     : SortedAdapterListUtils<Parent, Model>, HasOnItemSelectedListener<Parent> {

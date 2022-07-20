@@ -2,7 +2,7 @@ package com.merseyside.utils.view
 
 import android.view.View
 import androidx.core.view.ViewCompat
-import com.merseyside.merseyLib.kotlin.extensions.logMsg
+import com.merseyside.merseyLib.kotlin.logger.logMsg
 import com.merseyside.utils.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

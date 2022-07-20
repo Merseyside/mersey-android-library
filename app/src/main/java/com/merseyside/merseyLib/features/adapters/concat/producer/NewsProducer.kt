@@ -6,7 +6,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlin.coroutines.CoroutineContext
-import com.merseyside.utils.ext.delay
+import com.merseyside.merseyLib.time.coroutines.delay
 
 class NewsProducer: CoroutineScope {
 

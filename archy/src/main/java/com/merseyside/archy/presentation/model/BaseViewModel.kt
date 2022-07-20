@@ -10,7 +10,7 @@ import com.merseyside.archy.presentation.interfaces.IStringHelper
 import com.merseyside.utils.mvvm.SingleLiveEvent
 import com.merseyside.utils.ext.clear
 import com.merseyside.utils.isPermissionsGranted
-import com.merseyside.merseyLib.kotlin.Logger
+import com.merseyside.merseyLib.kotlin.logger.Logger
 
 abstract class BaseViewModel protected constructor() : ViewModel(), IStringHelper {
 

@@ -8,7 +8,7 @@ import com.merseyside.adapters.callback.HasOnItemClickListener
 import com.merseyside.adapters.ext.asynchronously
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.view.TypedBindingHolder
-import com.merseyside.merseyLib.kotlin.Logger
+import com.merseyside.merseyLib.kotlin.logger.Logger
 import com.merseyside.merseyLib.kotlin.concurency.Locker
 import com.merseyside.utils.mainThreadIfNeeds
 import kotlinx.coroutines.CoroutineScope

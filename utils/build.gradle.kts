@@ -72,7 +72,7 @@ val androidLibz = listOf(
 
 dependencies {
 
-    api(common.mersey.time)
+    api(common.bundles.mersey.time)
     api(common.mersey.kotlin.ext)
 
     androidLibz.forEach { lib -> implementation(lib) }
