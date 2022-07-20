@@ -6,7 +6,7 @@ import com.merseyside.adapters.model.ComparableAdapterViewModel
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.features.adapters.racers.entity.Checkpoint
-import com.merseyside.merseyLib.kotlin.extensions.log
+import com.merseyside.merseyLib.kotlin.logger.log
 import com.merseyside.merseyLib.time.ext.toFormattedDate
 import com.merseyside.merseyLib.time.units.Millis
 import com.merseyside.merseyLib.time.units.compareTo
