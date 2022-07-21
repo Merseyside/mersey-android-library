@@ -7,8 +7,8 @@ import com.merseyside.adapters.base.UpdateRequest
 import com.merseyside.adapters.ext.*
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.ComparableAdapterParentViewModel
-import com.merseyside.merseyLib.kotlin.logger.Logger
 import com.merseyside.merseyLib.kotlin.extensions.intersect
+import com.merseyside.merseyLib.kotlin.logger.Logger
 import com.merseyside.utils.isMainThread
 
 interface SortedAdapterListUtils<Parent, Model : ComparableAdapterParentViewModel<out Parent, Parent>>
