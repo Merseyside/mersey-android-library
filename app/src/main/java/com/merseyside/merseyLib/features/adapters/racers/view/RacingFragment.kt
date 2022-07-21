@@ -14,7 +14,7 @@ import com.merseyside.merseyLib.features.adapters.racers.adapter.RacersAdapter
 import com.merseyside.merseyLib.features.adapters.racers.di.DaggerRacingComponent
 import com.merseyside.merseyLib.features.adapters.racers.di.RacingModule
 import com.merseyside.merseyLib.features.adapters.racers.model.RacingViewModel
-import com.merseyside.merseyLib.kotlin.extensions.log
+import com.merseyside.merseyLib.kotlin.logger.log
 
 class RacingFragment : BaseSampleFragment<FragmentRacingBinding, RacingViewModel>() {
 

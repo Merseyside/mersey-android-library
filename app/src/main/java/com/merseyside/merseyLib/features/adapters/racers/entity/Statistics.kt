@@ -1,7 +1,7 @@
 package com.merseyside.merseyLib.features.adapters.racers.entity
 
 import com.merseyside.merseyLib.kotlin.extensions.forEachEntry
-import com.merseyside.merseyLib.kotlin.extensions.log
+import com.merseyside.merseyLib.kotlin.logger.log
 import com.merseyside.merseyLib.kotlin.extensions.minByNullable
 import com.merseyside.merseyLib.time.ext.sum
 import com.merseyside.merseyLib.time.units.Millis
