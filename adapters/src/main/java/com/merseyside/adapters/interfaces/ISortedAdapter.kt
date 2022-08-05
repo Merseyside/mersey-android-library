@@ -1,76 +1,41 @@
 @file:OptIn(InternalAdaptersApi::class)
 
-package com.merseyside.adapters.utils
+package com.merseyside.adapters.interfaces
 
 import androidx.recyclerview.widget.SortedList
-import com.merseyside.adapters.base.UpdateRequest
 import com.merseyside.adapters.ext.*
+import com.merseyside.adapters.interfaces.base.AdapterListActions
+import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.ComparableAdapterParentViewModel
+import com.merseyside.adapters.utils.InternalAdaptersApi
+import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.merseyLib.kotlin.extensions.intersect
 import com.merseyside.merseyLib.kotlin.logger.Logger
 import com.merseyside.utils.isMainThread
 
-interface SortedAdapterListUtils<Parent, Model : ComparableAdapterParentViewModel<out Parent, Parent>>
-    : AdapterListUtils<Parent, Model> {
+interface ISortedAdapter<Parent, Model : ComparableAdapterParentViewModel<out Parent, Parent>>
+    : IBaseAdapter<Parent, Model>, AdapterListActions<Parent, Model> {
 
     val sortedList: SortedList<Model>
 
-    override fun add(model: Model) {
-        super.add(model)
-
-        if (!isFiltered) {
-            sortedList.add(model)
-        }
-    }
-
-    override fun add(item: Parent) {
-        addModels(createModels(listOf(item)))
-    }
-
-    override fun add(items: List<Parent>) {
-        addModels(createModels(items))
-    }
-
-    override fun add(position: Int, item: Parent) {
-        throw Exception("Can be used only with BaseAdapter")
-    }
-
-    override fun add(position: Int, items: List<Parent>) {
-        throw Exception("Can be used only with BaseAdapter")
-    }
-
-    override fun addBefore(beforeItem: Parent, item: Parent) {
-        throw Exception("Can be used only with BaseAdapter")
-    }
-
-    override fun addBefore(beforeItem: Parent, items: List<Parent>) {
-        throw Exception("Can be used only with BaseAdapter")
-    }
-
-    override fun addAfter(afterItem: Parent, item: Parent) {
-        throw Exception("Can be used only with BaseAdapter")
-    }
-
-    override fun addAfter(afterItem: Parent, item: List<Parent>) {
-        throw Exception("Can be used only with BaseAdapter")
-    }
-
-    @InternalAdaptersApi
-    override fun add(index: Int, model: Model) {
-        throw Exception("Can be used only with BaseAdapter")
+    /* Models list actions */
+    override fun addModel(model: Model) {
+        sortedList.add(model)
     }
 
     override fun update(items: List<Parent>): Boolean {
-        return update(UpdateRequest.Builder(items)
-            .isDeleteOld(true)
-            .build()
+        return update(
+            UpdateRequest.Builder(items)
+                .isDeleteOld(true)
+                .build()
         )
     }
 
     fun update(updateRequest: UpdateRequest<Parent>): Boolean {
+
         val removed = if (updateRequest.isDeleteOld) {
-            val removeList = modelList
+            val removeList = models
                 .filter { model ->
                     if (model.isDeletable()) {
                         updateRequest.list.find {
@@ -120,88 +85,13 @@ interface SortedAdapterListUtils<Parent, Model : ComparableAdapterParentViewMode
         model: Model,
         payloads: List<AdapterParentViewModel.Payloadable>
     ): Int {
-        val position = super.notifyModelChanged(model, payloads)
+        val position = getPositionOfModel(model)
         sortedList.recalculatePositionOfItemAt(position)
         return position
     }
 
-    @InternalAdaptersApi
-    override fun addModels(list: List<Model>) {
-        super.addModels(list)
-
-        if (!isFiltered) {
-            addList(list)
-        } else {
-            applyFilterToNewModels(list)
-        }
-    }
-
-    fun getAllItemCount(): Int {
-        return modelList.size
-    }
-
-    override fun remove(items: List<Parent>): Boolean {
-        val modelList = items.mapNotNull { getModelByItem(it) }
-        return removeModels(modelList)
-    }
-
-    /**
-     * Be sure your model's compareTo method handles equal items!
-     */
-    override fun removeModels(list: List<Model>): Boolean {
-        return if (super.removeModels(list)) {
-
-            sortedList.batchedUpdate {
-                removeAll(list)
-            }
-            true
-        } else false
-    }
-
-    override fun remove(model: Model): Boolean {
-        sortedList.remove(model)
-        modelList.remove(model)
-        filterKeyMap.forEach { entry ->
-            filterKeyMap[entry.key] = entry.value.toMutableList().apply { remove(model) }
-        }
-        filterKeyMap.clear()
-
-        return true
-    }
 
     private fun addList(list: List<Model>) = sortedList.batchedUpdate { addAll(list) }
-
-    @Throws(IndexOutOfBoundsException::class)
-    override fun getModelByPosition(position: Int): Model {
-        return try {
-            sortedList[position]
-        } catch (e: IndexOutOfBoundsException) {
-            modelList[position]
-        }
-    }
-
-    override fun getItemByPosition(position: Int): Parent {
-        return getModelByPosition(position).item
-    }
-
-    override fun getPositionOfItem(item: Parent): Int {
-        return sortedList.indexOf { it.areItemsTheSame(item) }
-    }
-
-    @Throws(IllegalArgumentException::class)
-    override fun getPositionOfModel(model: Model): Int {
-        return getPositionOfItem(model.item).let { position ->
-            if (position != SortedList.INVALID_POSITION) position
-            else throw IllegalArgumentException("No data found")
-        }
-    }
-
-    @InternalAdaptersApi
-    override fun find(item: Parent): Model? {
-        return sortedList.find {
-            it.areItemsTheSame(item)
-        }
-    }
 
     override fun filter(model: Model, query: String): Boolean {
         throw NotImplementedError("Override this method in your implementation!")
@@ -228,15 +118,16 @@ interface SortedAdapterListUtils<Parent, Model : ComparableAdapterParentViewMode
      * @return true if filtered list is not empty, false otherwise.
      **/
     fun applyFilters(): Int {
-        val listToSet =
-            if (notAppliedFiltersMap.isEmpty() && filtersMap.isEmpty()) modelList
-            else applyFilters(modelList)
-
-        if (listToSet != null &&
-            this.sortedList.isNotEquals(listToSet)
-        ) replaceAll(listToSet)
-
-        return listToSet?.size ?: 0
+        TODO()
+//        val listToSet =
+//            if (notAppliedFiltersMap.isEmpty() && filtersMap.isEmpty()) modelList
+//            else applyFilters(modelList)
+//
+//        if (listToSet != null &&
+//            this.sortedList.isNotEquals(listToSet)
+//        ) replaceAll(listToSet)
+//
+//        return listToSet?.size ?: 0
     }
 
     fun applyFiltersAsync(callback: (filteredCount: Int) -> Unit = {}) {
@@ -269,21 +160,21 @@ interface SortedAdapterListUtils<Parent, Model : ComparableAdapterParentViewMode
      * @return filtered items count.
      */
     override fun setFilter(query: String): Int {
-        if (filterPattern != query) {
-            filterPattern = query
+//        if (filterPattern != query) {
+//            filterPattern = query
+//
+//            if (filterPattern.isNotEmpty()) {
+//                val filteredList = setFilter(modelList)
+//                if (filteredList != null) {
+//                    replaceAll(filteredList)
+//                }
+//            } else {
+//                isFiltered = false
+//                replaceAll(modelList)
+//            }
+//        }
 
-            if (filterPattern.isNotEmpty()) {
-                val filteredList = setFilter(modelList)
-                if (filteredList != null) {
-                    replaceAll(filteredList)
-                }
-            } else {
-                isFiltered = false
-                replaceAll(modelList)
-            }
-        }
-
-        return sortedList.size()
+        return getItemsCount()
     }
 
     override fun setFilterAsync(query: String, callback: (filteredCount: Int) -> Unit) {
@@ -378,13 +269,41 @@ interface SortedAdapterListUtils<Parent, Model : ComparableAdapterParentViewMode
         notAppliedFiltersMap.clear()
         filterKeyMap.clear()
 
-        replaceAll(modelList)
+        //replaceAll(modelList)
     }
 
     override fun clear() {
         sortedList.batchedUpdate { clear() }
-
-        modelList.clear()
         clearFilters()
+    }
+
+    /**/
+    @InternalAdaptersApi
+    override fun addModels(models: List<Model>) {
+        if (!isFiltered) {
+            addList(models)
+        } else {
+            applyFilterToNewModels(models)
+        }
+    }
+
+    /**
+     * Be sure your model's compareTo method handles equal items!
+     */
+    override fun removeModels(list: List<Model>): Boolean {
+        sortedList.batchedUpdate {
+            removeAll(list)
+        }
+        return true
+    }
+
+    override fun remove(model: Model): Boolean {
+        sortedList.remove(model)
+        filterKeyMap.forEach { entry ->
+            filterKeyMap[entry.key] = entry.value.toMutableList().apply { remove(model) }
+        }
+        filterKeyMap.clear()
+
+        return true
     }
 }

@@ -3,7 +3,7 @@ package com.merseyside.adapters.delegates
 import android.util.SparseArray
 import android.view.ViewGroup
 import com.merseyside.adapters.model.AdapterParentViewModel
-import com.merseyside.adapters.view.TypedBindingHolder
+import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.merseyLib.kotlin.extensions.isNotZero
 import com.merseyside.utils.ext.containsKey
 import com.merseyside.utils.ext.findKey

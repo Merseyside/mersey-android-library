@@ -8,7 +8,7 @@ import com.merseyside.adapters.callback.HasOnItemSelectedListener
 import com.merseyside.adapters.callback.OnItemClickListener
 import com.merseyside.adapters.callback.OnItemSelectedListener
 import com.merseyside.adapters.model.ComparableAdapterParentViewModel
-import com.merseyside.adapters.utils.SelectableAdapterListUtils
+import com.merseyside.adapters.interfaces.ISelectableAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -130,7 +130,7 @@ fun <Item : Any> HasOnItemSelectedListener<Item>.onItemSelected(
         }
 
         override fun onSelectedRemoved(
-            adapterList: SelectableAdapterListUtils<Item, *>,
+            adapterList: ISelectableAdapter<Item, *>,
             items: List<Item>
         ) {}
     }
@@ -152,7 +152,7 @@ fun <Item : Any> List<SelectableAdapter<Item, *>>.onItemSelected(
         }
 
         override fun onSelectedRemoved(
-            adapterList: SelectableAdapterListUtils<Item, *>,
+            adapterList: ISelectableAdapter<Item, *>,
             items: List<Item>
         ) {}
     }

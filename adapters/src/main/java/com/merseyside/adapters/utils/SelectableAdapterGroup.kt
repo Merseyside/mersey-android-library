@@ -3,6 +3,7 @@ package com.merseyside.adapters.utils
 import com.merseyside.adapters.base.SelectableAdapter
 import com.merseyside.adapters.callback.HasOnItemSelectedListener
 import com.merseyside.adapters.callback.OnItemSelectedListener
+import com.merseyside.adapters.interfaces.ISelectableAdapter
 import com.merseyside.merseyLib.kotlin.extensions.isNotZero
 
 class SelectableAdapterGroup<M>(
@@ -34,7 +35,7 @@ class SelectableAdapterGroup<M>(
         }
 
         override fun onSelectedRemoved(
-            adapterList: SelectableAdapterListUtils<M, *>,
+            adapterList: ISelectableAdapter<M, *>,
             items: List<M>
         ) {
             selectMostAppropriateItem(adapterList)
@@ -97,7 +98,7 @@ class SelectableAdapterGroup<M>(
         return adapters.filter { it.getSelectedItemsCount().isNotZero() }
     }
 
-    private fun selectMostAppropriateItem(adapter: SelectableAdapterListUtils<M, *>) {
+    private fun selectMostAppropriateItem(adapter: ISelectableAdapter<M, *>) {
         if (!isAllowToCancelSelection) {
             if (adapter.getAllItemCount().isNotZero()) {
                 adapter.selectFirstSelectableItem(force = true)

@@ -1,6 +1,5 @@
 package com.merseyside.archy.presentation.view.animatedCheckButton
 
-import android.view.View
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
@@ -34,11 +33,6 @@ fun setCheckable(button: AnimatedCheckButton, isCheckable: Boolean?) {
     if (isCheckable != null && button.isCheckable != isCheckable) {
         button.isCheckable = isCheckable
     }
-}
-
-@BindingAdapter("app:onButtonClick")
-fun setOnClick(button: AnimatedCheckButton, click: (View) -> Unit) {
-    button.setOnClick(click)
 }
 
 

@@ -1,11 +1,11 @@
 @file:OptIn(InternalAdaptersApi::class)
-
 package com.merseyside.adapters.base
 
 import androidx.recyclerview.widget.SortedList
+import com.merseyside.adapters.ext.getAll
+import com.merseyside.adapters.interfaces.ISortedAdapter
 import com.merseyside.adapters.model.ComparableAdapterViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
-import com.merseyside.adapters.utils.SortedAdapterListUtils
 import com.merseyside.merseyLib.kotlin.getMinMax
 import com.merseyside.utils.mainThreadIfNeeds
 import com.merseyside.utils.reflection.ReflectionUtils
@@ -16,9 +16,8 @@ import kotlinx.coroutines.SupervisorJob
 @Suppress("UNCHECKED_CAST")
 abstract class SortedAdapter<Parent, Model : ComparableAdapterViewModel<Parent>>(
     override val scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-) : BaseAdapter<Parent, Model>(), SortedAdapterListUtils<Parent, Model> {
+) : BaseAdapter<Parent, Model>(), ISortedAdapter<Parent, Model> {
 
-    override val modelList: MutableList<Model> = ArrayList()
 
     private val listCallback = object : SortedList.Callback<Model>() {
         override fun onInserted(position: Int, count: Int) {
@@ -65,6 +64,8 @@ abstract class SortedAdapter<Parent, Model : ComparableAdapterViewModel<Parent>>
     }
 
     override val sortedList: SortedList<Model> by lazy { SortedList(persistentClass, listCallback) }
+    override val models: List<Model>
+        get() = sortedList.getAll()
 
     override fun getItemCount() = sortedList.size()
 

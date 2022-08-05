@@ -7,7 +7,7 @@ import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import com.merseyside.adapters.model.AdapterParentViewModel
-import com.merseyside.adapters.view.TypedBindingHolder
+import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.utils.reflection.ReflectionUtils
 
 abstract class DelegateAdapter<Item : Parent, Parent,

@@ -2,7 +2,7 @@ package com.merseyside.adapters.model
 
 import androidx.annotation.CallSuper
 import androidx.databinding.BaseObservable
-import com.merseyside.adapters.base.ItemCallback
+import com.merseyside.adapters.utils.ItemCallback
 import com.merseyside.adapters.callback.OnItemClickListener
 import com.merseyside.merseyLib.kotlin.contract.Identifiable
 

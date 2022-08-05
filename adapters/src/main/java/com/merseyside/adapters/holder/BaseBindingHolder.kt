@@ -1,4 +1,4 @@
-package com.merseyside.adapters.view
+package com.merseyside.adapters.holder
 
 import android.content.Context
 import androidx.annotation.CallSuper

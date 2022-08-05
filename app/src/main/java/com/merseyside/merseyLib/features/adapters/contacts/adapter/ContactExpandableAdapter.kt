@@ -3,7 +3,6 @@ package com.merseyside.merseyLib.features.adapters.contacts.adapter
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.base.ExpandableAdapter
-import com.merseyside.adapters.base.UpdateRequest
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.databinding.ItemGroupContactBinding

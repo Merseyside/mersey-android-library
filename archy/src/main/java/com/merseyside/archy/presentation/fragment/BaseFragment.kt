@@ -11,7 +11,6 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.merseyside.archy.BaseApplication
 import com.merseyside.archy.presentation.activity.BaseActivity
 import com.merseyside.archy.presentation.activity.Orientation
@@ -76,7 +75,6 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        findNavController()
         if (savedInstanceState != null) {
             with(savedInstanceState) {
                 if (savedInstanceState.containsKey(RESULT_CODE_KEY)) {

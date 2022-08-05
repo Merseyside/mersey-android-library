@@ -2,10 +2,11 @@ package com.merseyside.adapters.delegates.composites
 
 import androidx.recyclerview.widget.SortedList
 import com.merseyside.adapters.delegates.DelegatesManager
+import com.merseyside.adapters.ext.getAll
+import com.merseyside.adapters.holder.TypedBindingHolder
+import com.merseyside.adapters.interfaces.ISortedAdapter
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.ComparableAdapterParentViewModel
-import com.merseyside.adapters.utils.SortedAdapterListUtils
-import com.merseyside.adapters.view.TypedBindingHolder
 import com.merseyside.merseyLib.kotlin.getMinMax
 import com.merseyside.utils.mainThreadIfNeeds
 import com.merseyside.utils.reflection.ReflectionUtils
@@ -16,8 +17,8 @@ import kotlinx.coroutines.SupervisorJob
 abstract class SortedCompositeAdapter<Parent, Model : ComparableAdapterParentViewModel<out Parent, Parent>>(
     delegatesManager: DelegatesManager<Parent, Model> = DelegatesManager(),
     override val scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-) : CompositeAdapter<Parent, Model>(delegatesManager),
-    SortedAdapterListUtils<Parent, Model> {
+) : BaseCompositeAdapter<Parent, Model>(delegatesManager),
+    ISortedAdapter<Parent, Model> {
 
     private val listCallback = object : SortedList.Callback<Model>() {
         override fun onInserted(position: Int, count: Int) {
@@ -66,6 +67,8 @@ abstract class SortedCompositeAdapter<Parent, Model : ComparableAdapterParentVie
     }
 
     override val sortedList: SortedList<Model> by lazy { SortedList(persistentClass, listCallback) }
+    override val models: List<Model>
+        get() = sortedList.getAll()
 
     override fun onBindViewHolder(
         holder: TypedBindingHolder<Model>,

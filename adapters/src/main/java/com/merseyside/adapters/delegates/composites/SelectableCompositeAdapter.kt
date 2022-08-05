@@ -8,7 +8,7 @@ import com.merseyside.adapters.callback.OnSelectEnabledListener
 import com.merseyside.adapters.delegates.DelegatesManager
 import com.merseyside.adapters.model.SelectableAdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
-import com.merseyside.adapters.utils.SelectableAdapterListUtils
+import com.merseyside.adapters.interfaces.ISelectableAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -21,7 +21,7 @@ abstract class SelectableCompositeAdapter<Parent, Model: SelectableAdapterParent
     isSelectEnabled: Boolean = true,
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 ) : SortedCompositeAdapter<Parent, Model>(delegatesManager, scope),
-    SelectableAdapterListUtils<Parent, Model> {
+    ISelectableAdapter<Parent, Model> {
 
     override var selectedList: MutableList<Model> = ArrayList()
     override val selectedListeners: MutableList<OnItemSelectedListener<Parent>> = ArrayList()
@@ -75,8 +75,8 @@ abstract class SelectableCompositeAdapter<Parent, Model: SelectableAdapterParent
         model.setSelectEnabled(isSelectEnabled)
     }
 
-    override fun setItemSelected(item: Model?, isSelectedByUser: Boolean): Boolean {
-        return if (super.setItemSelected(item, isSelectedByUser)) {
+    override fun setItemSelected(model: Model?, isSelectedByUser: Boolean): Boolean {
+        return if (super.setItemSelected(model, isSelectedByUser)) {
             recyclerView?.invalidateItemDecorations()
             true
         } else false

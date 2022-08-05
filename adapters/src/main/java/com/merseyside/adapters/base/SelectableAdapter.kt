@@ -4,9 +4,9 @@ package com.merseyside.adapters.base
 
 import com.merseyside.adapters.callback.OnItemSelectedListener
 import com.merseyside.adapters.callback.OnSelectEnabledListener
+import com.merseyside.adapters.interfaces.ISelectableAdapter
 import com.merseyside.adapters.model.SelectableAdapterViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
-import com.merseyside.adapters.utils.SelectableAdapterListUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -16,7 +16,7 @@ abstract class SelectableAdapter<Item, Model: SelectableAdapterViewModel<Item>>(
     override var isAllowToCancelSelection: Boolean = selectableMode == SelectableMode.MULTIPLE,
     isSelectEnabled: Boolean = true,
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-) : SortedAdapter<Item, Model>(scope), SelectableAdapterListUtils<Item, Model> {
+) : SortedAdapter<Item, Model>(scope), ISelectableAdapter<Item, Model> {
 
     enum class SelectableMode { SINGLE, MULTIPLE }
     internal var groupAdapter: Boolean = false
@@ -53,8 +53,8 @@ abstract class SelectableAdapter<Item, Model: SelectableAdapterViewModel<Item>>(
 
                 onSelectEnableListener?.onEnabled(value)
 
-                if (modelList.isNotEmpty()) {
-                    modelList.forEach { model ->
+                if (models.isNotEmpty()) {
+                    models.forEach { model ->
                         model.setSelectEnabled(value)
                     }
                 }
@@ -68,8 +68,8 @@ abstract class SelectableAdapter<Item, Model: SelectableAdapterViewModel<Item>>(
 
     override var isGroupAdapter: Boolean = false
 
-    override fun setItemSelected(item: Model?, isSelectedByUser: Boolean): Boolean {
-        return if (super.setItemSelected(item, isSelectedByUser)) {
+    override fun setItemSelected(model: Model?, isSelectedByUser: Boolean): Boolean {
+        return if (super.setItemSelected(model, isSelectedByUser)) {
             recyclerView?.invalidateItemDecorations()
             true
         } else false

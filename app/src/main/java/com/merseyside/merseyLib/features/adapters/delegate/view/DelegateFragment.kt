@@ -3,7 +3,7 @@ package com.merseyside.merseyLib.features.adapters.delegate.view
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import com.merseyside.adapters.base.UpdateRequest
+import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.adapters.ext.onItemClicked
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R

@@ -1,4 +1,4 @@
-package com.merseyside.adapters.view
+package com.merseyside.adapters.holder
 
 import androidx.databinding.ViewDataBinding
 import com.merseyside.adapters.model.AdapterParentViewModel

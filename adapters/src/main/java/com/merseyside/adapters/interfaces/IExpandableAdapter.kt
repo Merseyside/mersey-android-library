@@ -1,28 +1,30 @@
 @file:OptIn(InternalAdaptersApi::class)
 
-package com.merseyside.adapters.utils
+package com.merseyside.adapters.interfaces
 
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.base.SortedAdapter
-import com.merseyside.adapters.base.UpdateRequest
+import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.ExpandableAdapterParentViewModel
+import com.merseyside.adapters.utils.InternalAdaptersApi
+import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
 import com.merseyside.merseyLib.kotlin.extensions.remove
 
-interface ExpandableAdapterListUtils<Parent, Model : ExpandableAdapterParentViewModel<out Parent, Parent, InnerData>,
-        InnerData, InnerAdapter : AdapterListUtils<InnerData, out AdapterParentViewModel<out InnerData, InnerData>>>
-    : SelectableAdapterListUtils<Parent, Model> {
+interface IExpandableAdapter<Parent, Model : ExpandableAdapterParentViewModel<out Parent, Parent, InnerData>,
+        InnerData, InnerAdapter : IBaseAdapter<InnerData, out AdapterParentViewModel<out InnerData, InnerData>>>
+    : ISelectableAdapter<Parent, Model> {
     var adapterList: MutableList<Pair<Model, InnerAdapter>>
 
     fun initExpandableList(model: Model): InnerAdapter
     fun getExpandableView(binding: ViewDataBinding): RecyclerView?
 
     @InternalAdaptersApi
-    override fun addModels(list: List<Model>) {
-        super.addModels(list)
-        addModelsToAdapters(list)
+    override fun addModels(models: List<Model>) {
+        super.addModels(models)
+        addModelsToAdapters(models)
     }
 
     private fun addModelsToAdapters(list: List<Model>) {
@@ -81,7 +83,7 @@ interface ExpandableAdapterListUtils<Parent, Model : ExpandableAdapterParentView
             super.setFilter(query)
         } finally {
             if (query.isEmpty()) {
-                getAllModels().forEach { model ->
+                getModels().forEach { model ->
                     val adapter = getAdapterIfExists(model)
                     adapter?.setFilter(query)
                 }
@@ -137,9 +139,9 @@ interface ExpandableAdapterListUtils<Parent, Model : ExpandableAdapterParentView
         getFilterableAdapters().forEach { it.clearFilters() }
     }
 
-    override fun remove(items: List<Parent>): Boolean {
+    override fun remove(items: List<Parent>) {
         removeAdaptersByItems(items)
-        return super.remove(items)
+        super.remove(items)
     }
 
     override fun remove(item: Parent): Boolean {
@@ -163,7 +165,7 @@ interface ExpandableAdapterListUtils<Parent, Model : ExpandableAdapterParentView
     }
 
     private fun updateExpandableAdapters() {
-        getAllModels().forEach { model ->
+        getModels().forEach { model ->
             val adapter = getExpandableAdapter(model)
             addExpandableItems(adapter, model.getExpandableData())
         }
