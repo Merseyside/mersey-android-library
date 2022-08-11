@@ -2,8 +2,8 @@
 
 package com.merseyside.adapters.ext
 
-import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.interfaces.base.IBaseAdapter
+import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 
 inline fun <reified R: Parent, Parent> IBaseAdapter<Parent, *>.filterItemsIsInstance(): List<R> {
@@ -23,5 +23,5 @@ fun <Parent, ParentModel, Model, Item : Parent> Model.update(block: Model.(oldIt
         where ParentModel : AdapterParentViewModel<out Parent, Parent>,
               Model : AdapterParentViewModel<Item, Parent> {
     val parentModel = this as ParentModel
-    notifyModelChanged(parentModel, payload(block((this as Model).item)))
+    notifyModelUpdated(parentModel, payload(block((this as Model).item)))
 }

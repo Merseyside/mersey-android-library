@@ -1,3 +1,4 @@
+@file:OptIn(InternalAdaptersApi::class)
 package com.merseyside.adapters.ext
 
 import androidx.recyclerview.widget.SortedList
@@ -7,8 +8,9 @@ import com.merseyside.adapters.callback.HasOnItemClickListener
 import com.merseyside.adapters.callback.HasOnItemSelectedListener
 import com.merseyside.adapters.callback.OnItemClickListener
 import com.merseyside.adapters.callback.OnItemSelectedListener
-import com.merseyside.adapters.model.ComparableAdapterParentViewModel
 import com.merseyside.adapters.interfaces.ISelectableAdapter
+import com.merseyside.adapters.model.ComparableAdapterParentViewModel
+import com.merseyside.adapters.utils.InternalAdaptersApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

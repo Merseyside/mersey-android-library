@@ -1,14 +1,12 @@
-@file:OptIn(InternalAdaptersApi::class)
-
 package com.merseyside.adapters.delegates.composites
 
 import com.merseyside.adapters.base.SelectableAdapter
 import com.merseyside.adapters.callback.OnItemSelectedListener
 import com.merseyside.adapters.callback.OnSelectEnabledListener
 import com.merseyside.adapters.delegates.DelegatesManager
-import com.merseyside.adapters.model.SelectableAdapterParentViewModel
-import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.interfaces.ISelectableAdapter
+import com.merseyside.adapters.model.SelectableAdapterParentViewModel
+import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -62,8 +60,8 @@ abstract class SelectableCompositeAdapter<Parent, Model: SelectableAdapterParent
 
                 onSelectEnableListener?.onEnabled(value)
 
-                if (modelList.isNotEmpty()) {
-                    modelList.forEach { model ->
+                models.isNotNullAndEmpty {
+                    forEach { model ->
                         model.setSelectEnabled(value)
                     }
                 }

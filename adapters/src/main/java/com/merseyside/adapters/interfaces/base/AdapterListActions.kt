@@ -14,8 +14,18 @@ interface AdapterListActions<Parent, Model : AdapterParentViewModel<out Parent, 
 
 
     @InternalAdaptersApi
-    fun remove(model: Model): Boolean
+    fun removeModel(model: Model): Boolean
 
     @InternalAdaptersApi
     fun removeModels(list: List<Model>): Boolean
+
+    @InternalAdaptersApi
+    fun removeAll()
+
+    /**
+     * Updates [model] with [item]
+     * @return true if model's item and item are not the same.
+     */
+    @InternalAdaptersApi
+    fun updateModel(model: Model, item: Parent): Boolean
 }

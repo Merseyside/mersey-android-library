@@ -6,8 +6,8 @@ import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.holder.TypedBindingHolder
+import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.utils.reflection.ReflectionUtils
 
 abstract class DelegateAdapter<Item : Parent, Parent,
@@ -23,6 +23,7 @@ abstract class DelegateAdapter<Item : Parent, Parent,
     abstract fun getLayoutIdForItem(viewType: Int): Int
     protected abstract fun getBindingVariable(): Int
 
+    @CallSuper
     open fun isResponsibleFor(parent: Parent): Boolean {
         return isResponsibleForItemClass(parent!!::class.java)
     }

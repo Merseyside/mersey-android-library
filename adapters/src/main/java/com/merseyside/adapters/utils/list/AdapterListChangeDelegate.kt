@@ -1,7 +1,9 @@
+@file:OptIn(InternalAdaptersApi::class)
 package com.merseyside.adapters.utils.list
 
 import com.merseyside.adapters.interfaces.base.AdapterListActions
 import com.merseyside.adapters.model.AdapterParentViewModel
+import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.UpdateRequest
 
 interface AdapterListChangeDelegate<Parent, Model : AdapterParentViewModel<out Parent, Parent>> {
@@ -15,10 +17,16 @@ interface AdapterListChangeDelegate<Parent, Model : AdapterParentViewModel<out P
 
     fun remove(position: Int): Boolean
 
-    fun update(updateRequest: UpdateRequest<Parent>)
+    fun removeAll()
+
+    fun update(updateRequest: UpdateRequest<Parent>): Boolean
+
+    fun createModel(item: Parent): Model {
+        return listActions.modelProvider(item)
+    }
 
     fun createModels(items: List<Parent>): List<Model> {
-        return items.map { item -> listActions.modelProvider(item) }
+        return items.map { item -> createModel(item) }
     }
 
     fun getModels(): List<Model> = listActions.models
@@ -35,9 +43,15 @@ interface AdapterListChangeDelegate<Parent, Model : AdapterParentViewModel<out P
         return getModels().find { it.areItemsTheSame(item) }
     }
 
-    interface OnListChangedCallback<Parent, Model : AdapterParentViewModel<out Parent, Parent>> {
-        fun onItemsAdded(position: Int, itemsCount: Int)
+    fun remove(models: List<Model>) {
+        models.forEach { remove(it) }
+    }
 
-        fun onItemRemoved(position: Int, model: Model)
+    fun remove(model: Model): Boolean {
+        return listActions.removeModel(model)
+    }
+
+    fun getItemCount(): Int {
+        return getModels().size
     }
 }

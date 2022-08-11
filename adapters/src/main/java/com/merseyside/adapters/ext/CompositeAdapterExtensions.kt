@@ -9,7 +9,7 @@ import com.merseyside.adapters.model.AdapterParentViewModel
  */
 inline fun <reified VM, Parent> CompositeAdapter<Parent, *>.filterIsInstance(): List<VM>
         where VM : AdapterParentViewModel<out Parent, Parent> {
-    return modelList.filterIsInstance<VM>()
+    return models.filterIsInstance<VM>()
 }
 
 /**

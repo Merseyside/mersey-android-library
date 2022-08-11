@@ -11,9 +11,9 @@ import com.merseyside.adapters.ext.asynchronously
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
+import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.adapters.utils.list.AdapterListChangeDelegate
 import com.merseyside.merseyLib.kotlin.concurency.Locker
-import com.merseyside.utils.mainThreadIfNeeds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.sync.Mutex
@@ -22,7 +22,7 @@ import kotlinx.coroutines.sync.Mutex
 interface IBaseAdapter<Parent, Model : AdapterParentViewModel<out Parent, Parent>> :
     HasOnItemClickListener<Parent>, AdapterListActions<Parent, Model>, Locker {
 
-    var delegate: AdapterListChangeDelegate<Parent, Model>
+    val delegate: AdapterListChangeDelegate<Parent, Model>
 
     val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>
 
@@ -69,20 +69,9 @@ interface IBaseAdapter<Parent, Model : AdapterParentViewModel<out Parent, Parent
         return true
     }
 
-//    @Throws(IllegalArgumentException::class)
-//    @InternalAdaptersApi
-//    fun notifyModelMoved(
-//        oldPosition: Int,
-//        newPosition: Int,
-//        model: Model,
-//        payloads: List<AdapterParentViewModel.Payloadable> = emptyList()
-//    ) {
-//        adapter.notifyItemMoved()
-//    }
-
     @CallSuper
-    fun add(item: Parent): Model? {
-        return delegate.add(listOf(item)).firstOrNull()
+    fun add(item: Parent) {
+        delegate.add(listOf(item))
     }
 
     /**
@@ -90,8 +79,8 @@ interface IBaseAdapter<Parent, Model : AdapterParentViewModel<out Parent, Parent
      * @return items count that added
      */
     @CallSuper
-    fun add(items: List<Parent>): List<Model> {
-        return delegate.add(items)
+    fun add(items: List<Parent>) {
+        delegate.add(items)
     }
 
     fun addAsync(items: List<Parent>, func: () -> Unit = {}) {
@@ -108,29 +97,40 @@ interface IBaseAdapter<Parent, Model : AdapterParentViewModel<out Parent, Parent
         else update(items)
     }
 
-
-    fun update(items: List<Parent>): Boolean
-
-    @InternalAdaptersApi
-    fun update(model: Model, item: Parent): List<AdapterParentViewModel.Payloadable>? {
-        return if (!model.areContentsTheSame(item)) {
-            model.payload(item)
-        } else null
+    fun update(updateRequest: UpdateRequest<Parent>): Boolean {
+        return delegate.update(updateRequest)
     }
 
-    fun updateAndNotify(item: Parent): Boolean {
-        val model = find(item)
-        return if (model != null) {
-            val payloads = update(model, item)
+    fun update(items: List<Parent>): Boolean {
+        return update(
+            UpdateRequest.Builder(items)
+                .isDeleteOld(true)
+                .build()
+        )
+    }
 
-            if (payloads != null) {
-                mainThreadIfNeeds {
-                    notifyModelChanged(model, payloads)
-                }
+    fun updateAsync(
+        updateRequest: UpdateRequest<Parent>,
+        onUpdated: () -> Unit = {}
+    ) {
+        updateJob = scope.asynchronously {
+            withLock {
+                update(updateRequest)
+                onUpdated.invoke()
             }
+        }
+    }
+
+    @InternalAdaptersApi
+    override fun updateModel(model: Model, item: Parent): Boolean {
+        return if (!model.areContentsTheSame(item)) {
+            notifyModelUpdated(model, model.payload(item))
             true
         } else false
     }
+
+    fun notifyModelUpdated(model: Model, payloads: List<AdapterParentViewModel.Payloadable>)
+
     /**
      * Removes model by item
      * Calls onItemRemoved callback method on success.
@@ -196,7 +196,9 @@ interface IBaseAdapter<Parent, Model : AdapterParentViewModel<out Parent, Parent
         }
     }
 
-    fun clear()
+    fun clear() {
+        delegate.removeAll()
+    }
 
     /**
      * @return true if modelList has items else - false

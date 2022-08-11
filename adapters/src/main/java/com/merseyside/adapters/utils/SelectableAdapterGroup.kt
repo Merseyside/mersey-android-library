@@ -100,7 +100,7 @@ class SelectableAdapterGroup<M>(
 
     private fun selectMostAppropriateItem(adapter: ISelectableAdapter<M, *>) {
         if (!isAllowToCancelSelection) {
-            if (adapter.getAllItemCount().isNotZero()) {
+            if (adapter.getItemsCount().isNotZero()) {
                 adapter.selectFirstSelectableItem(force = true)
             } else {
                 selectFirstItem()

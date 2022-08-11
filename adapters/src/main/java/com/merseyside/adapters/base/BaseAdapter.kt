@@ -29,8 +29,7 @@ abstract class BaseAdapter<Item, Model : AdapterViewModel<Item>>
     HasOnItemClickListener<Item>,
     IBaseAdapter<Item, Model>, Locker {
 
-    override var delegate: AdapterListChangeDelegate<Item, Model> =
-        DefaultListChangeDelegate(this)
+    override val delegate: AdapterListChangeDelegate<Item, Model> by lazy { DefaultListChangeDelegate(this) }
 
     override val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>
         get() = this

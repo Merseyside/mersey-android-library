@@ -7,7 +7,6 @@ import com.merseyside.adapters.callback.HasOnItemSelectedListener
 import com.merseyside.adapters.callback.OnItemClickListener
 import com.merseyside.adapters.callback.OnItemSelectedListener
 import com.merseyside.adapters.callback.OnSelectEnabledListener
-import com.merseyside.adapters.ext.getAll
 import com.merseyside.adapters.model.SelectableAdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.merseyLib.kotlin.logger.Logger
@@ -42,25 +41,23 @@ interface ISelectableAdapter<Parent, Model: SelectableAdapterParentViewModel<out
         selectedListeners.remove(listener)
     }
 
-    override fun add(items: List<Parent>): List<Model> {
+    override fun addModels(models: List<Model>) {
         val isNoData = isEmpty()
 
-        val addedModels = super.add(items)
+        super.addModels(models)
 
-        addItemsToGroup(addedModels)
+        addItemsToGroup(models)
 
         if (isNoData) {
             if (isSelectEnabled && findSelectedItems().isEmpty()) {
                 selectFirstSelectableItem()
             }
         }
-
-        return addedModels
     }
 
     fun selectFirstSelectableItem(force: Boolean = false) {
         if (force || (!isAllowToCancelSelection && !isGroupAdapter) || selectFirstOnAdd) {
-            sortedList.getAll().forEach { item ->
+            models.forEach { item ->
                 if (setItemSelected(item)) return
             }
         }
@@ -170,7 +167,7 @@ interface ISelectableAdapter<Parent, Model: SelectableAdapterParentViewModel<out
 
     private fun findSelectedItems(): List<Model> {
         return if (selectedList.isEmpty()) {
-            getModels().filter { model ->
+            models.filter { model ->
                 isItemSelected(model)
             }.also {
                 selectedList = it.toMutableList()

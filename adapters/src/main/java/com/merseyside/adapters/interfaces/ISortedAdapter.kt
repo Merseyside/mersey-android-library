@@ -9,7 +9,6 @@ import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.ComparableAdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
-import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.merseyLib.kotlin.extensions.intersect
 import com.merseyside.merseyLib.kotlin.logger.Logger
 import com.merseyside.utils.isMainThread
@@ -19,79 +18,14 @@ interface ISortedAdapter<Parent, Model : ComparableAdapterParentViewModel<out Pa
 
     val sortedList: SortedList<Model>
 
-    /* Models list actions */
-    override fun addModel(model: Model) {
-        sortedList.add(model)
-    }
-
-    override fun update(items: List<Parent>): Boolean {
-        return update(
-            UpdateRequest.Builder(items)
-                .isDeleteOld(true)
-                .build()
-        )
-    }
-
-    fun update(updateRequest: UpdateRequest<Parent>): Boolean {
-
-        val removed = if (updateRequest.isDeleteOld) {
-            val removeList = models
-                .filter { model ->
-                    if (model.isDeletable()) {
-                        updateRequest.list.find {
-                            model.areItemsTheSame(it)
-                        } == null
-                    } else {
-                        false
-                    }
-                }
-
-            removeModels(removeList)
-        } else false
-
-        val addList = ArrayList<Parent>()
-        for (obj in updateRequest.list) {
-            if (isMainThread() || updateJob?.isActive == true) {
-                if (!updateAndNotify(obj) && updateRequest.isAddNew) {
-                    addList.add(obj)
-                }
-            } else {
-                break
-            }
-        }
-
-        if (addList.isNotEmpty()) {
-            add(addList)
-        }
-
-        return addList.isNotEmpty() || removed
-    }
-
-    fun updateAsync(
-        updateRequest: UpdateRequest<Parent>,
-        onUpdated: () -> Unit = {}
-    ) {
-        updateJob = scope.asynchronously {
-            withLock {
-                update(updateRequest)
-                onUpdated.invoke()
-            }
-        }
-    }
-
-    @Throws(IllegalArgumentException::class)
-    @InternalAdaptersApi
-    override fun notifyModelChanged(
+    override fun notifyModelUpdated(
         model: Model,
         payloads: List<AdapterParentViewModel.Payloadable>
-    ): Int {
+    ) {
         val position = getPositionOfModel(model)
+        adapter.notifyItemChanged(position, payloads)
         sortedList.recalculatePositionOfItemAt(position)
-        return position
     }
-
-
-    private fun addList(list: List<Model>) = sortedList.batchedUpdate { addAll(list) }
 
     override fun filter(model: Model, query: String): Boolean {
         throw NotImplementedError("Override this method in your implementation!")
@@ -277,7 +211,11 @@ interface ISortedAdapter<Parent, Model : ComparableAdapterParentViewModel<out Pa
         clearFilters()
     }
 
-    /**/
+    /* Models list actions */
+    override fun addModel(model: Model) {
+        sortedList.add(model)
+    }
+
     @InternalAdaptersApi
     override fun addModels(models: List<Model>) {
         if (!isFiltered) {
@@ -286,6 +224,8 @@ interface ISortedAdapter<Parent, Model : ComparableAdapterParentViewModel<out Pa
             applyFilterToNewModels(models)
         }
     }
+
+    private fun addList(list: List<Model>) = sortedList.batchedUpdate { addAll(list) }
 
     /**
      * Be sure your model's compareTo method handles equal items!
@@ -297,7 +237,7 @@ interface ISortedAdapter<Parent, Model : ComparableAdapterParentViewModel<out Pa
         return true
     }
 
-    override fun remove(model: Model): Boolean {
+    override fun removeModel(model: Model): Boolean {
         sortedList.remove(model)
         filterKeyMap.forEach { entry ->
             filterKeyMap[entry.key] = entry.value.toMutableList().apply { remove(model) }
@@ -305,5 +245,10 @@ interface ISortedAdapter<Parent, Model : ComparableAdapterParentViewModel<out Pa
         filterKeyMap.clear()
 
         return true
+    }
+
+    override fun removeAll() {
+        sortedList.clear()
+        adapter.notifyDataSetChanged()
     }
 }

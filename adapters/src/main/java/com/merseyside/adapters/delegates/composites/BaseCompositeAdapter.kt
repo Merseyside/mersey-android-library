@@ -45,8 +45,9 @@ abstract class BaseCompositeAdapter<Parent, Model : AdapterParentViewModel<out P
     override val modelProvider: (Parent) -> Model = ::createModel
 
 
-    override var delegate: AdapterListChangeDelegate<Parent, Model> =
+    override val delegate: AdapterListChangeDelegate<Parent, Model> by lazy {
         DefaultListChangeDelegate(this)
+    }
 
     override val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>
         get() = this

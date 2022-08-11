@@ -21,40 +21,6 @@ interface IExpandableAdapter<Parent, Model : ExpandableAdapterParentViewModel<ou
     fun initExpandableList(model: Model): InnerAdapter
     fun getExpandableView(binding: ViewDataBinding): RecyclerView?
 
-    @InternalAdaptersApi
-    override fun addModels(models: List<Model>) {
-        super.addModels(models)
-        addModelsToAdapters(models)
-    }
-
-    private fun addModelsToAdapters(list: List<Model>) {
-        list.forEach { model ->
-            val adapter = getExpandableAdapter(model)
-            val data = model.getExpandableData()
-
-            addExpandableItems(adapter, data)
-        }
-    }
-
-    fun getAdapterByItem(item: Parent): InnerAdapter? {
-        val model = getModelByItem(item)
-        return model?.let {
-            getAdapterIfExists(it)
-        }
-    }
-
-    fun getExpandableAdapters(): List<InnerAdapter> {
-        return adapterList.map { it.second }
-    }
-
-    private fun putAdapter(model: Model, adapter: InnerAdapter) {
-        adapterList.add(model to adapter)
-    }
-
-    private fun getAdapterIfExists(model: Model): InnerAdapter? {
-        return adapterList.find { it.first.areItemsTheSame(model.item) }?.second
-    }
-
     override fun update(updateRequest: UpdateRequest<Parent>): Boolean {
         if (updateRequest.isDeleteOld) {
             adapterList = adapterList.filter { adapter ->
@@ -65,25 +31,31 @@ interface IExpandableAdapter<Parent, Model : ExpandableAdapterParentViewModel<ou
         return super.update(updateRequest)
     }
 
-    override fun update(model: Model, item: Parent): List<AdapterParentViewModel.Payloadable>? {
-        val payloads = super.update(model, item)
 
-        if (payloads != null) {
-            val adapter = getExpandableAdapter(model)
-            model.getExpandableData().isNotNullAndEmpty {
-                adapter.update(this)
-            }
-        }
-
-        return payloads
+    override fun remove(items: List<Parent>) {
+        removeAdaptersByItems(items)
+        super.remove(items)
     }
+
+    override fun remove(item: Parent): Boolean {
+        removeAdaptersByItems(listOf(item))
+        return super.remove(item)
+    }
+
+    fun getAdapterByItem(item: Parent): InnerAdapter? {
+        val model = getModelByItem(item)
+        return model?.let {
+            getAdapterIfExists(it)
+        }
+    }
+
 
     override fun setFilter(query: String): Int {
         return try {
             super.setFilter(query)
         } finally {
             if (query.isEmpty()) {
-                getModels().forEach { model ->
+                models.forEach { model ->
                     val adapter = getAdapterIfExists(model)
                     adapter?.setFilter(query)
                 }
@@ -139,22 +111,20 @@ interface IExpandableAdapter<Parent, Model : ExpandableAdapterParentViewModel<ou
         getFilterableAdapters().forEach { it.clearFilters() }
     }
 
-    override fun remove(items: List<Parent>) {
-        removeAdaptersByItems(items)
-        super.remove(items)
-    }
-
-    override fun remove(item: Parent): Boolean {
-        removeAdaptersByItems(listOf(item))
-        return super.remove(item)
-    }
-
     private fun removeAdaptersByItems(list: List<Parent>) {
         val adapters = list.mapNotNull { getAdapterByItem(it) }
         adapterList.remove { adapters.find { second -> it == second } != null }
 
         adapters.forEach { it.notifyAdapterRemoved() }
         onAdaptersRemoved(adapters)
+    }
+
+    private fun putAdapter(model: Model, adapter: InnerAdapter) {
+        adapterList.add(model to adapter)
+    }
+
+    private fun getAdapterIfExists(model: Model): InnerAdapter? {
+        return adapterList.find { it.first.areItemsTheSame(model.item) }?.second
     }
 
     @InternalAdaptersApi
@@ -165,7 +135,7 @@ interface IExpandableAdapter<Parent, Model : ExpandableAdapterParentViewModel<ou
     }
 
     private fun updateExpandableAdapters() {
-        getModels().forEach { model ->
+        models.forEach { model ->
             val adapter = getExpandableAdapter(model)
             addExpandableItems(adapter, model.getExpandableData())
         }
@@ -205,5 +175,35 @@ interface IExpandableAdapter<Parent, Model : ExpandableAdapterParentViewModel<ou
         with(adapter) {
             update(list ?: emptyList())
         }
+    }
+
+    /* Models list actions */
+
+    @InternalAdaptersApi
+    override fun addModels(models: List<Model>) {
+        super.addModels(models)
+        addModelsToAdapters(models)
+    }
+
+    private fun addModelsToAdapters(list: List<Model>) {
+        list.forEach { model ->
+            val adapter = getExpandableAdapter(model)
+            val data = model.getExpandableData()
+
+            addExpandableItems(adapter, data)
+        }
+    }
+
+    override fun updateModel(model: Model, item: Parent): Boolean {
+        val isUpdated = super.updateModel(model, item)
+
+        if (isUpdated) {
+            val adapter = getExpandableAdapter(model)
+            model.getExpandableData().isNotNullAndEmpty {
+                adapter.update(this)
+            }
+        }
+
+        return isUpdated
     }
 }
