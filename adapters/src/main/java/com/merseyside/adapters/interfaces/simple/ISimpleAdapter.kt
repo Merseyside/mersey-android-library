@@ -58,16 +58,6 @@ interface ISimpleAdapter<Parent, Model : AdapterParentViewModel<out Parent, Pare
         adapter.notifyItemChanged(position, payloads)
     }
 
-    private fun removeOldItems(newList: List<Parent>) {
-        val removeList = ArrayList<Model>()
-        models.forEach { model ->
-            val item = newList.find { item -> model.areItemsTheSame(item) }
-            if (item == null) removeList.add(model)
-        }
-
-        removeModels(removeList)
-    }
-
 
     fun notifyPositionsChanged(startsWithPosition: Int) {
         if (startsWithPosition < adapter.itemCount - 1) {
@@ -112,20 +102,6 @@ interface ISimpleAdapter<Parent, Model : AdapterParentViewModel<out Parent, Pare
         notifyPositionsChanged(position)
 
         return removed
-    }
-
-    @InternalAdaptersApi
-    override fun removeModels(list: List<Model>): Boolean {
-        return if (list.isNotEmpty()) {
-            list.forEach { removeModel(it) }
-            //modelList.removeAll(list)
-            filterKeyMap.clear()
-            filterKeyMap.forEach { entry ->
-                filterKeyMap[entry.key] = entry.value.toMutableList().apply { removeAll(list) }
-            }
-
-            true
-        } else false
     }
 
     override fun removeAll() {

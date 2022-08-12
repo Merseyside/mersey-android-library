@@ -13,19 +13,37 @@ open class DefaultListChangeDelegate<Parent, Model : AdapterParentViewModel<out 
 
     override fun add(items: List<Parent>): List<Model> {
         val models = createModels(items)
+        return addModels(models)
+    }
+
+    protected fun addModel(model: Model): Model {
+        listActions.addModel(model)
+        return model
+    }
+
+    protected fun addModels(models: List<Model>): List<Model> {
         listActions.addModels(models)
         return models
     }
 
-    override fun remove(position: Int): Boolean {
+    override fun remove(item: Parent): Model? {
         return try {
-            val model = getModels()[position]
-            remove(model)
-            true
+            val model = getModelByItem(item)
+            model?.let { removeModel(model) }
+            model
         } catch (e: IllegalArgumentException) {
-            false
+            null
         }
     }
+
+    protected fun removeModels(models: List<Model>) {
+        models.forEach { removeModel(it) }
+    }
+
+    protected fun removeModel(model: Model): Boolean {
+        return listActions.removeModel(model)
+    }
+
 
     override fun removeAll() {
         listActions.removeAll()
@@ -41,10 +59,8 @@ open class DefaultListChangeDelegate<Parent, Model : AdapterParentViewModel<out 
 
             val addList = ArrayList<Parent>()
             list.forEach { item ->
-                val model = getModelByItem(item)
-                model?.let {
-                    if (update(model, item)) isUpdated = true
-                } ?: addList.add(item)
+                if (tryToUpdateWithItem(item) != null) isUpdated = true
+                else addList.add(item)
             }
 
             if (isAddNew) {
@@ -56,20 +72,29 @@ open class DefaultListChangeDelegate<Parent, Model : AdapterParentViewModel<out 
         return isUpdated
     }
 
-    protected fun update(model: Model, item: Parent): Boolean {
+    protected open fun updateModel(model: Model, item: Parent): Boolean {
         return listActions.updateModel(model, item)
     }
 
-    protected fun findOldItems(newItems: List<Parent>): Set<Model> {
-        val models = getModels()
+    /**
+     * @return model if it have been updated, null otherwise
+     */
+    protected open fun tryToUpdateWithItem(item: Parent): Model? {
+        val model = getModelByItem(item)
+        return model?.also {
+            updateModel(model, item)
+        }
+    }
+
+    protected fun findOldItems(newItems: List<Parent>, models: List<Model> = getModels()): Set<Model> {
         return models.subtractBy(newItems) { oldModel, newItem ->
             oldModel.isDeletable() && oldModel.areItemsTheSame(newItem)
         }
     }
 
-    protected fun removeOldItems(items: List<Parent>): Boolean {
-        val modelsToRemove = findOldItems(items)
-        remove(modelsToRemove.toList())
+    protected open fun removeOldItems(items: List<Parent>, models: List<Model> = getModels()): Boolean {
+        val modelsToRemove = findOldItems(items, models)
+        removeModels(modelsToRemove.toList())
         return modelsToRemove.isNotEmpty()
     }
 }

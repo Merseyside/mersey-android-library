@@ -1,6 +1,10 @@
 @file:OptIn(InternalAdaptersApi::class)
+
 package com.merseyside.adapters.base
 
+import com.merseyside.adapters.feature.filter.FilterFeature
+import com.merseyside.adapters.feature.filter.FilterPositionListChangeDelegate
+import com.merseyside.adapters.feature.filter.Filterable
 import com.merseyside.adapters.interfaces.simple.ISimpleAdapter
 import com.merseyside.adapters.model.AdapterViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
@@ -17,7 +21,11 @@ abstract class SimpleAdapter<Item, Model : AdapterViewModel<Item>>(
     override val models: List<Model> = mutModels
 
     override val delegate: AdapterPositionListChangeDelegate<Item, Model> by lazy {
-        PositionListChangeDelegate(this)
+        if (this is Filterable<*, *>) FilterPositionListChangeDelegate(
+            this,
+            filter as FilterFeature<Item, Model>
+        )
+        else PositionListChangeDelegate(this)
     }
 
     override fun getItemCount() = models.size

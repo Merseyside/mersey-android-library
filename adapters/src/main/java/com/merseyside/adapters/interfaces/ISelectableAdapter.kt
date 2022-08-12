@@ -212,13 +212,13 @@ interface ISelectableAdapter<Parent, Model: SelectableAdapterParentViewModel<out
         }
     }
 
-    override fun removeModels(list: List<Model>): Boolean {
-        return try {
-            super.removeModels(list)
-        } finally {
-            removeSelected(list)
-        }
-    }
+//    override fun removeModels(list: List<Model>): Boolean {
+//        return try {
+//            super.removeModels(list)
+//        } finally {
+//            removeSelected(list)
+//        }
+//    }
 
     private fun removeSelected(list: List<Model>) {
         if (list.isNotEmpty()) {

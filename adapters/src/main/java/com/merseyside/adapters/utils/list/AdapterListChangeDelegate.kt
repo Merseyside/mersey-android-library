@@ -8,14 +8,13 @@ import com.merseyside.adapters.utils.UpdateRequest
 
 interface AdapterListChangeDelegate<Parent, Model : AdapterParentViewModel<out Parent, Parent>> {
     val listActions: AdapterListActions<Parent, Model>
-    //var onListChangedCallback: OnListChangedCallback<Parent, Model>?
 
     /**
      * Converts items to models and return models that should be processed by adapter
      */
     fun add(items: List<Parent>): List<Model>
 
-    fun remove(position: Int): Boolean
+    fun remove(item: Parent): Model?
 
     fun removeAll()
 
@@ -31,24 +30,16 @@ interface AdapterListChangeDelegate<Parent, Model : AdapterParentViewModel<out P
 
     fun getModels(): List<Model> = listActions.models
 
-    fun getPositionOfItem(item: Parent): Int {
-        getModels().forEachIndexed { index, model ->
+    fun getPositionOfItem(item: Parent, models: List<Model> = getModels()): Int {
+        models.forEachIndexed { index, model ->
             if (model.areItemsTheSame(item)) return index
         }
 
         throw IllegalArgumentException("No data found")
     }
 
-    fun getModelByItem(item: Parent): Model? {
-        return getModels().find { it.areItemsTheSame(item) }
-    }
-
-    fun remove(models: List<Model>) {
-        models.forEach { remove(it) }
-    }
-
-    fun remove(model: Model): Boolean {
-        return listActions.removeModel(model)
+    fun getModelByItem(item: Parent, models: List<Model> = getModels()): Model? {
+        return models.find { it.areItemsTheSame(item) }
     }
 
     fun getItemCount(): Int {

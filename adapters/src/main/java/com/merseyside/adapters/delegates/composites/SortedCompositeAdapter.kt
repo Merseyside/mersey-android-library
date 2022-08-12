@@ -3,10 +3,15 @@ package com.merseyside.adapters.delegates.composites
 import androidx.recyclerview.widget.SortedList
 import com.merseyside.adapters.delegates.DelegatesManager
 import com.merseyside.adapters.ext.getAll
+import com.merseyside.adapters.feature.filter.FilterFeature
+import com.merseyside.adapters.feature.filter.FilterListChangeDelegate
+import com.merseyside.adapters.feature.filter.Filterable
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.interfaces.ISortedAdapter
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.ComparableAdapterParentViewModel
+import com.merseyside.adapters.utils.list.AdapterListChangeDelegate
+import com.merseyside.adapters.utils.list.DefaultListChangeDelegate
 import com.merseyside.adapters.utils.list.createSortedListCallback
 import com.merseyside.utils.reflection.ReflectionUtils
 import kotlinx.coroutines.CoroutineScope
@@ -25,6 +30,14 @@ abstract class SortedCompositeAdapter<Parent, Model : ComparableAdapterParentVie
 
     override val models: List<Model>
         get() = sortedList.getAll()
+
+    override val delegate: AdapterListChangeDelegate<Parent, Model> by lazy {
+        if (this is Filterable<*, *>) FilterListChangeDelegate(
+            this,
+            filter as FilterFeature<Parent, Model>
+        )
+        else DefaultListChangeDelegate(this)
+    }
 
     override fun onBindViewHolder(
         holder: TypedBindingHolder<Model>,

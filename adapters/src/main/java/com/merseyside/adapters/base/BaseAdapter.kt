@@ -16,8 +16,6 @@ import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.AdapterViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.ItemCallback
-import com.merseyside.adapters.utils.list.AdapterListChangeDelegate
-import com.merseyside.adapters.utils.list.DefaultListChangeDelegate
 import com.merseyside.merseyLib.kotlin.concurency.Locker
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.sync.Mutex
@@ -29,8 +27,6 @@ abstract class BaseAdapter<Item, Model : AdapterViewModel<Item>>
     HasOnItemClickListener<Item>,
     IBaseAdapter<Item, Model>, Locker {
 
-    override val delegate: AdapterListChangeDelegate<Item, Model> by lazy { DefaultListChangeDelegate(this) }
-
     override val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>
         get() = this
 
@@ -38,19 +34,11 @@ abstract class BaseAdapter<Item, Model : AdapterViewModel<Item>>
 
     override var listener: OnItemClickListener<Item>? = null
 
-
     private val bindItemList: MutableList<Model> = ArrayList()
     protected var recyclerView: RecyclerView? = null
 
     override var addJob: Job? = null
     override var updateJob: Job? = null
-    override var filterJob: Job? = null
-
-    override var isFiltered: Boolean = false
-    override val filtersMap: HashMap<String, Any> by lazy { HashMap() }
-    override val notAppliedFiltersMap: HashMap<String, Any> by lazy { HashMap() }
-    override var filterPattern: String = ""
-    override val filterKeyMap: MutableMap<String, List<Model>> by lazy { HashMap() }
 
     override val lock = Any()
     override val mutex: Mutex = Mutex()

@@ -9,13 +9,13 @@ class PositionListChangeDelegate<Parent, Model : AdapterParentViewModel<out Pare
 ) : DefaultListChangeDelegate<Parent, Model>(listActions), AdapterPositionListChangeDelegate<Parent, Model> {
 
     override fun add(position: Int, item: Parent) {
-        if (getItemCount() >= position) {
+        if (isValidPosition(position)) {
             listActions.addModelByPosition(position, createModel(item))
         } else throw IndexOutOfBoundsException("List size is ${getItemCount()} but adding position is $position")
     }
 
     override fun add(position: Int, items: List<Parent>) {
-        if (getItemCount() >= position) {
+        if (isValidPosition(position)) {
             listActions.addModelsByPosition(position, createModels(items))
         } else throw IndexOutOfBoundsException("List size is ${getItemCount()} but adding position is $position")
     }
@@ -33,7 +33,7 @@ class PositionListChangeDelegate<Parent, Model : AdapterParentViewModel<out Pare
                 } else {
                     val oldPosition = getPositionOfItem(item)
                     listActions.changeModelPosition(oldModel, oldPosition, newPosition)
-                    if (update(oldModel, item)) isUpdated = true
+                    if (updateModel(oldModel, item)) isUpdated = true
                 }
             }
 

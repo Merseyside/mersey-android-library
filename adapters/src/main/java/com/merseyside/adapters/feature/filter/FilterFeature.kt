@@ -1,31 +1,36 @@
 package com.merseyside.adapters.feature.filter
 
 import com.merseyside.adapters.model.AdapterParentViewModel
-import com.merseyside.adapters.utils.list.AdapterListChangeDelegate
 import com.merseyside.merseyLib.kotlin.logger.ILogger
 
-abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, Parent>> :
-    AdapterListChangeDelegate<Parent, Model>, ILogger {
+abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, Parent>> : ILogger {
 
-    //override lateinit var adapter: AdapterListUtils<Parent, Model>
+    private lateinit var filterCallback: FilterCallback<Model>
 
     private val filters: Filters by lazy { mutableMapOf() }
     private var notAppliedFilters: Filters = mutableMapOf()
 
-    private var isFiltered = false
+    var isFiltered = false
+        private set(value) {
+            if (value != field) {
+                field = value
+                filterCallback.onFilterStateChanged(value)
+            }
+        }
 
-    private lateinit var filterCallback: FilterCallback<Model>
+    private lateinit var provideFullList: () -> List<Model>
+    private lateinit var provideFilteredList: () -> List<Model>
 
-    private val allItems: List<Model>
-        get() = filterCallback.getAllItems()
-
-    private val currentItems: List<Model>
-        get() = filterCallback.getCurrentItems()
-
-
+    internal fun initListProviders(
+        fullListProvider: () -> List<Model>,
+        filteredListProvider: () -> List<Model>
+    ) {
+        this.provideFullList = fullListProvider
+        this.provideFilteredList = filteredListProvider
+    }
     /**
-    * If you pass an object as filter be sure isEquals() implemented properly.
-    */
+     * If you pass an object as filter be sure isEquals() implemented properly.
+     */
     fun addFilter(key: String, filter: Any) {
         val appliedFilter = filters[key]
         if (appliedFilter != filter) {
@@ -48,37 +53,36 @@ abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, 
         notAppliedFilters.clear()
     }
 
+    fun getAllModels(): List<Model> {
+        return provideFullList()
+    }
+
     /**
      * @return true if filters applied, false otherwise.
      */
     fun apply(): Boolean {
         if (isFiltered && areFiltersEmpty()) {
-            postResult(allItems)
+            isFiltered = false
         } else if (notAppliedFilters.isEmpty()) {
             log("No new filters added. Filtering skipped!")
             return false
         } else {
-            val canFilterCurrentItems = !notAppliedFilters.keys.any { filters.containsKey(it) }
+            val canFilterCurrentItems = filters.isNotEmpty() &&
+                    !notAppliedFilters.keys.any { filters.containsKey(it) }
+
             val filteredModels = if (canFilterCurrentItems) {
-                filter(currentItems)
+                filter(provideFilteredList(), notAppliedFilters)
             } else {
                 makeAllFiltersNotApplied()
-                filter(allItems)
+                filter(provideFullList(), notAppliedFilters)
             }
 
             putAppliedFilters()
             postResult(filteredModels)
+            isFiltered = true
         }
 
-        isFiltered = filters.isNotEmpty()
         return true
-    }
-    
-
-    abstract fun filter(model: Model, key: String, filter: Any): Boolean
-
-    internal fun filter(models: List<Model>): List<Model> {
-        return filter(models, filters)
     }
 
     private fun areFiltersEmpty(): Boolean {
@@ -89,11 +93,28 @@ abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, 
         filterCallback.onFiltered(models)
     }
 
-    private fun filter(models: List<Model>, filters: Filters = notAppliedFilters): List<Model> {
+    abstract fun filter(model: Model, key: String, filter: Any): Boolean
+
+    internal fun filter(model: Model): Model? {
+        return filter(model, filters)
+    }
+
+    internal fun filter(models: List<Model>): List<Model> {
+        return filter(models, filters)
+    }
+
+    internal fun filter(model: Model, filters: Filters): Model? {
+        val isFiltered = filters.all { (key, value) ->
+            filter(model, key, value)
+        }
+
+        return if (isFiltered) model
+        else null
+    }
+
+    private fun filter(models: List<Model>, filters: Filters): List<Model> {
         return models.filter { model ->
-            filters.all { (key, value) ->
-                filter(model, key, value)
-            }
+            filter(model, filters) != null
         }
     }
 
@@ -115,15 +136,16 @@ abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, 
         return filters.containsKey(key)
     }
 
+    private fun logFilters(prefix: String = "") {
+        filters.log("$prefix filters =")
+        notAppliedFilters.log("$prefix not applied =")
+    }
+
     interface FilterCallback<Model> {
-        fun getAllItems(): List<Model>
+        fun onFiltered(models: List<Model>)
 
-        fun getCurrentItems(): List<Model>
-
-        fun onFiltered(filteredModels: List<Model>)
+        fun onFilterStateChanged(isFiltered: Boolean)
     }
 
     override val tag = "FilterFeature"
 }
-
-internal typealias Filters = MutableMap<String, Any>

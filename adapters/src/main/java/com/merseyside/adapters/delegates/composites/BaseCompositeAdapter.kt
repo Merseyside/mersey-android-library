@@ -30,13 +30,6 @@ abstract class BaseCompositeAdapter<Parent, Model : AdapterParentViewModel<out P
 
     override var addJob: Job? = null
     override var updateJob: Job? = null
-    override var filterJob: Job? = null
-
-    override var isFiltered: Boolean = false
-    override val filtersMap: HashMap<String, Any> by lazy { HashMap() }
-    override val notAppliedFiltersMap: HashMap<String, Any> by lazy { HashMap() }
-    override var filterPattern: String = ""
-    override val filterKeyMap: MutableMap<String, List<Model>> by lazy { HashMap() }
 
     override val lock = Any()
     override val mutex: Mutex = Mutex()
@@ -57,7 +50,7 @@ abstract class BaseCompositeAdapter<Parent, Model : AdapterParentViewModel<out P
     init {
         delegatesManager.setOnDelegateRemoveCallback { delegate ->
             val removeList = models.filter { delegate.isResponsibleFor(it.item) }
-            removeModels(removeList)
+            remove(removeList.map { it.item })
         }
     }
 

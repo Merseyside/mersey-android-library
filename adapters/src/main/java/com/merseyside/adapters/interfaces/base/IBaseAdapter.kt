@@ -32,16 +32,7 @@ interface IBaseAdapter<Parent, Model : AdapterParentViewModel<out Parent, Parent
     val scope: CoroutineScope
     override val mutex: Mutex
 
-    var filterJob: Job?
-
     val lock: Any
-
-    var isFiltered: Boolean
-
-    val filtersMap: HashMap<String, Any>
-    val notAppliedFiltersMap: HashMap<String, Any>
-    var filterPattern: String
-    val filterKeyMap: MutableMap<String, List<Model>>
 
     @InternalAdaptersApi
     fun createModels(items: List<Parent>): List<Model> {
@@ -50,24 +41,6 @@ interface IBaseAdapter<Parent, Model : AdapterParentViewModel<out Parent, Parent
 
     @InternalAdaptersApi
     fun createModel(item: Parent): Model
-
-    @Throws(NotImplementedError::class)
-    fun setFilter(query: String): Int {
-        throw NotImplementedError()
-    }
-
-    @Throws(NotImplementedError::class)
-    fun setFilterAsync(query: String, callback: (filteredCount: Int) -> Unit = {}) {
-        throw NotImplementedError()
-    }
-
-    fun filter(model: Model, query: String): Boolean {
-        return true
-    }
-
-    fun filter(model: Model, key: String, filterObj: Any): Boolean {
-        return true
-    }
 
     @CallSuper
     fun add(item: Parent) {
@@ -138,8 +111,7 @@ interface IBaseAdapter<Parent, Model : AdapterParentViewModel<out Parent, Parent
      */
     @CallSuper
     fun remove(item: Parent): Boolean {
-        val position = getPositionOfItem(item)
-        return delegate.remove(position)
+        return delegate.remove(item) != null
     }
 
     fun remove(items: List<Parent>) {
@@ -196,6 +168,7 @@ interface IBaseAdapter<Parent, Model : AdapterParentViewModel<out Parent, Parent
         }
     }
 
+    @CallSuper
     fun clear() {
         delegate.removeAll()
     }

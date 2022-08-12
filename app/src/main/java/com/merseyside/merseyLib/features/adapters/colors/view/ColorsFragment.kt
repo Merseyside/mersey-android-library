@@ -11,6 +11,7 @@ import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.application.base.BaseSampleFragment
 import com.merseyside.merseyLib.databinding.FragmentColorsBinding
 import com.merseyside.merseyLib.features.adapters.colors.adapter.ColorsAdapter
+import com.merseyside.merseyLib.features.adapters.colors.adapter.ColorsFilter
 import com.merseyside.merseyLib.features.adapters.colors.di.ColorsModule
 import com.merseyside.merseyLib.features.adapters.colors.di.DaggerColorsComponent
 import com.merseyside.merseyLib.features.adapters.colors.model.ColorsViewModel
@@ -44,9 +45,9 @@ class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel
 
         if (newValue != null) {
             val filterName = when (view.id) {
-                requireBinding().rColor.id -> ColorsAdapter.R_COLOR_FILTER
-                requireBinding().gColor.id -> ColorsAdapter.G_COLOR_FILTER
-                requireBinding().bColor.id -> ColorsAdapter.B_COLOR_FILTER
+                requireBinding().rColor.id -> ColorsFilter.R_COLOR_FILTER
+                requireBinding().gColor.id -> ColorsFilter.G_COLOR_FILTER
+                requireBinding().bColor.id -> ColorsFilter.B_COLOR_FILTER
                 else -> throw IllegalArgumentException()
             }
 
@@ -62,7 +63,7 @@ class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel
                 }
             }.also {
                 if (requireBinding().async.isChecked) {
-                    adapter.applyFiltersAsync()
+                    //adapter.applyFiltersAsync()
                 } else {
                     adapter.applyFilters()
                 }
@@ -97,7 +98,7 @@ class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel
                 if (requireBinding().async.isChecked) {
                     adapter.updateAsync(updateRequest)
                 } else {
-                    adapter.update(updateRequest)
+                    //adapter.update(updateRequest)
                 }
             }
         }
