@@ -1,5 +1,6 @@
-package com.merseyside.adapters.interfaces.base
+package com.merseyside.adapters.interfaces.simple
 
+import com.merseyside.adapters.interfaces.base.AdapterListActions
 import com.merseyside.adapters.model.AdapterParentViewModel
 
 interface AdapterPositionListActions<Parent, Model : AdapterParentViewModel<out Parent, Parent>>

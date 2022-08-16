@@ -1,6 +1,6 @@
 @file:OptIn(InternalAdaptersApi::class)
 
-package com.merseyside.adapters.ext
+package com.merseyside.adapters.extensions
 
 import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.model.AdapterParentViewModel

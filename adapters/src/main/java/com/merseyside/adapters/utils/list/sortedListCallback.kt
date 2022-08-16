@@ -9,25 +9,25 @@ import com.merseyside.utils.mainThreadIfNeeds
 internal fun <Parent, Model : ComparableAdapterParentViewModel<out Parent, Parent>>
         createSortedListCallback(
     adapter: RecyclerView.Adapter<*>,
-    modelListProvider: () -> List<Model>
+    models: () -> List<Model>,
+    comparator: (model1: Model, model2: Model) -> Int
+    
 ): SortedList.Callback<Model> {
 
-    fun comparePriority(o1: Model, o2: Model): Int {
-        return o1.priority.compareTo(o2.priority)
-    }
+
 
     return object : SortedList.Callback<Model>() {
         override fun onInserted(position: Int, count: Int) {
-            for (i in position until modelListProvider().size) {
-                modelListProvider()[i].onPositionChanged(i)
+            for (i in position until models().size) {
+                models()[i].onPositionChanged(i)
             }
 
             mainThreadIfNeeds { adapter.notifyItemRangeInserted(position, count) }
         }
 
         override fun onRemoved(position: Int, count: Int) {
-            for (i in position until modelListProvider().size) {
-                modelListProvider()[i].onPositionChanged(i)
+            for (i in position until models().size) {
+                models()[i].onPositionChanged(i)
             }
 
             mainThreadIfNeeds { adapter.notifyItemRangeRemoved(position, count) }
@@ -37,7 +37,7 @@ internal fun <Parent, Model : ComparableAdapterParentViewModel<out Parent, Paren
             val minMax = getMinMax(fromPosition, toPosition)
 
             for (i in minMax.first..minMax.second) {
-                modelListProvider()[i].onPositionChanged(i)
+                models()[i].onPositionChanged(i)
             }
 
             adapter.notifyItemMoved(fromPosition, toPosition)
@@ -48,9 +48,7 @@ internal fun <Parent, Model : ComparableAdapterParentViewModel<out Parent, Paren
         }
 
         override fun compare(model1: Model, model2: Model): Int {
-            val priority = comparePriority(model1, model2)
-            return if (priority == 0) model1.compareTo(model2.item)
-            else priority
+            return comparator(model1, model2)
         }
 
         override fun areContentsTheSame(model1: Model, model2: Model): Boolean {

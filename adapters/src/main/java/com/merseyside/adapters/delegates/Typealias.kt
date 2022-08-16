@@ -6,6 +6,7 @@ import com.merseyside.adapters.model.ExpandableAdapterParentViewModel
 import com.merseyside.adapters.model.SelectableAdapterParentViewModel
 
 typealias SimpleDelegateAdapter<Item, Model> = DelegateAdapter<Item, Any, Model>
+typealias SimplePrioritizedDelegateAdapter<Item, Model> = PrioritizedDelegateAdapter<Item, Any, Model>
 
 typealias SimpleAdapterViewModel <Item> = AdapterParentViewModel<Item, Any>
 typealias SimpleComparableAdapterViewModel<Item> = ComparableAdapterParentViewModel<Item, Any>

@@ -3,13 +3,13 @@
 package com.merseyside.adapters.interfaces.simple
 
 import com.merseyside.adapters.interfaces.base.IBaseAdapter
+import com.merseyside.adapters.listDelegates.interfaces.AdapterPositionListChangeDelegate
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.UpdateRequest
-import com.merseyside.adapters.utils.list.AdapterPositionListChangeDelegate
 
 interface ISimpleAdapter<Parent, Model : AdapterParentViewModel<out Parent, Parent>>
-    : IBaseAdapter<Parent, Model>, SimpleAdapterListActions<Parent, Model> {
+    : IBaseAdapter<Parent, Model>, AdapterPositionListActions<Parent, Model> {
 
     override val delegate: AdapterPositionListChangeDelegate<Parent, Model>
 

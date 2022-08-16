@@ -28,7 +28,17 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:background="?attr/colorPrimaryDark">
+            android:background="?attr/colorPrimaryDark"
+            android:layout_marginHorizontal="@dimen/small_spacing">
+
+            <com.merseyside.archy.presentation.view.valueSwitcher.ValueSwitcher
+                android:id="@+id/sort_switcher"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:switchEntries="@array/sort_entries"
+                app:switchEntryValues="@array/sort_entry_values"
+                app:switchTitle="Sort by"
+                app:switchType="text" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -39,7 +49,7 @@
                     android:id="@+id/async"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/small_spacing"
+
                     android:layout_weight="1"
                     android:text="Async"
                     android:textSize="@dimen/text_size" />
@@ -65,7 +75,6 @@
                     android:id="@+id/add"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/small_spacing"
                     android:layout_weight="1"
                     android:checked="@={viewModel.isAddingObservableField()}"
                     android:text="Add"
@@ -75,7 +84,6 @@
                     android:id="@+id/update"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/small_spacing"
                     android:layout_weight="1"
                     android:checked="@={!viewModel.isAddingObservableField()}"
                     android:text="Update"

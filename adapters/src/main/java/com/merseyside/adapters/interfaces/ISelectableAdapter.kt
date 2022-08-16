@@ -7,6 +7,7 @@ import com.merseyside.adapters.callback.HasOnItemSelectedListener
 import com.merseyside.adapters.callback.OnItemClickListener
 import com.merseyside.adapters.callback.OnItemSelectedListener
 import com.merseyside.adapters.callback.OnSelectEnabledListener
+import com.merseyside.adapters.interfaces.sorted.ISortedAdapter
 import com.merseyside.adapters.model.SelectableAdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.merseyLib.kotlin.logger.Logger

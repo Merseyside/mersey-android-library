@@ -1,5 +1,6 @@
-package com.merseyside.adapters.feature.filter
+package com.merseyside.adapters.feature.filter.interfaces
 
+import com.merseyside.adapters.feature.filter.Filters
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.merseyLib.kotlin.logger.ILogger
 
@@ -95,8 +96,8 @@ abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, 
 
     abstract fun filter(model: Model, key: String, filter: Any): Boolean
 
-    internal fun filter(model: Model): Model? {
-        return filter(model, filters)
+    internal fun filter(model: Model): Boolean {
+        return filter(model, filters) != null
     }
 
     internal fun filter(models: List<Model>): List<Model> {
@@ -105,7 +106,9 @@ abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, 
 
     internal fun filter(model: Model, filters: Filters): Model? {
         val isFiltered = filters.all { (key, value) ->
-            filter(model, key, value)
+            if (model.filterable) {
+                filter(model, key, value)
+            } else true
         }
 
         return if (isFiltered) model

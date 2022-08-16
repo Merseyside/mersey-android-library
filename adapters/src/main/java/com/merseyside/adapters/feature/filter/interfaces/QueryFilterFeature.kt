@@ -1,4 +1,4 @@
-package com.merseyside.adapters.feature.filter
+package com.merseyside.adapters.feature.filter.interfaces
 
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty

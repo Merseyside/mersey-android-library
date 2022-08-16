@@ -1,8 +1,9 @@
-package com.merseyside.adapters.feature.filter
+package com.merseyside.adapters.feature.filter.interfaces
 
 import com.merseyside.adapters.model.AdapterParentViewModel
 
-interface FilterableQuery<Parent, Model : AdapterParentViewModel<out Parent, Parent>> : Filterable<Parent, Model> {
+interface FilterableQuery<Parent, Model : AdapterParentViewModel<out Parent, Parent>> :
+    Filterable<Parent, Model> {
 
     override val filter: QueryFilterFeature<Parent, Model>
 

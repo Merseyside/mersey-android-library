@@ -1,7 +1,6 @@
 @file:OptIn(InternalAdaptersApi::class)
-package com.merseyside.adapters.ext
+package com.merseyside.adapters.extensions
 
-import androidx.recyclerview.widget.SortedList
 import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.base.SelectableAdapter
 import com.merseyside.adapters.callback.HasOnItemClickListener
@@ -9,59 +8,10 @@ import com.merseyside.adapters.callback.HasOnItemSelectedListener
 import com.merseyside.adapters.callback.OnItemClickListener
 import com.merseyside.adapters.callback.OnItemSelectedListener
 import com.merseyside.adapters.interfaces.ISelectableAdapter
-import com.merseyside.adapters.model.ComparableAdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
-fun SortedList<*>.isEmpty(): Boolean {
-    return this.size() == 0
-}
-
-fun SortedList<*>.isNotEmpty(): Boolean {
-    return !isEmpty()
-}
-
-@Throws(IllegalArgumentException::class)
-fun <Model : ComparableAdapterParentViewModel<out Parent, Parent>, Parent> SortedList<Model>.isEquals(
-    list: List<Model>
-): Boolean {
-
-    if (this.size() != list.size) {
-        return false
-    } else {
-
-        list.forEachIndexed { index, model ->
-            val value = this.get(index)
-            if (!value.areItemsTheSame(model.item)) {
-                return@isEquals false
-            }
-        }
-
-        return true
-    }
-}
-
-fun <Model : ComparableAdapterParentViewModel<out Parent, Parent>, Parent> SortedList<Model>.isNotEquals(
-    list: List<Model>
-): Boolean = !this.isEquals(list)
-
-internal inline fun <Model> SortedList<Model>.forEach(onValue: (Model) -> Unit) {
-    forEachIndexed { _, item -> onValue(item) }
-}
-
-internal inline fun <Model> SortedList<Model>.forEachIndexed(onValue: (Int, model: Model) -> Unit) {
-    for (i in 0 until size()) {
-        onValue(i, get(i))
-    }
-}
-
-internal inline fun <Model> SortedList<Model>.find(predicate: (model: Model) -> Boolean): Model? {
-    forEach { if (predicate(it)) return it }
-
-    return null
-}
 
 inline fun <Item> BaseAdapter<Item, *>.findPosition(predicate: (item: Item) -> Boolean): Int {
     return getAll().find { predicate(it) }?.run {
@@ -82,16 +32,6 @@ inline fun <Item> BaseAdapter<Item, *>.findAll(predicate: (Item) -> Boolean): Li
     getAll().forEach { if (predicate(it)) list.add(it) }
 
     return list
-}
-
-internal inline fun <Model> SortedList<Model>.indexOf(predicate: (Model) -> Boolean): Int {
-    forEachIndexed { index, obj -> if (predicate(obj)) return index }
-
-    return SortedList.INVALID_POSITION
-}
-
-internal fun <Model> SortedList<Model>.removeAll(list: List<Model>) {
-    list.forEach { remove(it) }
 }
 
 fun <Item : Any> List<BaseAdapter<Item, *>>.onItemClicked(onClick: (item: Item) -> Unit): OnItemClickListener<Item> {
@@ -162,18 +102,6 @@ fun <Item : Any> List<SelectableAdapter<Item, *>>.onItemSelected(
     forEach { it.addOnItemSelectedListener(listener) }
 
     return listener
-}
-
-fun <Item> SortedList<Item>.batchedUpdate(block: SortedList<Item>.() -> Unit) {
-    beginBatchedUpdates()
-    block()
-    endBatchedUpdates()
-}
-
-fun <Item> SortedList<Item>.getAll(): List<Item> {
-    val list = mutableListOf<Item>()
-    forEach { list.add(it) }
-    return list
 }
 
 internal fun CoroutineScope.asynchronously(block: suspend CoroutineScope.() -> Unit) =

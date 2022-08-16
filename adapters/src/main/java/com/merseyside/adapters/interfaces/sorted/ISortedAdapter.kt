@@ -1,19 +1,24 @@
 @file:OptIn(InternalAdaptersApi::class)
 
-package com.merseyside.adapters.interfaces
+package com.merseyside.adapters.interfaces.sorted
 
 import androidx.recyclerview.widget.SortedList
-import com.merseyside.adapters.ext.*
-import com.merseyside.adapters.interfaces.base.AdapterListActions
+import com.merseyside.adapters.extensions.*
 import com.merseyside.adapters.interfaces.base.IBaseAdapter
+import com.merseyside.adapters.listDelegates.interfaces.AdapterPrioritizedListChangeDelegate
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.ComparableAdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 
 interface ISortedAdapter<Parent, Model : ComparableAdapterParentViewModel<out Parent, Parent>>
-    : IBaseAdapter<Parent, Model>, AdapterListActions<Parent, Model> {
+    : IBaseAdapter<Parent, Model>, AdapterPrioritizedListActions<Parent, Model> {
 
     val sortedList: SortedList<Model>
+    override val delegate: AdapterPrioritizedListChangeDelegate<Parent, Model>
+
+    fun add(item: Parent, priority: Int) {
+        delegate.add(item, priority)
+    }
 
     override fun notifyModelUpdated(
         model: Model,
@@ -24,21 +29,14 @@ interface ISortedAdapter<Parent, Model : ComparableAdapterParentViewModel<out Pa
         sortedList.recalculatePositionOfItemAt(position)
     }
 
-    private fun replaceAll(models: List<Model>) {
-        sortedList.batchedUpdate {
-            val sortedModels = sortedList.getAll().toSet()
-            val subtract = models.subtract(sortedModels)
-
-            val subtractSorted = sortedModels.subtract(models.toSet()).toList()
-
-            sortedList.removeAll(subtractSorted)
-            sortedList.addAll(subtract)
-        }
-    }
-
     /* Models list actions */
     override fun addModel(model: Model) {
         sortedList.add(model)
+    }
+
+    override fun addModel(model: Model, priority: Int) {
+        model.priority = priority
+        addModel(model)
     }
 
     @InternalAdaptersApi
@@ -54,4 +52,5 @@ interface ISortedAdapter<Parent, Model : ComparableAdapterParentViewModel<out Pa
         sortedList.clear()
         adapter.notifyDataSetChanged()
     }
+
 }

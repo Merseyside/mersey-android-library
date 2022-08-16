@@ -350,3 +350,59 @@ fun AttributeHelper.drawableOrNull(
         this.value = value
     }
 }
+
+fun AttributeHelper.textArray(
+    resName: String? = null
+): ReadWriteProperty<Any, List<String>> = object : ReadWriteProperty<Any, List<String>> {
+    var value: List<String>? = null
+
+    init {
+        if (resName != null) value = getTextArrayOrNull(resName)
+    }
+
+    override fun getValue(thisRef: Any, property: KProperty<*>): List<String> {
+        return value ?: getTextArray(property.name).also { value = it }
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: List<String>) {
+        this.value = value
+    }
+}
+
+fun AttributeHelper.textArrayOrNull(
+    resName: String? = null
+): ReadWriteProperty<Any, List<String>?> = object : ReadWriteProperty<Any, List<String>?> {
+    var value: List<String>? = null
+
+    init {
+        if (resName != null) value = getTextArrayOrNull(resName)
+    }
+
+    override fun getValue(thisRef: Any, property: KProperty<*>): List<String>? {
+        return value ?: getTextArrayOrNull(property.name)?.also { value = it }
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: List<String>?) {
+        this.value = value
+    }
+}
+
+fun <T> AttributeHelper.enum(
+    defaultValue: T? = null,
+    resName: String? = null,
+    provider: (Int) -> T
+): ReadWriteProperty<Any, T> = object : ReadWriteProperty<Any, T> {
+    var value: T? = null
+
+    init {
+        if (resName != null) value = getEnum(resName, defaultValue, provider)
+    }
+
+    override fun getValue(thisRef: Any, property: KProperty<*>): T {
+        return value ?: getEnum(property.name, defaultValue, provider).also { value = it }
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
+        this.value = value
+    }
+}

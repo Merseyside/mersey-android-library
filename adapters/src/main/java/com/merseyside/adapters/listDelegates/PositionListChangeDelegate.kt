@@ -1,12 +1,14 @@
-package com.merseyside.adapters.utils.list
+package com.merseyside.adapters.listDelegates
 
-import com.merseyside.adapters.interfaces.base.AdapterPositionListActions
+import com.merseyside.adapters.interfaces.simple.AdapterPositionListActions
+import com.merseyside.adapters.listDelegates.interfaces.AdapterPositionListChangeDelegate
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.UpdateRequest
 
 class PositionListChangeDelegate<Parent, Model : AdapterParentViewModel<out Parent, Parent>>(
     override val listActions: AdapterPositionListActions<Parent, Model>
-) : DefaultListChangeDelegate<Parent, Model>(listActions), AdapterPositionListChangeDelegate<Parent, Model> {
+) : DefaultListChangeDelegate<Parent, Model>(),
+    AdapterPositionListChangeDelegate<Parent, Model> {
 
     override fun add(position: Int, item: Parent) {
         if (isValidPosition(position)) {

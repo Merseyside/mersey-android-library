@@ -12,8 +12,6 @@ import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.AdapterViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.ItemCallback
-import com.merseyside.adapters.utils.list.AdapterListChangeDelegate
-import com.merseyside.adapters.utils.list.DefaultListChangeDelegate
 import com.merseyside.merseyLib.kotlin.concurency.Locker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,11 +34,6 @@ abstract class BaseCompositeAdapter<Parent, Model : AdapterParentViewModel<out P
 
     override var listener: OnItemClickListener<Parent>? = null
     override val modelProvider: (Parent) -> Model = ::createModel
-
-
-    override val delegate: AdapterListChangeDelegate<Parent, Model> by lazy {
-        DefaultListChangeDelegate(this)
-    }
 
     override val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>
         get() = this

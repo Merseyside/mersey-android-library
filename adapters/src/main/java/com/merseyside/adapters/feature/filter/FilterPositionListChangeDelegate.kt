@@ -1,14 +1,15 @@
 package com.merseyside.adapters.feature.filter
 
-import com.merseyside.adapters.interfaces.base.AdapterPositionListActions
+import com.merseyside.adapters.feature.filter.interfaces.FilterFeature
+import com.merseyside.adapters.interfaces.simple.AdapterPositionListActions
+import com.merseyside.adapters.listDelegates.interfaces.AdapterPositionListChangeDelegate
 import com.merseyside.adapters.model.AdapterParentViewModel
-import com.merseyside.adapters.utils.list.AdapterPositionListChangeDelegate
 import com.merseyside.merseyLib.kotlin.logger.ILogger
 
 internal class FilterPositionListChangeDelegate<Parent, Model : AdapterParentViewModel<out Parent, Parent>>(
     override val listActions: AdapterPositionListActions<Parent, Model>,
     filterFeature: FilterFeature<Parent, Model>
-) : FilterListChangeDelegate<Parent, Model>(listActions, filterFeature),
+) : FilterListChangeDelegate<Parent, Model>(filterFeature),
     AdapterPositionListChangeDelegate<Parent, Model>, ILogger {
 
     override fun add(position: Int, item: Parent) {

@@ -6,11 +6,13 @@ import android.view.View
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import com.merseyside.adapters.utils.UpdateRequest
+import com.merseyside.archy.presentation.view.valueSwitcher.ValueSwitcher
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.application.base.BaseSampleFragment
 import com.merseyside.merseyLib.databinding.FragmentColorsBinding
 import com.merseyside.merseyLib.features.adapters.colors.adapter.ColorsAdapter
+import com.merseyside.merseyLib.features.adapters.colors.adapter.ColorsComparator
 import com.merseyside.merseyLib.features.adapters.colors.adapter.ColorsFilter
 import com.merseyside.merseyLib.features.adapters.colors.di.ColorsModule
 import com.merseyside.merseyLib.features.adapters.colors.di.DaggerColorsComponent
@@ -81,6 +83,12 @@ class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel
             bColor.addTextChangeListener(textChangeListener)
         }
 
+        requireBinding().sortSwitcher.setOnValueChangeListener(object : ValueSwitcher.OnValueChangeListener {
+            override fun valueChanged(entryValue: String) {
+                adapter.setComparisonRule(ColorsComparator.ColorComparisonRule.valueOf(entryValue.uppercase()))
+            }
+        })
+
         viewModel.getColorsFlow().asLiveData().observe(viewLifecycleOwner) {
             if (requireBinding().add.isChecked) {
 
@@ -98,7 +106,7 @@ class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel
                 if (requireBinding().async.isChecked) {
                     adapter.updateAsync(updateRequest)
                 } else {
-                    //adapter.update(updateRequest)
+                    adapter.update(updateRequest)
                 }
             }
         }

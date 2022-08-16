@@ -7,12 +7,12 @@ import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SortedList
 import com.merseyside.adapters.callback.HasOnItemClickListener
-import com.merseyside.adapters.ext.asynchronously
+import com.merseyside.adapters.extensions.asynchronously
 import com.merseyside.adapters.holder.TypedBindingHolder
+import com.merseyside.adapters.listDelegates.interfaces.AdapterListChangeDelegate
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.UpdateRequest
-import com.merseyside.adapters.utils.list.AdapterListChangeDelegate
 import com.merseyside.merseyLib.kotlin.concurency.Locker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

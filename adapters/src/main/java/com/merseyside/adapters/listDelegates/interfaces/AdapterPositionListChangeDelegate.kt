@@ -1,4 +1,4 @@
-package com.merseyside.adapters.utils.list
+package com.merseyside.adapters.listDelegates.interfaces
 
 import com.merseyside.adapters.model.AdapterParentViewModel
 

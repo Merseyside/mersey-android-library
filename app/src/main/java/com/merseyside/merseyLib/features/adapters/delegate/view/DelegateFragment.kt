@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import com.merseyside.adapters.utils.UpdateRequest
-import com.merseyside.adapters.ext.onItemClicked
+import com.merseyside.adapters.extensions.onItemClicked
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.application.base.BaseSampleFragment

@@ -1,4 +1,4 @@
-package com.merseyside.adapters.ext
+package com.merseyside.adapters.extensions
 
 import com.merseyside.adapters.delegates.composites.CompositeAdapter
 import com.merseyside.adapters.model.AdapterParentViewModel

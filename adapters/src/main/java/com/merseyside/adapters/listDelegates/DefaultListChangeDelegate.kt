@@ -1,15 +1,14 @@
 @file:OptIn(InternalAdaptersApi::class)
 
-package com.merseyside.adapters.utils.list
+package com.merseyside.adapters.listDelegates
 
-import com.merseyside.adapters.interfaces.base.AdapterListActions
+import com.merseyside.adapters.listDelegates.interfaces.AdapterListChangeDelegate
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.UpdateRequest
 
-open class DefaultListChangeDelegate<Parent, Model : AdapterParentViewModel<out Parent, Parent>>(
-    override val listActions: AdapterListActions<Parent, Model>
-) : AdapterListChangeDelegate<Parent, Model> {
+abstract class DefaultListChangeDelegate<Parent, Model : AdapterParentViewModel<out Parent, Parent>>
+    : AdapterListChangeDelegate<Parent, Model> {
 
     override fun add(items: List<Parent>): List<Model> {
         val models = createModels(items)
@@ -88,7 +87,7 @@ open class DefaultListChangeDelegate<Parent, Model : AdapterParentViewModel<out 
 
     protected fun findOldItems(newItems: List<Parent>, models: List<Model> = getModels()): Set<Model> {
         return models.subtractBy(newItems) { oldModel, newItem ->
-            oldModel.isDeletable() && oldModel.areItemsTheSame(newItem)
+            oldModel.deletable && oldModel.areItemsTheSame(newItem)
         }
     }
 

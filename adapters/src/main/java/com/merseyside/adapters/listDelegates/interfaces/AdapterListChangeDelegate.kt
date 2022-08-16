@@ -1,9 +1,7 @@
-@file:OptIn(InternalAdaptersApi::class)
-package com.merseyside.adapters.utils.list
+package com.merseyside.adapters.listDelegates.interfaces
 
 import com.merseyside.adapters.interfaces.base.AdapterListActions
 import com.merseyside.adapters.model.AdapterParentViewModel
-import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.UpdateRequest
 
 interface AdapterListChangeDelegate<Parent, Model : AdapterParentViewModel<out Parent, Parent>> {

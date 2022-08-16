@@ -1,14 +1,13 @@
 package com.merseyside.adapters.feature.filter
 
-import com.merseyside.adapters.interfaces.base.AdapterListActions
+import com.merseyside.adapters.feature.filter.interfaces.FilterFeature
+import com.merseyside.adapters.listDelegates.DefaultListChangeDelegate
 import com.merseyside.adapters.model.AdapterParentViewModel
-import com.merseyside.adapters.utils.list.DefaultListChangeDelegate
 import com.merseyside.merseyLib.kotlin.logger.ILogger
 
-internal open class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<out Parent, Parent>>(
-    listActions: AdapterListActions<Parent, Model>,
+abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<out Parent, Parent>>(
     protected val filterFeature: FilterFeature<Parent, Model>
-) : DefaultListChangeDelegate<Parent, Model>(listActions), ILogger {
+) : DefaultListChangeDelegate<Parent, Model>(), ILogger {
 
     protected val mutAllModelList: MutableList<Model> = ArrayList()
     protected val allModelList: List<Model> = mutAllModelList

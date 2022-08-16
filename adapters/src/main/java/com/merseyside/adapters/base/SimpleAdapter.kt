@@ -2,14 +2,14 @@
 
 package com.merseyside.adapters.base
 
-import com.merseyside.adapters.feature.filter.FilterFeature
 import com.merseyside.adapters.feature.filter.FilterPositionListChangeDelegate
-import com.merseyside.adapters.feature.filter.Filterable
+import com.merseyside.adapters.feature.filter.interfaces.FilterFeature
+import com.merseyside.adapters.feature.filter.interfaces.Filterable
 import com.merseyside.adapters.interfaces.simple.ISimpleAdapter
+import com.merseyside.adapters.listDelegates.PositionListChangeDelegate
+import com.merseyside.adapters.listDelegates.interfaces.AdapterPositionListChangeDelegate
 import com.merseyside.adapters.model.AdapterViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
-import com.merseyside.adapters.utils.list.AdapterPositionListChangeDelegate
-import com.merseyside.adapters.utils.list.PositionListChangeDelegate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

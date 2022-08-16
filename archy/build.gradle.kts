@@ -41,6 +41,12 @@ android {
             )
         }
     }
+
+    val basePath = "src/main/res"
+    sourceSets.getByName("main") {
+        res.srcDir(basePath)
+        res.srcDir("$basePath/layouts/valueSwitcher")
+    }
 }
 
 kotlinConvention {
