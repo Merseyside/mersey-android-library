@@ -10,6 +10,7 @@ import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.MenuHost
 import androidx.fragment.app.Fragment
 import com.merseyside.archy.BaseApplication
 import com.merseyside.archy.presentation.activity.BaseActivity
@@ -34,6 +35,8 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
     private var currentLanguage: String = ""
 
     protected var snackbarManager: SnackbarManager? = null
+    protected lateinit var menuHost: MenuHost
+        private set
 
     final override var orientation: Orientation? = null
 
@@ -120,6 +123,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        menuHost = requireActivity()
         setupAppBar()
 
         baseActivity.getLanguage().run {

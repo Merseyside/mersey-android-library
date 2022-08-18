@@ -1,10 +1,10 @@
 package com.merseyside.adapters.delegates.composites
 
-import com.merseyside.adapters.base.SelectableAdapter
 import com.merseyside.adapters.callback.OnItemSelectedListener
 import com.merseyside.adapters.callback.OnSelectEnabledListener
 import com.merseyside.adapters.delegates.DelegatesManager
-import com.merseyside.adapters.interfaces.ISelectableAdapter
+import com.merseyside.adapters.interfaces.selectable.ISelectableAdapter
+import com.merseyside.adapters.interfaces.selectable.SelectableMode
 import com.merseyside.adapters.model.SelectableAdapterParentViewModel
 import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
 import kotlinx.coroutines.CoroutineScope
@@ -13,9 +13,9 @@ import kotlinx.coroutines.SupervisorJob
 
 abstract class SelectableCompositeAdapter<Parent, Model: SelectableAdapterParentViewModel<out Parent, Parent>>(
     delegatesManager: DelegatesManager<Parent, Model> = DelegatesManager(),
-    selectableMode: SelectableAdapter.SelectableMode = SelectableAdapter.SelectableMode.SINGLE,
+    selectableMode: SelectableMode = SelectableMode.SINGLE,
     override var isAllowToCancelSelection: Boolean =
-        selectableMode == SelectableAdapter.SelectableMode.MULTIPLE,
+        selectableMode == SelectableMode.MULTIPLE,
     isSelectEnabled: Boolean = true,
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 ) : SortedCompositeAdapter<Parent, Model>(delegatesManager, scope),
@@ -36,15 +36,15 @@ abstract class SelectableCompositeAdapter<Parent, Model: SelectableAdapterParent
             }
         }
 
-    override var selectableMode: SelectableAdapter.SelectableMode = selectableMode
+    override var selectableMode: SelectableMode = selectableMode
         set(value) {
             if (field != value) {
                 field = value
 
-                if (value == SelectableAdapter.SelectableMode.SINGLE) {
+                if (value == SelectableMode.SINGLE) {
                     if (selectedList.size > 1) {
                         (1 until selectedList.size).forEach { index ->
-                            selectedList[index].setSelected(false)
+                            selectedList[index].isSelected = false
                         }
 
                         selectedList = mutableListOf(selectedList.first())
@@ -62,19 +62,25 @@ abstract class SelectableCompositeAdapter<Parent, Model: SelectableAdapterParent
 
                 models.isNotNullAndEmpty {
                     forEach { model ->
-                        model.setSelectEnabled(value)
+                        model.isSelectable = value
                     }
                 }
             }
         }
 
-    override fun onModelCreated(model: Model) {
-        super.onModelCreated(model)
-        model.setSelectEnabled(isSelectEnabled)
+    override val internalSelectCallback: (Model) -> Unit = { model ->
+        if (model.isSelectable) {
+            setModelSelected(model, true)
+        }
     }
 
-    override fun setItemSelected(model: Model?, isSelectedByUser: Boolean): Boolean {
-        return if (super.setItemSelected(model, isSelectedByUser)) {
+    override fun onModelCreated(model: Model) {
+        super.onModelCreated(model)
+        model.isSelectable = isSelectEnabled
+    }
+
+    override fun setModelSelected(model: Model?, isSelectedByUser: Boolean): Boolean {
+        return if (super.setModelSelected(model, isSelectedByUser)) {
             recyclerView?.invalidateItemDecorations()
             true
         } else false

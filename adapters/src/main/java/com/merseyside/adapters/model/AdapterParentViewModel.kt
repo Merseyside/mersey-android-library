@@ -9,8 +9,8 @@ import com.merseyside.merseyLib.kotlin.contract.Identifiable
 @Suppress("UNCHECKED_CAST")
 abstract class AdapterParentViewModel<Item : Parent, Parent>(
     item: Item,
-    var deletable: Boolean = true,
-    var filterable: Boolean = true
+    open val deletable: Boolean = true,
+    open val filterable: Boolean = true
 ) : BaseObservable() {
 
     var item: Item = item

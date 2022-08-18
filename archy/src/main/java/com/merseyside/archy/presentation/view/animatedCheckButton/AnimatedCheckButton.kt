@@ -18,6 +18,7 @@ import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
 import com.merseyside.merseyLib.kotlin.logger.Logger
 import com.merseyside.merseyLib.time.units.Millis
 import com.merseyside.utils.ext.setColor
+import com.merseyside.utils.view.ext.onClick
 
 class AnimatedCheckButton(context: Context, attributeSet: AttributeSet)
     : AppCompatButton(context, attributeSet), ICheckableView {
@@ -82,28 +83,19 @@ class AnimatedCheckButton(context: Context, attributeSet: AttributeSet)
     }
 
     private fun doLayout() {
+        onClick {
+            if (isCheckable) {
+                isChecked = !isChecked
+                changeState()
+            }
+        }
+
         setForceChecked(isChecked)
         isInitialized = true
     }
 
-    override fun setOnClickListener(l: OnClickListener?) {
-        val listener = if (l != null) {
-            OnClickListener {
-                l.onClick(it)
-
-                if (isCheckable) {
-                    isChecked = !isChecked
-                    changeState()
-                }
-            }
-        } else null
-
-        super.setOnClickListener(listener)
-    }
-
     private fun changeState() {
         listener?.onChecked(isChecked)
-
         animateState()
     }
 

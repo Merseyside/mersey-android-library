@@ -6,12 +6,12 @@ import androidx.databinding.BindingAdapter
 /**
  * LocaleTextView bindings
  */
-@BindingAdapter("app:textData")
+@BindingAdapter("textData")
 fun setText(textView: LocaleTextView, localeData: LocaleData?) {
     textView.setText(localeData)
 }
 
-@BindingAdapter("app:text")
+@BindingAdapter("text")
 fun setText(textView: LocaleTextView, @StringRes id: Int?) {
     textView.setText(id)
 }
@@ -20,22 +20,22 @@ fun setText(textView: LocaleTextView, @StringRes id: Int?) {
  * LocaleEditText bindings
  */
 
-@BindingAdapter("app:textData")
+@BindingAdapter("textData")
 fun setText(editText: LocaleEditText, localeData: LocaleData?) {
     editText.setText(localeData)
 }
 
-@BindingAdapter("app:text")
+@BindingAdapter("text")
 fun setText(editText: LocaleEditText, @StringRes id: Int?) {
     editText.setText(id)
 }
 
-@BindingAdapter("app:hintData")
+@BindingAdapter("hintData")
 fun setHint(editText: LocaleEditText, localeData: LocaleData?) {
     editText.setHint(localeData)
 }
 
-@BindingAdapter("app:hint")
+@BindingAdapter("hint")
 fun setHint(editText: LocaleEditText, @StringRes id: Int?) {
     editText.setHint(id)
 }
@@ -43,12 +43,12 @@ fun setHint(editText: LocaleEditText, @StringRes id: Int?) {
 /**
  * LocaleTextInputLayout bindings
  */
-@BindingAdapter("app:hintData")
+@BindingAdapter("hintData")
 fun setHint(localeTextInputLayout: LocaleTextInputLayout, localeData: LocaleData?) {
     localeTextInputLayout.setHint(localeData)
 }
 
-@BindingAdapter("app:hint")
+@BindingAdapter("hint")
 fun setHint(localeTextInputLayout: LocaleTextInputLayout, @StringRes id: Int?) {
     localeTextInputLayout.setHint(id)
 }
@@ -57,22 +57,22 @@ fun setHint(localeTextInputLayout: LocaleTextInputLayout, @StringRes id: Int?) {
  * LocaleEditText bindings
  */
 
-@BindingAdapter("app:textData")
+@BindingAdapter("textData")
 fun setText(editText: LocaleTextInputEditText, localeData: LocaleData?) {
     editText.setText(localeData)
 }
 
-@BindingAdapter("app:text")
+@BindingAdapter("text")
 fun setText(editText: LocaleTextInputEditText, @StringRes id: Int?) {
     editText.setText(id)
 }
 
-@BindingAdapter("app:hintData")
+@BindingAdapter("hintData")
 fun setHint(editText: LocaleTextInputEditText, localeData: LocaleData?) {
     editText.setHint(localeData)
 }
 
-@BindingAdapter("app:hint")
+@BindingAdapter("hint")
 fun setHint(editText: LocaleTextInputEditText, @StringRes id: Int?) {
     editText.setHint(id)
 }
@@ -81,12 +81,12 @@ fun setHint(editText: LocaleTextInputEditText, @StringRes id: Int?) {
  * LocaleButton bindings
  */
 
-@BindingAdapter("app:textData")
+@BindingAdapter("textData")
 fun setText(button: LocaleButton, localeData: LocaleData?) {
     button.setText(localeData)
 }
 
-@BindingAdapter("app:text")
+@BindingAdapter("text")
 fun setText(button: LocaleButton, @StringRes id: Int?) {
     button.setText(id)
 }
@@ -95,12 +95,12 @@ fun setText(button: LocaleButton, @StringRes id: Int?) {
  * LocaleSwitch bindings
  */
 
-@BindingAdapter("app:textData")
+@BindingAdapter("textData")
 fun setText(switch: LocaleSwitch, localeData: LocaleData?) {
     switch.setText(localeData)
 }
 
-@BindingAdapter("app:text")
+@BindingAdapter("text")
 fun setText(switch: LocaleSwitch, @StringRes id: Int?) {
     switch.setText(id)
 }

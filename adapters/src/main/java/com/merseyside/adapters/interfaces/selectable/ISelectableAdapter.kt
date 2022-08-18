@@ -1,10 +1,10 @@
 @file:OptIn(InternalAdaptersApi::class)
+@file:Suppress("UNCHECKED_CAST")
 
-package com.merseyside.adapters.interfaces
+package com.merseyside.adapters.interfaces.selectable
 
 import com.merseyside.adapters.base.SelectableAdapter
 import com.merseyside.adapters.callback.HasOnItemSelectedListener
-import com.merseyside.adapters.callback.OnItemClickListener
 import com.merseyside.adapters.callback.OnItemSelectedListener
 import com.merseyside.adapters.callback.OnSelectEnabledListener
 import com.merseyside.adapters.interfaces.sorted.ISortedAdapter
@@ -12,10 +12,13 @@ import com.merseyside.adapters.model.SelectableAdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.merseyLib.kotlin.logger.Logger
 
-interface ISelectableAdapter<Parent, Model: SelectableAdapterParentViewModel<out Parent, Parent>>
-    : ISortedAdapter<Parent, Model>, HasOnItemSelectedListener<Parent> {
+interface ISelectableAdapter<Parent, Model>
+    : ISortedAdapter<Parent, Model>, HasOnItemSelectedListener<Parent>
+        where Model : SelectableAdapterParentViewModel<out Parent, Parent> {
 
-    var selectableMode: SelectableAdapter.SelectableMode
+    val internalSelectCallback: (Model) -> Unit
+
+    var selectableMode: SelectableMode
     var isSelectEnabled: Boolean
     var isAllowToCancelSelection: Boolean
 
@@ -42,13 +45,14 @@ interface ISelectableAdapter<Parent, Model: SelectableAdapterParentViewModel<out
         selectedListeners.remove(listener)
     }
 
+    override fun addModel(model: Model) {
+        addModelToGroup(model)
+        super.addModel(model)
+    }
+
     override fun addModels(models: List<Model>) {
         val isNoData = isEmpty()
-
         super.addModels(models)
-
-        addItemsToGroup(models)
-
         if (isNoData) {
             if (isSelectEnabled && findSelectedItems().isEmpty()) {
                 selectFirstSelectableItem()
@@ -59,42 +63,30 @@ interface ISelectableAdapter<Parent, Model: SelectableAdapterParentViewModel<out
     fun selectFirstSelectableItem(force: Boolean = false) {
         if (force || (!isAllowToCancelSelection && !isGroupAdapter) || selectFirstOnAdd) {
             models.forEach { item ->
-                if (setItemSelected(item)) return
+                if (setModelSelected(item)) return
             }
         }
     }
 
-    private fun addItemsToGroup(list: List<Model>) {
-        list.forEach {
-            addItemToGroup(it)
-        }
-    }
-
-    private fun addItemToGroup(item: Model) {
-        item.setOnItemClickListener(object :
-            OnItemClickListener<Parent> {
-            override fun onItemClicked(obj: Parent) {
-                if (isSelectEnabled) {
-                    setItemSelected(item, true)
-                }
-            }
-        })
+    private fun addModelToGroup(model: Model) {
+        model.onSelectCallback = internalSelectCallback as
+                ((SelectableAdapterParentViewModel<out Parent, Parent>) -> Unit)
     }
 
     fun selectItem(item: Parent) {
-        find(item)?.let {
-            setItemSelected(it)
+        find(item)?.let { model ->
+            setModelSelected(model)
         } ?: Logger.logErr("Item for selection not found!")
     }
 
     @Throws(IndexOutOfBoundsException::class)
     fun selectItem(position: Int) {
         val item = getModelByPosition(position)
-        setItemSelected(item)
+        setModelSelected(item)
     }
 
     fun selectItems(items: List<Parent>) {
-        if (selectableMode == SelectableAdapter.SelectableMode.MULTIPLE) {
+        if (selectableMode == SelectableMode.MULTIPLE) {
             items.forEach { selectItem(it) }
         } else {
             throw IllegalStateException("Selectable mode is Single")
@@ -119,19 +111,25 @@ interface ISelectableAdapter<Parent, Model: SelectableAdapterParentViewModel<out
         return selectedList.map { it.item }
     }
 
-    private fun canItemBeSelected(item: Model?): Boolean {
-        return (item != null && item.isSelectable())
+    private fun canModelBeSelected(item: Model?): Boolean {
+        return item != null && item.isSelectable
     }
 
-    fun setItemSelected(model: Model?, isSelectedByUser: Boolean = false): Boolean {
-        return if (model != null && canItemBeSelected(model)) {
-            if (!model.isSelected()) {
-                if (selectableMode == SelectableAdapter.SelectableMode.SINGLE) {
-                    if (selectedList.isEmpty() || !selectedList.first().areItemsTheSame(model.item)) {
+    fun setModelSelected(model: Model?, isSelectedByUser: Boolean = false): Boolean {
+        return if (model != null && canModelBeSelected(model)) {
+            if (!model.isSelected) {
+                if (selectableMode == SelectableMode.SINGLE) {
+                    if (selectedList.isEmpty() ||
+                        !selectedList.first().areItemsTheSame(model.item)
+                    ) {
                         if (selectedList.isNotEmpty()) {
                             with(selectedList.first()) {
-                                setSelected(false)
-                                notifyItemSelected(this, isSelectedByUser = false)
+                                isSelected = false
+                                notifyAllSelectedListeners(
+                                    model.item,
+                                    model.isSelected,
+                                    isSelectedByUser = false
+                                )
                             }
                             selectedList.clear()
                         }
@@ -142,13 +140,13 @@ interface ISelectableAdapter<Parent, Model: SelectableAdapterParentViewModel<out
                     selectedList.add(model)
                 }
 
-                model.setSelected(true)
-                notifyItemSelected(model, isSelectedByUser)
+                model.isSelected = true
+                notifyAllSelectedListeners(model.item, model.isSelected, isSelectedByUser)
             } else if (isAllowToCancelSelection) {
-                model.setSelected(false)
+                model.isSelected = false
                 selectedList.remove(model)
 
-                notifyItemSelected(model, isSelectedByUser)
+                notifyAllSelectedListeners(model.item, model.isSelected, isSelectedByUser)
             }
             true
         } else {
@@ -156,14 +154,14 @@ interface ISelectableAdapter<Parent, Model: SelectableAdapterParentViewModel<out
         }
     }
 
-    private fun notifyItemSelected(item: Model, isSelectedByUser: Boolean) {
-        selectedListeners.forEach { listener ->
-            listener.onSelected(item.item, item.isSelected(), isSelectedByUser)
+    private fun notifyModelsSelected(models: List<Model>, isSelectedByUser: Boolean) {
+        models.forEach { model ->
+            notifyAllSelectedListeners(
+                model.item,
+                model.isSelected,
+                isSelectedByUser
+            )
         }
-    }
-
-    private fun notifyItemsSelected(items: List<Model>, isSelectedByUser: Boolean) {
-        items.forEach { notifyItemSelected(it, isSelectedByUser) }
     }
 
     private fun findSelectedItems(): List<Model> {
@@ -179,8 +177,8 @@ interface ISelectableAdapter<Parent, Model: SelectableAdapterParentViewModel<out
     }
 
     private fun isItemSelected(model: Model): Boolean {
-        return if (canItemBeSelected(model)) {
-            model.isSelected()
+        return if (canModelBeSelected(model)) {
+            model.isSelected
         } else {
             false
         }
@@ -188,9 +186,9 @@ interface ISelectableAdapter<Parent, Model: SelectableAdapterParentViewModel<out
 
     fun clearSelections() {
         selectedList.forEach { model ->
-            model.setSelected(false)
+            model.isSelected = false
         }
-        notifyItemsSelected(selectedList, isSelectedByUser = false)
+        notifyModelsSelected(selectedList, isSelectedByUser = false)
         selectedList.clear()
     }
 
@@ -213,14 +211,6 @@ interface ISelectableAdapter<Parent, Model: SelectableAdapterParentViewModel<out
         }
     }
 
-//    override fun removeModels(list: List<Model>): Boolean {
-//        return try {
-//            super.removeModels(list)
-//        } finally {
-//            removeSelected(list)
-//        }
-//    }
-
     private fun removeSelected(list: List<Model>) {
         if (list.isNotEmpty()) {
             val selectedItemsGoingToRemove =
@@ -228,10 +218,10 @@ interface ISelectableAdapter<Parent, Model: SelectableAdapterParentViewModel<out
 
             if (selectedItemsGoingToRemove.isNotEmpty()) {
                 selectedItemsGoingToRemove.forEach { model ->
-                    model.setSelected(false, notifyItem = false)
+                    model.isSelected = false
                 }
 
-                notifyItemsSelected(selectedItemsGoingToRemove, isSelectedByUser = true)
+                notifyModelsSelected(selectedItemsGoingToRemove, isSelectedByUser = true)
                 selectedList.removeAll(selectedItemsGoingToRemove)
                 notifyItemsRemoved(selectedItemsGoingToRemove)
 

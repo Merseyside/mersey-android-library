@@ -10,8 +10,9 @@ import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.ComparableAdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 
-interface ISortedAdapter<Parent, Model : ComparableAdapterParentViewModel<out Parent, Parent>>
-    : IBaseAdapter<Parent, Model>, AdapterPrioritizedListActions<Parent, Model> {
+interface ISortedAdapter<Parent, Model>
+    : IBaseAdapter<Parent, Model>, AdapterPrioritizedListActions<Parent, Model>
+        where Model : ComparableAdapterParentViewModel<out Parent, Parent> {
 
     val sortedList: SortedList<Model>
     override val delegate: AdapterPrioritizedListChangeDelegate<Parent, Model>
@@ -41,7 +42,11 @@ interface ISortedAdapter<Parent, Model : ComparableAdapterParentViewModel<out Pa
 
     @InternalAdaptersApi
     override fun addModels(models: List<Model>) {
-        sortedList.batchedUpdate { addAll(models) }
+        sortedList.batchedUpdate {
+            models.forEach { model ->
+                addModel(model)
+            }
+        }
     }
 
     override fun removeModel(model: Model): Boolean {

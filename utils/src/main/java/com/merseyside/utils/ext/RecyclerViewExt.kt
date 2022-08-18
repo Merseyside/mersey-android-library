@@ -47,7 +47,7 @@ fun RecyclerView.smoothScrollToEnd() {
 
 inline fun <reified Adapter : RecyclerView.Adapter<VH>,
         VH : RecyclerView.ViewHolder> RecyclerView.getOrCreateAdapter(
-    initBlock: () -> Adapter
+    initBlock: RecyclerView.() -> Adapter
 ): Adapter {
     return if (adapter == null) {
         return initBlock().also { adapter = it }
@@ -55,4 +55,9 @@ inline fun <reified Adapter : RecyclerView.Adapter<VH>,
         if (adapter is Adapter) adapter as Adapter
         else throw IllegalArgumentException()
     }
+}
+
+inline fun <reified Adapter : RecyclerView.Adapter<VH>,
+        VH : RecyclerView.ViewHolder> RecyclerView.requireAdapter(): Adapter {
+    return adapter as Adapter
 }

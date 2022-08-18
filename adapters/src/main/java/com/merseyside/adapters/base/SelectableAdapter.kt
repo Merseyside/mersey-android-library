@@ -1,12 +1,11 @@
-@file:OptIn(InternalAdaptersApi::class)
-
 package com.merseyside.adapters.base
 
 import com.merseyside.adapters.callback.OnItemSelectedListener
 import com.merseyside.adapters.callback.OnSelectEnabledListener
-import com.merseyside.adapters.interfaces.ISelectableAdapter
+import com.merseyside.adapters.interfaces.selectable.ISelectableAdapter
+import com.merseyside.adapters.interfaces.selectable.SelectableMode
 import com.merseyside.adapters.model.SelectableAdapterViewModel
-import com.merseyside.adapters.utils.InternalAdaptersApi
+import com.merseyside.merseyLib.kotlin.logger.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -18,7 +17,6 @@ abstract class SelectableAdapter<Item, Model: SelectableAdapterViewModel<Item>>(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 ) : SortedAdapter<Item, Model>(scope), ISelectableAdapter<Item, Model> {
 
-    enum class SelectableMode { SINGLE, MULTIPLE }
     internal var groupAdapter: Boolean = false
     override var selectFirstOnAdd: Boolean = false
         get() {
@@ -37,7 +35,7 @@ abstract class SelectableAdapter<Item, Model: SelectableAdapterViewModel<Item>>(
                 if (value == SelectableMode.SINGLE) {
                     if (selectedList.size > 1) {
                         (1 until selectedList.size).forEach { index ->
-                            selectedList[index].setSelected(false)
+                            selectedList[index].isSelected = false
                         }
 
                         selectedList = mutableListOf(selectedList.first())
@@ -55,11 +53,17 @@ abstract class SelectableAdapter<Item, Model: SelectableAdapterViewModel<Item>>(
 
                 if (models.isNotEmpty()) {
                     models.forEach { model ->
-                        model.setSelectEnabled(value)
+                        model.isSelectable = value
                     }
                 }
             }
         }
+
+    override val internalSelectCallback: (Model) -> Unit = { model ->
+        if (this.isSelectEnabled) {
+            setModelSelected(model, true)
+        }
+    }
 
     override val selectedListeners: MutableList<OnItemSelectedListener<Item>> = ArrayList()
     override var onSelectEnableListener: OnSelectEnabledListener? = null
@@ -68,8 +72,8 @@ abstract class SelectableAdapter<Item, Model: SelectableAdapterViewModel<Item>>(
 
     override var isGroupAdapter: Boolean = false
 
-    override fun setItemSelected(model: Model?, isSelectedByUser: Boolean): Boolean {
-        return if (super.setItemSelected(model, isSelectedByUser)) {
+    override fun setModelSelected(model: Model?, isSelectedByUser: Boolean): Boolean {
+        return if (super.setModelSelected(model, isSelectedByUser)) {
             recyclerView?.invalidateItemDecorations()
             true
         } else false

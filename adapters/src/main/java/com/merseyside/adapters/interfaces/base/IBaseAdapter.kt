@@ -19,8 +19,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.sync.Mutex
 
 @SuppressLint("NotifyDataSetChanged")
-interface IBaseAdapter<Parent, Model : AdapterParentViewModel<out Parent, Parent>> :
-    HasOnItemClickListener<Parent>, AdapterListActions<Parent, Model>, Locker {
+interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>, Locker,
+    HasOnItemClickListener<Parent>
+        where Model : AdapterParentViewModel<out Parent, Parent> {
 
     val delegate: AdapterListChangeDelegate<Parent, Model>
 
@@ -128,7 +129,8 @@ interface IBaseAdapter<Parent, Model : AdapterParentViewModel<out Parent, Parent
     fun onPayloadable(
         holder: TypedBindingHolder<Model>,
         payloads: List<AdapterParentViewModel.Payloadable>
-    ) {}
+    ) {
+    }
 
 
     fun getItemsCount(): Int {

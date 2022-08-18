@@ -1,25 +1,26 @@
 @file:OptIn(InternalAdaptersApi::class)
-
-package com.merseyside.adapters.interfaces
+package com.merseyside.adapters.interfaces.nested
 
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
-import com.merseyside.adapters.base.SortedAdapter
+import com.merseyside.adapters.feature.filter.interfaces.Filterable
 import com.merseyside.adapters.interfaces.base.IBaseAdapter
+import com.merseyside.adapters.interfaces.sorted.ISortedAdapter
 import com.merseyside.adapters.model.AdapterParentViewModel
-import com.merseyside.adapters.model.ExpandableAdapterParentViewModel
+import com.merseyside.adapters.model.NestedAdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
 import com.merseyside.merseyLib.kotlin.extensions.remove
 
-interface IExpandableAdapter<Parent, Model : ExpandableAdapterParentViewModel<out Parent, Parent, InnerData>,
+interface INestedAdapter<Parent, Model : NestedAdapterParentViewModel<out Parent, Parent, InnerData>,
         InnerData, InnerAdapter : IBaseAdapter<InnerData, out AdapterParentViewModel<out InnerData, InnerData>>>
-    : ISelectableAdapter<Parent, Model> {
+    : ISortedAdapter<Parent, Model> {
+
     var adapterList: MutableList<Pair<Model, InnerAdapter>>
 
-    fun initExpandableList(model: Model): InnerAdapter
-    fun getExpandableView(binding: ViewDataBinding): RecyclerView?
+    fun initNestedAdapter(model: Model): InnerAdapter
+    fun getNestedView(binding: ViewDataBinding): RecyclerView?
 
     override fun update(updateRequest: UpdateRequest<Parent>): Boolean {
         if (updateRequest.isDeleteOld) {
@@ -49,68 +50,6 @@ interface IExpandableAdapter<Parent, Model : ExpandableAdapterParentViewModel<ou
         }
     }
 
-
-//    override fun setFilter(query: String): Int {
-//        return try {
-//            super.setFilter(query)
-//        } finally {
-//            if (query.isEmpty()) {
-//                models.forEach { model ->
-//                    val adapter = getAdapterIfExists(model)
-//                    adapter?.setFilter(query)
-//                }
-//            }
-//        }
-//    }
-//
-//    override fun setFilter(models: List<Model>): List<Model>? {
-//        return models.filter { model ->
-//            val adapter = getAdapterIfExists(model)
-//            adapter?.let {
-//                val hasData = try {
-//                    it.setFilter(filterPattern) > 0
-//                } catch (e: NotImplementedError) {
-//                    false
-//                }
-//
-//                val passedFilter = filter(model, filterPattern)
-//                hasData || passedFilter
-//            } ?: false
-//        }.also { isFiltered = true }
-//    }
-//
-//    override fun addFilter(key: String, obj: Any) {
-//        super.addFilter(key, obj)
-//        getFilterableAdapters()
-//            .forEach { subAdapter ->
-//                subAdapter.addFilter(key, obj)
-//            }
-//    }
-//
-//    override fun removeFilter(key: String) {
-//        super.removeFilter(key)
-//        getFilterableAdapters()
-//            .forEach { subAdapter ->
-//                subAdapter.removeFilter(key)
-//            }
-//    }
-//
-//    @InternalAdaptersApi
-//    override fun applyFilters(models: List<Model>): List<Model>? {
-//        val expandableModels = super.applyFilters(models)
-//        return expandableModels?.filter { model ->
-//            val subAdapter = getAdapterIfExists(model)
-//            if (subAdapter is SortedAdapter<*, *>) {
-//                subAdapter.applyFilters() > 0
-//            } else true
-//        }
-//    }
-//
-//    override fun clearFilters() {
-//        super.clearFilters()
-//        getFilterableAdapters().forEach { it.clearFilters() }
-//    }
-
     private fun removeAdaptersByItems(list: List<Parent>) {
         val adapters = list.mapNotNull { getAdapterByItem(it) }
         adapterList.remove { adapters.find { second -> it == second } != null }
@@ -127,21 +66,20 @@ interface IExpandableAdapter<Parent, Model : ExpandableAdapterParentViewModel<ou
         return adapterList.find { it.first.areItemsTheSame(model.item) }?.second
     }
 
-    @InternalAdaptersApi
-    fun getExpandableAdapter(model: Model): InnerAdapter {
-        return getAdapterIfExists(model) ?: initExpandableList(model).also { adapter ->
+    fun getNestedAdapter(model: Model): InnerAdapter {
+        return getAdapterIfExists(model) ?: initNestedAdapter(model).also { adapter ->
             putAdapter(model, adapter)
         }
     }
 
-    private fun updateExpandableAdapters() {
+    private fun updateNestedAdapters() {
         models.forEach { model ->
-            val adapter = getExpandableAdapter(model)
-            addExpandableItems(adapter, model.getExpandableData())
+            val adapter = getNestedAdapter(model)
+            addNestedItems(adapter, model.getNestedData())
         }
     }
 
-    private fun addExpandableItems(adapter: InnerAdapter, list: List<InnerData>?) {
+    private fun addNestedItems(adapter: InnerAdapter, list: List<InnerData>?) {
         with(adapter) {
             if (isEmpty()) {
                 if (list != null) {
@@ -153,10 +91,10 @@ interface IExpandableAdapter<Parent, Model : ExpandableAdapterParentViewModel<ou
         }
     }
 
-    private fun getFilterableAdapters(): List<SortedAdapter<InnerData, *>> {
+    private fun getFilterableAdapters(): List<Filterable<InnerData, *>> {
         return adapterList
             .map { it.second }
-            .filterIsInstance<SortedAdapter<InnerData, *>>()
+            .filterIsInstance<Filterable<InnerData, *>>()
     }
 
     fun onAdaptersRemoved(adapters: List<InnerAdapter>) {}
@@ -187,10 +125,10 @@ interface IExpandableAdapter<Parent, Model : ExpandableAdapterParentViewModel<ou
 
     private fun addModelsToAdapters(list: List<Model>) {
         list.forEach { model ->
-            val adapter = getExpandableAdapter(model)
-            val data = model.getExpandableData()
+            val adapter = getNestedAdapter(model)
+            val data = model.getNestedData()
 
-            addExpandableItems(adapter, data)
+            addNestedItems(adapter, data)
         }
     }
 
@@ -198,8 +136,8 @@ interface IExpandableAdapter<Parent, Model : ExpandableAdapterParentViewModel<ou
         val isUpdated = super.updateModel(model, item)
 
         if (isUpdated) {
-            val adapter = getExpandableAdapter(model)
-            model.getExpandableData().isNotNullAndEmpty {
+            val adapter = getNestedAdapter(model)
+            model.getNestedData().isNotNullAndEmpty {
                 adapter.update(this)
             }
         }
