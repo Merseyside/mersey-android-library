@@ -40,11 +40,19 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
 
             override fun onFilterStateChanged(isFiltered: Boolean) {
                 if (!isFiltered) {
-                    addModels(allModelList)
+                    listChangeDelegate.addModels(allModelList)
                     mutAllModelList.clear()
                 }
             }
         })
+    }
+
+    override fun createModel(item: Parent): Model {
+        return listChangeDelegate.createModel(item)
+    }
+
+    override fun createModels(items: List<Parent>): List<Model> {
+        return listChangeDelegate.createModels(items)
     }
 
     override fun add(items: List<Parent>): List<Model> {
@@ -52,9 +60,9 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
             return if (!isFiltered) {
                 listChangeDelegate.add(items)
             } else {
-                val models = createModels(items)
+                val models = listChangeDelegate.createModels(items)
                 mutAllModelList.addAll(models)
-                addModels(filter(models))
+                listChangeDelegate.addModels(filter(models))
             }
         }
     }
@@ -70,10 +78,14 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
         }
     }
 
+    override fun findOldItems(newItems: List<Parent>, models: List<Model>): Set<Model> {
+        return listChangeDelegate.findOldItems(newItems, models)
+    }
+
     override fun removeOldItems(items: List<Parent>, models: List<Model>): Boolean {
         val modelsToRemove = findOldItems(items, mutAllModelList)
         mutAllModelList.removeAll(modelsToRemove)
-        return super.removeOldItems(items, models)
+        return listChangeDelegate.removeOldItems(items, models)
     }
 
     override fun removeAll() {
@@ -82,7 +94,7 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
     }
 
     override fun tryToUpdateWithItem(item: Parent): Model? {
-        var model = super.tryToUpdateWithItem(item)
+        var model = listChangeDelegate.tryToUpdateWithItem(item)
         return if (model == null) {
             model = getModelByItem(item, mutAllModelList)
             model?.also { it.payload(item) }
@@ -94,8 +106,8 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
     }
 
     private fun update(models: List<Model>) {
-        super.removeOldItems(models.map { it.item }, filteredList)
-        super.addModels(models)
+        listChangeDelegate.removeOldItems(models.map { it.item }, filteredList)
+        listChangeDelegate.addModels(models)
     }
 
     protected fun isFiltered() = filterFeature.isFiltered

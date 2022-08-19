@@ -50,4 +50,56 @@ abstract class ListChangeDelegate<Parent, Model : AdapterParentViewModel<out Par
 
         return isUpdated
     }
+
+    internal fun addModel(model: Model): Model {
+        listActions.addModel(model)
+        return model
+    }
+
+    internal fun addModels(models: List<Model>): List<Model> {
+        listActions.addModels(models)
+        return models
+    }
+
+    protected fun removeModels(models: List<Model>) {
+        models.forEach { removeModel(it) }
+    }
+
+    protected fun removeModel(model: Model): Boolean {
+        return listActions.removeModel(model)
+    }
+
+    protected open fun updateModel(model: Model, item: Parent): Boolean {
+        return listActions.updateModel(model, item)
+    }
+
+    /**
+     * @return model if it have been updated, null otherwise
+     */
+    override fun tryToUpdateWithItem(item: Parent): Model? {
+        val model = getModelByItem(item)
+        return model?.also {
+            updateModel(model, item)
+        }
+    }
+
+    override fun findOldItems(newItems: List<Parent>, models: List<Model>): Set<Model> {
+        return models.subtractBy(newItems) { oldModel, newItem ->
+            oldModel.deletable && oldModel.areItemsTheSame(newItem)
+        }
+    }
+
+    override fun removeOldItems(items: List<Parent>, models: List<Model>): Boolean {
+        val modelsToRemove = findOldItems(items, models)
+        removeModels(modelsToRemove.toList())
+        return modelsToRemove.isNotEmpty()
+    }
+
+    override fun createModel(item: Parent): Model {
+        return listActions.modelProvider(item)
+    }
+
+    override fun createModels(items: List<Parent>): List<Model> {
+        return items.map { item -> createModel(item) }
+    }
 }

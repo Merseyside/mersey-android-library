@@ -62,6 +62,4 @@ internal class FilterPositionListChangeDelegate<Parent, Model : AdapterParentVie
         }
     }
 
-
-
 }

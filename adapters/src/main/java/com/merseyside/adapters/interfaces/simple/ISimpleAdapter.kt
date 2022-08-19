@@ -60,7 +60,7 @@ interface ISimpleAdapter<Parent, Model : AdapterParentViewModel<out Parent, Pare
 
 
     fun notifyPositionsChanged(startsWithPosition: Int) {
-        if (startsWithPosition < adapter.itemCount - 1) {
+        if (startsWithPosition < getLastPositionIndex()) {
             (startsWithPosition until adapter.itemCount).forEach { index ->
                 models[index].onPositionChanged(index)
             }
@@ -70,7 +70,7 @@ interface ISimpleAdapter<Parent, Model : AdapterParentViewModel<out Parent, Pare
     @InternalAdaptersApi
     override fun addModel(model: Model) {
         mutModels.add(model)
-        adapter.notifyItemInserted(getItemsCount() - 1)
+        adapter.notifyItemInserted(getLastPositionIndex())
     }
 
     @InternalAdaptersApi
