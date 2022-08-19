@@ -2,16 +2,14 @@
 
 package com.merseyside.adapters.base
 
-import android.view.LayoutInflater
-import android.view.ViewGroup
 import androidx.annotation.CallSuper
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.callback.HasOnItemClickListener
 import com.merseyside.adapters.callback.OnItemClickListener
+import com.merseyside.adapters.feature.filter.FilterListChangeDelegate
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.interfaces.base.IBaseAdapter
+import com.merseyside.adapters.listDelegates.ListChangeDelegate
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.AdapterViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
@@ -21,20 +19,21 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.sync.Mutex
 
 @InternalAdaptersApi
-abstract class BaseAdapter<Item, Model : AdapterViewModel<Item>>
+abstract class BaseAdapter<Parent, Model>
     : RecyclerView.Adapter<TypedBindingHolder<Model>>(),
-    ItemCallback<AdapterViewModel<Item>>,
-    HasOnItemClickListener<Item>,
-    IBaseAdapter<Item, Model>, Locker {
+    ItemCallback<AdapterViewModel<Parent>>,
+    HasOnItemClickListener<Parent>,
+    IBaseAdapter<Parent, Model>, Locker
+    where Model : AdapterParentViewModel<out Parent, Parent> {
 
     override val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>
         get() = this
 
     protected var isRecyclable: Boolean = true
 
-    override var listener: OnItemClickListener<Item>? = null
+    override var listener: OnItemClickListener<Parent>? = null
 
-    private val bindItemList: MutableList<Model> = ArrayList()
+    internal val bindItemList: MutableList<Model> = ArrayList()
     protected var recyclerView: RecyclerView? = null
 
     override var addJob: Job? = null
@@ -43,42 +42,17 @@ abstract class BaseAdapter<Item, Model : AdapterViewModel<Item>>
     override val lock = Any()
     override val mutex: Mutex = Mutex()
 
-    override val modelProvider: (Item) -> Model = ::createModel
+    override val modelProvider: (Parent) -> Model = ::createModel
 
-    protected abstract fun getLayoutIdForPosition(position: Int): Int
-    protected abstract fun getBindingVariable(): Int
-    protected abstract fun createItemViewModel(item: Item): Model
+    internal abstract val defaultDelegate: ListChangeDelegate<Parent, Model>
+    internal abstract val filterDelegate: FilterListChangeDelegate<Parent, Model>
+
+    @InternalAdaptersApi
+    abstract fun createModel(item: Parent): Model
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         this.recyclerView = recyclerView
         super.onAttachedToRecyclerView(recyclerView)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TypedBindingHolder<Model> {
-        val layoutInflater: LayoutInflater = LayoutInflater.from(parent.context)
-        val binding: ViewDataBinding =
-            DataBindingUtil.inflate(layoutInflater, viewType, parent, false)
-
-        return getBindingHolder(binding)
-    }
-
-    open fun getBindingHolder(binding: ViewDataBinding): TypedBindingHolder<Model> {
-        return TypedBindingHolder(binding)
-    }
-
-    @CallSuper
-    override fun onBindViewHolder(holder: TypedBindingHolder<Model>, position: Int) {
-        val model = getModelByPosition(position)
-        model.onPositionChanged(position)
-
-        bindItemList.add(model)
-
-        listener?.let { model.setOnItemClickListener(it) }
-        bind(holder, model)
-
-        if (!isRecyclable || isRecyclable && !holder.isRecyclable) {
-            holder.setIsRecyclable(isRecyclable)
-        }
     }
 
     override fun onBindViewHolder(
@@ -98,45 +72,21 @@ abstract class BaseAdapter<Item, Model : AdapterViewModel<Item>>
     }
 
     @CallSuper
-    internal open fun bind(holder: TypedBindingHolder<Model>, model: Model) {
-        holder.bind(getBindingVariable(), model)
-    }
+    override fun onViewRecycled(holder: TypedBindingHolder<Model>) {
+        super.onViewRecycled(holder)
+        if (holder.absoluteAdapterPosition != RecyclerView.NO_POSITION && holder.absoluteAdapterPosition < itemCount) {
 
-    override fun getItemViewType(position: Int): Int {
-        return getLayoutIdForPosition(position)
-    }
-
-//    @CallSuper
-//    override fun onViewRecycled(holder: TypedBindingHolder<Model>) {
-//        super.onViewRecycled(holder)
-//        if (holder.absoluteAdapterPosition != RecyclerView.NO_POSITION && holder.absoluteAdapterPosition < itemCount) {
-//
-//            getModelByPosition(holder.absoluteAdapterPosition).apply {
-//                bindItemList.remove(this)
-//                listener?.let {
-//                    removeOnItemClickListener(it)
-//                }
-//                onRecycled()
-//            }
-//        }
-//    }
-
-    @InternalAdaptersApi
-    override fun createModel(item: Item): Model {
-        return initItemViewModel(item)
-    }
-
-    internal open fun initItemViewModel(item: Item): Model {
-        return createItemViewModel(item).apply {
-            setItemPositionInterface(this@BaseAdapter)
+            getModelByPosition(holder.absoluteAdapterPosition).apply {
+                bindItemList.remove(this)
+                listener?.let {
+                    removeOnItemClickListener(it)
+                }
+                onRecycled()
+            }
         }
     }
 
     open fun removeListeners() {
         listener = null
-    }
-
-    companion object {
-        const val NO_ITEM = -1
     }
 }

@@ -19,8 +19,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.sync.Mutex
 
 @SuppressLint("NotifyDataSetChanged")
-interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>, Locker,
-    HasOnItemClickListener<Parent>
+interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
+    Locker, HasOnItemClickListener<Parent>
         where Model : AdapterParentViewModel<out Parent, Parent> {
 
     val delegate: AdapterListChangeDelegate<Parent, Model>
@@ -34,14 +34,6 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>, Locke
     override val mutex: Mutex
 
     val lock: Any
-
-    @InternalAdaptersApi
-    fun createModels(items: List<Parent>): List<Model> {
-        return items.map { createModel(it) }
-    }
-
-    @InternalAdaptersApi
-    fun createModel(item: Parent): Model
 
     @CallSuper
     fun add(item: Parent) {
@@ -129,13 +121,12 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>, Locke
     fun onPayloadable(
         holder: TypedBindingHolder<Model>,
         payloads: List<AdapterParentViewModel.Payloadable>
-    ) {
-    }
+    ) {}
 
 
-    fun getItemsCount(): Int {
-        return models.size
-    }
+    fun getItemsCount() = models.size
+
+    fun getLastPositionIndex(): Int = getItemsCount() - 1
 
     fun getItemByPosition(position: Int): Parent {
         return getModelByPosition(position).item
@@ -194,7 +185,7 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>, Locke
     @Throws(IndexOutOfBoundsException::class)
     fun last(): Parent {
         try {
-            return getModelByPosition(adapter.itemCount - 1).item
+            return getModelByPosition(getLastPositionIndex()).item
         } catch (e: Exception) {
             throw IndexOutOfBoundsException("List is empty")
         }

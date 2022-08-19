@@ -1,4 +1,4 @@
-package com.merseyside.adapters.base
+package com.merseyside.adapters.single
 
 import android.annotation.SuppressLint
 import android.os.Bundle

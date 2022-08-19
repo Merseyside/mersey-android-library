@@ -13,7 +13,7 @@ import androidx.annotation.IdRes
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.merseyside.adapters.base.SimpleAdapter
+import com.merseyside.adapters.single.SimpleAdapter
 import com.merseyside.archy.R
 import com.merseyside.archy.databinding.ViewFloatingListBinding
 import com.merseyside.utils.delegate.getValue

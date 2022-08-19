@@ -6,20 +6,22 @@ import com.merseyside.adapters.extensions.getAll
 import com.merseyside.adapters.extensions.recalculatePositions
 import com.merseyside.adapters.feature.compare.Comparator
 import com.merseyside.adapters.feature.filter.FilterPrioritizedListChangeDelegate
-import com.merseyside.adapters.feature.filter.interfaces.FilterFeature
-import com.merseyside.adapters.feature.filter.interfaces.Filterable
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.interfaces.sorted.ISortedAdapter
 import com.merseyside.adapters.listDelegates.PrioritizedListChangeDelegate
 import com.merseyside.adapters.listDelegates.interfaces.AdapterPrioritizedListChangeDelegate
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.ComparableAdapterParentViewModel
+import com.merseyside.adapters.utils.InternalAdaptersApi
+import com.merseyside.adapters.utils.getFilter
+import com.merseyside.adapters.utils.isFilterable
 import com.merseyside.adapters.utils.list.createSortedListCallback
 import com.merseyside.utils.reflection.ReflectionUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
+@OptIn(InternalAdaptersApi::class)
 abstract class SortedCompositeAdapter<Parent, Model : ComparableAdapterParentViewModel<out Parent, Parent>>(
     delegatesManager: DelegatesManager<Parent, Model> = DelegatesManager(),
     override val scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
@@ -37,6 +39,7 @@ abstract class SortedCompositeAdapter<Parent, Model : ComparableAdapterParentVie
             field = value
         }
 
+    @OptIn(InternalAdaptersApi::class)
     private val defaultComparator: (model1: Model, model2: Model) -> Int = { model1, model2 ->
         val priority = comparePriority(model1, model2)
         if (priority == 0) model1.compareTo(model2.item)
@@ -60,12 +63,16 @@ abstract class SortedCompositeAdapter<Parent, Model : ComparableAdapterParentVie
     override val models: List<Model>
         get() = sortedList.getAll()
 
+    override val defaultDelegate: PrioritizedListChangeDelegate<Parent, Model> by lazy {
+        PrioritizedListChangeDelegate(this)
+    }
+
+    override val filterDelegate: FilterPrioritizedListChangeDelegate<Parent, Model> by lazy {
+        FilterPrioritizedListChangeDelegate(defaultDelegate, getFilter())
+    }
+
     override val delegate: AdapterPrioritizedListChangeDelegate<Parent, Model> by lazy {
-        if (this is Filterable<*, *>) FilterPrioritizedListChangeDelegate(
-            this,
-            filter as FilterFeature<Parent, Model>
-        )
-        else PrioritizedListChangeDelegate(this)
+        if (isFilterable()) filterDelegate else defaultDelegate
     }
 
     override fun onBindViewHolder(
@@ -82,10 +89,6 @@ abstract class SortedCompositeAdapter<Parent, Model : ComparableAdapterParentVie
         } else {
             super.onBindViewHolder(holder, position, payloads)
         }
-    }
-
-    private fun comparePriority(o1: Model, o2: Model): Int {
-        return o1.priority.compareTo(o2.priority)
     }
 
     private val persistentClass: Class<Model> =

@@ -2,7 +2,7 @@ package com.merseyside.merseyLib.features.adapters.contacts.adapter
 
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
-import com.merseyside.adapters.base.NestedAdapter
+import com.merseyside.adapters.single.NestedAdapter
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.databinding.ItemGroupContactBinding

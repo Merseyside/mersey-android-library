@@ -1,6 +1,6 @@
 package com.merseyside.adapters.utils
 
-import com.merseyside.adapters.base.SelectableAdapter
+import com.merseyside.adapters.single.SelectableAdapter
 import com.merseyside.adapters.callback.HasOnItemSelectedListener
 import com.merseyside.adapters.callback.OnItemSelectedListener
 import com.merseyside.adapters.interfaces.selectable.ISelectableAdapter

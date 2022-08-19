@@ -1,6 +1,6 @@
 package com.merseyside.merseyLib.features.adapters.colors.adapter
 
-import com.merseyside.adapters.base.SortedAdapter
+import com.merseyside.adapters.single.SortedAdapter
 import com.merseyside.adapters.extensions.onItemClicked
 import com.merseyside.adapters.feature.filter.interfaces.Filterable
 import com.merseyside.merseyLib.BR

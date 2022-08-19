@@ -11,7 +11,8 @@ import com.merseyside.adapters.model.ComparableAdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 
 interface ISortedAdapter<Parent, Model>
-    : IBaseAdapter<Parent, Model>, AdapterPrioritizedListActions<Parent, Model>
+    : IBaseAdapter<Parent, Model>,
+    AdapterPrioritizedListActions<Parent, Model>
         where Model : ComparableAdapterParentViewModel<out Parent, Parent> {
 
     val sortedList: SortedList<Model>
@@ -57,5 +58,4 @@ interface ISortedAdapter<Parent, Model>
         sortedList.clear()
         adapter.notifyDataSetChanged()
     }
-
 }

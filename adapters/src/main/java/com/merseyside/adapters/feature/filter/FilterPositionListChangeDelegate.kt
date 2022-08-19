@@ -2,24 +2,28 @@ package com.merseyside.adapters.feature.filter
 
 import com.merseyside.adapters.feature.filter.interfaces.FilterFeature
 import com.merseyside.adapters.interfaces.simple.AdapterPositionListActions
+import com.merseyside.adapters.listDelegates.PositionListChangeDelegate
 import com.merseyside.adapters.listDelegates.interfaces.AdapterPositionListChangeDelegate
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.merseyLib.kotlin.logger.ILogger
 
 internal class FilterPositionListChangeDelegate<Parent, Model : AdapterParentViewModel<out Parent, Parent>>(
-    override val listActions: AdapterPositionListActions<Parent, Model>,
-    filterFeature: FilterFeature<Parent, Model>
+    override val listChangeDelegate: PositionListChangeDelegate<Parent, Model>,
+    override val filterFeature: FilterFeature<Parent, Model>
 ) : FilterListChangeDelegate<Parent, Model>(filterFeature),
     AdapterPositionListChangeDelegate<Parent, Model>, ILogger {
+
+    override val listActions: AdapterPositionListActions<Parent, Model>
+        get() = listChangeDelegate.listActions
 
     override fun add(position: Int, item: Parent) {
         with(filterFeature) {
             val model = createModel(item)
             if (isFiltered()) {
-                if (isValidPosition(position, allModelList)) {
+                if (listChangeDelegate.isValidPosition(position, allModelList)) {
                     mutAllModelList.add(position, model)
 
-                    if (filter(model) != null) {
+                    if (filter(model)) {
                         val filteredPosition = calculatePositionInFilteredList(position)
                         listActions.addModelByPosition(filteredPosition, model)
                     }
@@ -57,5 +61,7 @@ internal class FilterPositionListChangeDelegate<Parent, Model : AdapterParentVie
             else pos
         }
     }
+
+
 
 }

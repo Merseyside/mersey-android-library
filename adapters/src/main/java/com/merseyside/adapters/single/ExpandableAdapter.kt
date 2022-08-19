@@ -1,4 +1,4 @@
-package com.merseyside.adapters.base
+package com.merseyside.adapters.single
 
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.callback.OnItemExpandedListener

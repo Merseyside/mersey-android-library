@@ -15,7 +15,7 @@ import com.merseyside.merseyLib.kotlin.extensions.remove
 
 interface INestedAdapter<Parent, Model : NestedAdapterParentViewModel<out Parent, Parent, InnerData>,
         InnerData, InnerAdapter : IBaseAdapter<InnerData, out AdapterParentViewModel<out InnerData, InnerData>>>
-    : ISortedAdapter<Parent, Model> {
+    : ISortedAdapter<Parent, Model>, AdapterNestedListActions<Parent, Model, InnerAdapter> {
 
     var adapterList: MutableList<Pair<Model, InnerAdapter>>
 
@@ -66,15 +66,9 @@ interface INestedAdapter<Parent, Model : NestedAdapterParentViewModel<out Parent
         return adapterList.find { it.first.areItemsTheSame(model.item) }?.second
     }
 
-    fun getNestedAdapter(model: Model): InnerAdapter {
-        return getAdapterIfExists(model) ?: initNestedAdapter(model).also { adapter ->
-            putAdapter(model, adapter)
-        }
-    }
-
     private fun updateNestedAdapters() {
         models.forEach { model ->
-            val adapter = getNestedAdapter(model)
+            val adapter = getNestedAdapterByModel(model)
             addNestedItems(adapter, model.getNestedData())
         }
     }
@@ -117,6 +111,12 @@ interface INestedAdapter<Parent, Model : NestedAdapterParentViewModel<out Parent
 
     /* Models list actions */
 
+    override fun getNestedAdapterByModel(model: Model): InnerAdapter {
+        return getAdapterIfExists(model) ?: initNestedAdapter(model).also { adapter ->
+            putAdapter(model, adapter)
+        }
+    }
+
     @InternalAdaptersApi
     override fun addModels(models: List<Model>) {
         super.addModels(models)
@@ -125,7 +125,7 @@ interface INestedAdapter<Parent, Model : NestedAdapterParentViewModel<out Parent
 
     private fun addModelsToAdapters(list: List<Model>) {
         list.forEach { model ->
-            val adapter = getNestedAdapter(model)
+            val adapter = getNestedAdapterByModel(model)
             val data = model.getNestedData()
 
             addNestedItems(adapter, data)
@@ -136,7 +136,7 @@ interface INestedAdapter<Parent, Model : NestedAdapterParentViewModel<out Parent
         val isUpdated = super.updateModel(model, item)
 
         if (isUpdated) {
-            val adapter = getNestedAdapter(model)
+            val adapter = getNestedAdapterByModel(model)
             model.getNestedData().isNotNullAndEmpty {
                 adapter.update(this)
             }

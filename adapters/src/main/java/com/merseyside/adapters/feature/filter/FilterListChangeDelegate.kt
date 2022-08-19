@@ -1,19 +1,27 @@
 package com.merseyside.adapters.feature.filter
 
 import com.merseyside.adapters.feature.filter.interfaces.FilterFeature
-import com.merseyside.adapters.listDelegates.DefaultListChangeDelegate
+import com.merseyside.adapters.interfaces.base.AdapterListActions
+import com.merseyside.adapters.listDelegates.BaseListChangeDelegate
+import com.merseyside.adapters.listDelegates.ListChangeDelegate
 import com.merseyside.adapters.model.AdapterParentViewModel
+import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.merseyLib.kotlin.logger.ILogger
 
 abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<out Parent, Parent>>(
-    protected val filterFeature: FilterFeature<Parent, Model>
-) : DefaultListChangeDelegate<Parent, Model>(), ILogger {
+    filterFeature: FilterFeature<Parent, Model>
+) : BaseListChangeDelegate<Parent, Model>(), ILogger {
+
+    abstract val filterFeature: FilterFeature<Parent, Model>
+
+    protected abstract val listChangeDelegate: ListChangeDelegate<Parent, Model>
+
+    override val listActions: AdapterListActions<Parent, Model>
+        get() = listChangeDelegate.listActions
 
     protected val mutAllModelList: MutableList<Model> = ArrayList()
     protected val allModelList: List<Model> = mutAllModelList
-        get() {
-            return field.ifEmpty { getModels() }
-        }
+        get() = field.ifEmpty { getModels() }
 
     protected val filteredList: List<Model>
         get() = getModels()
@@ -32,7 +40,7 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
 
             override fun onFilterStateChanged(isFiltered: Boolean) {
                 if (!isFiltered) {
-                    addModels(allModelList.log("all models list"))
+                    addModels(allModelList)
                     mutAllModelList.clear()
                 }
             }
@@ -42,7 +50,7 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
     override fun add(items: List<Parent>): List<Model> {
         with(filterFeature) {
             return if (!isFiltered) {
-                super.add(items)
+                listChangeDelegate.add(items)
             } else {
                 val models = createModels(items)
                 mutAllModelList.addAll(models)
@@ -53,7 +61,7 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
 
     override fun remove(item: Parent): Model? {
         with(filterFeature) {
-            return super.remove(item).also {
+            return listChangeDelegate.remove(item).also {
                 if (isFiltered) {
                     val model = it ?: getModelByItem(item, mutAllModelList)
                     model?.let { mutAllModelList.remove(model) }
@@ -69,7 +77,7 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
     }
 
     override fun removeAll() {
-        super.removeAll()
+        listChangeDelegate.removeAll()
         mutAllModelList.clear()
     }
 
@@ -79,6 +87,10 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
             model = getModelByItem(item, mutAllModelList)
             model?.also { it.payload(item) }
         } else model
+    }
+
+    override fun update(updateRequest: UpdateRequest<Parent>): Boolean {
+        return listChangeDelegate.update(updateRequest)
     }
 
     private fun update(models: List<Model>) {

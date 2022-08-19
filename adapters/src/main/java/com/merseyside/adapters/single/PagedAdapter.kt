@@ -1,4 +1,4 @@
-package com.merseyside.adapters.base
+package com.merseyside.adapters.single
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

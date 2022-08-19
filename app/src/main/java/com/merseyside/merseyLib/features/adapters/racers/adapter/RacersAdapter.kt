@@ -1,6 +1,6 @@
 package com.merseyside.merseyLib.features.adapters.racers.adapter
 
-import com.merseyside.adapters.base.SortedAdapter
+import com.merseyside.adapters.single.SortedAdapter
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.animators.template.SetTextFadeOutInAnimator

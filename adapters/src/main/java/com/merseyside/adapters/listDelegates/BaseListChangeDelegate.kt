@@ -5,15 +5,9 @@ package com.merseyside.adapters.listDelegates
 import com.merseyside.adapters.listDelegates.interfaces.AdapterListChangeDelegate
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
-import com.merseyside.adapters.utils.UpdateRequest
 
-abstract class DefaultListChangeDelegate<Parent, Model : AdapterParentViewModel<out Parent, Parent>>
+abstract class BaseListChangeDelegate<Parent, Model : AdapterParentViewModel<out Parent, Parent>>
     : AdapterListChangeDelegate<Parent, Model> {
-
-    override fun add(items: List<Parent>): List<Model> {
-        val models = createModels(items)
-        return addModels(models)
-    }
 
     protected fun addModel(model: Model): Model {
         listActions.addModel(model)
@@ -25,50 +19,12 @@ abstract class DefaultListChangeDelegate<Parent, Model : AdapterParentViewModel<
         return models
     }
 
-    override fun remove(item: Parent): Model? {
-        return try {
-            val model = getModelByItem(item)
-            model?.let { removeModel(model) }
-            model
-        } catch (e: IllegalArgumentException) {
-            null
-        }
-    }
-
     protected fun removeModels(models: List<Model>) {
         models.forEach { removeModel(it) }
     }
 
     protected fun removeModel(model: Model): Boolean {
         return listActions.removeModel(model)
-    }
-
-
-    override fun removeAll() {
-        listActions.removeAll()
-    }
-
-    override fun update(updateRequest: UpdateRequest<Parent>): Boolean {
-        var isUpdated = false
-
-        with(updateRequest) {
-            if (updateRequest.isDeleteOld) {
-                isUpdated = removeOldItems(list)
-            }
-
-            val addList = ArrayList<Parent>()
-            list.forEach { item ->
-                if (tryToUpdateWithItem(item) != null) isUpdated = true
-                else addList.add(item)
-            }
-
-            if (isAddNew) {
-                add(addList)
-                if (addList.isNotEmpty()) isUpdated = true
-            }
-        }
-
-        return isUpdated
     }
 
     protected open fun updateModel(model: Model, item: Parent): Boolean {
@@ -95,6 +51,32 @@ abstract class DefaultListChangeDelegate<Parent, Model : AdapterParentViewModel<
         val modelsToRemove = findOldItems(items, models)
         removeModels(modelsToRemove.toList())
         return modelsToRemove.isNotEmpty()
+    }
+
+    fun createModel(item: Parent): Model {
+        return listActions.modelProvider(item)
+    }
+
+    fun createModels(items: List<Parent>): List<Model> {
+        return items.map { item -> createModel(item) }
+    }
+
+    fun getModels(): List<Model> = listActions.models
+
+    fun getPositionOfItem(item: Parent, models: List<Model> = getModels()): Int {
+        models.forEachIndexed { index, model ->
+            if (model.areItemsTheSame(item)) return index
+        }
+
+        throw IllegalArgumentException("No data found")
+    }
+
+    fun getModelByItem(item: Parent, models: List<Model> = getModels()): Model? {
+        return models.find { it.areItemsTheSame(item) }
+    }
+
+    fun getItemCount(): Int {
+        return getModels().size
     }
 }
 

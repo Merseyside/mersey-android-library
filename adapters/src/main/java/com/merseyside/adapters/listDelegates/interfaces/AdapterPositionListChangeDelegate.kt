@@ -9,8 +9,4 @@ interface AdapterPositionListChangeDelegate<Parent, Model : AdapterParentViewMod
 
     fun add(position: Int, items: List<Parent>)
 
-    fun isValidPosition(position: Int, models: List<Model> = getModels()): Boolean {
-        return getModels().size >= position
-    }
-
 }

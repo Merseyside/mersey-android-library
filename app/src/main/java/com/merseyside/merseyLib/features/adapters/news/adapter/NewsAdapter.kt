@@ -1,6 +1,6 @@
 package com.merseyside.merseyLib.features.adapters.news.adapter
 
-import com.merseyside.adapters.base.SimpleAdapter
+import com.merseyside.adapters.single.SimpleAdapter
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.features.adapters.news.model.News

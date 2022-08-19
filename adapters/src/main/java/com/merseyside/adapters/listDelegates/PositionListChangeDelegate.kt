@@ -7,7 +7,7 @@ import com.merseyside.adapters.utils.UpdateRequest
 
 class PositionListChangeDelegate<Parent, Model : AdapterParentViewModel<out Parent, Parent>>(
     override val listActions: AdapterPositionListActions<Parent, Model>
-) : DefaultListChangeDelegate<Parent, Model>(),
+) : ListChangeDelegate<Parent, Model>(),
     AdapterPositionListChangeDelegate<Parent, Model> {
 
     override fun add(position: Int, item: Parent) {
@@ -41,5 +41,9 @@ class PositionListChangeDelegate<Parent, Model : AdapterParentViewModel<out Pare
 
             return isUpdated
         }
+    }
+
+    fun isValidPosition(position: Int, models: List<Model> = getModels()): Boolean {
+        return getModels().size >= position
     }
 }

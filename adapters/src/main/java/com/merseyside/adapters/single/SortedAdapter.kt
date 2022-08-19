@@ -1,18 +1,18 @@
 @file:OptIn(InternalAdaptersApi::class)
-package com.merseyside.adapters.base
+package com.merseyside.adapters.single
 
 import androidx.recyclerview.widget.SortedList
 import com.merseyside.adapters.extensions.getAll
 import com.merseyside.adapters.extensions.recalculatePositions
 import com.merseyside.adapters.feature.compare.Comparator
 import com.merseyside.adapters.feature.filter.FilterPrioritizedListChangeDelegate
-import com.merseyside.adapters.feature.filter.interfaces.FilterFeature
-import com.merseyside.adapters.feature.filter.interfaces.Filterable
 import com.merseyside.adapters.interfaces.sorted.ISortedAdapter
 import com.merseyside.adapters.listDelegates.PrioritizedListChangeDelegate
 import com.merseyside.adapters.listDelegates.interfaces.AdapterPrioritizedListChangeDelegate
 import com.merseyside.adapters.model.ComparableAdapterViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
+import com.merseyside.adapters.utils.getFilter
+import com.merseyside.adapters.utils.isFilterable
 import com.merseyside.adapters.utils.list.createSortedListCallback
 import com.merseyside.merseyLib.kotlin.extensions.isZero
 import com.merseyside.utils.reflection.ReflectionUtils
@@ -20,10 +20,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST", "LeakingThis")
 abstract class SortedAdapter<Item, Model : ComparableAdapterViewModel<Item>>(
     override val scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-) : BaseAdapter<Item, Model>(), ISortedAdapter<Item, Model> {
+) : SingleAdapter<Item, Model>(), ISortedAdapter<Item, Model> {
 
     var comparator: Comparator<Item, Model>? = null
         set(value) {
@@ -60,16 +60,19 @@ abstract class SortedAdapter<Item, Model : ComparableAdapterViewModel<Item>>(
     override val models: List<Model>
         get() = sortedList.getAll()
 
+    override val defaultDelegate: PrioritizedListChangeDelegate<Item, Model> by lazy {
+        PrioritizedListChangeDelegate(this)
+    }
+
+    override val filterDelegate: FilterPrioritizedListChangeDelegate<Item, Model> by lazy {
+        FilterPrioritizedListChangeDelegate(defaultDelegate, getFilter())
+    }
+
     override val delegate: AdapterPrioritizedListChangeDelegate<Item, Model> by lazy {
-        if (this is Filterable<*, *>) FilterPrioritizedListChangeDelegate(this, filter as FilterFeature<Item, Model>)
-        else PrioritizedListChangeDelegate(this)
+        if (isFilterable()) filterDelegate else defaultDelegate
     }
 
     override fun getItemCount() = sortedList.size()
-
-    private fun comparePriority(o1: Model, o2: Model): Int {
-        return o1.priority.compareTo(o2.priority)
-    }
 
     /**
      * Any children of this class have to pass Item and Model types. Otherwise, this cast throws CastException
