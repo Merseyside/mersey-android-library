@@ -1,7 +1,6 @@
 package com.merseyside.adapters.feature.filter
 
 import com.merseyside.adapters.feature.filter.interfaces.FilterFeature
-import com.merseyside.adapters.interfaces.base.AdapterListActions
 import com.merseyside.adapters.listDelegates.BaseListChangeDelegate
 import com.merseyside.adapters.listDelegates.ListChangeDelegate
 import com.merseyside.adapters.model.AdapterParentViewModel
@@ -16,8 +15,9 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
 
     protected abstract val listChangeDelegate: ListChangeDelegate<Parent, Model>
 
-    override val listActions: AdapterListActions<Parent, Model>
-        get() = listChangeDelegate.listActions
+    override fun getModels(): List<Model> {
+        return listChangeDelegate.getModels()
+    }
 
     protected val mutAllModelList: MutableList<Model> = ArrayList()
     protected val allModelList: List<Model> = mutAllModelList

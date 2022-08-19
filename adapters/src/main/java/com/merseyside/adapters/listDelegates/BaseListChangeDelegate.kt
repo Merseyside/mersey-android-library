@@ -6,7 +6,7 @@ import com.merseyside.adapters.model.AdapterParentViewModel
 abstract class BaseListChangeDelegate<Parent, Model : AdapterParentViewModel<out Parent, Parent>>
     : AdapterListChangeDelegate<Parent, Model> {
 
-    fun getModels(): List<Model> = listActions.models
+    abstract fun getModels(): List<Model>
 
     fun getPositionOfItem(item: Parent, models: List<Model> = getModels()): Int {
         models.forEachIndexed { index, model ->

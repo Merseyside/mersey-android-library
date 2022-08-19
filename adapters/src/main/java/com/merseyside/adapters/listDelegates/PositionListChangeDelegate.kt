@@ -12,13 +12,13 @@ class PositionListChangeDelegate<Parent, Model : AdapterParentViewModel<out Pare
 
     override fun add(position: Int, item: Parent) {
         if (isValidPosition(position)) {
-            listActions.addModelByPosition(position, createModel(item))
+            addItemByPosition(position, item)
         } else throw IndexOutOfBoundsException("List size is ${getItemCount()} but adding position is $position")
     }
 
     override fun add(position: Int, items: List<Parent>) {
         if (isValidPosition(position)) {
-            listActions.addModelsByPosition(position, createModels(items))
+            addItemsByPosition(position, items)
         } else throw IndexOutOfBoundsException("List size is ${getItemCount()} but adding position is $position")
     }
 
@@ -41,6 +41,18 @@ class PositionListChangeDelegate<Parent, Model : AdapterParentViewModel<out Pare
 
             return isUpdated
         }
+    }
+
+    internal fun addModelByPosition(position: Int, model: Model) {
+        listActions.addModelByPosition(position, model)
+    }
+
+    internal fun addItemByPosition(position: Int, item: Parent) {
+        addModelByPosition(position, createModel(item))
+    }
+
+    internal fun addItemsByPosition(position: Int, items: List<Parent>) {
+        listActions.addModelsByPosition(position, createModels(items))
     }
 
     fun isValidPosition(position: Int, models: List<Model> = getModels()): Boolean {

@@ -12,7 +12,11 @@ open class PrioritizedListChangeDelegate<Parent, Model : ComparableAdapterParent
     override fun add(item: Parent, priority: Int): Model {
         validatePriority(priority)
         val model = createModel(item)
-        listActions.addModel(model, priority)
+        addModel(model, priority)
         return model
+    }
+
+    internal fun addModel(model: Model, priority: Int) {
+        listActions.addModel(model, priority)
     }
 }

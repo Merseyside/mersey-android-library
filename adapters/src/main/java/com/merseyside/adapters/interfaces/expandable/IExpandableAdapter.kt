@@ -3,17 +3,17 @@
 
 package com.merseyside.adapters.interfaces.expandable
 
+import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.callback.HasOnItemExpandedListener
-import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.interfaces.nested.INestedAdapter
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.ExpandableAdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 
-interface IExpandableAdapter<Parent, Model, InnerData,
-        InnerAdapter : IBaseAdapter<InnerData, out AdapterParentViewModel<out InnerData, InnerData>>>
+interface IExpandableAdapter<Parent, Model, InnerData, InnerAdapter>
     : INestedAdapter<Parent, Model, InnerData, InnerAdapter>, HasOnItemExpandedListener<Parent>
-        where Model : ExpandableAdapterParentViewModel<out Parent, Parent, InnerData> {
+        where Model : ExpandableAdapterParentViewModel<out Parent, Parent, InnerData>,
+              InnerAdapter : BaseAdapter<InnerData, out AdapterParentViewModel<out InnerData, InnerData>> {
 
     var expandableMode: ExpandableMode
     val internalExpandedCallback: (Model) -> Unit
@@ -104,10 +104,6 @@ interface IExpandableAdapter<Parent, Model, InnerData,
 //        super.clearFilters()
 //        getFilterableAdapters().forEach { it.clearFilters() }
 //    }
-
-    override fun addModels(models: List<Model>) {
-        super.addModels(models)
-    }
 
     override fun addModel(model: Model) {
         super.addModel(model)

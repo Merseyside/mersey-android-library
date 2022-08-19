@@ -2,12 +2,17 @@
 
 package com.merseyside.adapters.listDelegates
 
+import com.merseyside.adapters.interfaces.base.AdapterListActions
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.UpdateRequest
 
 abstract class ListChangeDelegate<Parent, Model : AdapterParentViewModel<out Parent, Parent>>
     : BaseListChangeDelegate<Parent, Model>() {
+
+    abstract val listActions: AdapterListActions<Parent, Model>
+
+    final override fun getModels(): List<Model> = listActions.models
 
     override fun add(items: List<Parent>): List<Model> {
         val models = createModels(items)

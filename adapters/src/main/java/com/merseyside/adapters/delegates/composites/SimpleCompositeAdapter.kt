@@ -1,8 +1,6 @@
 package com.merseyside.adapters.delegates.composites
 
-import androidx.recyclerview.widget.RecyclerView
-import com.merseyside.adapters.holder.TypedBindingHolder
-import com.merseyside.adapters.interfaces.base.IBaseAdapter
+import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.model.*
 
 open class SimpleCompositeAdapter : CompositeAdapter<Any, AdapterViewModel<Any>>()
@@ -14,10 +12,8 @@ open class SimpleSelectableCompositeAdapter :
 
 abstract class SimpleNestedCompositeAdapter<Data, InnerAdapter> :
     NestedCompositeAdapter<Any, NestedAdapterViewModel<Any, Data>, Data, InnerAdapter>()
-        where InnerAdapter : IBaseAdapter<Data, *>,
-              InnerAdapter : RecyclerView.Adapter<out TypedBindingHolder<out AdapterParentViewModel<out Data, Data>>>
+        where InnerAdapter : BaseAdapter<Data, *>
 
 abstract class SimpleExpandableCompositeAdapter<Data, InnerAdapter> :
     ExpandableCompositeAdapter<Any, ExpandableAdapterViewModel<Any, Data>, Data, InnerAdapter>()
-        where InnerAdapter : IBaseAdapter<Data, *>,
-              InnerAdapter : RecyclerView.Adapter<out TypedBindingHolder<out AdapterParentViewModel<out Data, Data>>>
+        where InnerAdapter : BaseAdapter<Data, *>

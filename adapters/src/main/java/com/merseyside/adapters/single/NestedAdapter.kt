@@ -1,42 +1,37 @@
 package com.merseyside.adapters.single
 
-import androidx.recyclerview.widget.RecyclerView
+import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.feature.filter.FilterNestedListChangeDelegate
 import com.merseyside.adapters.holder.TypedBindingHolder
-import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.interfaces.nested.INestedAdapter
+import com.merseyside.adapters.listDelegates.NestedListChangeDelegate
 import com.merseyside.adapters.listDelegates.interfaces.AdapterNestedListChangeDelegate
-import com.merseyside.adapters.listDelegates.interfaces.NestedListChangeDelegate
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.NestedAdapterViewModel
-import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.getFilter
 import com.merseyside.adapters.utils.isFilterable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
-@OptIn(InternalAdaptersApi::class)
 abstract class NestedAdapter<Item, Model, Data, InnerAdapter>(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 ) : SortedAdapter<Item, Model>(scope = scope),
     INestedAdapter<Item, Model, Data, InnerAdapter>
         where Model : NestedAdapterViewModel<Item, Data>,
-              InnerAdapter : RecyclerView.Adapter<out TypedBindingHolder<out AdapterParentViewModel<out Data, Data>>>,
-              InnerAdapter : IBaseAdapter<Data, out AdapterParentViewModel<out Data, Data>> {
+              InnerAdapter : BaseAdapter<Data, out AdapterParentViewModel<out Data, Data>> {
 
     override var adapterList: MutableList<Pair<Model, InnerAdapter>> = ArrayList()
 
-    override val defaultDelegate: NestedListChangeDelegate<Item, Model, InnerAdapter> by lazy {
+    override val defaultDelegate: NestedListChangeDelegate<Item, Model, Data, InnerAdapter> by lazy {
         NestedListChangeDelegate(this)
     }
 
-    @OptIn(InternalAdaptersApi::class)
-    override val filterDelegate: FilterNestedListChangeDelegate<Item, Model, InnerAdapter> by lazy {
+    override val filterDelegate: FilterNestedListChangeDelegate<Item, Model, Data, InnerAdapter> by lazy {
         FilterNestedListChangeDelegate(defaultDelegate, getFilter())
     }
 
-    override val delegate: AdapterNestedListChangeDelegate<Item, Model, InnerAdapter> by lazy {
+    override val delegate: AdapterNestedListChangeDelegate<Item, Model, Data, InnerAdapter> by lazy {
         if (isFilterable()) filterDelegate else defaultDelegate
     }
 

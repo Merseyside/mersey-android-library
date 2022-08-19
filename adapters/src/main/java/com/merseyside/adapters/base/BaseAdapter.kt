@@ -18,7 +18,6 @@ import com.merseyside.merseyLib.kotlin.concurency.Locker
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.sync.Mutex
 
-@InternalAdaptersApi
 abstract class BaseAdapter<Parent, Model>
     : RecyclerView.Adapter<TypedBindingHolder<Model>>(),
     ItemCallback<AdapterViewModel<Parent>>,
