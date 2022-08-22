@@ -3,11 +3,9 @@ package com.merseyside.archy.presentation.view.animatedCheckButton
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
-import com.merseyside.merseyLib.kotlin.logger.log
 
 @BindingAdapter("observableChecked")
 fun setChecked(button: AnimatedCheckButton, isChecked: Boolean?) {
-    "here1".log()
     if (isChecked != null && button.isChecked() != isChecked) {
         button.setForceChecked(isChecked)
     }

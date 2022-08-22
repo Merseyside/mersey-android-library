@@ -29,6 +29,17 @@ interface INestedAdapter<Parent, Model, InnerData, InnerAdapter> : ISortedAdapte
         }
     }
 
+    override fun remove(item: Parent): Boolean {
+        removeAdapterByItem(item)
+        return super.remove(item)
+    }
+
+    fun removeAdapterByItem(item: Parent): Boolean {
+        return getModelByItem(item)?.let { model ->
+            removeAdapterByModel(model)
+        } ?: false
+    }
+
     private fun putAdapter(model: Model, adapter: InnerAdapter) {
         adapterList.add(model to adapter)
     }
@@ -43,8 +54,8 @@ interface INestedAdapter<Parent, Model, InnerData, InnerAdapter> : ISortedAdapte
             .filterIsInstance<Filterable<InnerData, *>>()
     }
 
-    private fun removeAdapterByModel(model: Model) {
-        adapterList.remove { (adaptersModel, _) ->
+    private fun removeAdapterByModel(model: Model): Boolean {
+        return adapterList.remove { (adaptersModel, _) ->
             adaptersModel == model
         }
     }
@@ -54,12 +65,6 @@ interface INestedAdapter<Parent, Model, InnerData, InnerAdapter> : ISortedAdapte
     override fun getNestedAdapterByModel(model: Model): InnerAdapter {
         return getAdapterIfExists(model) ?: initNestedAdapter(model).also { adapter ->
             putAdapter(model, adapter)
-        }
-    }
-
-    override fun removeModel(model: Model): Boolean {
-        return super.removeModel(model).also {
-            removeAdapterByModel(model)
         }
     }
 }

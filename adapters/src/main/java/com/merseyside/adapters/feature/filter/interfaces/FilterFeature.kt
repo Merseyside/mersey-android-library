@@ -6,21 +6,24 @@ import com.merseyside.merseyLib.kotlin.logger.ILogger
 
 abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, Parent>> : ILogger {
 
-    private lateinit var filterCallback: FilterCallback<Model>
+    private var filterCallback: FilterCallback<Model>? = null
 
-    private val filters: Filters by lazy { mutableMapOf() }
-    private var notAppliedFilters: Filters = mutableMapOf()
+    internal val filters: Filters by lazy { mutableMapOf() }
+    internal var notAppliedFilters: Filters = mutableMapOf()
 
     var isFiltered = false
         private set(value) {
             if (value != field) {
                 field = value
-                filterCallback.onFilterStateChanged(value)
+                filterCallback?.onFilterStateChanged(value)
             }
         }
 
-    private lateinit var provideFullList: () -> List<Model>
-    private lateinit var provideFilteredList: () -> List<Model>
+    val itemsCount: Int
+        get() = provideFilteredList().size
+
+    internal var provideFullList: () -> List<Model> = { emptyList() }
+    internal var provideFilteredList: () -> List<Model> = { provideFullList() }
 
     internal fun initListProviders(
         fullListProvider: () -> List<Model>,
@@ -32,14 +35,14 @@ abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, 
     /**
      * If you pass an object as filter be sure isEquals() implemented properly.
      */
-    fun addFilter(key: String, filter: Any) {
+    open fun addFilter(key: String, filter: Any) {
         val appliedFilter = filters[key]
         if (appliedFilter != filter) {
             notAppliedFilters[key] = filter
         }
     }
 
-    fun removeFilter(key: String) {
+    open fun removeFilter(key: String) {
         val appliedFilter = filters[key]
         if (isFiltered) {
             if (appliedFilter != null) {
@@ -61,7 +64,7 @@ abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, 
     /**
      * @return true if filters applied, false otherwise.
      */
-    fun apply(): Boolean {
+    open fun apply(): Boolean {
         if (isFiltered && areFiltersEmpty()) {
             isFiltered = false
         } else if (notAppliedFilters.isEmpty()) {
@@ -86,38 +89,35 @@ abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, 
         return true
     }
 
-    private fun areFiltersEmpty(): Boolean {
+    internal fun areFiltersEmpty(): Boolean {
         return filters.isEmpty() && notAppliedFilters.isEmpty()
     }
 
     private fun postResult(models: List<Model>) {
-        filterCallback.onFiltered(models)
+        filterCallback?.onFiltered(models)
     }
 
     abstract fun filter(model: Model, key: String, filter: Any): Boolean
 
     internal fun filter(model: Model): Boolean {
-        return filter(model, filters) != null
+        return filter(model, filters)
     }
 
     internal fun filter(models: List<Model>): List<Model> {
         return filter(models, filters)
     }
 
-    internal fun filter(model: Model, filters: Filters): Model? {
-        val isFiltered = filters.all { (key, value) ->
+    internal open fun filter(model: Model, filters: Filters): Boolean {
+        return filters.all { (key, value) ->
             if (model.filterable) {
                 filter(model, key, value)
             } else true
         }
-
-        return if (isFiltered) model
-        else null
     }
 
     private fun filter(models: List<Model>, filters: Filters): List<Model> {
         return models.filter { model ->
-            filter(model, filters) != null
+            filter(model, filters)
         }
     }
 
@@ -133,6 +133,9 @@ abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, 
 
     internal fun setFilterCallback(callback: FilterCallback<Model>) {
         this.filterCallback = callback
+        if (isFiltered) {
+            callback.onFilterStateChanged(true)
+        }
     }
 
     private fun isFilterAlreadyExists(key: String): Boolean {

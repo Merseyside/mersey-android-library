@@ -4,6 +4,7 @@ import com.merseyside.adapters.feature.filter.interfaces.FilterFeature
 import com.merseyside.adapters.listDelegates.PositionListChangeDelegate
 import com.merseyside.adapters.listDelegates.interfaces.AdapterPositionListChangeDelegate
 import com.merseyside.adapters.model.AdapterParentViewModel
+import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.merseyLib.kotlin.logger.ILogger
 
 internal class FilterPositionListChangeDelegate<Parent, Model : AdapterParentViewModel<out Parent, Parent>>(
@@ -34,6 +35,10 @@ internal class FilterPositionListChangeDelegate<Parent, Model : AdapterParentVie
         items.forEachIndexed { index, parent ->
             add(position + index, parent)
         }
+    }
+
+    override fun update(models: List<Model>) {
+        update(UpdateRequest(models.map { it.item }))
     }
 
     private fun calculatePositionInFilteredList(desiredPosition: Int): Int {

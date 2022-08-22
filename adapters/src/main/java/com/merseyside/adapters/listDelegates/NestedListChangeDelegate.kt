@@ -13,20 +13,17 @@ class NestedListChangeDelegate<Parent, Model, InnerData, InnerAdapter>(
         where Model : NestedAdapterParentViewModel<out Parent, Parent, InnerData>,
               InnerAdapter : BaseAdapter<InnerData, out AdapterParentViewModel<out InnerData, InnerData>> {
 
-    fun getNestedAdapterByModel(model: Model): InnerAdapter {
+    internal fun getNestedAdapterByModel(model: Model): InnerAdapter {
         return listActions.getNestedAdapterByModel(model)
     }
 
-    override fun add(items: List<Parent>): List<Model> {
-        val models = super.add(items)
-        models.forEach { model ->
+    override fun createModel(item: Parent): Model {
+        return super.createModel(item).also { model ->
             val adapter = getNestedAdapterByModel(model)
             val innerDataList = model.getNestedData()
 
             innerDataList?.let { data -> adapter.add(data) }
         }
-
-        return models
     }
 
     override fun updateModel(model: Model, item: Parent): Boolean {

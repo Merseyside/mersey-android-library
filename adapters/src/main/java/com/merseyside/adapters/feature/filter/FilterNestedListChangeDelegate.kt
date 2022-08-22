@@ -17,15 +17,29 @@ class FilterNestedListChangeDelegate<Parent, Model, InnerData, InnerAdapter>(
         where Model : NestedAdapterParentViewModel<out Parent, Parent, InnerData>,
               InnerAdapter : BaseAdapter<InnerData, out AdapterParentViewModel<out InnerData, InnerData>> {
 
+    internal fun getNestedAdapterByModel(model: Model): InnerAdapter {
+        return listChangeDelegate.getNestedAdapterByModel(model)
+    }
+
     init {
         if (filterFeature is NestedFilterFeature<Parent, Model>) {
             filterFeature.getFilterableByModel = { model ->
-                val nestedAdapter = listChangeDelegate.getNestedAdapterByModel(model)
+                val nestedAdapter = getNestedAdapterByModel(model)
                 if (nestedAdapter is Filterable<*, *>) nestedAdapter
                 else null
             }
         }
     }
 
+    override fun createModel(item: Parent): Model {
+        return super.createModel(item).also { model ->
+            if (filterFeature is NestedFilterFeature<Parent, Model>) {
+                val filterable = getNestedAdapterByModel(model) as? Filterable<*, *>
 
+                filterable?.let {
+                    filterFeature.setFilters(filterable)
+                }
+            }
+        }
+    }
 }

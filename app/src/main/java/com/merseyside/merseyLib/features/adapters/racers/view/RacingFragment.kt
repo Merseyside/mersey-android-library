@@ -14,7 +14,6 @@ import com.merseyside.merseyLib.features.adapters.racers.adapter.RacersAdapter
 import com.merseyside.merseyLib.features.adapters.racers.di.DaggerRacingComponent
 import com.merseyside.merseyLib.features.adapters.racers.di.RacingModule
 import com.merseyside.merseyLib.features.adapters.racers.model.RacingViewModel
-import com.merseyside.merseyLib.kotlin.logger.log
 
 class RacingFragment : BaseSampleFragment<FragmentRacingBinding, RacingViewModel>() {
 
@@ -41,9 +40,8 @@ class RacingFragment : BaseSampleFragment<FragmentRacingBinding, RacingViewModel
         }
 
 
-        viewModel.getCheckpointFlow().asLiveData().observe(viewLifecycleOwner) {
-            it.log()
-            adapter.update(UpdateRequest(it))
+        viewModel.getCheckpointFlow().asLiveData().observe(viewLifecycleOwner) { checkpoint ->
+            adapter.update(UpdateRequest.Builder(checkpoint).isDeleteOld(false).build())
         }
     }
 }

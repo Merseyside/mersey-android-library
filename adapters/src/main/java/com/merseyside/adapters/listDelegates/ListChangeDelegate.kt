@@ -61,7 +61,7 @@ abstract class ListChangeDelegate<Parent, Model : AdapterParentViewModel<out Par
         return model
     }
 
-    internal fun addModels(models: List<Model>): List<Model> {
+    internal open fun addModels(models: List<Model>): List<Model> {
         listActions.addModels(models)
         return models
     }

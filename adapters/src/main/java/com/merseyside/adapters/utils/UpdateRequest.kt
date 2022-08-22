@@ -7,25 +7,22 @@ class UpdateRequest<Item>(val list: List<Item>) {
     var isAddNew = true
         private set
 
-    var isDeleteOld = false
+    var isDeleteOld = true
         private set
 
     class Builder<Item>(list: List<Item>) {
 
         constructor(item: Item): this(listOf(item))
 
-        private val request: UpdateRequest<Item> =
-            UpdateRequest(list)
+        private val request: UpdateRequest<Item> = UpdateRequest(list)
 
         fun isAddNew(bool: Boolean): Builder<Item> {
             request.isAddNew = bool
-
             return this
         }
 
         fun isDeleteOld(bool: Boolean): Builder<Item> {
             request.isDeleteOld = bool
-
             return this
         }
 

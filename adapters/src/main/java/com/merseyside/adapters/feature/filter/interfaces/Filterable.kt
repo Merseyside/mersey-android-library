@@ -25,4 +25,13 @@ interface Filterable<Parent, Model : AdapterParentViewModel<out Parent, Parent>>
         addFilter(key, filter)
         applyFilters()
     }
+
+    fun removeAndApplyFilter(key: String) {
+        removeFilter(key)
+        applyFilters()
+    }
+
+    fun getFilteredItems(): List<Model> {
+        return filter.provideFilteredList()
+    }
 }

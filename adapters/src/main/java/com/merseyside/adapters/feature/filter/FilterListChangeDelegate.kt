@@ -51,8 +51,8 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
         return listChangeDelegate.createModel(item)
     }
 
-    override fun createModels(items: List<Parent>): List<Model> {
-        return listChangeDelegate.createModels(items)
+    final override fun createModels(items: List<Parent>): List<Model> {
+        return items.map { item -> createModel(item) }
     }
 
     override fun add(items: List<Parent>): List<Model> {
@@ -60,9 +60,10 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
             return if (!isFiltered) {
                 listChangeDelegate.add(items)
             } else {
-                val models = listChangeDelegate.createModels(items)
-                mutAllModelList.addAll(models)
-                listChangeDelegate.addModels(filter(models))
+                val models = createModels(items)
+                addModels(models)
+
+                models
             }
         }
     }
@@ -105,9 +106,20 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
         return listChangeDelegate.update(updateRequest)
     }
 
-    private fun update(models: List<Model>) {
+    internal open fun update(models: List<Model>) {
         listChangeDelegate.removeOldItems(models.map { it.item }, filteredList)
         listChangeDelegate.addModels(models)
+    }
+
+    internal fun addModel(model: Model) {
+        if (isFiltered()) {
+            if (filterFeature.filter(model)) listChangeDelegate.addModel(model)
+        }
+    }
+
+    internal fun addModels(models: List<Model>) {
+        mutAllModelList.addAll(models)
+        models.forEach { model -> addModel(model) }
     }
 
     protected fun isFiltered() = filterFeature.isFiltered
