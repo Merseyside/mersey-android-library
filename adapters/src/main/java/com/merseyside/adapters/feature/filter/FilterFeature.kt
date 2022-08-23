@@ -1,6 +1,5 @@
-package com.merseyside.adapters.feature.filter.interfaces
+package com.merseyside.adapters.feature.filter
 
-import com.merseyside.adapters.feature.filter.Filters
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.merseyLib.kotlin.logger.ILogger
 

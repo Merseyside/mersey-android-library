@@ -1,6 +1,6 @@
 package com.merseyside.merseyLib.features.adapters.contacts.adapter
 
-import com.merseyside.adapters.feature.filter.interfaces.FilterFeature
+import com.merseyside.adapters.feature.filter.FilterFeature
 import com.merseyside.adapters.feature.filter.interfaces.Filterable
 import com.merseyside.adapters.single.SortedAdapter
 import com.merseyside.merseyLib.BR

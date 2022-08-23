@@ -1,7 +1,6 @@
 package com.merseyside.adapters.feature.filter
 
 import com.merseyside.adapters.base.BaseAdapter
-import com.merseyside.adapters.feature.filter.interfaces.FilterFeature
 import com.merseyside.adapters.feature.filter.interfaces.Filterable
 import com.merseyside.adapters.feature.filter.interfaces.NestedFilterFeature
 import com.merseyside.adapters.listDelegates.NestedListChangeDelegate

@@ -68,11 +68,7 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
     }
 
     fun update(items: List<Parent>): Boolean {
-        return update(
-            UpdateRequest.Builder(items)
-                .isDeleteOld(true)
-                .build()
-        )
+        return update(UpdateRequest(items))
     }
 
     fun updateAsync(

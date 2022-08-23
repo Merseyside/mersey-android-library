@@ -1,6 +1,6 @@
 package com.merseyside.adapters.utils
 
-import com.merseyside.adapters.feature.filter.interfaces.FilterFeature
+import com.merseyside.adapters.feature.filter.FilterFeature
 import com.merseyside.adapters.feature.filter.interfaces.Filterable
 import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.model.AdapterParentViewModel

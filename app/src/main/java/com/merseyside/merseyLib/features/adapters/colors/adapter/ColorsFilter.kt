@@ -1,6 +1,6 @@
 package com.merseyside.merseyLib.features.adapters.colors.adapter
 
-import com.merseyside.adapters.feature.filter.interfaces.FilterFeature
+import com.merseyside.adapters.feature.filter.FilterFeature
 import com.merseyside.merseyLib.features.adapters.colors.entity.HexColor
 import com.merseyside.merseyLib.features.adapters.colors.model.ColorItemViewModel
 

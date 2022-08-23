@@ -1,7 +1,6 @@
 package com.merseyside.adapters.feature.filter
 
 import com.merseyside.adapters.feature.compare.validatePriority
-import com.merseyside.adapters.feature.filter.interfaces.FilterFeature
 import com.merseyside.adapters.listDelegates.PrioritizedListChangeDelegate
 import com.merseyside.adapters.listDelegates.interfaces.AdapterPrioritizedListChangeDelegate
 import com.merseyside.adapters.model.ComparableAdapterParentViewModel

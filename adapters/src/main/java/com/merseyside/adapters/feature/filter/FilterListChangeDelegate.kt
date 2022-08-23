@@ -1,6 +1,5 @@
 package com.merseyside.adapters.feature.filter
 
-import com.merseyside.adapters.feature.filter.interfaces.FilterFeature
 import com.merseyside.adapters.listDelegates.BaseListChangeDelegate
 import com.merseyside.adapters.listDelegates.ListChangeDelegate
 import com.merseyside.adapters.model.AdapterParentViewModel

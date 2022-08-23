@@ -1,5 +1,6 @@
 package com.merseyside.adapters.feature.filter.interfaces
 
+import com.merseyside.adapters.feature.filter.FilterFeature
 import com.merseyside.adapters.model.AdapterParentViewModel
 
 interface Filterable<Parent, Model : AdapterParentViewModel<out Parent, Parent>> {

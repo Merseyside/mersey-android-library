@@ -1,5 +1,6 @@
 package com.merseyside.adapters.feature.filter.interfaces
 
+import com.merseyside.adapters.feature.filter.FilterFeature
 import com.merseyside.adapters.feature.filter.Filters
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 
