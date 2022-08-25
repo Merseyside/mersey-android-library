@@ -16,7 +16,7 @@ interface ISimpleAdapter<Parent, Model : AdapterParentViewModel<out Parent, Pare
     @InternalAdaptersApi
     val mutModels: MutableList<Model>
 
-    fun add(position: Int, item: Parent, onComplete: (Unit) -> Unit) {
+    fun addAsync(position: Int, item: Parent, onComplete: (Unit) -> Unit) {
         doAsync(onComplete) { add(position, item) }
     }
 
@@ -24,7 +24,7 @@ interface ISimpleAdapter<Parent, Model : AdapterParentViewModel<out Parent, Pare
         delegate.add(position, item)
     }
 
-    fun add(position: Int, items: List<Parent>, onComplete: (Unit) -> Unit) {
+    fun addAsync(position: Int, items: List<Parent>, onComplete: (Unit) -> Unit) {
         doAsync(onComplete) { add(position, items) }
     }
 

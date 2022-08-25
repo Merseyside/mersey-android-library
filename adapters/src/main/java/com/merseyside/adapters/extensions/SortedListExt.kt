@@ -62,7 +62,7 @@ internal fun <Model> SortedList<Model>.removeAll(list: List<Model>) {
     list.forEach { remove(it) }
 }
 
-suspend inline fun <Item> SortedList<Item>.batchedUpdate(crossinline block: SortedList<Item>.() -> Unit) {
+suspend inline fun <Item> SortedList<Item>.batchedUpdate(crossinline block: suspend SortedList<Item>.() -> Unit) {
     try {
         beginBatchedUpdates()
         runWithDefault {

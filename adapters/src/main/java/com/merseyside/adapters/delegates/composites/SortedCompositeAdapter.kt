@@ -31,7 +31,7 @@ abstract class SortedCompositeAdapter<Parent, Model : ComparableAdapterParentVie
     var comparator: Comparator<Parent, Model>? = null
         set(value) {
             value?.setOnComparatorUpdateCallback(object: Comparator.OnComparatorUpdateCallback {
-                override fun onUpdate() {
+                override suspend fun onUpdate() {
                     sortedList.recalculatePositions()
                 }
             })
