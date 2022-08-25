@@ -13,7 +13,7 @@ abstract class SelectableAdapter<Item, Model: SelectableAdapterViewModel<Item>>(
     selectableMode: SelectableMode = SelectableMode.SINGLE,
     override var isAllowToCancelSelection: Boolean = selectableMode == SelectableMode.MULTIPLE,
     isSelectEnabled: Boolean = true,
-    scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Main)
 ) : SortedAdapter<Item, Model>(scope), ISelectableAdapter<Item, Model> {
 
     internal var groupAdapter: Boolean = false

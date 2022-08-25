@@ -15,8 +15,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
 abstract class SimpleAdapter<Item, Model : AdapterViewModel<Item>>(
-    override val scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-) : SingleAdapter<Item, Model>(), ISimpleAdapter<Item, Model> {
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Main)
+) : SingleAdapter<Item, Model>(scope), ISimpleAdapter<Item, Model> {
     final override val mutModels: MutableList<Model> = ArrayList()
     override val models: List<Model> = mutModels
 

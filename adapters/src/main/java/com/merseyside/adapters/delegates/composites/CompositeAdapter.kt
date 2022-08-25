@@ -10,10 +10,14 @@ import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.getFilter
 import com.merseyside.adapters.utils.isFilterable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
 
 open class CompositeAdapter<Parent, Model : AdapterParentViewModel<out Parent, Parent>>(
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
     delegatesManager: DelegatesManager<Parent, Model> = DelegatesManager()
-) : BaseCompositeAdapter<Parent, Model>(delegatesManager), ISimpleAdapter<Parent, Model> {
+) : BaseCompositeAdapter<Parent, Model>(scope, delegatesManager), ISimpleAdapter<Parent, Model> {
 
     final override val mutModels: MutableList<Model> = ArrayList()
     override val models: List<Model> = mutModels

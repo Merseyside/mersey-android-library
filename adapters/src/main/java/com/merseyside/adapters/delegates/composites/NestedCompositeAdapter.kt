@@ -1,5 +1,3 @@
-@file:OptIn(InternalAdaptersApi::class)
-
 package com.merseyside.adapters.delegates.composites
 
 import com.merseyside.adapters.base.BaseAdapter
@@ -18,7 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
 abstract class NestedCompositeAdapter<Parent, Model, Data, InnerAdapter>(
-    scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Main)
 ) : SortedCompositeAdapter<Parent, Model>(scope = scope),
     INestedAdapter<Parent, Model, Data, InnerAdapter>
         where Model : NestedAdapterParentViewModel<out Parent, Parent, Data>,

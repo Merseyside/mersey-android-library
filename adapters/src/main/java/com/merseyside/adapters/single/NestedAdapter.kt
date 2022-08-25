@@ -15,8 +15,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
 abstract class NestedAdapter<Item, Model, Data, InnerAdapter>(
-    scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-) : SortedAdapter<Item, Model>(scope = scope),
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Main)
+) : SortedAdapter<Item, Model>(scope),
     INestedAdapter<Item, Model, Data, InnerAdapter>
         where Model : NestedAdapterViewModel<Item, Data>,
               InnerAdapter : BaseAdapter<Data, out AdapterParentViewModel<out Data, Data>> {

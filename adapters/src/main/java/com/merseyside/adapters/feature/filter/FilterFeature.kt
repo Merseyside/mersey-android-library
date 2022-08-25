@@ -26,7 +26,7 @@ abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, 
     val itemsCount: Int
         get() = provideFilteredList().size
 
-    val isBind: Boolean
+    private val isBind: Boolean
         get() = this::workManager.isInitialized
 
     internal lateinit var workManager: CoroutineWorkManager<Any, Unit>
@@ -72,6 +72,7 @@ abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, 
     }
 
     open suspend fun applyFilters(): Boolean = withContext(Dispatchers.Main) {
+
         isFiltered = if (isFiltered && areFiltersEmpty()) {
             false
         } else if (notAppliedFilters.isEmpty()) {
@@ -84,9 +85,8 @@ abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, 
             true
         }
 
-        return@withContext true
+        true
     }
-
 
     private suspend fun filterModels(): List<Model> = runWithDefault {
         val canFilterCurrentItems = filters.isNotEmpty() &&
@@ -104,7 +104,15 @@ abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, 
      * @return true if filters applied, false otherwise.
      */
     open fun applyFiltersAsync(onComplete: (Boolean) -> Unit = {}) {
-        doAsync(onComplete) { applyFilters() }
+        doAsync(
+            onComplete,
+            onError = {
+                putAppliedFilters()
+                isFiltered = true
+                onComplete(false)
+            }
+        ) { applyFilters() }
+
     }
 
     internal fun areFiltersEmpty(): Boolean {
@@ -166,12 +174,18 @@ abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, 
     }
 
     fun <Result> doAsync(
-        provideResult: (Result) -> Unit = {},
+        onComplete: (Result) -> Unit = {},
+        onError: () -> Unit = {},
         work: suspend FilterFeature<Parent, Model>.() -> Result,
     ): Job? {
-        return workManager.addAndExecute {
-            val result = work()
-            provideResult(result)
+        return if (isBind) {
+            workManager.addAndExecute {
+                val result = work()
+                onComplete(result)
+            }
+        } else {
+            onError()
+            null
         }
     }
 

@@ -14,6 +14,7 @@ import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.AdapterViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.ItemCallback
+import com.merseyside.adapters.utils.getFilter
 import com.merseyside.merseyLib.kotlin.concurency.Locker
 import com.merseyside.merseyLib.kotlin.coroutines.CoroutineWorkManager
 import kotlinx.coroutines.CoroutineScope
@@ -22,11 +23,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.sync.Mutex
 
 abstract class BaseAdapter<Parent, Model>(
-    coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Main)
+    coroutineScope: CoroutineScope
 ) : RecyclerView.Adapter<TypedBindingHolder<Model>>(),
     ItemCallback<AdapterViewModel<Parent>>,
     HasOnItemClickListener<Parent>,
-    IBaseAdapter<Parent, Model>, Locker
+    IBaseAdapter<Parent, Model>
     where Model : AdapterParentViewModel<out Parent, Parent> {
 
     internal val workManager = CoroutineWorkManager<Any, Unit>(scope = coroutineScope)
@@ -40,12 +41,6 @@ abstract class BaseAdapter<Parent, Model>(
 
     internal val bindItemList: MutableList<Model> = ArrayList()
     protected var recyclerView: RecyclerView? = null
-
-    override var addJob: Job? = null
-    override var updateJob: Job? = null
-
-    override val lock = Any()
-    override val mutex: Mutex = Mutex()
 
     override val modelProvider: (Parent) -> Model = ::createModel
 

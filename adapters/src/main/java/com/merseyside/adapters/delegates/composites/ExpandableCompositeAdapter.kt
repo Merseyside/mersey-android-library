@@ -11,11 +11,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
 abstract class ExpandableCompositeAdapter<Parent, Model, Data, InnerAdapter>(
-    scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob()),
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
     override var expandableMode: ExpandableMode = ExpandableMode.MULTIPLE
-) : NestedCompositeAdapter<Parent, Model, Data, InnerAdapter>(
-    scope = scope
-), IExpandableAdapter<Parent, Model, Data, InnerAdapter>
+) : NestedCompositeAdapter<Parent, Model, Data, InnerAdapter>(scope),
+    IExpandableAdapter<Parent, Model, Data, InnerAdapter>
         where Model : ExpandableAdapterParentViewModel<out Parent, Parent, Data>,
               InnerAdapter : BaseAdapter<Data, out AdapterParentViewModel<out Data, Data>> {
 

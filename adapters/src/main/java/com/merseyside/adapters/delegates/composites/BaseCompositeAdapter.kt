@@ -14,9 +14,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
 abstract class BaseCompositeAdapter<Parent, Model>(
+    scope: CoroutineScope,
     val delegatesManager: DelegatesManager<Parent, Model>,
-    override val scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-) : BaseAdapter<Parent, Model>()
+) : BaseAdapter<Parent, Model>(scope)
     where Model : AdapterParentViewModel<out Parent, Parent> {
 
     override val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>

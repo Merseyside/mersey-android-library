@@ -21,16 +21,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
-@OptIn(InternalAdaptersApi::class)
-abstract class SortedCompositeAdapter<Parent, Model : ComparableAdapterParentViewModel<out Parent, Parent>>(
-    delegatesManager: DelegatesManager<Parent, Model> = DelegatesManager(),
-    override val scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-) : BaseCompositeAdapter<Parent, Model>(delegatesManager),
-    ISortedAdapter<Parent, Model> {
+abstract class SortedCompositeAdapter<Parent, Model>(
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
+    delegatesManager: DelegatesManager<Parent, Model> = DelegatesManager()
+) : BaseCompositeAdapter<Parent, Model>(scope, delegatesManager),
+    ISortedAdapter<Parent, Model>
+        where Model : ComparableAdapterParentViewModel<out Parent, Parent> {
 
     var comparator: Comparator<Parent, Model>? = null
         set(value) {
-            value?.setOnComparatorUpdateCallback(object: Comparator.OnComparatorUpdateCallback {
+            value?.setOnComparatorUpdateCallback(object : Comparator.OnComparatorUpdateCallback {
                 override suspend fun onUpdate() {
                     sortedList.recalculatePositions()
                 }
@@ -39,7 +39,6 @@ abstract class SortedCompositeAdapter<Parent, Model : ComparableAdapterParentVie
             field = value
         }
 
-    @OptIn(InternalAdaptersApi::class)
     private val defaultComparator: (model1: Model, model2: Model) -> Int = { model1, model2 ->
         val priority = comparePriority(model1, model2)
         if (priority == 0) model1.compareTo(model2.item)
@@ -57,7 +56,8 @@ abstract class SortedCompositeAdapter<Parent, Model : ComparableAdapterParentVie
                 adapter = this,
                 models = { models },
                 comparator = internalComparator
-            ))
+            )
+        )
     }
 
     override val models: List<Model>

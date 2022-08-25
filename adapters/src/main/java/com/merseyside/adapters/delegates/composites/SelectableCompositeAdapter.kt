@@ -11,15 +11,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
-abstract class SelectableCompositeAdapter<Parent, Model: SelectableAdapterParentViewModel<out Parent, Parent>>(
+abstract class SelectableCompositeAdapter<Parent, Model>(
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
     delegatesManager: DelegatesManager<Parent, Model> = DelegatesManager(),
     selectableMode: SelectableMode = SelectableMode.SINGLE,
-    override var isAllowToCancelSelection: Boolean =
-        selectableMode == SelectableMode.MULTIPLE,
+    override var isAllowToCancelSelection: Boolean = selectableMode == SelectableMode.MULTIPLE,
     isSelectEnabled: Boolean = true,
-    scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-) : SortedCompositeAdapter<Parent, Model>(delegatesManager, scope),
-    ISelectableAdapter<Parent, Model> {
+) : SortedCompositeAdapter<Parent, Model>(scope, delegatesManager),
+    ISelectableAdapter<Parent, Model>
+    where Model: SelectableAdapterParentViewModel<out Parent, Parent> {
 
     override var selectedList: MutableList<Model> = ArrayList()
     override val selectedListeners: MutableList<OnItemSelectedListener<Parent>> = ArrayList()

@@ -23,8 +23,8 @@ import kotlinx.coroutines.SupervisorJob
 
 @Suppress("UNCHECKED_CAST", "LeakingThis")
 abstract class SortedAdapter<Item, Model : ComparableAdapterViewModel<Item>>(
-    override val scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-) : SingleAdapter<Item, Model>(), ISortedAdapter<Item, Model> {
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Main)
+) : SingleAdapter<Item, Model>(scope), ISortedAdapter<Item, Model> {
 
     var comparator: Comparator<Item, Model>? = null
         set(value) {

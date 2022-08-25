@@ -19,20 +19,11 @@ import kotlinx.coroutines.sync.Mutex
 
 @SuppressLint("NotifyDataSetChanged")
 interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
-    Locker, HasOnItemClickListener<Parent>
+    HasOnItemClickListener<Parent>
         where Model : AdapterParentViewModel<out Parent, Parent> {
 
     val delegate: AdapterListChangeDelegate<Parent, Model>
-
     val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>
-
-    var addJob: Job?
-    var updateJob: Job?
-
-    val scope: CoroutineScope
-    override val mutex: Mutex
-
-    val lock: Any
 
     @CallSuper
     fun addAsync(item: Parent, onComplete: (Model?) -> Unit = {}) {
