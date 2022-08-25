@@ -9,14 +9,10 @@ import com.merseyside.adapters.model.NestedAdapterParentViewModel
 import com.merseyside.merseyLib.kotlin.coroutines.CoroutineWorkManager
 
 class FilterNestedListChangeDelegate<Parent, Model, InnerData, InnerAdapter>(
-    coroutineWorkManager: CoroutineWorkManager<Any, Unit>,
     override val listChangeDelegate: NestedListChangeDelegate<Parent, Model, InnerData, InnerAdapter>,
     override val filterFeature: FilterFeature<Parent, Model>
-) : FilterPrioritizedListChangeDelegate<Parent, Model>(
-    coroutineWorkManager,
-    listChangeDelegate,
-    filterFeature
-), AdapterNestedListChangeDelegate<Parent, Model, InnerData, InnerAdapter>
+) : FilterPrioritizedListChangeDelegate<Parent, Model>(listChangeDelegate, filterFeature),
+    AdapterNestedListChangeDelegate<Parent, Model, InnerData, InnerAdapter>
         where Model : NestedAdapterParentViewModel<out Parent, Parent, InnerData>,
               InnerAdapter : BaseAdapter<InnerData, out AdapterParentViewModel<out InnerData, InnerData>> {
 

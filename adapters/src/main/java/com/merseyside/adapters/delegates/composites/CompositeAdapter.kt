@@ -23,7 +23,7 @@ open class CompositeAdapter<Parent, Model : AdapterParentViewModel<out Parent, P
     }
 
     override val filterDelegate: FilterPositionListChangeDelegate<Parent, Model> by lazy {
-        FilterPositionListChangeDelegate(workManager, defaultDelegate, getFilter())
+        FilterPositionListChangeDelegate(defaultDelegate, getFilter())
     }
 
     override val delegate: AdapterPositionListChangeDelegate<Parent, Model> by lazy {

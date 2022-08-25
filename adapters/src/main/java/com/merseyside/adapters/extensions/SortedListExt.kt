@@ -65,9 +65,9 @@ internal fun <Model> SortedList<Model>.removeAll(list: List<Model>) {
 suspend inline fun <Item> SortedList<Item>.batchedUpdate(crossinline block: suspend SortedList<Item>.() -> Unit) {
     try {
         beginBatchedUpdates()
-        runWithDefault {
+        //runWithDefault {
             block()
-        }
+        //}
     } finally {
         endBatchedUpdates()
     }

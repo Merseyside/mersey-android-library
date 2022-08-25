@@ -8,7 +8,6 @@ import com.merseyside.merseyLib.kotlin.coroutines.CoroutineWorkManager
 import com.merseyside.merseyLib.kotlin.logger.ILogger
 
 abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<out Parent, Parent>>(
-    coroutineWorkManager: CoroutineWorkManager<Any, Unit>,
     filterFeature: FilterFeature<Parent, Model>
 ) : BaseListChangeDelegate<Parent, Model>(), ILogger {
 
@@ -29,8 +28,6 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
 
     init {
         filterFeature.apply {
-            workManager = coroutineWorkManager
-
             initListProviders(
                 fullListProvider = { allModelList },
                 filteredListProvider = { filteredList }

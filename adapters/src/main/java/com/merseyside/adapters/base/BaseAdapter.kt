@@ -29,7 +29,7 @@ abstract class BaseAdapter<Parent, Model>(
     IBaseAdapter<Parent, Model>, Locker
     where Model : AdapterParentViewModel<out Parent, Parent> {
 
-    protected val workManager = CoroutineWorkManager<Any, Unit>(scope = coroutineScope)
+    internal val workManager = CoroutineWorkManager<Any, Unit>(scope = coroutineScope)
 
     override val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>
         get() = this

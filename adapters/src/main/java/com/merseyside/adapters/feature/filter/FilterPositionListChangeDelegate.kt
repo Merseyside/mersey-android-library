@@ -8,10 +8,9 @@ import com.merseyside.merseyLib.kotlin.coroutines.CoroutineWorkManager
 import com.merseyside.merseyLib.kotlin.logger.ILogger
 
 internal class FilterPositionListChangeDelegate<Parent, Model>(
-    coroutineWorkManager: CoroutineWorkManager<Any, Unit>,
     override val listChangeDelegate: PositionListChangeDelegate<Parent, Model>,
     override val filterFeature: FilterFeature<Parent, Model>
-) : FilterListChangeDelegate<Parent, Model>(coroutineWorkManager, filterFeature),
+) : FilterListChangeDelegate<Parent, Model>(filterFeature),
     AdapterPositionListChangeDelegate<Parent, Model>, ILogger
     where Model : AdapterParentViewModel<out Parent, Parent> {
 

@@ -72,7 +72,7 @@ abstract class SortedAdapter<Item, Model : ComparableAdapterViewModel<Item>>(
     }
 
     override val filterDelegate: FilterPrioritizedListChangeDelegate<Item, Model> by lazy {
-        FilterPrioritizedListChangeDelegate(workManager, defaultDelegate, getFilter())
+        FilterPrioritizedListChangeDelegate(defaultDelegate, getFilter())
     }
 
     override val delegate: AdapterPrioritizedListChangeDelegate<Item, Model> by lazy {

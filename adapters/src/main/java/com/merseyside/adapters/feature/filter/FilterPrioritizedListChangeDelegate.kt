@@ -7,10 +7,9 @@ import com.merseyside.adapters.model.ComparableAdapterParentViewModel
 import com.merseyside.merseyLib.kotlin.coroutines.CoroutineWorkManager
 
 open class FilterPrioritizedListChangeDelegate<Parent, Model>(
-    coroutineWorkManager: CoroutineWorkManager<Any, Unit>,
     override val listChangeDelegate: PrioritizedListChangeDelegate<Parent, Model>,
     override val filterFeature: FilterFeature<Parent, Model>
-) : FilterListChangeDelegate<Parent, Model>(coroutineWorkManager, filterFeature),
+) : FilterListChangeDelegate<Parent, Model>(filterFeature),
     AdapterPrioritizedListChangeDelegate<Parent, Model>
         where Model : ComparableAdapterParentViewModel<out Parent, Parent> {
 
