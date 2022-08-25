@@ -1,8 +1,8 @@
-package com.merseyside.adapters.feature.filter.interfaces
+package com.merseyside.adapters.feature.filter
 
-import com.merseyside.adapters.feature.filter.FilterFeature
-import com.merseyside.adapters.feature.filter.Filters
+import com.merseyside.adapters.feature.filter.interfaces.Filterable
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
+import com.merseyside.merseyLib.kotlin.extensions.isNotZero
 
 abstract class NestedFilterFeature<Parent, Model : NestedAdapterParentViewModel<out Parent, Parent, *>> :
     FilterFeature<Parent, Model>() {
@@ -27,35 +27,31 @@ abstract class NestedFilterFeature<Parent, Model : NestedAdapterParentViewModel<
         }
     }
 
-    final override fun filter(model: Model, filters: Filters): Boolean {
+    final override suspend fun filter(model: Model, filters: Filters): Boolean {
         val isFiltered = super.filter(model, filters)
         val filterable = getFilterableByModel(model)
 
         if (filterable != null) {
+            filterable.filter.applyFilters()
             val innerItemsCount = filterable.getFilteredItems().size
 
-            if (isFiltered) return filter(model, innerItemsCount)
+            if (isFiltered) return filter(model, innerItemsCount.isNotZero())
         }
 
         return isFiltered
     }
 
-    final override fun apply(): Boolean {
-        provideFullList().forEach { model ->
-            getFilterableByModel(model)?.applyFilters()
-        }
-        return super.apply()
+    open fun filter(model: Model, hasItems: Boolean): Boolean {
+        return hasItems
     }
 
-    abstract fun filter(model: Model, innerAdapterItemsCount: Int): Boolean
-
-    internal fun setFilters(filterable: Filterable<*, *>) {
+    internal suspend fun setFilters(filterable: Filterable<*, *>) {
         val filterFeature = filterable.filter
         filters.forEach { (key, value) ->
             filterFeature.addFilter(key, value)
         }
 
-        filterFeature.apply()
+        filterFeature.applyFilters()
     }
 
 }

@@ -15,15 +15,21 @@ import com.merseyside.adapters.model.AdapterViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.ItemCallback
 import com.merseyside.merseyLib.kotlin.concurency.Locker
+import com.merseyside.merseyLib.kotlin.coroutines.CoroutineWorkManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.sync.Mutex
 
-abstract class BaseAdapter<Parent, Model>
-    : RecyclerView.Adapter<TypedBindingHolder<Model>>(),
+abstract class BaseAdapter<Parent, Model>(
+    coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Main)
+) : RecyclerView.Adapter<TypedBindingHolder<Model>>(),
     ItemCallback<AdapterViewModel<Parent>>,
     HasOnItemClickListener<Parent>,
     IBaseAdapter<Parent, Model>, Locker
     where Model : AdapterParentViewModel<out Parent, Parent> {
+
+    protected val workManager = CoroutineWorkManager<Any, Unit>(scope = coroutineScope)
 
     override val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>
         get() = this
@@ -60,7 +66,7 @@ abstract class BaseAdapter<Parent, Model>
         payloads: List<Any>
     ) {
         if (payloads.isNotEmpty()) {
-            val payloadable = payloads[0] as List<AdapterParentViewModel.Payloadable>
+            val payloadable = payloads.first() as List<AdapterParentViewModel.Payloadable>
 
             if (isPayloadsValid(payloadable)) {
                 onPayloadable(holder, payloadable)
@@ -73,7 +79,8 @@ abstract class BaseAdapter<Parent, Model>
     @CallSuper
     override fun onViewRecycled(holder: TypedBindingHolder<Model>) {
         super.onViewRecycled(holder)
-        if (holder.absoluteAdapterPosition != RecyclerView.NO_POSITION && holder.absoluteAdapterPosition < itemCount) {
+        if (holder.absoluteAdapterPosition != RecyclerView.NO_POSITION &&
+            holder.absoluteAdapterPosition < itemCount) {
 
             getModelByPosition(holder.absoluteAdapterPosition).apply {
                 bindItemList.remove(this)
@@ -82,6 +89,16 @@ abstract class BaseAdapter<Parent, Model>
                 }
                 onRecycled()
             }
+        }
+    }
+
+    override fun <Result> doAsync(
+        provideResult: (Result) -> Unit,
+        work: suspend IBaseAdapter<Parent, Model>.() -> Result,
+    ): Job? {
+        return workManager.addAndExecute {
+            val result = work()
+            provideResult(result)
         }
     }
 

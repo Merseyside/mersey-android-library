@@ -4,15 +4,18 @@ import com.merseyside.adapters.listDelegates.PositionListChangeDelegate
 import com.merseyside.adapters.listDelegates.interfaces.AdapterPositionListChangeDelegate
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.UpdateRequest
+import com.merseyside.merseyLib.kotlin.coroutines.CoroutineWorkManager
 import com.merseyside.merseyLib.kotlin.logger.ILogger
 
-internal class FilterPositionListChangeDelegate<Parent, Model : AdapterParentViewModel<out Parent, Parent>>(
+internal class FilterPositionListChangeDelegate<Parent, Model>(
+    coroutineWorkManager: CoroutineWorkManager<Any, Unit>,
     override val listChangeDelegate: PositionListChangeDelegate<Parent, Model>,
     override val filterFeature: FilterFeature<Parent, Model>
-) : FilterListChangeDelegate<Parent, Model>(filterFeature),
-    AdapterPositionListChangeDelegate<Parent, Model>, ILogger {
+) : FilterListChangeDelegate<Parent, Model>(coroutineWorkManager, filterFeature),
+    AdapterPositionListChangeDelegate<Parent, Model>, ILogger
+    where Model : AdapterParentViewModel<out Parent, Parent> {
 
-    override fun add(position: Int, item: Parent) {
+    override suspend fun add(position: Int, item: Parent) {
         with(filterFeature) {
             val model = createModel(item)
             if (isFiltered()) {
@@ -30,14 +33,10 @@ internal class FilterPositionListChangeDelegate<Parent, Model : AdapterParentVie
         }
     }
 
-    override fun add(position: Int, items: List<Parent>) {
+    override suspend fun add(position: Int, items: List<Parent>) {
         items.forEachIndexed { index, parent ->
             add(position + index, parent)
         }
-    }
-
-    override fun update(models: List<Model>) {
-        update(UpdateRequest(models.map { it.item }))
     }
 
     private fun calculatePositionInFilteredList(desiredPosition: Int): Int {
@@ -60,6 +59,10 @@ internal class FilterPositionListChangeDelegate<Parent, Model : AdapterParentVie
             if (pos < desiredPosition) pos + 1
             else pos
         }
+    }
+
+    override suspend fun setModels(models: List<Model>) {
+        listChangeDelegate.update(UpdateRequest(models.map { model -> model.item }))
     }
 
 }

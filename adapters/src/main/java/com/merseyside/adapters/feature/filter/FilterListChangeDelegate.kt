@@ -4,9 +4,11 @@ import com.merseyside.adapters.listDelegates.BaseListChangeDelegate
 import com.merseyside.adapters.listDelegates.ListChangeDelegate
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.UpdateRequest
+import com.merseyside.merseyLib.kotlin.coroutines.CoroutineWorkManager
 import com.merseyside.merseyLib.kotlin.logger.ILogger
 
 abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<out Parent, Parent>>(
+    coroutineWorkManager: CoroutineWorkManager<Any, Unit>,
     filterFeature: FilterFeature<Parent, Model>
 ) : BaseListChangeDelegate<Parent, Model>(), ILogger {
 
@@ -26,35 +28,52 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
         get() = getModels()
 
     init {
-        filterFeature.initListProviders(
-            fullListProvider = { allModelList },
-            filteredListProvider = { filteredList }
-        )
+        filterFeature.apply {
+            workManager = coroutineWorkManager
 
-        filterFeature.setFilterCallback(object : FilterFeature.FilterCallback<Model> {
-            override fun onFiltered(models: List<Model>) {
-                if (mutAllModelList.isEmpty()) mutAllModelList.addAll(getModels())
-                update(models)
-            }
+            initListProviders(
+                fullListProvider = { allModelList },
+                filteredListProvider = { filteredList }
+            )
 
-            override fun onFilterStateChanged(isFiltered: Boolean) {
-                if (!isFiltered) {
-                    listChangeDelegate.addModels(allModelList)
-                    mutAllModelList.clear()
+            setFilterCallback(object : FilterFeature.FilterCallback<Model> {
+                override suspend fun onFiltered(models: List<Model>) {
+                    if (mutAllModelList.isEmpty()) mutAllModelList.addAll(getModels())
+                    setModels(models)
                 }
-            }
-        })
+
+                override suspend fun onFilterStateChanged(isFiltered: Boolean) {
+                    if (!isFiltered) {
+                        setModels(allModelList)
+                        mutAllModelList.clear()
+                    }
+                }
+            })
+        }
     }
 
-    override fun createModel(item: Parent): Model {
+    override suspend fun createModel(item: Parent): Model {
         return listChangeDelegate.createModel(item)
     }
 
-    final override fun createModels(items: List<Parent>): List<Model> {
+    final override suspend fun createModels(items: List<Parent>): List<Model> {
         return items.map { item -> createModel(item) }
     }
 
-    override fun add(items: List<Parent>): List<Model> {
+    override suspend fun add(item: Parent): Model {
+        with(filterFeature) {
+            return if (!isFiltered) {
+                listChangeDelegate.add(item)
+            } else {
+                val model = createModel(item)
+                addModel(model)
+
+                model
+            }
+        }
+    }
+
+    override suspend fun add(items: List<Parent>): List<Model> {
         with(filterFeature) {
             return if (!isFiltered) {
                 listChangeDelegate.add(items)
@@ -67,7 +86,7 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
         }
     }
 
-    override fun remove(item: Parent): Model? {
+    override suspend fun remove(item: Parent): Model? {
         with(filterFeature) {
             return listChangeDelegate.remove(item).also {
                 if (isFiltered) {
@@ -78,47 +97,71 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
         }
     }
 
-    override fun findOldItems(newItems: List<Parent>, models: List<Model>): Set<Model> {
-        return listChangeDelegate.findOldItems(newItems, models)
-    }
-
-    override fun removeOldItems(items: List<Parent>, models: List<Model>): Boolean {
-        val modelsToRemove = findOldItems(items, mutAllModelList)
-        mutAllModelList.removeAll(modelsToRemove)
-        return listChangeDelegate.removeOldItems(items, models)
-    }
-
-    override fun removeAll() {
-        listChangeDelegate.removeAll()
-        mutAllModelList.clear()
-    }
-
-    override fun tryToUpdateWithItem(item: Parent): Model? {
-        var model = listChangeDelegate.tryToUpdateWithItem(item)
-        return if (model == null) {
-            model = getModelByItem(item, mutAllModelList)
-            model?.also { it.payload(item) }
-        } else model
-    }
-
-    override fun update(updateRequest: UpdateRequest<Parent>): Boolean {
-        return listChangeDelegate.update(updateRequest)
-    }
-
-    internal open fun update(models: List<Model>) {
-        listChangeDelegate.removeOldItems(models.map { it.item }, filteredList)
-        listChangeDelegate.addModels(models)
-    }
-
-    internal fun addModel(model: Model) {
+    override suspend fun removeModel(model: Model): Boolean {
         if (isFiltered()) {
-            if (filterFeature.filter(model)) listChangeDelegate.addModel(model)
+            mutAllModelList.remove(model)
+        }
+
+        return listChangeDelegate.removeModel(model)
+    }
+
+    override suspend fun removeModels(models: List<Model>): Boolean {
+        if (isFiltered()) {
+            mutAllModelList.removeAll(models)
+        }
+
+        return listChangeDelegate.removeModels(models)
+    }
+
+    override suspend fun removeAll() {
+        mutAllModelList.clear()
+        listChangeDelegate.removeAll()
+    }
+
+    override suspend fun update(updateRequest: UpdateRequest<Parent>): Boolean {
+        return if (!isFiltered()) {
+            listChangeDelegate.update(updateRequest)
+        } else {
+            val updateTransaction = getUpdateTransaction(updateRequest, allModelList).log()
+
+            with(updateTransaction) {
+                if (modelsToRemove.isNotEmpty()) {
+                    removeModels(modelsToRemove)
+                }
+
+                if (modelsToUpdate.isNotEmpty()) {
+                    updateModels(modelsToUpdate)
+                }
+
+                if (itemsToAdd.isNotEmpty()) {
+                    add(itemsToAdd)
+                }
+            }
+
+            !updateTransaction.isEmpty()
         }
     }
 
-    internal fun addModels(models: List<Model>) {
+    override suspend fun setModels(models: List<Model>) {
+        listChangeDelegate.setModels(models)
+    }
+
+    override suspend fun addModel(model: Model): Boolean {
+        if (isFiltered()) {
+            if (filterFeature.filter(model)) listChangeDelegate.addModel(model)
+        }
+
+        return true
+    }
+
+    override suspend fun addModels(models: List<Model>): Boolean {
         mutAllModelList.addAll(models)
         models.forEach { model -> addModel(model) }
+        return true
+    }
+
+    override suspend fun updateModel(model: Model, item: Parent): Boolean {
+        return listChangeDelegate.updateModel(model, item)
     }
 
     protected fun isFiltered() = filterFeature.isFiltered

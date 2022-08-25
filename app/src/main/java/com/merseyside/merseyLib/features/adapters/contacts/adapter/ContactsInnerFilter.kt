@@ -1,9 +1,8 @@
 package com.merseyside.merseyLib.features.adapters.contacts.adapter
 
-import com.merseyside.adapters.feature.filter.interfaces.NestedFilterFeature
+import com.merseyside.adapters.feature.filter.NestedFilterFeature
 import com.merseyside.merseyLib.features.adapters.contacts.entity.ContactGroup
 import com.merseyside.merseyLib.features.adapters.contacts.model.ContactGroupItemViewModel
-import com.merseyside.merseyLib.kotlin.extensions.isNotZero
 
 class ContactsInnerFilter : NestedFilterFeature<ContactGroup, ContactGroupItemViewModel>() {
 
@@ -11,8 +10,8 @@ class ContactsInnerFilter : NestedFilterFeature<ContactGroup, ContactGroupItemVi
         return true
     }
 
-    override fun filter(model: ContactGroupItemViewModel, innerAdapterItemsCount: Int): Boolean {
-        return innerAdapterItemsCount.isNotZero()
+    override fun filter(model: ContactGroupItemViewModel, hasItems: Boolean): Boolean {
+        return hasItems.log("kek", "has items")
     }
 
     companion object {

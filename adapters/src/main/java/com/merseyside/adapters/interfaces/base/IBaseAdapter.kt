@@ -7,7 +7,6 @@ import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SortedList
 import com.merseyside.adapters.callback.HasOnItemClickListener
-import com.merseyside.adapters.extensions.asynchronously
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.listDelegates.interfaces.AdapterListChangeDelegate
 import com.merseyside.adapters.model.AdapterParentViewModel
@@ -36,57 +35,57 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
     val lock: Any
 
     @CallSuper
-    fun add(item: Parent) {
-        delegate.add(listOf(item))
+    fun addAsync(item: Parent, onComplete: (Model?) -> Unit = {}) {
+        doAsync(onComplete) { add(item) }
+    }
+
+    suspend fun add(item: Parent): Model? {
+        return delegate.add(listOf(item)).firstOrNull()
     }
 
     /**
      * Delegates items adding to [AdapterListChangeDelegate]
-     * @return items count that added
+     * @return Added models
      */
     @CallSuper
-    fun add(items: List<Parent>) {
-        delegate.add(items)
+    fun addAsync(items: List<Parent>, onComplete: (List<Model>) -> Unit = {}) {
+        doAsync(onComplete) { add(items) }
     }
 
-    fun addAsync(items: List<Parent>, func: () -> Unit = {}) {
-        addJob = scope.asynchronously {
-            withLock {
-                add(items)
-                func.invoke()
-            }
-        }
+    suspend fun add(items: List<Parent>): List<Model> {
+        return delegate.add(items)
     }
 
-    fun addOrUpdate(items: List<Parent>) {
+    fun addOrUpdateAsync(items: List<Parent>, onComplete: (Unit) -> Unit = {}) {
+        doAsync(onComplete) { addOrUpdate(items) }
+    }
+
+    suspend fun addOrUpdate(items: List<Parent>) {
         if (isEmpty()) add(items)
-        else update(items)
+        else update(UpdateRequest(items))
     }
 
-    fun update(updateRequest: UpdateRequest<Parent>): Boolean {
+    fun updateAsync(updateRequest: UpdateRequest<Parent>, provideResult: (Boolean) -> Unit = {}) {
+        doAsync(provideResult) { update(updateRequest) }
+    }
+
+    suspend fun update(updateRequest: UpdateRequest<Parent>): Boolean {
         return delegate.update(updateRequest)
     }
 
-    fun update(items: List<Parent>): Boolean {
-        return update(UpdateRequest(items))
+    fun updateAsync(items: List<Parent>, onComplete: (Boolean) -> Unit = {}) {
+        doAsync(onComplete) { update(items) }
     }
 
-    fun updateAsync(
-        updateRequest: UpdateRequest<Parent>,
-        onUpdated: () -> Unit = {}
-    ) {
-        updateJob = scope.asynchronously {
-            withLock {
-                update(updateRequest)
-                onUpdated.invoke()
-            }
-        }
+    suspend fun update(items: List<Parent>): Boolean {
+        return delegate.update(UpdateRequest(items))
     }
 
     @InternalAdaptersApi
-    override fun updateModel(model: Model, item: Parent): Boolean {
-        return if (!model.areContentsTheSame(item)) {
-            notifyModelUpdated(model, model.payload(item))
+    override suspend fun updateModel(model: Model, item: Parent): Boolean {
+        val payload = model.payload(item)
+        return if (containsModel(model)) {
+            notifyModelUpdated(model, payload)
             true
         } else false
     }
@@ -98,14 +97,24 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
      * Calls onItemRemoved callback method on success.
      * @return position of removed item
      */
+
     @CallSuper
-    fun remove(item: Parent): Boolean {
-        return delegate.remove(item) != null
+    fun removeAsync(item: Parent, onComplete: (Model?) -> Unit = {}) {
+        doAsync(onComplete) { remove(item) }
     }
 
-    fun remove(items: List<Parent>) {
-        items.forEach { remove(it) }
+    suspend fun remove(item: Parent): Model? {
+        return delegate.remove(item)
     }
+
+    fun removeAsync(items: List<Parent>, onComplete: (List<Model>) -> Unit = {}) {
+        doAsync(onComplete) { remove(items) }
+    }
+
+    suspend fun remove(items: List<Parent>): List<Model> {
+        return delegate.remove(items)
+    }
+
 
     fun notifyAdapterRemoved() {}
 
@@ -151,6 +160,10 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
         throw IllegalArgumentException("No data found")
     }
 
+    fun containsModel(model: Model): Boolean {
+        return models.contains(model)
+    }
+
     fun find(item: Parent): Model? {
         return models.find {
             it.areItemsTheSame(item)
@@ -159,7 +172,7 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
 
     @CallSuper
     fun clear() {
-        delegate.removeAll()
+        doAsync { delegate.removeAll() }
     }
 
     /**
@@ -190,4 +203,9 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
     fun getAll(): List<Parent> {
         return models.map { it.item }
     }
+
+    fun <Result> doAsync(
+        provideResult: (Result) -> Unit = {},
+        work: suspend IBaseAdapter<Parent, Model>.() -> Result,
+    ): Job?
 }

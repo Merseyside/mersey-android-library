@@ -28,7 +28,7 @@ abstract class NestedAdapter<Item, Model, Data, InnerAdapter>(
     }
 
     override val filterDelegate: FilterNestedListChangeDelegate<Item, Model, Data, InnerAdapter> by lazy {
-        FilterNestedListChangeDelegate(defaultDelegate, getFilter())
+        FilterNestedListChangeDelegate(workManager, defaultDelegate, getFilter())
     }
 
     override val delegate: AdapterNestedListChangeDelegate<Item, Model, Data, InnerAdapter> by lazy {

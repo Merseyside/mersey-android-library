@@ -5,5 +5,5 @@ import com.merseyside.adapters.model.ComparableAdapterParentViewModel
 interface AdapterPrioritizedListChangeDelegate<Parent, Model : ComparableAdapterParentViewModel<out Parent, Parent>> :
     AdapterListChangeDelegate<Parent, Model> {
 
-    fun add(item: Parent, priority: Int): Model
+    suspend fun add(item: Parent, priority: Int): Model
 }

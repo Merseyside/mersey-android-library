@@ -8,13 +8,17 @@ abstract class QueryFilterFeature<Parent, Model : AdapterParentViewModel<out Par
 
     abstract fun filter(model: Model, query: String): Boolean
 
-    fun setQuery(query: String?) {
+    fun setQuery(query: String?, onComplete: (Boolean) -> Unit = {}) {
+        doAsync(onComplete) { setQuery(query) }
+    }
+
+    suspend fun setQuery(query: String?): Boolean {
         if (query.isNotNullAndEmpty()) {
             addFilter(QUERY_KEY, query)
         } else {
             removeFilter(QUERY_KEY)
         }
-        apply()
+        return applyFilters()
     }
 
     final override fun filter(model: Model, key: String, filter: Any): Boolean {

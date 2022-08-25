@@ -68,7 +68,7 @@ class ValueSwitcher(context: Context, attributeSet: AttributeSet?, defStyleAttr:
 
     private fun initializeView() {
         with(binding) {
-            applyViewStub(viewStub)
+            applyViewStub(someViewStub)
 
             textColor?.let {
                 if (valueView is TextView) {

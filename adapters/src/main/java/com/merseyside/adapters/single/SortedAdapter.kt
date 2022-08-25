@@ -1,4 +1,5 @@
 @file:OptIn(InternalAdaptersApi::class)
+
 package com.merseyside.adapters.single
 
 import androidx.recyclerview.widget.SortedList
@@ -27,11 +28,17 @@ abstract class SortedAdapter<Item, Model : ComparableAdapterViewModel<Item>>(
 
     var comparator: Comparator<Item, Model>? = null
         set(value) {
-            value?.setOnComparatorUpdateCallback(object: Comparator.OnComparatorUpdateCallback {
-                override fun onUpdate() {
-                    sortedList.recalculatePositions()
-                }
-            })
+            value?.apply {
+                workManager = this@SortedAdapter.workManager
+                setOnComparatorUpdateCallback(object :
+                    Comparator.OnComparatorUpdateCallback {
+                    override suspend fun onUpdate() {
+                        doAsync {
+                            sortedList.recalculatePositions()
+                        }
+                    }
+                })
+            }
 
             field = value
         }
@@ -65,7 +72,7 @@ abstract class SortedAdapter<Item, Model : ComparableAdapterViewModel<Item>>(
     }
 
     override val filterDelegate: FilterPrioritizedListChangeDelegate<Item, Model> by lazy {
-        FilterPrioritizedListChangeDelegate(defaultDelegate, getFilter())
+        FilterPrioritizedListChangeDelegate(workManager, defaultDelegate, getFilter())
     }
 
     override val delegate: AdapterPrioritizedListChangeDelegate<Item, Model> by lazy {

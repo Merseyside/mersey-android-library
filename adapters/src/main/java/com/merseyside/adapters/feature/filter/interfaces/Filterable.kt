@@ -18,18 +18,18 @@ interface Filterable<Parent, Model : AdapterParentViewModel<out Parent, Parent>>
         filter.clearFilters()
     }
 
-    fun applyFilters() {
-        filter.apply()
+    fun applyFiltersAsync(onComplete: (Boolean) -> Unit = {}) {
+        filter.applyFiltersAsync(onComplete)
     }
 
-    fun addAndApplyFilter(key: String, filter: Any) {
+    fun addAndApplyFilter(key: String, filter: Any, onComplete: (Boolean) -> Unit = {}) {
         addFilter(key, filter)
-        applyFilters()
+        applyFiltersAsync(onComplete)
     }
 
-    fun removeAndApplyFilter(key: String) {
+    fun removeAndApplyFilter(key: String, onComplete: (Boolean) -> Unit = {}) {
         removeFilter(key)
-        applyFilters()
+        applyFiltersAsync(onComplete)
     }
 
     fun getFilteredItems(): List<Model> {

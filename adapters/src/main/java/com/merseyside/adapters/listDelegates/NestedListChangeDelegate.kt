@@ -5,6 +5,7 @@ import com.merseyside.adapters.interfaces.nested.AdapterNestedListActions
 import com.merseyside.adapters.listDelegates.interfaces.AdapterNestedListChangeDelegate
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
+import com.merseyside.adapters.utils.UpdateRequest
 
 class NestedListChangeDelegate<Parent, Model, InnerData, InnerAdapter>(
     override val listActions: AdapterNestedListActions<Parent, Model, InnerData, InnerAdapter>
@@ -17,7 +18,7 @@ class NestedListChangeDelegate<Parent, Model, InnerData, InnerAdapter>(
         return listActions.getNestedAdapterByModel(model)
     }
 
-    override fun createModel(item: Parent): Model {
+    override suspend fun createModel(item: Parent): Model {
         return super.createModel(item).also { model ->
             val adapter = getNestedAdapterByModel(model)
             val innerDataList = model.getNestedData()
@@ -26,12 +27,12 @@ class NestedListChangeDelegate<Parent, Model, InnerData, InnerAdapter>(
         }
     }
 
-    override fun updateModel(model: Model, item: Parent): Boolean {
+    override suspend fun updateModel(model: Model, item: Parent): Boolean {
         val isUpdated = super.updateModel(model, item)
         if (isUpdated) {
             val adapter = getNestedAdapterByModel(model)
             val innerDataList = model.getNestedData()
-            innerDataList?.let { data -> adapter.update(data) }
+            innerDataList?.let { data -> adapter.update(UpdateRequest(data)) }
         }
 
         return isUpdated

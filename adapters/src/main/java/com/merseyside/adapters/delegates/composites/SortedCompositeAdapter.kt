@@ -68,7 +68,7 @@ abstract class SortedCompositeAdapter<Parent, Model : ComparableAdapterParentVie
     }
 
     override val filterDelegate: FilterPrioritizedListChangeDelegate<Parent, Model> by lazy {
-        FilterPrioritizedListChangeDelegate(defaultDelegate, getFilter())
+        FilterPrioritizedListChangeDelegate(workManager, defaultDelegate, getFilter())
     }
 
     override val delegate: AdapterPrioritizedListChangeDelegate<Parent, Model> by lazy {

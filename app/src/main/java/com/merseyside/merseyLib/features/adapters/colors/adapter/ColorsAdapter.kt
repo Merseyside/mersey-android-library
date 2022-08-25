@@ -20,7 +20,7 @@ class ColorsAdapter(scope: CoroutineScope) : SortedAdapter<HexColor, ColorItemVi
     init {
         comparator = colorsComparator
         onItemClicked {
-            remove(it)
+            removeAsync(it)
         }
     }
 

@@ -12,7 +12,7 @@ class ColorsComparator(
         return when(comparisonRule) {
             ColorComparisonRule.ASC -> model1.getColor().compareTo(model2.getColor())
             ColorComparisonRule.DESC -> model2.getColor().compareTo(model1.getColor())
-            else -> rainbowComparison(model1.getColor(), model2.getColor())
+            ColorComparisonRule.RAINBOW -> rainbowComparison(model1.getColor(), model2.getColor())
         }
     }
 
@@ -24,15 +24,15 @@ class ColorsComparator(
         Color.colorToHSV(color2, hsv2)
 
         if ((hsv1[0].toInt()) == (hsv2[0].toInt())) {
-            return hsv1[2].toInt() - hsv2[2].toInt()
+            return hsv1[2].toInt().compareTo(hsv2[2].toInt())
         }
 
-        return hsv1[0].toInt() - hsv2[0].toInt();
+        return hsv1[0].toInt().compareTo(hsv2[0].toInt())
     }
 
     fun setCompareRule(rule: ColorComparisonRule) {
         this.comparisonRule = rule
-        update()
+        updateAsync()
     }
 
     enum class ColorComparisonRule {

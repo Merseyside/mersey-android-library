@@ -39,9 +39,8 @@ class RacingFragment : BaseSampleFragment<FragmentRacingBinding, RacingViewModel
             addItemDecoration(CheckpointItemDecorator(context, R.dimen.small_spacing))
         }
 
-
         viewModel.getCheckpointFlow().asLiveData().observe(viewLifecycleOwner) { checkpoint ->
-            adapter.update(UpdateRequest.Builder(checkpoint).isDeleteOld(false).build())
+            adapter.updateAsync(UpdateRequest.Builder(checkpoint).isDeleteOld(false).build())
         }
     }
 }

@@ -30,7 +30,7 @@ inline fun <Item> IBaseAdapter<Item, *>.findAll(predicate: (Item) -> Boolean): L
 
 inline fun <Item> IBaseAdapter<Item, *>.removeIf(predicate: (Item) -> Boolean): List<Item> {
     val itemsToRemove = findAll(predicate)
-    remove(itemsToRemove)
+    removeAsync(itemsToRemove)
     return itemsToRemove
 }
 

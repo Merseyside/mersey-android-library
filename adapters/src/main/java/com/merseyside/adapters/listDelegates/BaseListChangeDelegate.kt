@@ -1,7 +1,11 @@
 package com.merseyside.adapters.listDelegates
 
 import com.merseyside.adapters.listDelegates.interfaces.AdapterListChangeDelegate
+import com.merseyside.adapters.listDelegates.utils.UpdateTransaction
 import com.merseyside.adapters.model.AdapterParentViewModel
+import com.merseyside.adapters.utils.UpdateRequest
+import com.merseyside.adapters.utils.runWithDefault
+import com.merseyside.merseyLib.kotlin.extensions.subtractBy
 
 abstract class BaseListChangeDelegate<Parent, Model : AdapterParentViewModel<out Parent, Parent>>
     : AdapterListChangeDelegate<Parent, Model> {
@@ -24,22 +28,80 @@ abstract class BaseListChangeDelegate<Parent, Model : AdapterParentViewModel<out
         return getModels().size
     }
 
-    abstract fun createModel(item: Parent): Model
+    abstract suspend fun createModel(item: Parent): Model
 
-    abstract fun createModels(items: List<Parent>): List<Model>
+    abstract suspend fun createModels(items: List<Parent>): List<Model>
 
-    abstract fun tryToUpdateWithItem(item: Parent): Model?
+    abstract suspend fun addModel(model: Model): Boolean
 
-    abstract fun findOldItems(newItems: List<Parent>, models: List<Model> = getModels()): Set<Model>
+    abstract suspend fun addModels(models: List<Model>): Boolean
 
-    abstract fun removeOldItems(items: List<Parent>, models: List<Model> = getModels()): Boolean
-}
+    override suspend fun remove(items: List<Parent>): List<Model> {
+        return items.mapNotNull { item -> remove(item) }
+    }
 
-fun <T1, T2> Iterable<T1>.subtractBy( //TODO move to kotlin-ext
-    other: Iterable<T2>,
-    predicate: (first: T1, second: T2) -> Boolean
-): Set<T1> {
-    return filter { first ->
-        other.find { second -> predicate(first, second) } == null
-    }.toSet()
+    abstract suspend fun removeModel(model: Model): Boolean
+
+    abstract suspend fun removeModels(models: List<Model>): Boolean
+
+    abstract suspend fun updateModel(model: Model, item: Parent): Boolean
+
+    protected suspend fun update(items: List<Parent>): Boolean {
+        return update(UpdateRequest(items))
+    }
+
+    abstract suspend fun setModels(models: List<Model>)
+
+    protected suspend fun updateModels(updateList: List<Pair<Model, Parent>>) {
+        updateList.forEach { (model, item) -> updateModel(model, item) }
+    }
+
+    protected suspend fun getUpdateTransaction(
+        updateRequest: UpdateRequest<Parent>,
+        models: List<Model>
+    ): UpdateTransaction<Parent, Model> = runWithDefault {
+
+        val updateTransaction = UpdateTransaction<Parent, Model>()
+        with(updateTransaction) {
+            if (updateRequest.isDeleteOld) {
+                modelsToRemove = findOutdatedModels(updateRequest.list, models)
+            }
+
+            val addList = ArrayList<Parent>()
+            val updateList = ArrayList<Pair<Model, Parent>>()
+            updateRequest.list.forEach { newItem ->
+                val model = getModelByItem(newItem)
+                if (model == null) {
+                    if (updateRequest.isAddNew) addList.add(newItem)
+                } else {
+                    if (!model.areContentsTheSame(newItem)) {
+                        updateList.add(model to newItem)
+                    }
+                }
+            }
+
+            modelsToUpdate = updateList
+            itemsToAdd = addList
+        }
+
+        updateTransaction
+    }
+
+    protected suspend fun findOutdatedModels(newItems: List<Parent>, models: List<Model>): List<Model> = runWithDefault {
+        models.subtractBy(newItems) { oldModel, newItem ->
+            oldModel.deletable && oldModel.areItemsTheSame(newItem)
+        }.toList()
+    }
+
+    protected suspend fun findNewModels(newModels: List<Model>, models: List<Model>): List<Model> = runWithDefault {
+        newModels.subtractBy(models) { newModel, model ->
+            model.areItemsTheSame(newModel.item)
+        }.toList()
+    }
+
+    protected suspend fun findNewItems(newItems: List<Parent>, models: List<Model>): List<Parent> = runWithDefault {
+        newItems.subtractBy(models) { newItem, model ->
+            model.areItemsTheSame(newItem)
+        }.toList()
+    }
 }

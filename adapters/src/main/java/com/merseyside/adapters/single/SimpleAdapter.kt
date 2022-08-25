@@ -25,7 +25,7 @@ abstract class SimpleAdapter<Item, Model : AdapterViewModel<Item>>(
     }
 
     override val filterDelegate: FilterPositionListChangeDelegate<Item, Model> by lazy {
-        FilterPositionListChangeDelegate(defaultDelegate, getFilter())
+        FilterPositionListChangeDelegate(workManager, defaultDelegate, getFilter())
     }
 
     override val delegate: AdapterPositionListChangeDelegate<Item, Model> by lazy {

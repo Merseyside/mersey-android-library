@@ -7,11 +7,11 @@ interface FilterableQuery<Parent, Model : AdapterParentViewModel<out Parent, Par
 
     override val filter: QueryFilterFeature<Parent, Model>
 
-    fun setQuery(query: String?) {
-        filter.setQuery(query)
+    fun setQuery(query: String?, onComplete: (Boolean) -> Unit = {}) {
+        filter.setQuery(query, onComplete)
     }
 
-    override fun applyFilters() {
+    override fun applyFiltersAsync(onComplete: (Boolean) -> Unit) {
         throw UnsupportedOperationException()
     }
 
@@ -19,7 +19,7 @@ interface FilterableQuery<Parent, Model : AdapterParentViewModel<out Parent, Par
         throw UnsupportedOperationException()
     }
 
-    override fun addAndApplyFilter(key: String, filter: Any) {
+    override fun addAndApplyFilter(key: String, filter: Any, onComplete: (Boolean) -> Unit) {
         throw UnsupportedOperationException()
     }
 

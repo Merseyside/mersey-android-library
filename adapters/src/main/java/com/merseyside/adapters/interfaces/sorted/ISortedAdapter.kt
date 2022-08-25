@@ -10,15 +10,18 @@ import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.ComparableAdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 
-interface ISortedAdapter<Parent, Model>
-    : IBaseAdapter<Parent, Model>,
+interface ISortedAdapter<Parent, Model> : IBaseAdapter<Parent, Model>,
     AdapterPrioritizedListActions<Parent, Model>
         where Model : ComparableAdapterParentViewModel<out Parent, Parent> {
 
     val sortedList: SortedList<Model>
     override val delegate: AdapterPrioritizedListChangeDelegate<Parent, Model>
 
-    fun add(item: Parent, priority: Int) {
+    fun add(item: Parent, priority: Int, onComplete: (Unit) -> Unit) {
+        doAsync(onComplete) { add(item, priority) }
+    }
+
+    suspend fun add(item: Parent, priority: Int) {
         delegate.add(item, priority)
     }
 
@@ -32,17 +35,17 @@ interface ISortedAdapter<Parent, Model>
     }
 
     /* Models list actions */
-    override fun addModel(model: Model) {
+    override suspend fun addModel(model: Model) {
         sortedList.add(model)
     }
 
-    override fun addModel(model: Model, priority: Int) {
+    override suspend fun addModel(model: Model, priority: Int) {
         model.priority = priority
         addModel(model)
     }
 
     @InternalAdaptersApi
-    override fun addModels(models: List<Model>) {
+    override suspend fun addModels(models: List<Model>) {
         sortedList.batchedUpdate {
             models.forEach { model ->
                 addModel(model)
@@ -50,12 +53,24 @@ interface ISortedAdapter<Parent, Model>
         }
     }
 
-    override fun removeModel(model: Model): Boolean {
+    override suspend fun removeModel(model: Model): Boolean {
         return sortedList.remove(model)
     }
 
-    override fun removeAll() {
+    override suspend fun removeModels(models: List<Model>): Boolean {
+        sortedList.batchedUpdate {
+            models.map { model -> removeModel(model) }.any()
+        }
+
+        return true
+    }
+
+    override suspend fun removeAll() {
         sortedList.clear()
         adapter.notifyDataSetChanged()
+    }
+
+    override fun comparePriority(model1: Model, model2: Model): Int {
+        return model1.priority.compareTo(model2.priority)
     }
 }

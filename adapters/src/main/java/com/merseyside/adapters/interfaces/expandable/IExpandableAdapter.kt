@@ -44,7 +44,7 @@ interface IExpandableAdapter<Parent, Model, InnerData, InnerAdapter>
         }
     }
 
-    override fun addModel(model: Model) {
+    override suspend  fun addModel(model: Model) {
         super.addModel(model)
         model.onExpandedCallback = internalExpandedCallback as
                 ((ExpandableAdapterParentViewModel<out Parent, Parent, InnerData>) -> Unit)

@@ -25,7 +25,7 @@ abstract class BaseCompositeAdapter<Parent, Model>(
     init {
         delegatesManager.setOnDelegateRemoveCallback { delegate ->
             val removeList = models.filter { delegate.isResponsibleFor(it.item) }
-            remove(removeList.map { it.item })
+            removeAsync(removeList.map { it.item })
         }
     }
 

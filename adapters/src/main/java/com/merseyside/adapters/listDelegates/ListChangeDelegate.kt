@@ -6,20 +6,28 @@ import com.merseyside.adapters.interfaces.base.AdapterListActions
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.UpdateRequest
+import com.merseyside.merseyLib.kotlin.logger.ILogger
 
 abstract class ListChangeDelegate<Parent, Model : AdapterParentViewModel<out Parent, Parent>>
-    : BaseListChangeDelegate<Parent, Model>() {
+    : BaseListChangeDelegate<Parent, Model>(), ILogger {
 
     abstract val listActions: AdapterListActions<Parent, Model>
 
     final override fun getModels(): List<Model> = listActions.models
 
-    override fun add(items: List<Parent>): List<Model> {
-        val models = createModels(items)
-        return addModels(models)
+    override suspend fun add(item: Parent): Model {
+        val model = createModel(item)
+        addModel(model)
+        return model
     }
 
-    override fun remove(item: Parent): Model? {
+    override suspend fun add(items: List<Parent>): List<Model> {
+        val models = createModels(items)
+        addModels(models)
+        return models
+    }
+
+    override suspend fun remove(item: Parent): Model? {
         return try {
             val model = getModelByItem(item)
             model?.let { removeModel(model) }
@@ -29,82 +37,68 @@ abstract class ListChangeDelegate<Parent, Model : AdapterParentViewModel<out Par
         }
     }
 
-    override fun removeAll() {
+    override suspend fun removeAll() {
         listActions.removeAll()
     }
 
-    override fun update(updateRequest: UpdateRequest<Parent>): Boolean {
-        var isUpdated = false
+    override suspend fun update(updateRequest: UpdateRequest<Parent>): Boolean {
+        val updateTransaction = getUpdateTransaction(updateRequest, getModels())
 
-        with(updateRequest) {
-            if (updateRequest.isDeleteOld) {
-                isUpdated = removeOldItems(list)
+        with(updateTransaction) {
+            if (modelsToRemove.isNotEmpty()) {
+                removeModels(modelsToRemove)
             }
 
-            val addList = ArrayList<Parent>()
-            list.forEach { item ->
-                if (tryToUpdateWithItem(item) != null) isUpdated = true
-                else addList.add(item)
+            if (modelsToUpdate.isNotEmpty()) {
+                updateModels(modelsToUpdate)
             }
 
-            if (isAddNew) {
-                add(addList)
-                if (addList.isNotEmpty()) isUpdated = true
+            if (itemsToAdd.isNotEmpty()) {
+                add(itemsToAdd)
             }
         }
 
-        return isUpdated
+        return !updateTransaction.isEmpty()
     }
 
-    internal fun addModel(model: Model): Model {
+    override suspend fun setModels(models: List<Model>) {
+        val modelsToRemove = findOutdatedModels(models.map { it.item }, getModels())
+        removeModels(modelsToRemove)
+
+        val modelsToAdd = findNewModels(models, getModels())
+        addModels(modelsToAdd)
+    }
+
+
+    override suspend fun addModel(model: Model): Boolean {
         listActions.addModel(model)
-        return model
+        return true
     }
 
-    internal open fun addModels(models: List<Model>): List<Model> {
+    override suspend fun addModels(models: List<Model>): Boolean {
         listActions.addModels(models)
-        return models
+        return true
     }
 
-    protected fun removeModels(models: List<Model>) {
-        models.forEach { removeModel(it) }
-    }
-
-    protected fun removeModel(model: Model): Boolean {
+    override suspend fun removeModel(model: Model): Boolean {
         return listActions.removeModel(model)
     }
 
-    protected open fun updateModel(model: Model, item: Parent): Boolean {
+    override suspend fun removeModels(models: List<Model>): Boolean {
+        return listActions.removeModels(models)
+    }
+
+    override suspend fun updateModel(model: Model, item: Parent): Boolean {
         return listActions.updateModel(model, item)
     }
 
-    /**
-     * @return model if it have been updated, null otherwise
-     */
-    override fun tryToUpdateWithItem(item: Parent): Model? {
-        val model = getModelByItem(item)
-        return model?.also {
-            updateModel(model, item)
-        }
-    }
-
-    override fun findOldItems(newItems: List<Parent>, models: List<Model>): Set<Model> {
-        return models.subtractBy(newItems) { oldModel, newItem ->
-            oldModel.deletable && oldModel.areItemsTheSame(newItem)
-        }
-    }
-
-    override fun removeOldItems(items: List<Parent>, models: List<Model>): Boolean {
-        val modelsToRemove = findOldItems(items, models)
-        removeModels(modelsToRemove.toList())
-        return modelsToRemove.isNotEmpty()
-    }
-
-    override fun createModel(item: Parent): Model {
+    override suspend fun createModel(item: Parent): Model {
         return listActions.modelProvider(item)
     }
 
-    override fun createModels(items: List<Parent>): List<Model> {
+    override suspend fun createModels(items: List<Parent>): List<Model> {
         return items.map { item -> createModel(item) }
     }
+
+    override val tag: String = "ListChangeDelegate"
 }

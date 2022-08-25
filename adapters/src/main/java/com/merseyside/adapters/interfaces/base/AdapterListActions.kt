@@ -7,22 +7,25 @@ interface AdapterListActions<Parent, Model : AdapterParentViewModel<out Parent, 
     AdapterListContract<Parent, Model> {
 
     @InternalAdaptersApi
-    fun addModel(model: Model)
+    suspend fun addModel(model: Model)
 
     @InternalAdaptersApi
-    fun addModels(models: List<Model>)
+    suspend fun addModels(models: List<Model>)
 
 
     @InternalAdaptersApi
-    fun removeModel(model: Model): Boolean
+    suspend fun removeModel(model: Model): Boolean
 
     @InternalAdaptersApi
-    fun removeAll()
+    suspend fun removeModels(models: List<Model>): Boolean
+
+    @InternalAdaptersApi
+    suspend fun removeAll()
 
     /**
      * Updates [model] with [item]
      * @return true if model's item and item are not the same.
      */
     @InternalAdaptersApi
-    fun updateModel(model: Model, item: Parent): Boolean
+    suspend fun updateModel(model: Model, item: Parent): Boolean
 }

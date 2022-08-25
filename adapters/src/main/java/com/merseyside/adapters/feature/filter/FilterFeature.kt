@@ -1,7 +1,12 @@
 package com.merseyside.adapters.feature.filter
 
 import com.merseyside.adapters.model.AdapterParentViewModel
+import com.merseyside.adapters.utils.runWithDefault
+import com.merseyside.merseyLib.kotlin.coroutines.CoroutineWorkManager
 import com.merseyside.merseyLib.kotlin.logger.ILogger
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.withContext
 
 abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, Parent>> : ILogger {
 
@@ -14,12 +19,17 @@ abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, 
         private set(value) {
             if (value != field) {
                 field = value
-                filterCallback?.onFilterStateChanged(value)
+                doAsync { filterCallback?.onFilterStateChanged(value) }
             }
         }
 
     val itemsCount: Int
         get() = provideFilteredList().size
+
+    val isBind: Boolean
+        get() = this::workManager.isInitialized
+
+    internal lateinit var workManager: CoroutineWorkManager<Any, Unit>
 
     internal var provideFullList: () -> List<Model> = { emptyList() }
     internal var provideFilteredList: () -> List<Model> = { provideFullList() }
@@ -31,6 +41,7 @@ abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, 
         this.provideFullList = fullListProvider
         this.provideFilteredList = filteredListProvider
     }
+
     /**
      * If you pass an object as filter be sure isEquals() implemented properly.
      */
@@ -60,53 +71,61 @@ abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, 
         return provideFullList()
     }
 
+    open suspend fun applyFilters(): Boolean = withContext(Dispatchers.Main) {
+        isFiltered = if (isFiltered && areFiltersEmpty()) {
+            false
+        } else if (notAppliedFilters.isEmpty()) {
+            log("No new filters added. Filtering skipped!")
+            return@withContext false
+        } else {
+            val filteredModels = filterModels()
+            putAppliedFilters()
+            postResult(filteredModels)
+            true
+        }
+
+        return@withContext true
+    }
+
+
+    private suspend fun filterModels(): List<Model> = runWithDefault {
+        val canFilterCurrentItems = filters.isNotEmpty() &&
+                !notAppliedFilters.keys.any { filters.containsKey(it) }
+
+        if (canFilterCurrentItems) {
+            filter(provideFilteredList(), notAppliedFilters)
+        } else {
+            makeAllFiltersNotApplied()
+            filter(provideFullList(), notAppliedFilters)
+        }
+    }
+
     /**
      * @return true if filters applied, false otherwise.
      */
-    open fun apply(): Boolean {
-        if (isFiltered && areFiltersEmpty()) {
-            isFiltered = false
-        } else if (notAppliedFilters.isEmpty()) {
-            log("No new filters added. Filtering skipped!")
-            return false
-        } else {
-            val canFilterCurrentItems = filters.isNotEmpty() &&
-                    !notAppliedFilters.keys.any { filters.containsKey(it) }
-
-            val filteredModels = if (canFilterCurrentItems) {
-                filter(provideFilteredList(), notAppliedFilters)
-            } else {
-                makeAllFiltersNotApplied()
-                filter(provideFullList(), notAppliedFilters)
-            }
-
-            putAppliedFilters()
-            postResult(filteredModels)
-            isFiltered = true
-        }
-
-        return true
+    open fun applyFiltersAsync(onComplete: (Boolean) -> Unit = {}) {
+        doAsync(onComplete) { applyFilters() }
     }
 
     internal fun areFiltersEmpty(): Boolean {
         return filters.isEmpty() && notAppliedFilters.isEmpty()
     }
 
-    private fun postResult(models: List<Model>) {
+    private suspend fun postResult(models: List<Model>) {
         filterCallback?.onFiltered(models)
     }
 
     abstract fun filter(model: Model, key: String, filter: Any): Boolean
 
-    internal fun filter(model: Model): Boolean {
+    internal suspend fun filter(model: Model): Boolean {
         return filter(model, filters)
     }
 
-    internal fun filter(models: List<Model>): List<Model> {
+    internal suspend fun filter(models: List<Model>): List<Model> {
         return filter(models, filters)
     }
 
-    internal open fun filter(model: Model, filters: Filters): Boolean {
+    internal open suspend fun filter(model: Model, filters: Filters): Boolean {
         return filters.all { (key, value) ->
             if (model.filterable) {
                 filter(model, key, value)
@@ -114,7 +133,7 @@ abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, 
         }
     }
 
-    private fun filter(models: List<Model>, filters: Filters): List<Model> {
+    private suspend fun filter(models: List<Model>, filters: Filters): List<Model> {
         return models.filter { model ->
             filter(model, filters)
         }
@@ -133,7 +152,7 @@ abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, 
     internal fun setFilterCallback(callback: FilterCallback<Model>) {
         this.filterCallback = callback
         if (isFiltered) {
-            callback.onFilterStateChanged(true)
+            doAsync { callback.onFilterStateChanged(true) }
         }
     }
 
@@ -146,10 +165,20 @@ abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, 
         notAppliedFilters.log("$prefix not applied =")
     }
 
-    interface FilterCallback<Model> {
-        fun onFiltered(models: List<Model>)
+    fun <Result> doAsync(
+        provideResult: (Result) -> Unit = {},
+        work: suspend FilterFeature<Parent, Model>.() -> Result,
+    ): Job? {
+        return workManager.addAndExecute {
+            val result = work()
+            provideResult(result)
+        }
+    }
 
-        fun onFilterStateChanged(isFiltered: Boolean)
+    interface FilterCallback<Model> {
+        suspend fun onFiltered(models: List<Model>)
+
+        suspend fun onFilterStateChanged(isFiltered: Boolean)
     }
 
     override val tag = "FilterFeature"

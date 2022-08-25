@@ -3,8 +3,8 @@ package com.merseyside.merseyLib.features.adapters.delegate.view
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.adapters.extensions.onItemClicked
+import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.application.base.BaseSampleFragment
@@ -40,10 +40,10 @@ class DelegateFragment : BaseSampleFragment<FragmentDelegateBinding, DelegateVie
         super.onViewCreated(view, savedInstanceState)
 
         requireBinding().recycler.adapter = adapter
-        adapter.add(Cat("Squirty", 5, "abc"))
+        adapter.addAsync(Cat("Squirty", 5, "abc"))
 
         requireBinding().populate.onClick {
-            adapter.update(UpdateRequest.Builder(getData()).build())
+            adapter.updateAsync(UpdateRequest.Builder(getData()).build())
         }
     }
 

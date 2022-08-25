@@ -61,7 +61,7 @@ class ContactFragment : BaseSampleFragment<FragmentContactsBinding, ContactViewM
 
         requireBinding().recycler.adapter = adapter
         viewModel.contactsFlow.asLiveData().observe(viewLifecycleOwner) { items ->
-            adapter.addOrUpdate(items)
+            adapter.addOrUpdateAsync(items)
         }
 
         requireBinding().populate.onClick {

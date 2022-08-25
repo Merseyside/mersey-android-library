@@ -36,14 +36,13 @@ class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel
             .build().inject(this)
     }
 
-    private val textChangeListener = {
-            view: View,
-            newValue: String?,
-            _: String?,
-            length: Int,
-            _: Int,
-            _: Int,
-            _: Int ->
+    private val textChangeListener = { view: View,
+                                       newValue: String?,
+                                       _: String?,
+                                       length: Int,
+                                       _: Int,
+                                       _: Int,
+                                       _: Int ->
 
         if (newValue != null) {
             val filterName = when (view.id) {
@@ -64,11 +63,7 @@ class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel
                     false
                 }
             }.also {
-                if (requireBinding().async.isChecked) {
-                    //adapter.applyFiltersAsync()
-                } else {
-                    adapter.applyFilters()
-                }
+                adapter.applyFiltersAsync()
             }
         } else false
     }
@@ -83,7 +78,8 @@ class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel
             bColor.addTextChangeListener(textChangeListener)
         }
 
-        requireBinding().sortSwitcher.setOnValueChangeListener(object : ValueSwitcher.OnValueChangeListener {
+        requireBinding().sortSwitcher.setOnValueChangeListener(object :
+            ValueSwitcher.OnValueChangeListener {
             override fun valueChanged(entryValue: String) {
                 adapter.setComparisonRule(ColorsComparator.ColorComparisonRule.valueOf(entryValue.uppercase()))
             }
@@ -92,22 +88,14 @@ class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel
         viewModel.getColorsFlow().asLiveData().observe(viewLifecycleOwner) {
             if (requireBinding().add.isChecked) {
 
-                if (requireBinding().async.isChecked) {
-                    adapter.addAsync(it)
-                } else {
-                    adapter.add(it)
-                }
+                adapter.addAsync(it)
             } else {
                 val updateRequest = UpdateRequest.Builder(it)
                     .isAddNew(requireBinding().updateAdd.isChecked)
                     .isDeleteOld(requireBinding().updateRemove.isChecked)
                     .build()
 
-                if (requireBinding().async.isChecked) {
-                    adapter.updateAsync(updateRequest)
-                } else {
-                    adapter.update(updateRequest)
-                }
+                adapter.updateAsync(updateRequest)
             }
         }
     }

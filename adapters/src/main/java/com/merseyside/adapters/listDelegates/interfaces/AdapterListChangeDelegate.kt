@@ -7,11 +7,15 @@ interface AdapterListChangeDelegate<Parent, Model : AdapterParentViewModel<out P
     /**
      * Converts items to models and return models that should be processed by adapter
      */
-    fun add(items: List<Parent>): List<Model>
+    suspend fun add(item: Parent): Model
 
-    fun remove(item: Parent): Model?
+    suspend fun add(items: List<Parent>): List<Model>
 
-    fun removeAll()
+    suspend fun remove(item: Parent): Model?
 
-    fun update(updateRequest: UpdateRequest<Parent>): Boolean
+    suspend fun remove(items: List<Parent>): List<Model>
+
+    suspend fun removeAll()
+
+    suspend fun update(updateRequest: UpdateRequest<Parent>): Boolean
 }

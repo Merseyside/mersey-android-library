@@ -3,12 +3,12 @@
 
 package com.merseyside.adapters.interfaces.selectable
 
-import com.merseyside.adapters.single.SelectableAdapter
 import com.merseyside.adapters.callback.HasOnItemSelectedListener
 import com.merseyside.adapters.callback.OnItemSelectedListener
 import com.merseyside.adapters.callback.OnSelectEnabledListener
 import com.merseyside.adapters.interfaces.sorted.ISortedAdapter
 import com.merseyside.adapters.model.SelectableAdapterParentViewModel
+import com.merseyside.adapters.single.SelectableAdapter
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.merseyLib.kotlin.logger.Logger
 
@@ -45,12 +45,12 @@ interface ISelectableAdapter<Parent, Model>
         selectedListeners.remove(listener)
     }
 
-    override fun addModel(model: Model) {
+    override suspend fun addModel(model: Model) {
         addModelToGroup(model)
         super.addModel(model)
     }
 
-    override fun addModels(models: List<Model>) {
+    override suspend fun addModels(models: List<Model>) {
         val isNoData = isEmpty()
         super.addModels(models)
         if (isNoData) {
@@ -201,7 +201,7 @@ interface ISelectableAdapter<Parent, Model>
         clearSelections()
     }
 
-    override fun remove(item: Parent): Boolean {
+    override suspend fun remove(item: Parent): Model? {
         return try {
             super.remove(item)
         } finally {

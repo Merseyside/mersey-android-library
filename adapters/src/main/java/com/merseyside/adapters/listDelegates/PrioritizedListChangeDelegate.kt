@@ -9,14 +9,14 @@ open class PrioritizedListChangeDelegate<Parent, Model : ComparableAdapterParent
     override val listActions: AdapterPrioritizedListActions<Parent, Model>
 ) : ListChangeDelegate<Parent, Model>(), AdapterPrioritizedListChangeDelegate<Parent, Model> {
 
-    override fun add(item: Parent, priority: Int): Model {
+    override suspend fun add(item: Parent, priority: Int): Model {
         validatePriority(priority)
         val model = createModel(item)
         addModel(model, priority)
         return model
     }
 
-    internal fun addModel(model: Model, priority: Int) {
+    internal suspend fun addModel(model: Model, priority: Int) {
         listActions.addModel(model, priority)
     }
 }

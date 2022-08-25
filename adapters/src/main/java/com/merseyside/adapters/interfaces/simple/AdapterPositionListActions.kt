@@ -6,9 +6,9 @@ import com.merseyside.adapters.model.AdapterParentViewModel
 interface AdapterPositionListActions<Parent, Model : AdapterParentViewModel<out Parent, Parent>>
     : AdapterListActions<Parent, Model> {
 
-    fun addModelByPosition(position: Int, model: Model)
+    suspend fun addModelByPosition(position: Int, model: Model)
 
-    fun addModelsByPosition(position: Int, models: List<Model>)
+    suspend fun addModelsByPosition(position: Int, models: List<Model>)
 
-    fun changeModelPosition(model: Model, oldPosition: Int, newPosition: Int)
+    suspend fun changeModelPosition(model: Model, oldPosition: Int, newPosition: Int)
 }

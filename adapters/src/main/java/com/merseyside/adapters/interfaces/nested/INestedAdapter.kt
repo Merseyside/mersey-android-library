@@ -29,7 +29,7 @@ interface INestedAdapter<Parent, Model, InnerData, InnerAdapter> : ISortedAdapte
         }
     }
 
-    override fun remove(item: Parent): Boolean {
+    override suspend fun remove(item: Parent): Model? {
         removeAdapterByItem(item)
         return super.remove(item)
     }

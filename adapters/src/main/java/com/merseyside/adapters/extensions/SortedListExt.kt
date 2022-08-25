@@ -2,6 +2,7 @@ package com.merseyside.adapters.extensions
 
 import androidx.recyclerview.widget.SortedList
 import com.merseyside.adapters.model.ComparableAdapterParentViewModel
+import com.merseyside.adapters.utils.runWithDefault
 
 fun SortedList<*>.isEmpty(): Boolean {
     return this.size() == 0
@@ -61,10 +62,15 @@ internal fun <Model> SortedList<Model>.removeAll(list: List<Model>) {
     list.forEach { remove(it) }
 }
 
-fun <Item> SortedList<Item>.batchedUpdate(block: SortedList<Item>.() -> Unit) {
-    beginBatchedUpdates()
-    block()
-    endBatchedUpdates()
+suspend inline fun <Item> SortedList<Item>.batchedUpdate(crossinline block: SortedList<Item>.() -> Unit) {
+    try {
+        beginBatchedUpdates()
+        runWithDefault {
+            block()
+        }
+    } finally {
+        endBatchedUpdates()
+    }
 }
 
 fun <Item> SortedList<Item>.getAll(): List<Item> {
@@ -75,10 +81,8 @@ fun <Item> SortedList<Item>.getAll(): List<Item> {
 
 fun SortedList<*>.recalculatePositions() {
     val models = getAll()
-    batchedUpdate {
-        models.forEach { model ->
-            val pos = indexOf { it == model }
-            recalculatePositionOfItemAt(pos)
-        }
+    models.forEach { model ->
+        val pos = indexOf { it == model }
+        recalculatePositionOfItemAt(pos)
     }
 }
