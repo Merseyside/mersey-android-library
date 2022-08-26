@@ -23,4 +23,8 @@ data class HexColor(
     }
 
     override fun getId() = color
+
+    override fun toString(): String {
+        return getHex()
+    }
 }

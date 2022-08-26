@@ -1,14 +1,14 @@
 package com.merseyside.adapters.callback
 
-interface OnItemClickListener<M> {
+interface OnItemClickListener<Item> {
 
-    fun onItemClicked(obj: M)
+    fun onItemClicked(item: Item)
 }
 
-interface HasOnItemClickListener<M> {
-    var listener: OnItemClickListener<M>?
+interface HasOnItemClickListener<Item> {
+    var listener: OnItemClickListener<Item>?
 
-    fun setOnItemClickListener(listener: OnItemClickListener<M>?) {
+    fun setOnItemClickListener(listener: OnItemClickListener<Item>?) {
         this.listener = listener
     }
 }

@@ -13,4 +13,15 @@
     <string name="name">Name: %1$s</string>
     <string name="age">Age: %1$d</string>
 
+    <string-array name="sort_entries">
+        <item>Ascending</item>
+        <item>Descending</item>
+        <item>Rainbow</item>
+    </string-array>
+
+    <string-array name="sort_entry_values">
+        <item>asc</item>
+        <item>desc</item>
+        <item>rainbow</item>
+    </string-array>
 </resources>

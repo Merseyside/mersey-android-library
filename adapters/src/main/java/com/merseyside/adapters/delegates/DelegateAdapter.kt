@@ -6,25 +6,20 @@ import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.model.AdapterParentViewModel
-import com.merseyside.adapters.view.TypedBindingHolder
 import com.merseyside.utils.reflection.ReflectionUtils
 
-abstract class DelegateAdapter<Item : Parent, Parent,
-        Model : AdapterParentViewModel<Item, out Parent>>(
-    private val priority: Int = 0
-) {
-
-    init {
-        checkPriority()
-    }
+abstract class DelegateAdapter<Item : Parent, Parent, Model : AdapterParentViewModel<Item, out Parent>> {
 
     @LayoutRes
     abstract fun getLayoutIdForItem(viewType: Int): Int
     protected abstract fun getBindingVariable(): Int
 
+    @CallSuper
     open fun isResponsibleFor(parent: Parent): Boolean {
-        return isResponsibleForItemClass(parent!!::class.java)
+        return parent?.let { isResponsibleForItemClass(it::class.java) }
+            ?: throw NullPointerException("Parent is null!")
     }
 
     internal fun isResponsibleForItemClass(clazz: Class<out Parent>): Boolean {
@@ -34,23 +29,22 @@ abstract class DelegateAdapter<Item : Parent, Parent,
     abstract fun createItemViewModel(item: Item): Model
 
     @Suppress("UNCHECKED_CAST")
-    internal fun createItemViewModel(parent: Parent): Model {
+    internal open fun createItemViewModel(parent: Parent): Model {
         val item = (parent as? Item) ?: throw IllegalArgumentException(
             "This delegate is not " +
                     "responsible for ${parent!!::class}"
         )
-        return createItemViewModel(item).also { it.priority = priority }
+        return createItemViewModel(item)
     }
 
     fun createViewHolder(parent: ViewGroup, viewType: Int): TypedBindingHolder<Model> {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val binding: ViewDataBinding =
-            DataBindingUtil.inflate(
-                layoutInflater,
-                getLayoutIdForItem(viewType),
-                parent,
-                false
-            )
+        val binding: ViewDataBinding = DataBindingUtil.inflate(
+            layoutInflater,
+            getLayoutIdForItem(viewType),
+            parent,
+            false
+        )
 
         return getBindingHolder(binding)
     }
@@ -66,12 +60,6 @@ abstract class DelegateAdapter<Item : Parent, Parent,
 
     open fun getBindingHolder(binding: ViewDataBinding) = TypedBindingHolder<Model>(binding)
 
-    private fun checkPriority() {
-        if (priority !in ALWAYS_FIRST_PRIORITY..ALWAYS_LAST_PRIORITY) {
-            throw IllegalArgumentException("Wrong priority!")
-        }
-    }
-
     @Suppress("UNCHECKED_CAST")
     private val persistentClass: Class<Item> =
         ReflectionUtils.getGenericParameterClass(
@@ -79,9 +67,4 @@ abstract class DelegateAdapter<Item : Parent, Parent,
             DelegateAdapter::class.java,
             0
         ) as Class<Item>
-
-    companion object {
-        const val ALWAYS_FIRST_PRIORITY = -1
-        const val ALWAYS_LAST_PRIORITY = Int.MAX_VALUE
-    }
 }
