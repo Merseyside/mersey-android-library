@@ -30,7 +30,9 @@ abstract class BaseListChangeDelegate<Parent, Model : AdapterParentViewModel<out
 
     abstract suspend fun createModel(item: Parent): Model
 
-    abstract suspend fun createModels(items: List<Parent>): List<Model>
+    suspend fun createModels(items: List<Parent>): List<Model> {
+        return items.map { item -> createModel(item) }
+    }
 
     abstract suspend fun addModel(model: Model): Boolean
 
@@ -49,6 +51,8 @@ abstract class BaseListChangeDelegate<Parent, Model : AdapterParentViewModel<out
     protected suspend fun update(items: List<Parent>): Boolean {
         return update(UpdateRequest(items))
     }
+
+    abstract suspend fun applyUpdateTransaction(updateTransaction: UpdateTransaction<Parent, Model>) : Boolean
 
     abstract suspend fun setModels(models: List<Model>)
 

@@ -2,6 +2,7 @@ package com.merseyside.adapters.feature.filter
 
 import com.merseyside.adapters.listDelegates.BaseListChangeDelegate
 import com.merseyside.adapters.listDelegates.ListChangeDelegate
+import com.merseyside.adapters.listDelegates.utils.UpdateTransaction
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.merseyLib.kotlin.coroutines.CoroutineWorkManager
@@ -53,16 +54,13 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
         return listChangeDelegate.createModel(item)
     }
 
-    final override suspend fun createModels(items: List<Parent>): List<Model> {
-        return items.map { item -> createModel(item) }
-    }
-
     override suspend fun add(item: Parent): Model {
         with(filterFeature) {
             return if (!isFiltered) {
                 listChangeDelegate.add(item)
             } else {
                 val model = createModel(item)
+                mutAllModelList.add(model)
                 addModel(model)
 
                 model
@@ -76,6 +74,7 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
                 listChangeDelegate.add(items)
             } else {
                 val models = createModels(items)
+                mutAllModelList.addAll(models)
                 addModels(models)
 
                 models
@@ -95,18 +94,10 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
     }
 
     override suspend fun removeModel(model: Model): Boolean {
-        if (isFiltered()) {
-            mutAllModelList.remove(model)
-        }
-
         return listChangeDelegate.removeModel(model)
     }
 
     override suspend fun removeModels(models: List<Model>): Boolean {
-        if (isFiltered()) {
-            mutAllModelList.removeAll(models)
-        }
-
         return listChangeDelegate.removeModels(models)
     }
 
@@ -115,28 +106,32 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
         listChangeDelegate.removeAll()
     }
 
-    override suspend fun update(updateRequest: UpdateRequest<Parent>): Boolean {
+    final override suspend fun update(updateRequest: UpdateRequest<Parent>): Boolean {
         return if (!isFiltered()) {
             listChangeDelegate.update(updateRequest)
         } else {
-            val updateTransaction = getUpdateTransaction(updateRequest, allModelList).log()
+            val updateTransaction = getUpdateTransaction(updateRequest, allModelList)
+            applyUpdateTransaction(updateTransaction)
+        }
+    }
 
-            with(updateTransaction) {
-                if (modelsToRemove.isNotEmpty()) {
-                    removeModels(modelsToRemove)
-                }
-
-                if (modelsToUpdate.isNotEmpty()) {
-                    updateModels(modelsToUpdate)
-                }
-
-                if (itemsToAdd.isNotEmpty()) {
-                    add(itemsToAdd)
-                }
+    override suspend fun applyUpdateTransaction(updateTransaction: UpdateTransaction<Parent, Model>): Boolean {
+        with(updateTransaction) {
+            if (modelsToRemove.isNotEmpty()) {
+                removeFromAllModels(modelsToRemove)
+                removeModels(modelsToRemove)
             }
 
-            !updateTransaction.isEmpty()
+            if (modelsToUpdate.isNotEmpty()) {
+                updateModels(modelsToUpdate)
+            }
+
+            if (itemsToAdd.isNotEmpty()) {
+                add(itemsToAdd)
+            }
         }
+
+        return !updateTransaction.isEmpty()
     }
 
     override suspend fun setModels(models: List<Model>) {
@@ -152,13 +147,29 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
     }
 
     override suspend fun addModels(models: List<Model>): Boolean {
-        mutAllModelList.addAll(models)
-        models.forEach { model -> addModel(model) }
+        if (isFiltered()) {
+            val filteredModels = filterFeature.filter(models)
+            listChangeDelegate.addModels(filteredModels)
+        }
         return true
     }
 
     override suspend fun updateModel(model: Model, item: Parent): Boolean {
-        return listChangeDelegate.updateModel(model, item)
+        val isUpdated = listChangeDelegate.updateModel(model, item)
+        if (isUpdated && isFiltered()) {
+            val filtered = filterFeature.filter(model)
+            if (!filtered) removeModel(model)
+        }
+
+        return isFiltered()
+    }
+
+    internal open suspend fun removeFromAllModels(model: Model): Boolean {
+        return mutAllModelList.remove(model)
+    }
+
+    internal suspend fun removeFromAllModels(models: List<Model>) {
+        models.forEach { model -> removeFromAllModels(model) }
     }
 
     protected fun isFiltered() = filterFeature.isFiltered

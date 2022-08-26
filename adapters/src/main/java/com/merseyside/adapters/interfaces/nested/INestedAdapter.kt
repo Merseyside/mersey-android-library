@@ -1,5 +1,3 @@
-@file:OptIn(InternalAdaptersApi::class)
-
 package com.merseyside.adapters.interfaces.nested
 
 import androidx.databinding.ViewDataBinding
@@ -11,6 +9,7 @@ import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.merseyLib.kotlin.extensions.remove
+
 
 interface INestedAdapter<Parent, Model, InnerData, InnerAdapter> : ISortedAdapter<Parent, Model>,
     AdapterNestedListActions<Parent, Model, InnerData, InnerAdapter>
@@ -29,17 +28,6 @@ interface INestedAdapter<Parent, Model, InnerData, InnerAdapter> : ISortedAdapte
         }
     }
 
-    override suspend fun remove(item: Parent): Model? {
-        removeAdapterByItem(item)
-        return super.remove(item)
-    }
-
-    fun removeAdapterByItem(item: Parent): Boolean {
-        return getModelByItem(item)?.let { model ->
-            removeAdapterByModel(model)
-        } ?: false
-    }
-
     private fun putAdapter(model: Model, adapter: InnerAdapter) {
         adapterList.add(model to adapter)
     }
@@ -54,17 +42,23 @@ interface INestedAdapter<Parent, Model, InnerData, InnerAdapter> : ISortedAdapte
             .filterIsInstance<Filterable<InnerData, *>>()
     }
 
-    private fun removeAdapterByModel(model: Model): Boolean {
-        return adapterList.remove { (adaptersModel, _) ->
-            adaptersModel == model
-        }
-    }
-
     /* Models list actions */
 
     override fun getNestedAdapterByModel(model: Model): InnerAdapter {
         return getAdapterIfExists(model) ?: initNestedAdapter(model).also { adapter ->
             putAdapter(model, adapter)
         }
+    }
+
+    override fun removeNestedAdapterByModel(model: Model): Boolean {
+        return adapterList.remove { (adaptersModel, _) ->
+            adaptersModel == model
+        }
+    }
+
+    @InternalAdaptersApi
+    override suspend fun removeAll() {
+        super.removeAll()
+        adapterList.clear()
     }
 }

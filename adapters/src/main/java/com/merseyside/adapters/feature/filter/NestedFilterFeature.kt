@@ -54,4 +54,11 @@ abstract class NestedFilterFeature<Parent, Model : NestedAdapterParentViewModel<
         filterFeature.applyFilters()
     }
 
+    override suspend fun cancelFiltering() {
+        super.cancelFiltering()
+        provideFullList()
+            .mapNotNull { model -> getFilterableByModel(model) }
+            .forEach { filterable -> filterable.filter.applyFilters() }
+    }
+
 }

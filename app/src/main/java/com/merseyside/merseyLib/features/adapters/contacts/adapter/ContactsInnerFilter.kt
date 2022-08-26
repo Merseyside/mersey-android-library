@@ -11,7 +11,7 @@ class ContactsInnerFilter : NestedFilterFeature<ContactGroup, ContactGroupItemVi
     }
 
     override fun filter(model: ContactGroupItemViewModel, hasItems: Boolean): Boolean {
-        return hasItems.log("kek", "has items")
+        return hasItems
     }
 
     companion object {

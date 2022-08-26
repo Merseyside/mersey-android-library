@@ -10,7 +10,7 @@ class ContactProducer {
     private val contactsFlow = MutableSharedFlow<List<ContactGroup>>()
     fun getContactsSharedFlow(): SharedFlow<List<ContactGroup>> = contactsFlow
 
-    suspend fun generateRandomContacts(count: Int = 100) {
+    suspend fun generateRandomContacts(count: Int = 10) {
         val contacts = (0 until count).map {
             generateRandomString(6)
         }

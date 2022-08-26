@@ -11,4 +11,6 @@ interface AdapterNestedListActions<Parent, Model, InnerData, InnerAdapter>
               InnerAdapter : BaseAdapter<InnerData, out AdapterParentViewModel<out InnerData, InnerData>> {
 
     fun getNestedAdapterByModel(model: Model): InnerAdapter
+
+    fun removeNestedAdapterByModel(model: Model): Boolean
 }

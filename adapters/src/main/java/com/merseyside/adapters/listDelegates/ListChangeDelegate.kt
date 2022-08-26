@@ -3,6 +3,7 @@
 package com.merseyside.adapters.listDelegates
 
 import com.merseyside.adapters.interfaces.base.AdapterListActions
+import com.merseyside.adapters.listDelegates.utils.UpdateTransaction
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.UpdateRequest
@@ -43,7 +44,12 @@ abstract class ListChangeDelegate<Parent, Model : AdapterParentViewModel<out Par
 
     override suspend fun update(updateRequest: UpdateRequest<Parent>): Boolean {
         val updateTransaction = getUpdateTransaction(updateRequest, getModels())
+        return applyUpdateTransaction(updateTransaction)
+    }
 
+    override suspend fun applyUpdateTransaction(
+        updateTransaction: UpdateTransaction<Parent, Model>
+    ): Boolean {
         with(updateTransaction) {
             if (modelsToRemove.isNotEmpty()) {
                 removeModels(modelsToRemove)
@@ -94,10 +100,6 @@ abstract class ListChangeDelegate<Parent, Model : AdapterParentViewModel<out Par
 
     override suspend fun createModel(item: Parent): Model {
         return listActions.modelProvider(item)
-    }
-
-    override suspend fun createModels(items: List<Parent>): List<Model> {
-        return items.map { item -> createModel(item) }
     }
 
     override val tag: String = "ListChangeDelegate"

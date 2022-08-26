@@ -57,6 +57,7 @@ abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, 
         if (isFiltered) {
             if (appliedFilter != null) {
                 filters.remove(key)
+                notAppliedFilters.remove(key)
                 makeAllFiltersNotApplied()
             }
         }
@@ -74,6 +75,7 @@ abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, 
     open suspend fun applyFilters(): Boolean = withContext(Dispatchers.Main) {
 
         isFiltered = if (isFiltered && areFiltersEmpty()) {
+            cancelFiltering()
             false
         } else if (notAppliedFilters.isEmpty()) {
             log("No new filters added. Filtering skipped!")
@@ -99,6 +101,8 @@ abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, 
             filter(provideFullList(), notAppliedFilters)
         }
     }
+
+    internal open suspend fun cancelFiltering() {}
 
     /**
      * @return true if filters applied, false otherwise.
