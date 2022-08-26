@@ -9,7 +9,7 @@ import com.merseyside.animators.BaseAnimatorBuilder
 import com.merseyside.animators.BaseSingleAnimator
 import com.merseyside.animators.MainPoint
 import com.merseyside.merseyLib.kotlin.safeLet
-import com.merseyside.merseyLib.kotlin.Logger
+import com.merseyside.merseyLib.kotlin.logger.Logger
 import com.merseyside.merseyLib.time.units.TimeUnit
 
 class TransitionAnimator (

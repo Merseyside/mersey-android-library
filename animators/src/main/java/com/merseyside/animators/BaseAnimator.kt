@@ -7,8 +7,8 @@ import android.animation.ValueAnimator
 import android.os.Build
 import com.merseyside.merseyLib.time.units.Millis
 import com.merseyside.utils.delayedMainThread
-import com.merseyside.merseyLib.kotlin.extensions.log
-import com.merseyside.merseyLib.kotlin.Logger
+import com.merseyside.merseyLib.kotlin.logger.log
+import com.merseyside.merseyLib.kotlin.logger.Logger
 
 abstract class BaseAnimator {
 

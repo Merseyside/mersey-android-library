@@ -8,7 +8,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.StyleRes
 import androidx.annotation.StyleableRes
 import androidx.core.content.res.getColorOrThrow
-import com.merseyside.merseyLib.kotlin.Logger
+import com.merseyside.merseyLib.kotlin.logger.Logger
 import com.merseyside.utils.ext.capitalize
 import java.lang.reflect.Field
 
@@ -131,6 +131,24 @@ class AttributeHelper(
         return id?.let { ta.getDrawable(id) }
     }
 
+    fun getTextArray(name: String): List<String> {
+        val id = getIdentifierOrNull(name)
+        return id?.let { ta.getTextArray(id) }?.map { it.toString() }
+            ?: throw IllegalArgumentException("Not null identifier expected.")
+    }
+
+    fun getTextArrayOrNull(name: String): List<String>? {
+        val id = getIdentifierOrNull(name)
+        return id?.let { ta.getTextArray(id) }?.map { it.toString() }
+    }
+
+    fun <T> getEnum(name: String, defValue: T? = null, provider: (Int) -> T): T {
+        return requireDefValueIfEmpty(name, defValue) {
+            val value = getIntOrNull(name)
+            value?.let { provider(value) }
+        }
+    }
+
     fun recycle() {
         ta.recycle()
     }
@@ -189,8 +207,8 @@ class AttributeHelper(
     @Throws(IllegalArgumentException::class)
     private fun <T> requireDefValueIfEmpty(
         name: String,
-        defValue: Any,
-        block: ((Int) -> T)? = null
+        defValue: Any?,
+        block: ((Int) -> T?)? = null
     ): T {
         val id = getIdentifierOrNull(name)
 
@@ -200,8 +218,8 @@ class AttributeHelper(
             block(id)
         } else defValue
 
-        return if (value == NO_VALUE || value == NO_VALUE_FLOAT
-            || value == NO_VALUE_STRING
+        return if (value == null || value == NO_VALUE ||
+            value == NO_VALUE_FLOAT || value == NO_VALUE_STRING
         ) {
             throw IllegalArgumentException("Default value not passed and attribute is null!")
         } else value as T

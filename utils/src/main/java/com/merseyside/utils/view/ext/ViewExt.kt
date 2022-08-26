@@ -151,7 +151,7 @@ fun TextView.setTextSizePx(value: Number) {
 
 fun View.onClick(onClick: (View) -> Unit): View.OnClickListener {
     val listener = View.OnClickListener { onClick(it) }
-    this.setOnClickListener(listener)
+    setOnClickListener(listener)
 
     return listener
 }

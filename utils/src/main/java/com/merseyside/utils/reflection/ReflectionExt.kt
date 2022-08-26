@@ -1,6 +1,6 @@
 package com.merseyside.utils.reflection
 
-import com.merseyside.merseyLib.kotlin.extensions.log
+import com.merseyside.merseyLib.kotlin.logger.log
 import kotlin.reflect.full.memberFunctions
 
 fun Any.callMethodByName(name: String): Any? {

@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.ConcatAdapter
-import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.BR
+import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.application.base.BaseSampleFragment
 import com.merseyside.merseyLib.databinding.FragmentConcatAdapterBinding
 import com.merseyside.merseyLib.features.adapters.colors.view.DaggerConcatComponent
@@ -42,11 +42,11 @@ class ConcatAdapterFragment : BaseSampleFragment<FragmentConcatAdapterBinding, C
         requireBinding().recycler.adapter = concatAdapter
 
         viewModel.getNewsFlow().asLiveData().observe(viewLifecycleOwner) {
-            newsAdapter.add(it)
+            newsAdapter.addAsync(it)
         }
 
         viewModel.getAdsFlow().asLiveData().observe(viewLifecycleOwner) {
-            adsAdapter.add(it)
+            adsAdapter.addAsync(it)
         }
     }
 

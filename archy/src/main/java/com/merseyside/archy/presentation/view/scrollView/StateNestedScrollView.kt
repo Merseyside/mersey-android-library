@@ -5,7 +5,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
 import androidx.core.widget.NestedScrollView
-import com.merseyside.merseyLib.kotlin.extensions.log
+import com.merseyside.merseyLib.kotlin.logger.log
 
 class StateNestedScrollView(
     context: Context,

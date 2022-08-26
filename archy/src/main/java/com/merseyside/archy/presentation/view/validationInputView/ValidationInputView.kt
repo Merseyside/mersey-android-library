@@ -11,7 +11,7 @@ import androidx.core.view.updateLayoutParams
 import com.merseyside.archy.R
 import com.merseyside.archy.databinding.ViewValidationInputBinding
 import com.merseyside.archy.presentation.view.validationInputView.ValidationState.*
-import com.merseyside.merseyLib.kotlin.Logger
+import com.merseyside.merseyLib.kotlin.logger.Logger
 import com.merseyside.utils.attributes.AttributeHelper
 import com.merseyside.utils.colorStateList.colorToSimpleStateList
 import com.merseyside.utils.delegate.*

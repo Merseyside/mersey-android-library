@@ -9,6 +9,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isGone
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.merseyside.archy.BaseApplication
 import com.merseyside.archy.presentation.dialog.MaterialAlertDialog
@@ -19,7 +20,7 @@ import com.merseyside.archy.presentation.view.OnKeyboardStateListener
 import com.merseyside.archy.presentation.view.OrientationHandler
 import com.merseyside.archy.presentation.view.localeViews.ILocaleManager
 import com.merseyside.archy.utils.SnackbarManager
-import com.merseyside.merseyLib.kotlin.Logger
+import com.merseyside.merseyLib.kotlin.logger.Logger
 import com.merseyside.utils.LocaleManager
 import com.merseyside.utils.ext.getLocalizedContext
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
@@ -182,6 +183,16 @@ abstract class BaseActivity : AppCompatActivity(),
             }
         }
     }
+
+    val navHostFragment: NavHostFragment?
+        get() = getFragmentContainer()?.let { id ->
+            supportFragmentManager.findFragmentById(id) as NavHostFragment
+        }
+
+    val navController: NavController
+        get() = navHostFragment?.navController ?:
+            throw IllegalArgumentException("NavHostFragment is null! Are you sure you pass fragment" +
+                    " container correctly?")
 
 
     override fun showAlertDialog(

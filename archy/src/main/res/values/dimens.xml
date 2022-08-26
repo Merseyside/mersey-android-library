@@ -2,4 +2,6 @@
 <resources>
 
     <dimen name="text_margin">4dp</dimen>
+
+    <dimen name="value_switcher_icon_size">32dp</dimen>
 </resources>

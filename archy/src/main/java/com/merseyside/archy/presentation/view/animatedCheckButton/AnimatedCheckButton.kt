@@ -6,16 +6,17 @@ import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
+import android.view.View.OnClickListener
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatButton
-import com.merseyside.archy.R
 import com.merseyside.animators.AnimatorList
 import com.merseyside.animators.Approach
 import com.merseyside.animators.animator.ColorAnimator
+import com.merseyside.archy.R
 import com.merseyside.merseyLib.kotlin.extensions.forEachNotNull
 import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
+import com.merseyside.merseyLib.kotlin.logger.Logger
 import com.merseyside.merseyLib.time.units.Millis
-import com.merseyside.merseyLib.kotlin.Logger
 import com.merseyside.utils.ext.setColor
 import com.merseyside.utils.view.ext.onClick
 
@@ -82,23 +83,19 @@ class AnimatedCheckButton(context: Context, attributeSet: AttributeSet)
     }
 
     private fun doLayout() {
-        setForceChecked(isChecked)
-
         onClick {
-            onClick.invoke(this)
-
             if (isCheckable) {
                 isChecked = !isChecked
                 changeState()
             }
         }
 
+        setForceChecked(isChecked)
         isInitialized = true
     }
 
     private fun changeState() {
         listener?.onChecked(isChecked)
-
         animateState()
     }
 
@@ -268,10 +265,6 @@ class AnimatedCheckButton(context: Context, attributeSet: AttributeSet)
 
     fun setClickableWhenTransition(isClickable: Boolean) {
         this.isClickableWhenTransition = isClickable
-    }
-
-    fun setOnClick(click: (View) -> Unit) {
-        this.onClick = click
     }
 
     companion object {

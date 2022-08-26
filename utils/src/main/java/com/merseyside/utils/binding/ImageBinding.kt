@@ -107,20 +107,22 @@ fun setImageWithCoil(
             load(data) {
                 //listener { request, result -> result.log("CoilResult") }
                 builder()
-                placeholder(placeholder)
+                placeholder?.let { placeholder(getValidPlaceholder(it)) }
             }
         } catch (e: NullPointerException) {
             e.printStackTrace()
-            loadPlaceHolder(placeholder) { builder() }
+            loadPlaceholder(placeholder) { builder() }
         }
     }
 }
 
-private fun ImageView.loadPlaceHolder(
+private fun ImageView.loadPlaceholder(
     placeholder: Any?,
     builder: ImageRequest.Builder.() -> Unit
 ) {
-    load(placeholder) { builder() }
+    placeholder?.let {
+        load(getValidPlaceholder(it)) { builder() }
+    }
 }
 
 private fun build(
@@ -146,12 +148,11 @@ private fun build(
     }
 }
 
-private fun ImageRequest.Builder.placeholder(holder: Any?) = apply {
-    when (holder) {
-        null -> {}
-        is Drawable -> placeholder(holder)
-        is Int -> placeholder(ColorDrawable(holder))
-        else -> throw IllegalArgumentException("Wrong placeholder type!")
+private fun getValidPlaceholder(placeholder: Any): Drawable {
+    return when(placeholder) {
+        is Drawable -> placeholder
+        is Int -> ColorDrawable(placeholder)
+        else -> throw IllegalArgumentException("Only drawable and color placeholders supported!")
     }
 }
 

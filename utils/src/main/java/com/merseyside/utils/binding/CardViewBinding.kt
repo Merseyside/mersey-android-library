@@ -7,14 +7,14 @@ import com.google.android.material.textfield.TextInputLayout
 import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
 import com.merseyside.utils.view.ext.getColorFromAttr
 
-@BindingAdapter("app:attrCardBackgroundColor")
+@BindingAdapter("attrCardBackgroundColor")
 fun setCardViewBackgroundColor(cardView: CardView, @AttrRes attrId: Int?) {
     if (attrId != null) {
         cardView.setCardBackgroundColor(cardView.getColorFromAttr(attrId))
     }
 }
 
-@BindingAdapter("app:errorText")
+@BindingAdapter("errorText")
 fun setErrorMessage(view: TextInputLayout, errorMessage: String?) {
     view.isErrorEnabled = errorMessage.isNotNullAndEmpty()
     view.error = errorMessage

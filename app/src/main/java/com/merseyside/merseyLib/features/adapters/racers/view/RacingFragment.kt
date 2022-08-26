@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
-import com.merseyside.adapters.base.UpdateRequest
+import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.application.base.BaseSampleFragment
@@ -14,7 +14,6 @@ import com.merseyside.merseyLib.features.adapters.racers.adapter.RacersAdapter
 import com.merseyside.merseyLib.features.adapters.racers.di.DaggerRacingComponent
 import com.merseyside.merseyLib.features.adapters.racers.di.RacingModule
 import com.merseyside.merseyLib.features.adapters.racers.model.RacingViewModel
-import com.merseyside.merseyLib.kotlin.extensions.log
 
 class RacingFragment : BaseSampleFragment<FragmentRacingBinding, RacingViewModel>() {
 
@@ -40,10 +39,8 @@ class RacingFragment : BaseSampleFragment<FragmentRacingBinding, RacingViewModel
             addItemDecoration(CheckpointItemDecorator(context, R.dimen.small_spacing))
         }
 
-
-        viewModel.getCheckpointFlow().asLiveData().observe(viewLifecycleOwner) {
-            it.log()
-            adapter.update(UpdateRequest(it))
+        viewModel.getCheckpointFlow().asLiveData().observe(viewLifecycleOwner) { checkpoint ->
+            adapter.updateAsync(UpdateRequest.Builder(checkpoint).isDeleteOld(false).build())
         }
     }
 }

@@ -41,6 +41,12 @@ android {
             )
         }
     }
+
+    val basePath = "src/main/res"
+    sourceSets.getByName("main") {
+        res.srcDir(basePath)
+        res.srcDir("$basePath/layouts/valueSwitcher")
+    }
 }
 
 kotlinConvention {
@@ -75,7 +81,7 @@ val modulez = listOf(
 
 dependencies {
     implementation(common.serialization)
-    api(common.mersey.time)
+    api(common.bundles.mersey.time)
 
     modulez.forEach { module -> implementation(module) }
     

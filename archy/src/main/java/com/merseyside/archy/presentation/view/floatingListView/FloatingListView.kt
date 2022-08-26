@@ -13,11 +13,11 @@ import androidx.annotation.IdRes
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.merseyside.adapters.base.BaseAdapter
+import com.merseyside.adapters.single.SimpleAdapter
 import com.merseyside.archy.R
 import com.merseyside.archy.databinding.ViewFloatingListBinding
-import com.merseyside.utils.delegate.viewBinding
 import com.merseyside.utils.delegate.getValue
+import com.merseyside.utils.delegate.viewBinding
 
 /**
  * This class have to be extended from RelativeLayout
@@ -29,14 +29,12 @@ class FloatingListView(context: Context, attrsSet: AttributeSet? = null): Relati
     enum class Orientation {VERTICAL, HORIZONTAL, GRID}
 
     private lateinit var recyclerView: RecyclerView
-
     private var relativeView: View? = null
-
     var orientation: Orientation = Orientation.VERTICAL
 
     @IdRes var containerId: Int = 0
 
-    private var adapter: BaseAdapter<*, *>? = null
+    private var adapter: SimpleAdapter<*, *>? = null
 
     init {
         if (attrsSet != null) {
@@ -76,7 +74,7 @@ class FloatingListView(context: Context, attrsSet: AttributeSet? = null): Relati
 
     }
 
-    fun setAdapter(adapter: BaseAdapter<*, *>) {
+    fun setAdapter(adapter: SimpleAdapter<*, *>) {
         recyclerView.adapter = adapter
         this.adapter = adapter
     }

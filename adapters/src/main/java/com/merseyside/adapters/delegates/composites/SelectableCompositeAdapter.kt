@@ -1,27 +1,25 @@
-@file:OptIn(InternalAdaptersApi::class)
-
 package com.merseyside.adapters.delegates.composites
 
-import com.merseyside.adapters.base.SelectableAdapter
 import com.merseyside.adapters.callback.OnItemSelectedListener
 import com.merseyside.adapters.callback.OnSelectEnabledListener
 import com.merseyside.adapters.delegates.DelegatesManager
+import com.merseyside.adapters.interfaces.selectable.ISelectableAdapter
+import com.merseyside.adapters.interfaces.selectable.SelectableMode
 import com.merseyside.adapters.model.SelectableAdapterParentViewModel
-import com.merseyside.adapters.utils.InternalAdaptersApi
-import com.merseyside.adapters.utils.SelectableAdapterListUtils
+import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
-abstract class SelectableCompositeAdapter<Parent, Model: SelectableAdapterParentViewModel<out Parent, Parent>>(
+abstract class SelectableCompositeAdapter<Parent, Model>(
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
     delegatesManager: DelegatesManager<Parent, Model> = DelegatesManager(),
-    selectableMode: SelectableAdapter.SelectableMode = SelectableAdapter.SelectableMode.SINGLE,
-    override var isAllowToCancelSelection: Boolean =
-        selectableMode == SelectableAdapter.SelectableMode.MULTIPLE,
+    selectableMode: SelectableMode = SelectableMode.SINGLE,
+    override var isAllowToCancelSelection: Boolean = selectableMode == SelectableMode.MULTIPLE,
     isSelectEnabled: Boolean = true,
-    scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-) : SortedCompositeAdapter<Parent, Model>(delegatesManager, scope),
-    SelectableAdapterListUtils<Parent, Model> {
+) : SortedCompositeAdapter<Parent, Model>(scope, delegatesManager),
+    ISelectableAdapter<Parent, Model>
+    where Model: SelectableAdapterParentViewModel<out Parent, Parent> {
 
     override var selectedList: MutableList<Model> = ArrayList()
     override val selectedListeners: MutableList<OnItemSelectedListener<Parent>> = ArrayList()
@@ -38,15 +36,15 @@ abstract class SelectableCompositeAdapter<Parent, Model: SelectableAdapterParent
             }
         }
 
-    override var selectableMode: SelectableAdapter.SelectableMode = selectableMode
+    override var selectableMode: SelectableMode = selectableMode
         set(value) {
             if (field != value) {
                 field = value
 
-                if (value == SelectableAdapter.SelectableMode.SINGLE) {
+                if (value == SelectableMode.SINGLE) {
                     if (selectedList.size > 1) {
                         (1 until selectedList.size).forEach { index ->
-                            selectedList[index].setSelected(false)
+                            selectedList[index].isSelected = false
                         }
 
                         selectedList = mutableListOf(selectedList.first())
@@ -62,21 +60,27 @@ abstract class SelectableCompositeAdapter<Parent, Model: SelectableAdapterParent
 
                 onSelectEnableListener?.onEnabled(value)
 
-                if (modelList.isNotEmpty()) {
-                    modelList.forEach { model ->
-                        model.setSelectEnabled(value)
+                models.isNotNullAndEmpty {
+                    forEach { model ->
+                        model.isSelectable = value
                     }
                 }
             }
         }
 
-    override fun onModelCreated(model: Model) {
-        super.onModelCreated(model)
-        model.setSelectEnabled(isSelectEnabled)
+    override val internalSelectCallback: (Model) -> Unit = { model ->
+        if (model.isSelectable) {
+            setModelSelected(model, true)
+        }
     }
 
-    override fun setItemSelected(item: Model?, isSelectedByUser: Boolean): Boolean {
-        return if (super.setItemSelected(item, isSelectedByUser)) {
+    override fun onModelCreated(model: Model) {
+        super.onModelCreated(model)
+        model.isSelectable = isSelectEnabled
+    }
+
+    override fun setModelSelected(model: Model?, isSelectedByUser: Boolean): Boolean {
+        return if (super.setModelSelected(model, isSelectedByUser)) {
             recyclerView?.invalidateItemDecorations()
             true
         } else false

@@ -2,13 +2,15 @@ package com.merseyside.adapters.model
 
 import androidx.annotation.CallSuper
 import androidx.databinding.BaseObservable
-import com.merseyside.adapters.base.ItemCallback
 import com.merseyside.adapters.callback.OnItemClickListener
+import com.merseyside.adapters.utils.ItemCallback
 import com.merseyside.merseyLib.kotlin.contract.Identifiable
 
 @Suppress("UNCHECKED_CAST")
 abstract class AdapterParentViewModel<Item : Parent, Parent>(
-    item: Item
+    item: Item,
+    open val deletable: Boolean = true,
+    open val filterable: Boolean = true
 ) : BaseObservable() {
 
     var item: Item = item
@@ -16,14 +18,12 @@ abstract class AdapterParentViewModel<Item : Parent, Parent>(
 
     private var position: Int = NO_ITEM_POSITION
     private lateinit var itemPosition: ItemCallback<AdapterViewModel<Item>>
-    internal var priority: Int = 0
 
     internal fun setItemPositionInterface(i: ItemCallback<AdapterViewModel<Item>>) {
         itemPosition = i
     }
 
-    private val listeners: ArrayList<OnItemClickListener<Parent>>
-            by lazy { ArrayList() }
+    private val listeners: ArrayList<OnItemClickListener<Parent>> by lazy { ArrayList() }
 
     fun setOnItemClickListener(listener: OnItemClickListener<Parent>) {
         if (!this.listeners.contains(listener)) {
@@ -75,10 +75,6 @@ abstract class AdapterParentViewModel<Item : Parent, Parent>(
     }
 
     protected open fun onPositionChanged(fromPosition: Int, toPosition: Int) {}
-
-    open fun isDeletable(): Boolean {
-        return true
-    }
 
     open fun onRecycled() {}
 

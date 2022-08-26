@@ -50,5 +50,5 @@ kotlinConvention {
 dependencies {
     implementation(androidLibs.appCompat)
     implementation(projects.utils)
-    api(common.mersey.time)
+    api(common.bundles.mersey.time)
 }
