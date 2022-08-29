@@ -43,7 +43,7 @@ fun Bundle?.isNotNullAndEmpty(): Boolean {
     return this != null && !this.isEmpty
 }
 
-inline fun <reified T : Any> Bundle.putSerialize(
+inline fun <reified T> Bundle.putSerialize(
     key: String,
     value: T?,
     json: Json = JsonConfigurator.json
@@ -51,14 +51,14 @@ inline fun <reified T : Any> Bundle.putSerialize(
     this.putString(key, value?.serialize(json))
 }
 
-inline fun <reified T : Any> Bundle.getSerialize(
+inline fun <reified T> Bundle.getSerialize(
     key: String,
     json: Json = JsonConfigurator.json
 ): T? {
     return this.getString(key)?.deserialize(json)
 }
 
-inline fun <reified T : Any> Bundle.putSerialize(
+inline fun <reified T> Bundle.putSerialize(
     key: String,
     value: T?,
     serializationStrategy: SerializationStrategy<T>,
@@ -67,7 +67,7 @@ inline fun <reified T : Any> Bundle.putSerialize(
     this.putString(key, value?.serialize(serializationStrategy, json))
 }
 
-inline fun <reified T : Any> Bundle.getSerialize(
+inline fun <reified T> Bundle.getSerialize(
     key: String,
     deserializationStrategy: DeserializationStrategy<T>,
     json: Json = JsonConfigurator.json

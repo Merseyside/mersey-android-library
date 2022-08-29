@@ -6,18 +6,17 @@ import com.merseyside.adapters.feature.filter.FilterPositionListChangeDelegate
 import com.merseyside.adapters.interfaces.simple.ISimpleAdapter
 import com.merseyside.adapters.listDelegates.PositionListChangeDelegate
 import com.merseyside.adapters.listDelegates.interfaces.AdapterPositionListChangeDelegate
-import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.getFilter
 import com.merseyside.adapters.utils.isFilterable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.sync.Mutex
 
-open class CompositeAdapter<Parent, Model : AdapterParentViewModel<out Parent, Parent>>(
+open class CompositeAdapter<Parent, Model>(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
     delegatesManager: DelegatesManager<Parent, Model> = DelegatesManager()
-) : BaseCompositeAdapter<Parent, Model>(scope, delegatesManager), ISimpleAdapter<Parent, Model> {
+) : BaseCompositeAdapter<Parent, Model>(scope, delegatesManager), ISimpleAdapter<Parent, Model>
+    where Model: AdapterParentViewModel<out Parent, Parent> {
 
     final override val mutModels: MutableList<Model> = ArrayList()
     override val models: List<Model> = mutModels

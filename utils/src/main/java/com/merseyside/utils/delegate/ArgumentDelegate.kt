@@ -8,6 +8,7 @@ import androidx.navigation.fragment.navArgs
 import com.merseyside.utils.ext.getSerialize
 import com.merseyside.utils.ext.put
 import com.merseyside.utils.reflection.callMethodByName
+import kotlinx.serialization.DeserializationStrategy
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -277,5 +278,39 @@ inline fun <reified T> ArgumentHelper.deserializable(
 ): ArgumentProperty<Any, T> = object : ArgumentProperty<Any, T>(this, key) {
     override fun getValue(thisRef: Any, property: KProperty<*>): T {
         return requireArgs.getSerialize(key(property)) ?: defaultValue
+    }
+}
+
+inline fun <reified T> ArgumentHelper.deserializable(
+    deserializationStrategy: DeserializationStrategy<T>,
+    noinline key: (KProperty<*>) -> String = KProperty<*>::name
+): ArgumentProperty<Any, T> = object : ArgumentProperty<Any, T>(
+    this,
+    key,
+    requireExistence = true
+) {
+    override fun getValue(thisRef: Any, property: KProperty<*>): T {
+        return requireExistence(key(property)) { key, args ->
+            args.getSerialize(key, deserializationStrategy)!!
+        }
+    }
+}
+
+inline fun <reified T> ArgumentHelper.deserializableOrNull(
+    deserializationStrategy: DeserializationStrategy<T>,
+    noinline key: (KProperty<*>) -> String = KProperty<*>::name
+): ArgumentProperty<Any, T?> = object : ArgumentProperty<Any, T?>(this, key) {
+    override fun getValue(thisRef: Any, property: KProperty<*>): T? {
+        return arguments?.getSerialize(key(property), deserializationStrategy)
+    }
+}
+
+inline fun <reified T> ArgumentHelper.deserializable(
+    defaultValue: T,
+    deserializationStrategy: DeserializationStrategy<T>,
+    noinline key: (KProperty<*>) -> String = KProperty<*>::name
+): ArgumentProperty<Any, T> = object : ArgumentProperty<Any, T>(this, key) {
+    override fun getValue(thisRef: Any, property: KProperty<*>): T {
+        return requireArgs.getSerialize(key(property), deserializationStrategy) ?: defaultValue
     }
 }
