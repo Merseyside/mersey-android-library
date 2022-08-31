@@ -9,8 +9,12 @@ import com.merseyside.utils.view.ext.getActivity
 open class BaseBindingHolder(val binding: ViewDataBinding)
     : RecyclerView.ViewHolder(binding.root) {
 
+    val isInitialized: Boolean
+        get() = this::_model.isInitialized
+
     private lateinit var _model: Any
 
+    @Throws(UninitializedPropertyAccessException::class)
     open fun getModel() = _model
 
     @CallSuper

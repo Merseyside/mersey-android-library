@@ -1,9 +1,8 @@
 package com.merseyside.adapters.model
 
 import androidx.databinding.ObservableBoolean
-import androidx.databinding.ObservableField
-import com.merseyside.utils.ext.onChange
-import com.merseyside.utils.mainThreadIfNeeds
+import com.merseyside.merseyLib.kotlin.ObservableField
+import com.merseyside.merseyLib.kotlin.SingleObservableField
 
 abstract class SelectableAdapterParentViewModel<Item : Parent, Parent>(
     item: Item,
@@ -11,46 +10,35 @@ abstract class SelectableAdapterParentViewModel<Item : Parent, Parent>(
     isSelectable: Boolean = IS_SELECTABLE_DEFAULT
 ) : ComparableAdapterParentViewModel<Item, Parent>(item) {
 
-    internal lateinit var onSelectCallback: (SelectableAdapterParentViewModel<Item, Parent>) -> Unit
+    private val mutSelectEvent = SingleObservableField<Item>()
+    internal val selectEvent: ObservableField<Item> = mutSelectEvent
 
+    val selectedObservable = ObservableBoolean(isSelected)
     val selectableObservable = ObservableBoolean()
     val selectEnabledObservable = ObservableBoolean(isSelectable)
 
     var isSelected: Boolean = isSelected
-        internal set(value) {
+        set(value) {
             if (field != value) {
                 field = value
 
-                mainThreadIfNeeds {
-                    this.selectedObservable.set(isSelected)
-                    onSelectedChanged(isSelected)
-                }
+                selectedObservable.set(isSelected)
+                onSelectedChanged(isSelected)
             }
         }
 
     var isSelectable: Boolean = isSelectable
-        internal set(value) {
+        set(value) {
             if (field != value) {
                 field = value
 
-                mainThreadIfNeeds {
-                    this.selectableObservable.set(isSelectable)
-                    onSelectableChanged(isSelectable)
-                }
+                selectableObservable.set(value)
+                onSelectableChanged(value)
             }
         }
-
-
-    val selectedObservable = ObservableField(isSelected).apply {
-        onChange { _, value, isInitial ->
-            if (!isInitial && value != isSelected) {
-                onClick()
-            }
-        }
-    }
 
     open fun onSelect() {
-        onSelectCallback(this)
+        mutSelectEvent.value = item
     }
 
     /**

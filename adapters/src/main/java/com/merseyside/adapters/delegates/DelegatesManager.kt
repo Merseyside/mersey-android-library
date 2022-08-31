@@ -2,8 +2,8 @@ package com.merseyside.adapters.delegates
 
 import android.util.SparseArray
 import android.view.ViewGroup
-import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.holder.TypedBindingHolder
+import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.merseyLib.kotlin.extensions.isNotZero
 import com.merseyside.utils.ext.containsKey
 import com.merseyside.utils.ext.findKey
@@ -49,7 +49,7 @@ class DelegatesManager<Parent, Model : AdapterParentViewModel<out Parent, Parent
         )
     }
 
-    fun onBindViewHolder(holder: TypedBindingHolder<Model>, model: Model, position: Int) {
+    internal fun onBindViewHolder(holder: TypedBindingHolder<Model>, model: Model, position: Int) {
         requireDelegate { getResponsibleDelegate(model) }.onBindViewHolder(holder, model, position)
     }
 

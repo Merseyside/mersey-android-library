@@ -9,7 +9,6 @@ import com.merseyside.adapters.model.SelectableAdapterParentViewModel
 import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 
 abstract class SelectableCompositeAdapter<Parent, Model>(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
@@ -19,7 +18,7 @@ abstract class SelectableCompositeAdapter<Parent, Model>(
     isSelectEnabled: Boolean = true,
 ) : SortedCompositeAdapter<Parent, Model>(scope, delegatesManager),
     ISelectableAdapter<Parent, Model>
-    where Model: SelectableAdapterParentViewModel<out Parent, Parent> {
+        where Model : SelectableAdapterParentViewModel<out Parent, Parent> {
 
     override var selectedList: MutableList<Model> = ArrayList()
     override val selectedListeners: MutableList<OnItemSelectedListener<Parent>> = ArrayList()
@@ -68,15 +67,11 @@ abstract class SelectableCompositeAdapter<Parent, Model>(
             }
         }
 
-    override val internalSelectCallback: (Model) -> Unit = { model ->
+    override val internalOnSelect: (Parent) -> Unit = { item ->
+        val model = getModelByItem(item)
         if (model.isSelectable) {
             setModelSelected(model, true)
         }
-    }
-
-    override fun onModelCreated(model: Model) {
-        super.onModelCreated(model)
-        model.isSelectable = isSelectEnabled
     }
 
     override fun setModelSelected(model: Model?, isSelectedByUser: Boolean): Boolean {

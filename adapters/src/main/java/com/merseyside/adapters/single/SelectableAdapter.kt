@@ -58,8 +58,9 @@ abstract class SelectableAdapter<Item, Model: SelectableAdapterViewModel<Item>>(
             }
         }
 
-    override val internalSelectCallback: (Model) -> Unit = { model ->
-        if (this.isSelectEnabled) {
+    override val internalOnSelect: (Item) -> Unit = { item ->
+        val model = getModelByItem(item)
+        if (model.isSelectable) {
             setModelSelected(model, true)
         }
     }

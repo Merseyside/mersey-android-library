@@ -5,8 +5,10 @@ import android.view.ViewGroup
 import androidx.annotation.CallSuper
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.holder.TypedBindingHolder
+import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.AdapterViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import kotlinx.coroutines.CoroutineScope
@@ -22,18 +24,8 @@ abstract class SingleAdapter<Item, Model>(
     protected abstract fun getBindingVariable(): Int
     protected abstract fun createItemViewModel(item: Item): Model
 
-    override fun onBindViewHolder(holder: TypedBindingHolder<Model>, position: Int) {
-        val model = getModelByPosition(position)
-        model.onPositionChanged(position)
-
-        bindItemList.add(model)
-
-        listener?.let { model.setOnItemClickListener(it) }
-        bind(holder, model)
-
-        if (!isRecyclable || isRecyclable && !holder.isRecyclable) {
-            holder.setIsRecyclable(isRecyclable)
-        }
+    override fun bindModel(holder: TypedBindingHolder<Model>, position: Int): Model {
+        return getModel(holder, position).also { model -> bind(holder, model) }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TypedBindingHolder<Model> {
@@ -64,7 +56,22 @@ abstract class SingleAdapter<Item, Model>(
     }
 
     override fun createModel(item: Item): Model {
-        return initItemViewModel(item)
+        return initItemViewModel(item).also { model ->
+            onModelCreated(model)
+        }
+    }
+
+    @CallSuper
+    override fun onViewRecycled(holder: TypedBindingHolder<Model>) {
+        super.onViewRecycled(holder)
+        if (holder.absoluteAdapterPosition != RecyclerView.NO_POSITION &&
+            holder.absoluteAdapterPosition < itemCount) {
+
+            getModelByPosition(holder.absoluteAdapterPosition).apply {
+                bindItemList.remove(this)
+                onRecycled()
+            }
+        }
     }
 
 }

@@ -25,6 +25,9 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
     val delegate: AdapterListChangeDelegate<Parent, Model>
     val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>
 
+    @InternalAdaptersApi
+    val onClick: (Parent) -> Unit
+
     @CallSuper
     fun addAsync(item: Parent, onComplete: (Model?) -> Unit = {}) {
         doAsync(onComplete) { add(item) }
@@ -81,6 +84,12 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
         } else false
     }
 
+    @InternalAdaptersApi
+    @CallSuper
+    fun onModelCreated(model: Model) {
+        model.clickEvent.observe(onClick)
+    }
+
     fun notifyModelUpdated(model: Model, payloads: List<AdapterParentViewModel.Payloadable>)
 
     /**
@@ -132,8 +141,8 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
         return models[position]
     }
 
-    fun getModelByItem(item: Parent): Model? {
-        return models.find { it.areItemsTheSame(item) }
+    fun getModelByItem(item: Parent): Model {
+        return models.find { it.areItemsTheSame(item) } ?: throw IllegalArgumentException()
     }
 
     fun getPositionOfModel(model: Model): Int {

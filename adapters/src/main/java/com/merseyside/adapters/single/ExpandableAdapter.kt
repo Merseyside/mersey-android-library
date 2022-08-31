@@ -6,6 +6,7 @@ import com.merseyside.adapters.interfaces.expandable.ExpandableMode
 import com.merseyside.adapters.interfaces.expandable.IExpandableAdapter
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.ExpandableAdapterViewModel
+import com.merseyside.adapters.utils.InternalAdaptersApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -20,7 +21,9 @@ abstract class ExpandableAdapter<Item, Model, Data, InnerAdapter>(
 
     override val expandedListeners: MutableList<OnItemExpandedListener<Item>> = ArrayList()
 
-    override val internalExpandedCallback: (Model) -> Unit = { model ->
+    @OptIn(InternalAdaptersApi::class)
+    override val internalOnExpand: (Item) -> Unit = { item ->
+        val model = getModelByItem(item)
         if (model.isExpandable) {
             changeModelExpandedState(model)
         }

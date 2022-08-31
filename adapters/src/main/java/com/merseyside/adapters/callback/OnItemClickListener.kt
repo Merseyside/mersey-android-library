@@ -6,9 +6,17 @@ interface OnItemClickListener<Item> {
 }
 
 interface HasOnItemClickListener<Item> {
-    var listener: OnItemClickListener<Item>?
+    var clickListeners: MutableList<OnItemClickListener<Item>>
 
-    fun setOnItemClickListener(listener: OnItemClickListener<Item>?) {
-        this.listener = listener
+    fun setOnItemClickListener(listener: OnItemClickListener<Item>) {
+        clickListeners.add(listener)
+    }
+
+    fun removeOnItemClickListener(listener: OnItemClickListener<Item>) {
+        clickListeners.remove(listener)
+    }
+
+    fun removeAllClickListeners() {
+        clickListeners.clear()
     }
 }

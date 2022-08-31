@@ -1,3 +1,5 @@
+@file:OptIn(InternalAdaptersApi::class)
+
 package com.merseyside.adapters.delegates
 
 import android.view.LayoutInflater
@@ -6,11 +8,23 @@ import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import com.merseyside.adapters.callback.HasOnItemClickListener
+import com.merseyside.adapters.callback.OnItemClickListener
+import com.merseyside.adapters.feature.style.Styleable
+import com.merseyside.adapters.feature.style.StyleableItem
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.model.AdapterParentViewModel
+import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.utils.reflection.ReflectionUtils
 
-abstract class DelegateAdapter<Item : Parent, Parent, Model : AdapterParentViewModel<Item, out Parent>> {
+abstract class DelegateAdapter<Item : Parent, Parent, Model> : HasOnItemClickListener<Item>
+    where Model : AdapterParentViewModel<Item, out Parent> {
+
+    override var clickListeners: MutableList<OnItemClickListener<Item>> = ArrayList()
+
+    private val onClick: (Item) -> Unit = { item ->
+        clickListeners.forEach { listener -> listener.onItemClicked(item) }
+    }
 
     @LayoutRes
     abstract fun getLayoutIdForItem(viewType: Int): Int
@@ -34,7 +48,7 @@ abstract class DelegateAdapter<Item : Parent, Parent, Model : AdapterParentViewM
             "This delegate is not " +
                     "responsible for ${parent!!::class}"
         )
-        return createItemViewModel(item)
+        return createItemViewModel(item).also { model -> onModelCreated(model) }
     }
 
     fun createViewHolder(parent: ViewGroup, viewType: Int): TypedBindingHolder<Model> {
@@ -49,13 +63,16 @@ abstract class DelegateAdapter<Item : Parent, Parent, Model : AdapterParentViewM
         return getBindingHolder(binding)
     }
 
-    open fun onBindViewHolder(holder: TypedBindingHolder<Model>, model: Model, position: Int) {
-        bind(holder, model)
+    internal open fun onModelCreated(model: Model) {
+        model.clickEvent.observe {
+            clickListeners.forEach { listener -> listener.onItemClicked(model.item) }
+        }
     }
 
     @CallSuper
-    internal open fun bind(holder: TypedBindingHolder<Model>, model: Model) {
+    open fun onBindViewHolder(holder: TypedBindingHolder<Model>, model: Model, position: Int) {
         holder.bind(getBindingVariable(), model)
+        if (this is Styleable<*, *>) applyStyleInternal(holder.binding, model.item as StyleableItem<*>)
     }
 
     open fun getBindingHolder(binding: ViewDataBinding) = TypedBindingHolder<Model>(binding)

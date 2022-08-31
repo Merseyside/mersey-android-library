@@ -139,7 +139,7 @@ abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, 
 
     internal open suspend fun filter(model: Model, filters: Filters): Boolean {
         return filters.all { (key, value) ->
-            if (model.filterable) {
+            if (model.isFilterable) {
                 filter(model, key, value)
             } else true
         }

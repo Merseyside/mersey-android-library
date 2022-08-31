@@ -1,8 +1,6 @@
-@file:OptIn(InternalAdaptersApi::class)
 package com.merseyside.adapters.delegates.composites
 
 import android.view.ViewGroup
-import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.delegates.DelegatesManager
@@ -10,8 +8,6 @@ import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 
 abstract class BaseCompositeAdapter<Parent, Model>(
     scope: CoroutineScope,
@@ -37,24 +33,18 @@ abstract class BaseCompositeAdapter<Parent, Model>(
         return delegatesManager.createViewHolder(parent, viewType)
     }
 
-    @CallSuper
-    override fun onBindViewHolder(holder: TypedBindingHolder<Model>, position: Int) {
-        delegatesManager.onBindViewHolder(holder, getModelByPosition(position), position)
-        listener?.let { holder.getModel().setOnItemClickListener(it) }
+    override fun bindModel(holder: TypedBindingHolder<Model>, position: Int): Model {
+        return getModel(holder, position).also { model ->
+            delegatesManager.onBindViewHolder(holder, model, position)
+        }
     }
 
     override fun getItemCount() = models.size
 
+    @InternalAdaptersApi
     override fun createModel(item: Parent): Model {
-        val model = delegatesManager.createModel(item)
-        onModelCreated(model)
-        return model
-    }
-
-    @CallSuper
-    protected open fun onModelCreated(model: Model) {
-        listener?.let {
-            model.setOnItemClickListener(it)
+        return delegatesManager.createModel(item).also { model ->
+            onModelCreated(model)
         }
     }
 }

@@ -7,8 +7,9 @@ import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.adapters.utils.runWithDefault
 import com.merseyside.merseyLib.kotlin.extensions.subtractBy
 
-abstract class BaseListChangeDelegate<Parent, Model : AdapterParentViewModel<out Parent, Parent>>
-    : AdapterListChangeDelegate<Parent, Model> {
+abstract class BaseListChangeDelegate<Parent, Model>
+    : AdapterListChangeDelegate<Parent, Model>
+    where Model : AdapterParentViewModel<out Parent, Parent> {
 
     abstract fun getModels(): List<Model>
 
@@ -52,7 +53,7 @@ abstract class BaseListChangeDelegate<Parent, Model : AdapterParentViewModel<out
         return update(UpdateRequest(items))
     }
 
-    abstract suspend fun applyUpdateTransaction(updateTransaction: UpdateTransaction<Parent, Model>) : Boolean
+    abstract suspend fun applyUpdateTransaction(updateTransaction: UpdateTransaction<Parent, Model>): Boolean
 
     abstract suspend fun setModels(models: List<Model>)
 
@@ -91,21 +92,26 @@ abstract class BaseListChangeDelegate<Parent, Model : AdapterParentViewModel<out
         updateTransaction
     }
 
-    protected suspend fun findOutdatedModels(newItems: List<Parent>, models: List<Model>): List<Model> = runWithDefault {
+    protected suspend fun findOutdatedModels(
+        newItems: List<Parent>,
+        models: List<Model>
+    ): List<Model> = runWithDefault {
         models.subtractBy(newItems) { oldModel, newItem ->
-            oldModel.deletable && oldModel.areItemsTheSame(newItem)
+            oldModel.isDeletable && oldModel.areItemsTheSame(newItem)
         }.toList()
     }
 
-    protected suspend fun findNewModels(newModels: List<Model>, models: List<Model>): List<Model> = runWithDefault {
-        newModels.subtractBy(models) { newModel, model ->
-            model.areItemsTheSame(newModel.item)
-        }.toList()
-    }
+    protected suspend fun findNewModels(newModels: List<Model>, models: List<Model>): List<Model> =
+        runWithDefault {
+            newModels.subtractBy(models) { newModel, model ->
+                model.areItemsTheSame(newModel.item)
+            }.toList()
+        }
 
-    protected suspend fun findNewItems(newItems: List<Parent>, models: List<Model>): List<Parent> = runWithDefault {
-        newItems.subtractBy(models) { newItem, model ->
-            model.areItemsTheSame(newItem)
-        }.toList()
-    }
+    protected suspend fun findNewItems(newItems: List<Parent>, models: List<Model>): List<Parent> =
+        runWithDefault {
+            newItems.subtractBy(models) { newItem, model ->
+                model.areItemsTheSame(newItem)
+            }.toList()
+        }
 }

@@ -16,7 +16,8 @@ interface IExpandableAdapter<Parent, Model, InnerData, InnerAdapter>
               InnerAdapter : BaseAdapter<InnerData, out AdapterParentViewModel<out InnerData, InnerData>> {
 
     var expandableMode: ExpandableMode
-    val internalExpandedCallback: (Model) -> Unit
+    @InternalAdaptersApi
+    val internalOnExpand: (Parent) -> Unit
 
     @InternalAdaptersApi
     fun getExpandedModels(): List<Model> {
@@ -44,9 +45,8 @@ interface IExpandableAdapter<Parent, Model, InnerData, InnerAdapter>
         }
     }
 
-    override suspend  fun addModel(model: Model) {
-        super.addModel(model)
-        model.onExpandedCallback = internalExpandedCallback as
-                ((ExpandableAdapterParentViewModel<out Parent, Parent, InnerData>) -> Unit)
+    override fun onModelCreated(model: Model) {
+        super.onModelCreated(model)
+        model.expandEvent.observe(internalOnExpand)
     }
 }

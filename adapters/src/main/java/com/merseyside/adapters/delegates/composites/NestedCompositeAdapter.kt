@@ -1,6 +1,7 @@
 package com.merseyside.adapters.delegates.composites
 
 import com.merseyside.adapters.base.BaseAdapter
+import com.merseyside.adapters.delegates.DelegatesManager
 import com.merseyside.adapters.feature.filter.FilterNestedListChangeDelegate
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.interfaces.nested.INestedAdapter
@@ -16,8 +17,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
 abstract class NestedCompositeAdapter<Parent, Model, Data, InnerAdapter>(
-    scope: CoroutineScope = CoroutineScope(Dispatchers.Main)
-) : SortedCompositeAdapter<Parent, Model>(scope = scope),
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
+    delegatesManager: DelegatesManager<Parent, Model> = DelegatesManager()
+) : SortedCompositeAdapter<Parent, Model>(scope, delegatesManager),
     INestedAdapter<Parent, Model, Data, InnerAdapter>
         where Model : NestedAdapterParentViewModel<out Parent, Parent, Data>,
               InnerAdapter : BaseAdapter<Data, out AdapterParentViewModel<out Data, Data>> {

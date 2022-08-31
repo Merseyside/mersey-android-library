@@ -16,8 +16,6 @@ interface ISelectableAdapter<Parent, Model>
     : ISortedAdapter<Parent, Model>, HasOnItemSelectedListener<Parent>
         where Model : SelectableAdapterParentViewModel<out Parent, Parent> {
 
-    val internalSelectCallback: (Model) -> Unit
-
     var selectableMode: SelectableMode
     var isSelectEnabled: Boolean
     var isAllowToCancelSelection: Boolean
@@ -28,6 +26,8 @@ interface ISelectableAdapter<Parent, Model>
     var selectedList: MutableList<Model>
 
     var selectFirstOnAdd: Boolean
+
+    val internalOnSelect: (parent: Parent) -> Unit
 
     override fun addOnItemSelectedListener(listener: OnItemSelectedListener<Parent>) {
         super.addOnItemSelectedListener(listener)
@@ -45,9 +45,9 @@ interface ISelectableAdapter<Parent, Model>
         selectedListeners.remove(listener)
     }
 
-    override suspend fun addModel(model: Model) {
-        addModelToGroup(model)
-        super.addModel(model)
+    override fun onModelCreated(model: Model) {
+        model.isSelectable = isSelectEnabled
+        model.selectEvent.observe(internalOnSelect)
     }
 
     override suspend fun addModels(models: List<Model>) {
@@ -66,11 +66,6 @@ interface ISelectableAdapter<Parent, Model>
                 if (setModelSelected(item)) return
             }
         }
-    }
-
-    private fun addModelToGroup(model: Model) {
-        model.onSelectCallback = internalSelectCallback as
-                ((SelectableAdapterParentViewModel<out Parent, Parent>) -> Unit)
     }
 
     fun selectItem(item: Parent) {
