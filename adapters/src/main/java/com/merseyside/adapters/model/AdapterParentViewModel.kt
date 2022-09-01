@@ -62,7 +62,9 @@ abstract class AdapterParentViewModel<Item : Parent, Parent>(
 
     @CallSuper
     open fun onClick() {
-        mutClickEvent.value = item
+        if (isClickable) {
+            mutClickEvent.value = item
+        }
     }
 
     /**

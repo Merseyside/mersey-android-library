@@ -36,15 +36,15 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
         return delegate.add(listOf(item)).firstOrNull()
     }
 
-    /**
-     * Delegates items adding to [AdapterListChangeDelegate]
-     * @return Added models
-     */
-    @CallSuper
+
     fun addAsync(items: List<Parent>, onComplete: (Unit) -> Unit = {}) {
         doAsync(onComplete) { add(items) }
     }
 
+    /**
+     * Delegates items adding to [AdapterListChangeDelegate]
+     * @return Added models
+     */
     suspend fun add(items: List<Parent>) {
         delegate.add(items)
     }
