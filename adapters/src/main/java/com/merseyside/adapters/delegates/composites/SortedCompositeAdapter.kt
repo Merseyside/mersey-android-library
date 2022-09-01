@@ -71,6 +71,7 @@ abstract class SortedCompositeAdapter<Parent, Model>(
         FilterPrioritizedListChangeDelegate(defaultDelegate, getFilter())
     }
 
+    @InternalAdaptersApi
     override val delegate: AdapterPrioritizedListChangeDelegate<Parent, Model> by lazy {
         if (isFilterable()) filterDelegate else defaultDelegate
     }

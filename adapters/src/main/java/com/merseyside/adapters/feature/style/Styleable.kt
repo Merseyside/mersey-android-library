@@ -3,6 +3,7 @@ package com.merseyside.adapters.feature.style
 import androidx.databinding.ViewDataBinding
 import com.merseyside.adapters.utils.InternalAdaptersApi
 
+@Suppress("UNCHECKED_CAST")
 interface Styleable<Definition : StyleDefinition, Binding: ViewDataBinding> {
 
     @InternalAdaptersApi

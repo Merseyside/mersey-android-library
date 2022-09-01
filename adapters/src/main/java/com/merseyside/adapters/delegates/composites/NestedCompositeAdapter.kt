@@ -34,6 +34,7 @@ abstract class NestedCompositeAdapter<Parent, Model, Data, InnerAdapter>(
         FilterNestedListChangeDelegate(defaultDelegate, getFilter())
     }
 
+    @InternalAdaptersApi
     override val delegate: AdapterNestedListChangeDelegate<Parent, Model, Data, InnerAdapter> by lazy {
         if (isFilterable()) filterDelegate else defaultDelegate
     }

@@ -17,7 +17,7 @@ interface ISortedAdapter<Parent, Model> : IBaseAdapter<Parent, Model>,
     val sortedList: SortedList<Model>
     override val delegate: AdapterPrioritizedListChangeDelegate<Parent, Model>
 
-    fun add(item: Parent, priority: Int, onComplete: (Unit) -> Unit) {
+    fun addAsync(item: Parent, priority: Int, onComplete: (Unit) -> Unit = {}) {
         doAsync(onComplete) { add(item, priority) }
     }
 

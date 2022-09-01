@@ -7,8 +7,13 @@ import com.merseyside.merseyLib.kotlin.SingleObservableField
 abstract class SelectableAdapterParentViewModel<Item : Parent, Parent>(
     item: Item,
     isSelected: Boolean = IS_SELECTED_DEFAULT,
-    isSelectable: Boolean = IS_SELECTABLE_DEFAULT
-) : ComparableAdapterParentViewModel<Item, Parent>(item) {
+    isSelectable: Boolean = IS_SELECTABLE_DEFAULT,
+    clickable: Boolean = true,
+    deletable: Boolean = true,
+    filterable: Boolean = true
+) : ComparableAdapterParentViewModel<Item, Parent>(
+    item, clickable, deletable, filterable
+) {
 
     private val mutSelectEvent = SingleObservableField<Item>()
     internal val selectEvent: ObservableField<Item> = mutSelectEvent

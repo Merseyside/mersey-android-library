@@ -12,17 +12,16 @@ import com.merseyside.adapters.listDelegates.interfaces.AdapterListChangeDelegat
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.UpdateRequest
-import com.merseyside.merseyLib.kotlin.concurency.Locker
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.sync.Mutex
 
 @SuppressLint("NotifyDataSetChanged")
 interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
     HasOnItemClickListener<Parent>
         where Model : AdapterParentViewModel<out Parent, Parent> {
 
+    @InternalAdaptersApi
     val delegate: AdapterListChangeDelegate<Parent, Model>
+    @InternalAdaptersApi
     val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>
 
     @InternalAdaptersApi
@@ -42,12 +41,12 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
      * @return Added models
      */
     @CallSuper
-    fun addAsync(items: List<Parent>, onComplete: (List<Model>) -> Unit = {}) {
+    fun addAsync(items: List<Parent>, onComplete: (Unit) -> Unit = {}) {
         doAsync(onComplete) { add(items) }
     }
 
-    suspend fun add(items: List<Parent>): List<Model> {
-        return delegate.add(items)
+    suspend fun add(items: List<Parent>) {
+        delegate.add(items)
     }
 
     fun addOrUpdateAsync(items: List<Parent>, onComplete: (Unit) -> Unit = {}) {
@@ -141,8 +140,8 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
         return models[position]
     }
 
-    fun getModelByItem(item: Parent): Model {
-        return models.find { it.areItemsTheSame(item) } ?: throw IllegalArgumentException()
+    fun getModelByItem(item: Parent): Model? {
+        return models.find { it.areItemsTheSame(item) }
     }
 
     fun getPositionOfModel(model: Model): Int {
@@ -171,8 +170,12 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
     }
 
     @CallSuper
-    fun clear() {
-        doAsync { delegate.removeAll() }
+    fun clearAsync(onComplete: (Unit) -> Unit = {}) {
+        doAsync(onComplete) { clear() }
+    }
+
+    suspend fun clear() {
+        delegate.clear()
     }
 
     /**

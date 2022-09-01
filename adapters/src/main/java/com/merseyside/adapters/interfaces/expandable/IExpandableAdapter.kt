@@ -28,14 +28,14 @@ interface IExpandableAdapter<Parent, Model, InnerData, InnerAdapter>
         return getExpandedModels().map { it.item }
     }
 
-    fun changeModelExpandedState(model: Model, isExpandedByUser: Boolean = true) {
+    suspend fun changeModelExpandedState(model: Model, isExpandedByUser: Boolean = true) {
         val newExpandedState = !model.isExpanded
         applyExpandableMode(newExpandedState)
         model.isExpanded = newExpandedState
         notifyAllExpandedListeners(model.item, newExpandedState, isExpandedByUser)
     }
 
-    private fun applyExpandableMode(newState: Boolean) {
+    private suspend fun applyExpandableMode(newState: Boolean) {
         if (expandableMode == ExpandableMode.SINGLE) {
             if (newState) {
                 getExpandedModels().forEach {

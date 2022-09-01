@@ -24,8 +24,8 @@ abstract class SingleAdapter<Item, Model>(
     protected abstract fun getBindingVariable(): Int
     protected abstract fun createItemViewModel(item: Item): Model
 
-    override fun bindModel(holder: TypedBindingHolder<Model>, position: Int): Model {
-        return getModel(holder, position).also { model -> bind(holder, model) }
+    override fun bindModel(holder: TypedBindingHolder<Model>, model: Model, position: Int) {
+        bind(holder, model)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TypedBindingHolder<Model> {

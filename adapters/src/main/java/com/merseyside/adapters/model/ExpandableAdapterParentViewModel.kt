@@ -7,9 +7,14 @@ import com.merseyside.utils.mainThreadIfNeeds
 
 abstract class ExpandableAdapterParentViewModel<Item : Parent, Parent, Data>(
     item: Item,
-    isExpanded: Boolean = IS_EXPANDED_DEFAULT,
-    isExpandable: Boolean = IS_EXPANDABLE_DEFAULT
-) : NestedAdapterParentViewModel<Item, Parent, Data>(item) {
+    isExpanded: Boolean = false,
+    isExpandable: Boolean = true,
+    clickable: Boolean = true,
+    deletable: Boolean = true,
+    filterable: Boolean = true
+) : NestedAdapterParentViewModel<Item, Parent, Data>(
+    item, clickable, deletable, filterable
+) {
 
     var isExpanded: Boolean = isExpanded
         internal set(value) {
@@ -46,10 +51,5 @@ abstract class ExpandableAdapterParentViewModel<Item : Parent, Parent, Data>(
 
     open fun onExpandedChanged(isExpanded: Boolean) {
         notifyUpdate()
-    }
-
-    companion object {
-        private const val IS_EXPANDED_DEFAULT = false
-        private const val IS_EXPANDABLE_DEFAULT = true
     }
 }

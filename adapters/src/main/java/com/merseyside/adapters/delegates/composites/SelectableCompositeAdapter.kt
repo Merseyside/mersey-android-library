@@ -69,12 +69,14 @@ abstract class SelectableCompositeAdapter<Parent, Model>(
 
     override val internalOnSelect: (Parent) -> Unit = { item ->
         val model = getModelByItem(item)
-        if (model.isSelectable) {
-            setModelSelected(model, true)
+        model?.let {
+            if (model.isSelectable) {
+                doAsync { setModelSelected(model, true) }
+            }
         }
     }
 
-    override fun setModelSelected(model: Model?, isSelectedByUser: Boolean): Boolean {
+    override suspend fun setModelSelected(model: Model?, isSelectedByUser: Boolean): Boolean {
         return if (super.setModelSelected(model, isSelectedByUser)) {
             recyclerView?.invalidateItemDecorations()
             true

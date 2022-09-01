@@ -46,6 +46,7 @@ interface ISelectableAdapter<Parent, Model>
     }
 
     override fun onModelCreated(model: Model) {
+        super.onModelCreated(model)
         model.isSelectable = isSelectEnabled
         model.selectEvent.observe(internalOnSelect)
     }
@@ -60,7 +61,7 @@ interface ISelectableAdapter<Parent, Model>
         }
     }
 
-    fun selectFirstSelectableItem(force: Boolean = false) {
+    suspend fun selectFirstSelectableItem(force: Boolean = false) {
         if (force || (!isAllowToCancelSelection && !isGroupAdapter) || selectFirstOnAdd) {
             models.forEach { item ->
                 if (setModelSelected(item)) return
@@ -68,19 +69,27 @@ interface ISelectableAdapter<Parent, Model>
         }
     }
 
-    fun selectItem(item: Parent) {
+    fun selectItemAsync(item: Parent, onComplete: (Unit) -> Unit = {}) {
+        doAsync(onComplete) { selectItem(item) }
+    }
+
+    suspend fun selectItem(item: Parent) {
         find(item)?.let { model ->
             setModelSelected(model)
         } ?: Logger.logErr("Item for selection not found!")
     }
 
     @Throws(IndexOutOfBoundsException::class)
-    fun selectItem(position: Int) {
+    suspend fun selectItem(position: Int) {
         val item = getModelByPosition(position)
         setModelSelected(item)
     }
 
-    fun selectItems(items: List<Parent>) {
+    fun selectItemsAsync(items: List<Parent>, onComplete: (Unit) -> Unit = {}) {
+        doAsync(onComplete) { selectItems(items) }
+    }
+
+    suspend fun selectItems(items: List<Parent>) {
         if (selectableMode == SelectableMode.MULTIPLE) {
             items.forEach { selectItem(it) }
         } else {
@@ -110,7 +119,7 @@ interface ISelectableAdapter<Parent, Model>
         return item != null && item.isSelectable
     }
 
-    fun setModelSelected(model: Model?, isSelectedByUser: Boolean = false): Boolean {
+    suspend fun setModelSelected(model: Model?, isSelectedByUser: Boolean = false): Boolean {
         return if (model != null && canModelBeSelected(model)) {
             if (!model.isSelected) {
                 if (selectableMode == SelectableMode.SINGLE) {
@@ -191,7 +200,7 @@ interface ISelectableAdapter<Parent, Model>
         return selectedList.size
     }
 
-    override fun clear() {
+    override suspend fun clear() {
         super.clear()
         clearSelections()
     }
@@ -206,7 +215,7 @@ interface ISelectableAdapter<Parent, Model>
         }
     }
 
-    private fun removeSelected(list: List<Model>) {
+    private suspend fun removeSelected(list: List<Model>) {
         if (list.isNotEmpty()) {
             val selectedItemsGoingToRemove =
                 selectedList.intersect(list.toSet()).toList()

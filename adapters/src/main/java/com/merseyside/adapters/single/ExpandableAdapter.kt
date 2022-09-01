@@ -24,8 +24,10 @@ abstract class ExpandableAdapter<Item, Model, Data, InnerAdapter>(
     @OptIn(InternalAdaptersApi::class)
     override val internalOnExpand: (Item) -> Unit = { item ->
         val model = getModelByItem(item)
-        if (model.isExpandable) {
-            changeModelExpandedState(model)
+        model?.let {
+            if (model.isExpandable) {
+                doAsync { changeModelExpandedState(model) }
+            }
         }
     }
 

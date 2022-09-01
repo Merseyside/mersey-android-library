@@ -5,7 +5,6 @@ import com.merseyside.adapters.listDelegates.ListChangeDelegate
 import com.merseyside.adapters.listDelegates.utils.UpdateTransaction
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.UpdateRequest
-import com.merseyside.merseyLib.kotlin.coroutines.CoroutineWorkManager
 import com.merseyside.merseyLib.kotlin.logger.ILogger
 
 abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<out Parent, Parent>>(
@@ -101,9 +100,9 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
         return listChangeDelegate.removeModels(models)
     }
 
-    override suspend fun removeAll() {
+    override suspend fun clear() {
         mutAllModelList.clear()
-        listChangeDelegate.removeAll()
+        listChangeDelegate.clear()
     }
 
     final override suspend fun update(updateRequest: UpdateRequest<Parent>): Boolean {

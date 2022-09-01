@@ -7,14 +7,14 @@ import com.merseyside.adapters.interfaces.selectable.SelectableMode
 import com.merseyside.adapters.model.SelectableAdapterViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 
-abstract class SelectableAdapter<Item, Model: SelectableAdapterViewModel<Item>>(
+abstract class SelectableAdapter<Item, Model>(
     selectableMode: SelectableMode = SelectableMode.SINGLE,
     override var isAllowToCancelSelection: Boolean = selectableMode == SelectableMode.MULTIPLE,
     isSelectEnabled: Boolean = true,
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main)
-) : SortedAdapter<Item, Model>(scope), ISelectableAdapter<Item, Model> {
+) : SortedAdapter<Item, Model>(scope), ISelectableAdapter<Item, Model>
+    where Model: SelectableAdapterViewModel<Item> {
 
     internal var groupAdapter: Boolean = false
     override var selectFirstOnAdd: Boolean = false
@@ -60,8 +60,10 @@ abstract class SelectableAdapter<Item, Model: SelectableAdapterViewModel<Item>>(
 
     override val internalOnSelect: (Item) -> Unit = { item ->
         val model = getModelByItem(item)
-        if (model.isSelectable) {
-            setModelSelected(model, true)
+        model?.let {
+            if (model.isSelectable) {
+                doAsync { setModelSelected(model, true) }
+            }
         }
     }
 
@@ -72,7 +74,7 @@ abstract class SelectableAdapter<Item, Model: SelectableAdapterViewModel<Item>>(
 
     override var isGroupAdapter: Boolean = false
 
-    override fun setModelSelected(model: Model?, isSelectedByUser: Boolean): Boolean {
+    override suspend fun setModelSelected(model: Model?, isSelectedByUser: Boolean): Boolean {
         return if (super.setModelSelected(model, isSelectedByUser)) {
             recyclerView?.invalidateItemDecorations()
             true

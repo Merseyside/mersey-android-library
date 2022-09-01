@@ -15,7 +15,7 @@ interface AdapterListChangeDelegate<Parent, Model : AdapterParentViewModel<out P
 
     suspend fun remove(items: List<Parent>): List<Model>
 
-    suspend fun removeAll()
+    suspend fun clear()
 
     suspend fun update(updateRequest: UpdateRequest<Parent>): Boolean
 }

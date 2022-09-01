@@ -33,10 +33,8 @@ abstract class BaseCompositeAdapter<Parent, Model>(
         return delegatesManager.createViewHolder(parent, viewType)
     }
 
-    override fun bindModel(holder: TypedBindingHolder<Model>, position: Int): Model {
-        return getModel(holder, position).also { model ->
-            delegatesManager.onBindViewHolder(holder, model, position)
-        }
+    override fun bindModel(holder: TypedBindingHolder<Model>, model: Model, position: Int) {
+        delegatesManager.onBindViewHolder(holder, model, position)
     }
 
     override fun getItemCount() = models.size

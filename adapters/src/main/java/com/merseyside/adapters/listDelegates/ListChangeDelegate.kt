@@ -38,7 +38,7 @@ abstract class ListChangeDelegate<Parent, Model : AdapterParentViewModel<out Par
         }
     }
 
-    override suspend fun removeAll() {
+    override suspend fun clear() {
         listActions.removeAll()
     }
 

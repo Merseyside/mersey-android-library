@@ -19,12 +19,12 @@ import com.merseyside.merseyLib.kotlin.extensions.isZero
 import com.merseyside.utils.reflection.ReflectionUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 
-@Suppress("UNCHECKED_CAST", "LeakingThis")
-abstract class SortedAdapter<Item, Model : ComparableAdapterViewModel<Item>>(
+@Suppress("UNCHECKED_CAST")
+abstract class SortedAdapter<Item, Model>(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main)
-) : SingleAdapter<Item, Model>(scope), ISortedAdapter<Item, Model> {
+) : SingleAdapter<Item, Model>(scope), ISortedAdapter<Item, Model>
+    where Model : ComparableAdapterViewModel<Item> {
 
     var comparator: Comparator<Item, Model>? = null
         set(value) {

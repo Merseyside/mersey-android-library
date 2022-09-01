@@ -26,8 +26,10 @@ abstract class ExpandableCompositeAdapter<Parent, Model, Data, InnerAdapter>(
     @OptIn(InternalAdaptersApi::class)
     override val internalOnExpand: (Parent) -> Unit = { item ->
         val model = getModelByItem(item)
-        if (model.isExpandable) {
-            changeModelExpandedState(model)
+        model?.let {
+            if (model.isExpandable) {
+                doAsync { changeModelExpandedState(model) }
+            }
         }
     }
 

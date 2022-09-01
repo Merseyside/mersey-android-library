@@ -14,8 +14,8 @@ open class BaseBindingHolder(val binding: ViewDataBinding)
 
     private lateinit var _model: Any
 
-    @Throws(UninitializedPropertyAccessException::class)
-    open fun getModel() = _model
+    open val model: Any
+        get() = _model
 
     @CallSuper
     fun bind(variable: Int, obj: Any) {

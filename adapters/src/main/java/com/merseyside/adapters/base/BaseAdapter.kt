@@ -2,7 +2,6 @@
 
 package com.merseyside.adapters.base
 
-import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.callback.HasOnItemClickListener
 import com.merseyside.adapters.callback.OnItemClickListener
@@ -56,18 +55,23 @@ abstract class BaseAdapter<Parent, Model>(
     }
 
     override fun onBindViewHolder(holder: TypedBindingHolder<Model>, position: Int) {
-        val model = bindModel(holder, position)
+        val model = getModelByPosition(position)
         model.onPositionChanged(position)
+        bindModel(holder, model, position)
 
         bindItemList.add(model)
 
-        if (!isRecyclable || isRecyclable && !holder.isRecyclable) {
+        if (!isRecyclable || !holder.isRecyclable) {
             holder.setIsRecyclable(isRecyclable)
         }
     }
 
     @Suppress("UNCHECKED_CAST")
-    internal abstract fun bindModel(holder: TypedBindingHolder<Model>, position: Int): Model
+    internal abstract fun bindModel(
+        holder: TypedBindingHolder<Model>,
+        model: Model,
+        position: Int
+    )
 
     override fun onBindViewHolder(
         holder: TypedBindingHolder<Model>,
@@ -76,7 +80,6 @@ abstract class BaseAdapter<Parent, Model>(
     ) {
         if (payloads.isNotEmpty()) {
             val payloadable = payloads.first() as List<AdapterParentViewModel.Payloadable>
-
             if (isPayloadsValid(payloadable)) {
                 onPayloadable(holder, payloadable)
             }
@@ -97,16 +100,5 @@ abstract class BaseAdapter<Parent, Model>(
 
     open fun removeListeners() {
         removeAllClickListeners()
-    }
-
-    internal fun getModel(
-        holder: TypedBindingHolder<Model>,
-        position: Int
-    ): Model {
-        return if (holder.isInitialized) {
-            holder.getModel()
-        } else {
-            getModelByPosition(position)
-        }
     }
 }
