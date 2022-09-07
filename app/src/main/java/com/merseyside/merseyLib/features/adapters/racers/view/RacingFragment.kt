@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
+import com.merseyside.adapters.decorator.SimpleItemOffsetDecorator
 import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
@@ -36,7 +37,11 @@ class RacingFragment : BaseSampleFragment<FragmentRacingBinding, RacingViewModel
 
         requireBinding().racersList.apply {
             adapter = this@RacingFragment.adapter
-            addItemDecoration(CheckpointItemDecorator(context, R.dimen.small_spacing))
+            addItemDecoration(SimpleItemOffsetDecorator(
+                context,
+                R.dimen.small_spacing,
+                R.dimen.normal_spacing
+            ))
         }
 
         viewModel.getCheckpointFlow().asLiveData().observe(viewLifecycleOwner) { checkpoint ->

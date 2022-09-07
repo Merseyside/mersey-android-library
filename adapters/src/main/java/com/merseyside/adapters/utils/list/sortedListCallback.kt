@@ -1,7 +1,6 @@
 package com.merseyside.adapters.utils.list
 
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.SortedList
 import com.merseyside.adapters.model.ComparableAdapterParentViewModel
 import com.merseyside.merseyLib.kotlin.getMinMax
 
@@ -11,10 +10,6 @@ internal fun <Parent, Model : ComparableAdapterParentViewModel<out Parent, Paren
     comparator: (model1: Model, model2: Model) -> Int
 ): SortedList.Callback<Model> = object : SortedList.Callback<Model>() {
     override fun onInserted(position: Int, count: Int) {
-        for (i in position until models().size) {
-            models()[i].onPositionChanged(i)
-        }
-
         adapter.notifyItemRangeInserted(position, count)
     }
 
@@ -40,15 +35,15 @@ internal fun <Parent, Model : ComparableAdapterParentViewModel<out Parent, Paren
         adapter.notifyItemRangeChanged(position, count)
     }
 
-    override fun compare(model1: Model, model2: Model): Int {
-        return comparator(model1, model2)
+    override fun compare(item1: Model, item2: Model): Int {
+        return comparator(item1, item2)
     }
 
-    override fun areContentsTheSame(model1: Model, model2: Model): Boolean {
-        return model1.areContentsTheSame(model2.item)
+    override fun areContentsTheSame(oldItem: Model, newItem: Model): Boolean {
+        return oldItem.areContentsTheSame(newItem.item)
     }
 
-    override fun areItemsTheSame(model1: Model, model2: Model): Boolean {
-        return model1.areItemsTheSame(model2.item)
+    override fun areItemsTheSame(item1: Model, item2: Model): Boolean {
+        return item1.areItemsTheSame(item2.item)
     }
 }

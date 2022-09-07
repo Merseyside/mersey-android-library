@@ -20,7 +20,6 @@ abstract class AdapterParentViewModel<Item : Parent, Parent>(
         internal set
 
     private var position: Int = NO_ITEM_POSITION
-    private lateinit var itemPosition: ItemCallback<AdapterViewModel<Item>>
 
     private val mutClickEvent = SingleObservableField<Item>()
     internal val clickEvent: ObservableField<Item> = mutClickEvent
@@ -56,10 +55,6 @@ abstract class AdapterParentViewModel<Item : Parent, Parent>(
             }
         }
 
-    internal fun setItemPositionInterface(i: ItemCallback<AdapterViewModel<Item>>) {
-        itemPosition = i
-    }
-
     @CallSuper
     open fun onClick() {
         if (isClickable) {
@@ -85,10 +80,6 @@ abstract class AdapterParentViewModel<Item : Parent, Parent>(
 
         return position
     }
-
-    fun getItemCount() = itemPosition.getItemCount()
-    fun isLast() = getPosition() == getItemCount() - 1
-    fun isFirst() = getPosition() == 0
 
     fun onPositionChanged(toPosition: Int) {
         if (position != toPosition) {

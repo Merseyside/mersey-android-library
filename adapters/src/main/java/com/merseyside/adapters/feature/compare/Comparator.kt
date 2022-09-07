@@ -3,7 +3,9 @@ package com.merseyside.adapters.feature.compare
 import com.merseyside.adapters.model.ComparableAdapterParentViewModel
 import com.merseyside.merseyLib.kotlin.coroutines.CoroutineWorkManager
 
-abstract class Comparator<Parent, Model : ComparableAdapterParentViewModel<out Parent, Parent>> {
+abstract class Comparator<Parent, Model : ComparableAdapterParentViewModel<out Parent, Parent>>(
+    protected var animation: Boolean = true
+) {
 
     private lateinit var callback: OnComparatorUpdateCallback
     internal lateinit var workManager: CoroutineWorkManager<Any, Unit>
@@ -18,7 +20,7 @@ abstract class Comparator<Parent, Model : ComparableAdapterParentViewModel<out P
     }
 
     suspend fun update() {
-        callback.onUpdate()
+        callback.onUpdate(animation)
     }
 
     internal fun setOnComparatorUpdateCallback(callback: OnComparatorUpdateCallback) {
@@ -26,6 +28,6 @@ abstract class Comparator<Parent, Model : ComparableAdapterParentViewModel<out P
     }
 
     internal interface OnComparatorUpdateCallback {
-        suspend fun onUpdate()
+        suspend fun onUpdate(animation: Boolean)
     }
 }

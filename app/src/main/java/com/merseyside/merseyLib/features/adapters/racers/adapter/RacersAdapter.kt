@@ -18,7 +18,7 @@ class RacersAdapter(scope: CoroutineScope) :
     SortedAdapter<Checkpoint, CheckpointItemViewModel>(scope) {
     override fun getLayoutIdForPosition(position: Int) = R.layout.item_checkpoint
     override fun getBindingVariable() = BR.viewModel
-    override fun createItemViewModel(obj: Checkpoint) = CheckpointItemViewModel(obj)
+    override fun createItemViewModel(item: Checkpoint) = CheckpointItemViewModel(item)
 
     override fun onPayloadable(
         holder: TypedBindingHolder<CheckpointItemViewModel>,

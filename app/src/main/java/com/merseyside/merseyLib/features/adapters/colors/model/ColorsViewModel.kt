@@ -16,12 +16,6 @@ class ColorsViewModel(
     private val colorProducer: ColorProducer
 ) : AndroidViewModel(application) {
 
-    init {
-        delayedMainThread(Seconds(1)) {
-            repeat(10) { onPopulateClick() }
-        }
-    }
-
     val isAddingObservableField = ObservableBoolean(true)
     val isFilterObservableField = ObservableBoolean(false)
 

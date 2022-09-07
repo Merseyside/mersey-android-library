@@ -1,3 +1,5 @@
+@file:OptIn(InternalAdaptersApi::class)
+
 package com.merseyside.adapters.delegates.composites
 
 import com.merseyside.adapters.callback.OnItemSelectedListener
@@ -6,6 +8,7 @@ import com.merseyside.adapters.delegates.DelegatesManager
 import com.merseyside.adapters.interfaces.selectable.ISelectableAdapter
 import com.merseyside.adapters.interfaces.selectable.SelectableMode
 import com.merseyside.adapters.model.SelectableAdapterParentViewModel
+import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -68,10 +71,12 @@ abstract class SelectableCompositeAdapter<Parent, Model>(
         }
 
     override val internalOnSelect: (Parent) -> Unit = { item ->
-        val model = getModelByItem(item)
-        model?.let {
-            if (model.isSelectable) {
-                doAsync { setModelSelected(model, true) }
+        doAsync {
+            val model = getModelByItem(item)
+            model?.let {
+                if (model.isSelectable) {
+                    setModelSelected(model, true)
+                }
             }
         }
     }

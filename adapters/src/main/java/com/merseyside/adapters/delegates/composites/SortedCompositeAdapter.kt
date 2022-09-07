@@ -1,9 +1,9 @@
 package com.merseyside.adapters.delegates.composites
 
-import androidx.recyclerview.widget.SortedList
+import com.merseyside.adapters.utils.list.SortedList
 import com.merseyside.adapters.delegates.DelegatesManager
-import com.merseyside.adapters.extensions.getAll
 import com.merseyside.adapters.extensions.recalculatePositions
+import com.merseyside.adapters.extensions.recalculatePositionsWithAnimation
 import com.merseyside.adapters.feature.compare.Comparator
 import com.merseyside.adapters.feature.filter.FilterPrioritizedListChangeDelegate
 import com.merseyside.adapters.holder.TypedBindingHolder
@@ -19,7 +19,6 @@ import com.merseyside.adapters.utils.list.createSortedListCallback
 import com.merseyside.utils.reflection.ReflectionUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 
 abstract class SortedCompositeAdapter<Parent, Model>(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
@@ -31,8 +30,13 @@ abstract class SortedCompositeAdapter<Parent, Model>(
     var comparator: Comparator<Parent, Model>? = null
         set(value) {
             value?.setOnComparatorUpdateCallback(object : Comparator.OnComparatorUpdateCallback {
-                override suspend fun onUpdate() {
-                    sortedList.recalculatePositions()
+                override suspend fun onUpdate(animation: Boolean) {
+                    doAsync {
+                        with(sortedList) {
+                            if (animation) recalculatePositionsWithAnimation()
+                            else recalculatePositions()
+                        }
+                    }
                 }
             })
 

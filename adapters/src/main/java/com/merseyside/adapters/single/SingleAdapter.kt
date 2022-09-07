@@ -15,9 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
 @InternalAdaptersApi
-abstract class SingleAdapter<Item, Model>(
-    scope: CoroutineScope = CoroutineScope(Dispatchers.Main)
-): BaseAdapter<Item, Model>(scope)
+abstract class SingleAdapter<Item, Model>(scope: CoroutineScope): BaseAdapter<Item, Model>(scope)
     where Model : AdapterViewModel<Item> {
 
     protected abstract fun getLayoutIdForPosition(position: Int): Int
@@ -48,17 +46,9 @@ abstract class SingleAdapter<Item, Model>(
     override fun getItemViewType(position: Int): Int {
         return getLayoutIdForPosition(position)
     }
-    
-    internal open fun initItemViewModel(item: Item): Model {
-        return createItemViewModel(item).apply {
-            setItemPositionInterface(this@SingleAdapter)
-        }
-    }
 
     override fun createModel(item: Item): Model {
-        return initItemViewModel(item).also { model ->
-            onModelCreated(model)
-        }
+        return createItemViewModel(item)
     }
 
     @CallSuper

@@ -1,3 +1,5 @@
+@file:OptIn(InternalAdaptersApi::class)
+
 package com.merseyside.adapters.single
 
 import com.merseyside.adapters.callback.OnItemSelectedListener
@@ -5,6 +7,7 @@ import com.merseyside.adapters.callback.OnSelectEnabledListener
 import com.merseyside.adapters.interfaces.selectable.ISelectableAdapter
 import com.merseyside.adapters.interfaces.selectable.SelectableMode
 import com.merseyside.adapters.model.SelectableAdapterViewModel
+import com.merseyside.adapters.utils.InternalAdaptersApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
@@ -14,7 +17,7 @@ abstract class SelectableAdapter<Item, Model>(
     isSelectEnabled: Boolean = true,
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main)
 ) : SortedAdapter<Item, Model>(scope), ISelectableAdapter<Item, Model>
-    where Model: SelectableAdapterViewModel<Item> {
+        where Model : SelectableAdapterViewModel<Item> {
 
     internal var groupAdapter: Boolean = false
     override var selectFirstOnAdd: Boolean = false
@@ -59,10 +62,12 @@ abstract class SelectableAdapter<Item, Model>(
         }
 
     override val internalOnSelect: (Item) -> Unit = { item ->
-        val model = getModelByItem(item)
-        model?.let {
-            if (model.isSelectable) {
-                doAsync { setModelSelected(model, true) }
+        doAsync {
+            val model = getModelByItem(item)
+            model?.let {
+                if (model.isSelectable) {
+                    setModelSelected(model, true)
+                }
             }
         }
     }

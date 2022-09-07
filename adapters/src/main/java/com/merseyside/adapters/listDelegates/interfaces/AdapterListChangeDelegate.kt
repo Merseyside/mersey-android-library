@@ -3,7 +3,8 @@ package com.merseyside.adapters.listDelegates.interfaces
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.UpdateRequest
 
-interface AdapterListChangeDelegate<Parent, Model : AdapterParentViewModel<out Parent, Parent>> {
+interface AdapterListChangeDelegate<Parent, Model>
+    where Model : AdapterParentViewModel<out Parent, Parent> {
     /**
      * Converts items to models and return models that should be processed by adapter
      */
@@ -18,4 +19,6 @@ interface AdapterListChangeDelegate<Parent, Model : AdapterParentViewModel<out P
     suspend fun clear()
 
     suspend fun update(updateRequest: UpdateRequest<Parent>): Boolean
+
+    suspend fun getModelByItem(item: Parent): Model?
 }

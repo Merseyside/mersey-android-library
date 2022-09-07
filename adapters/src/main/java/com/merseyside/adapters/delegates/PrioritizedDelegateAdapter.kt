@@ -5,14 +5,18 @@ import com.merseyside.adapters.model.ComparableAdapterParentViewModel
 
 abstract class PrioritizedDelegateAdapter<Item : Parent, Parent,
         Model : ComparableAdapterParentViewModel<Item, out Parent>>(
-    private val priority: Int
+    priority: Int = 0
 ) : DelegateAdapter<Item, Parent, Model>() {
 
-    init {
-        validatePriority(priority)
-    }
+    var priority: Int = priority
+        internal set(value) {
+            if (field != value) {
+                validatePriority(value)
+                field = value
+            }
+        }
 
-    override fun createItemViewModel(item: Item): Model {
-        return super.createItemViewModel(item).also { it.priority = priority }
+    override fun onModelCreated(model: Model) {
+        return super.onModelCreated(model).also { model.priority = priority }
     }
 }

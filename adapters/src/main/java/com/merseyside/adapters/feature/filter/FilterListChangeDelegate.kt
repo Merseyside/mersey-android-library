@@ -21,7 +21,7 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
 
     protected val mutAllModelList: MutableList<Model> = ArrayList()
     protected val allModelList: List<Model> = mutAllModelList
-        get() = field.ifEmpty { getModels() }
+        get() = field.ifEmpty { filteredList }
 
     protected val filteredList: List<Model>
         get() = getModels()
@@ -85,7 +85,7 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
         with(filterFeature) {
             return listChangeDelegate.remove(item).also {
                 if (isFiltered) {
-                    val model = it ?: getModelByItem(item, mutAllModelList)
+                    val model = it ?: getModelByItem(item, allModelList)
                     model?.let { mutAllModelList.remove(model) }
                 }
             }
@@ -114,7 +114,9 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
         }
     }
 
-    override suspend fun applyUpdateTransaction(updateTransaction: UpdateTransaction<Parent, Model>): Boolean {
+    override suspend fun applyUpdateTransaction(
+        updateTransaction: UpdateTransaction<Parent, Model>
+    ): Boolean {
         with(updateTransaction) {
             if (modelsToRemove.isNotEmpty()) {
                 removeFromAllModels(modelsToRemove)
@@ -169,6 +171,10 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
 
     internal suspend fun removeFromAllModels(models: List<Model>) {
         models.forEach { model -> removeFromAllModels(model) }
+    }
+
+    override suspend fun getModelByItem(item: Parent): Model? {
+        return listChangeDelegate.getModelByItem(item)
     }
 
     protected fun isFiltered() = filterFeature.isFiltered

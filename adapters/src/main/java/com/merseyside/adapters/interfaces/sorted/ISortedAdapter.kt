@@ -2,7 +2,7 @@
 
 package com.merseyside.adapters.interfaces.sorted
 
-import androidx.recyclerview.widget.SortedList
+import com.merseyside.adapters.utils.list.SortedList
 import com.merseyside.adapters.extensions.*
 import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.listDelegates.interfaces.AdapterPrioritizedListChangeDelegate
@@ -25,7 +25,7 @@ interface ISortedAdapter<Parent, Model> : IBaseAdapter<Parent, Model>,
         delegate.add(item, priority)
     }
 
-    override fun notifyModelUpdated(
+    override suspend fun notifyModelUpdated(
         model: Model,
         payloads: List<AdapterParentViewModel.Payloadable>
     ) {
@@ -65,9 +65,17 @@ interface ISortedAdapter<Parent, Model> : IBaseAdapter<Parent, Model>,
         return true
     }
 
+    override suspend fun containsModel(model: Model): Boolean {
+        return sortedList.contains(model)
+    }
+
     override suspend fun removeAll() {
         sortedList.clear()
         adapter.notifyDataSetChanged()
+    }
+
+    override suspend fun getPositionOfModel(model: Model): Int {
+        return sortedList.indexOf(model)
     }
 
     override fun comparePriority(model1: Model, model2: Model): Int {

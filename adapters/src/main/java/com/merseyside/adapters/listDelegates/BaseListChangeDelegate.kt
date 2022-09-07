@@ -21,8 +21,9 @@ abstract class BaseListChangeDelegate<Parent, Model>
         throw IllegalArgumentException("No data found")
     }
 
-    fun getModelByItem(item: Parent, models: List<Model> = getModels()): Model? {
-        return models.find { it.areItemsTheSame(item) }
+    suspend fun getModelByItem(item: Parent, models: List<Model> = getModels()): Model? {
+        val model = getModelByItem(item)
+        return model ?: models.find { it.areItemsTheSame(item) }
     }
 
     fun getItemCount(): Int {

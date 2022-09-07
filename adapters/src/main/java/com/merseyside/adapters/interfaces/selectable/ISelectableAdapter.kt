@@ -45,7 +45,7 @@ interface ISelectableAdapter<Parent, Model>
         selectedListeners.remove(listener)
     }
 
-    override fun onModelCreated(model: Model) {
+    override suspend fun onModelCreated(model: Model) {
         super.onModelCreated(model)
         model.isSelectable = isSelectEnabled
         model.selectEvent.observe(internalOnSelect)
@@ -105,7 +105,7 @@ interface ISelectableAdapter<Parent, Model>
         }
     }
 
-    fun getSelectedItemPosition(): Int {
+    suspend fun getSelectedItemPosition(): Int {
         return getSelectedItem()?.let {
             getPositionOfItem(it)
         } ?: SelectableAdapter.NO_SELECTIONS

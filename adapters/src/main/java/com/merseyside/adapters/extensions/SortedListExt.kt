@@ -1,8 +1,7 @@
 package com.merseyside.adapters.extensions
 
-import androidx.recyclerview.widget.SortedList
+import com.merseyside.adapters.utils.list.SortedList
 import com.merseyside.adapters.model.ComparableAdapterParentViewModel
-import com.merseyside.adapters.utils.runWithDefault
 
 fun SortedList<*>.isEmpty(): Boolean {
     return this.size() == 0
@@ -32,10 +31,6 @@ fun <Model : ComparableAdapterParentViewModel<out Parent, Parent>, Parent> Sorte
     }
 }
 
-fun <Model : ComparableAdapterParentViewModel<out Parent, Parent>, Parent> SortedList<Model>.isNotEquals(
-    list: List<Model>
-): Boolean = !this.isEquals(list)
-
 internal inline fun <Model> SortedList<Model>.forEach(onValue: (Model) -> Unit) {
     forEachIndexed { _, item -> onValue(item) }
 }
@@ -58,7 +53,11 @@ internal inline fun <Model> SortedList<Model>.indexOf(predicate: (Model) -> Bool
     return SortedList.INVALID_POSITION
 }
 
-internal fun <Model> SortedList<Model>.removeAll(list: List<Model>) {
+internal suspend fun <Model> SortedList<Model>.contains(model: Model): Boolean {
+    return indexOf(model) != SortedList.INVALID_POSITION
+}
+
+internal suspend fun <Model> SortedList<Model>.removeAll(list: List<Model>) {
     list.forEach { remove(it) }
 }
 
@@ -73,16 +72,24 @@ suspend inline fun <Item> SortedList<Item>.batchedUpdate(crossinline block: susp
     }
 }
 
-fun <Item> SortedList<Item>.getAll(): List<Item> {
-    val list = mutableListOf<Item>()
-    forEach { list.add(it) }
-    return list
+//fun <Model> SortedList<Model>.getAll(): List<Model> {
+//    val list = mutableListOf<Model>()
+//    forEach { list.add(it) }
+//    return list
+//}
+
+suspend fun <Model> SortedList<Model>.recalculatePositions() {
+    val models = getAll()
+    clear()
+    addAll(models)
 }
 
-fun SortedList<*>.recalculatePositions() {
+suspend fun <Model> SortedList<Model>.recalculatePositionsWithAnimation() {
     val models = getAll()
     models.forEach { model ->
-        val pos = indexOf { it == model }
-        recalculatePositionOfItemAt(pos)
+        val pos = indexOf { it == model  }
+        if (pos != SortedList.INVALID_POSITION) {
+            recalculatePositionOfItemAt(pos)
+        }
     }
 }

@@ -17,16 +17,8 @@ class CheckpointItemViewModel(item: Checkpoint) : ComparableAdapterViewModel<Che
     private var gapChange: Millis = Millis()
     private var rank: Int = 0
 
-    override fun areContentsTheSame(other: Checkpoint): Boolean {
-        return this.item == other
-    }
-
     override fun compareTo(other: Checkpoint): Int {
         return this.item.gap.compareTo(other.gap)
-    }
-
-    override fun areItemsTheSame(other: Checkpoint): Boolean {
-        return this.item.racer == other.racer
     }
 
     override fun notifyUpdate() {

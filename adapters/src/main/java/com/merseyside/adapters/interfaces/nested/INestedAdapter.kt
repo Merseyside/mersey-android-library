@@ -21,7 +21,8 @@ interface INestedAdapter<Parent, Model, InnerData, InnerAdapter> : ISortedAdapte
     fun initNestedAdapter(model: Model): InnerAdapter
     fun getNestedView(binding: ViewDataBinding): RecyclerView?
 
-    fun getAdapterByItem(item: Parent): InnerAdapter? {
+    @OptIn(InternalAdaptersApi::class)
+    suspend fun getAdapterByItem(item: Parent): InnerAdapter? {
         val model = getModelByItem(item)
         return model?.let {
             getAdapterIfExists(it)

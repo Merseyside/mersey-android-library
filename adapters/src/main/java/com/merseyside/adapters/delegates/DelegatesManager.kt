@@ -2,6 +2,7 @@ package com.merseyside.adapters.delegates
 
 import android.util.SparseArray
 import android.view.ViewGroup
+import androidx.core.util.isEmpty
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.merseyLib.kotlin.extensions.isNotZero
@@ -104,6 +105,12 @@ class DelegatesManager<Parent, Model : AdapterParentViewModel<out Parent, Parent
     fun removeResponsibleDelegate(item: Parent): Boolean {
         return removeResponsibleDelegate(item!!::class.java)
     }
+
+    fun clear() {
+        delegates.clear()
+    }
+
+    fun isEmpty(): Boolean = delegates.isEmpty()
 
     private fun getResponsibleDelegate(model: Model): DelegateAdapter<out Parent, Parent, Model> {
         return if (count.isNotZero()) {

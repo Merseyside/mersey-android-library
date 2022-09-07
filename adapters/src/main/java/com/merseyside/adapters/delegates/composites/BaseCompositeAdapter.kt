@@ -41,8 +41,6 @@ abstract class BaseCompositeAdapter<Parent, Model>(
 
     @InternalAdaptersApi
     override fun createModel(item: Parent): Model {
-        return delegatesManager.createModel(item).also { model ->
-            onModelCreated(model)
-        }
+        return delegatesManager.createModel(item)
     }
 }

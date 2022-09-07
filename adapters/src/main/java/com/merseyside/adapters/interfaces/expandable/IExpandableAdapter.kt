@@ -45,7 +45,7 @@ interface IExpandableAdapter<Parent, Model, InnerData, InnerAdapter>
         }
     }
 
-    override fun onModelCreated(model: Model) {
+    override suspend fun onModelCreated(model: Model) {
         super.onModelCreated(model)
         model.expandEvent.observe(internalOnExpand)
     }

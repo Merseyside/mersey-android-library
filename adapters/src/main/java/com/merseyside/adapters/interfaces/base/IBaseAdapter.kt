@@ -5,13 +5,14 @@ package com.merseyside.adapters.interfaces.base
 import android.annotation.SuppressLint
 import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.SortedList
 import com.merseyside.adapters.callback.HasOnItemClickListener
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.listDelegates.interfaces.AdapterListChangeDelegate
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.UpdateRequest
+import com.merseyside.merseyLib.kotlin.contract.Identifiable
+import com.merseyside.utils.measureAndLogTime
 import kotlinx.coroutines.Job
 
 @SuppressLint("NotifyDataSetChanged")
@@ -21,8 +22,11 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
 
     @InternalAdaptersApi
     val delegate: AdapterListChangeDelegate<Parent, Model>
+
     @InternalAdaptersApi
     val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>
+
+    val hashMap: MutableMap<Any, Model>
 
     @InternalAdaptersApi
     val onClick: (Parent) -> Unit
@@ -63,7 +67,9 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
     }
 
     suspend fun update(updateRequest: UpdateRequest<Parent>): Boolean {
-        return delegate.update(updateRequest)
+        return measureAndLogTime("updateTime") {
+            delegate.update(updateRequest)
+        }
     }
 
     fun updateAsync(items: List<Parent>, onComplete: (Boolean) -> Unit = {}) {
@@ -85,11 +91,11 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
 
     @InternalAdaptersApi
     @CallSuper
-    fun onModelCreated(model: Model) {
+    suspend fun onModelCreated(model: Model) {
         model.clickEvent.observe(onClick)
     }
 
-    fun notifyModelUpdated(model: Model, payloads: List<AdapterParentViewModel.Payloadable>)
+    suspend fun notifyModelUpdated(model: Model, payloads: List<AdapterParentViewModel.Payloadable>)
 
     /**
      * Removes model by item
@@ -125,7 +131,8 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
     fun onPayloadable(
         holder: TypedBindingHolder<Model>,
         payloads: List<AdapterParentViewModel.Payloadable>
-    ) {}
+    ) {
+    }
 
 
     fun getItemsCount() = models.size
@@ -140,26 +147,26 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
         return models[position]
     }
 
-    fun getModelByItem(item: Parent): Model? {
-        return models.find { it.areItemsTheSame(item) }
+    suspend fun getPositionOfModel(model: Model): Int
+
+    fun getModelByItemAsync(item: Parent, onComplete: (Model?) -> Unit) {
+        doAsync(onComplete) { getModelByItem(item) }
     }
 
-    fun getPositionOfModel(model: Model): Int {
-        return getPositionOfItem(model.item).let { position ->
-            if (position != SortedList.INVALID_POSITION) position
-            else throw IllegalArgumentException("No data found")
-        }
+    @InternalAdaptersApi
+    suspend fun getModelByItem(item: Parent): Model? {
+        return delegate.getModelByItem(item)
     }
 
-    fun getPositionOfItem(item: Parent): Int {
-        models.forEachIndexed { index, model ->
-            if (model.areItemsTheSame(item)) return index
-        }
 
-        throw IllegalArgumentException("No data found")
+    suspend fun getPositionOfItem(item: Parent): Int {
+        val model = getModelByItem(item)
+        return if (model != null) {
+            getPositionOfModel(model)
+        } else -1
     }
 
-    fun containsModel(model: Model): Boolean {
+    suspend fun containsModel(model: Model): Boolean {
         return models.contains(model)
     }
 

@@ -2,6 +2,7 @@ package com.merseyside.merseyLib.features.adapters.colors.model
 
 import com.merseyside.adapters.model.ComparableAdapterViewModel
 import com.merseyside.merseyLib.features.adapters.colors.entity.HexColor
+import com.merseyside.merseyLib.kotlin.logger.log
 
 class ColorItemViewModel(obj: HexColor) : ComparableAdapterViewModel<HexColor>(obj) {
 

@@ -1,10 +1,8 @@
 @file:OptIn(InternalAdaptersApi::class)
 
 package com.merseyside.adapters.single
-
-import androidx.recyclerview.widget.SortedList
-import com.merseyside.adapters.extensions.getAll
 import com.merseyside.adapters.extensions.recalculatePositions
+import com.merseyside.adapters.extensions.recalculatePositionsWithAnimation
 import com.merseyside.adapters.feature.compare.Comparator
 import com.merseyside.adapters.feature.filter.FilterPrioritizedListChangeDelegate
 import com.merseyside.adapters.interfaces.sorted.ISortedAdapter
@@ -16,6 +14,7 @@ import com.merseyside.adapters.utils.getFilter
 import com.merseyside.adapters.utils.isFilterable
 import com.merseyside.adapters.utils.list.createSortedListCallback
 import com.merseyside.merseyLib.kotlin.extensions.isZero
+import com.merseyside.adapters.utils.list.SortedList
 import com.merseyside.utils.reflection.ReflectionUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,11 +29,13 @@ abstract class SortedAdapter<Item, Model>(
         set(value) {
             value?.apply {
                 workManager = this@SortedAdapter.workManager
-                setOnComparatorUpdateCallback(object :
-                    Comparator.OnComparatorUpdateCallback {
-                    override suspend fun onUpdate() {
+                setOnComparatorUpdateCallback(object : Comparator.OnComparatorUpdateCallback {
+                    override suspend fun onUpdate(animation: Boolean) {
                         doAsync {
-                            sortedList.recalculatePositions()
+                            with(sortedList) {
+                                if (animation) recalculatePositionsWithAnimation()
+                                else recalculatePositions()
+                            }
                         }
                     }
                 })

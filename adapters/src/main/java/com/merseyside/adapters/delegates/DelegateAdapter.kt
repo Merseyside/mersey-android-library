@@ -64,9 +64,7 @@ abstract class DelegateAdapter<Item : Parent, Parent, Model> : HasOnItemClickLis
     }
 
     internal open fun onModelCreated(model: Model) {
-        model.clickEvent.observe {
-            clickListeners.forEach { listener -> listener.onItemClicked(model.item) }
-        }
+        model.clickEvent.observe(onClick)
     }
 
     @CallSuper

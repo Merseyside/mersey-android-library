@@ -8,8 +8,9 @@ import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.merseyLib.kotlin.extensions.move
 
-interface ISimpleAdapter<Parent, Model : AdapterParentViewModel<out Parent, Parent>>
-    : IBaseAdapter<Parent, Model>, AdapterPositionListActions<Parent, Model> {
+interface ISimpleAdapter<Parent, Model> : IBaseAdapter<Parent, Model>,
+    AdapterPositionListActions<Parent, Model>
+        where Model : AdapterParentViewModel<out Parent, Parent> {
 
     override val delegate: AdapterPositionListChangeDelegate<Parent, Model>
 
@@ -52,14 +53,13 @@ interface ISimpleAdapter<Parent, Model : AdapterParentViewModel<out Parent, Pare
         add(position + 1, item)
     }
 
-    override fun notifyModelUpdated(
+    override suspend fun notifyModelUpdated(
         model: Model,
         payloads: List<AdapterParentViewModel.Payloadable>
     ) {
         val position = getPositionOfModel(model)
         adapter.notifyItemChanged(position, payloads)
     }
-
 
     fun notifyPositionsChanged(startsWithPosition: Int) {
         if (startsWithPosition < getLastPositionIndex()) {
@@ -117,5 +117,9 @@ interface ISimpleAdapter<Parent, Model : AdapterParentViewModel<out Parent, Pare
 
     override suspend fun changeModelPosition(model: Model, oldPosition: Int, newPosition: Int) {
         mutModels.move(oldPosition, newPosition)
+    }
+
+    override suspend fun getPositionOfModel(model: Model): Int {
+        return models.indexOf(model)
     }
 }
