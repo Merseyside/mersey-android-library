@@ -1,11 +1,13 @@
-package com.merseyside.adapters.feature.filter
+package com.merseyside.adapters.feature.filter.delegate
 
+import com.merseyside.adapters.feature.filter.FilterFeature
 import com.merseyside.adapters.listDelegates.BaseListChangeDelegate
 import com.merseyside.adapters.listDelegates.ListChangeDelegate
 import com.merseyside.adapters.listDelegates.utils.UpdateTransaction
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.merseyLib.kotlin.logger.ILogger
+import com.merseyside.merseyLib.kotlin.logger.log
 
 abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<out Parent, Parent>>(
     filterFeature: FilterFeature<Parent, Model>
@@ -79,6 +81,11 @@ abstract class FilterListChangeDelegate<Parent, Model : AdapterParentViewModel<o
                 models
             }
         }
+    }
+
+    override suspend fun addOrUpdate(items: List<Parent>) {
+        if (allModelList.isEmpty()) add(items)
+        else update(items)
     }
 
     override suspend fun remove(item: Parent): Model? {

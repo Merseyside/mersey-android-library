@@ -1,8 +1,8 @@
 package com.merseyside.adapters.model
 
 import androidx.databinding.ObservableBoolean
-import com.merseyside.merseyLib.kotlin.ObservableField
-import com.merseyside.merseyLib.kotlin.SingleObservableField
+import com.merseyside.merseyLib.kotlin.observable.ObservableField
+import com.merseyside.merseyLib.kotlin.observable.SingleObservableField
 
 abstract class SelectableAdapterParentViewModel<Item : Parent, Parent>(
     item: Item,

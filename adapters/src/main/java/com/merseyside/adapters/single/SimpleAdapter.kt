@@ -2,7 +2,7 @@
 
 package com.merseyside.adapters.single
 
-import com.merseyside.adapters.feature.filter.FilterPositionListChangeDelegate
+import com.merseyside.adapters.feature.filter.delegate.FilterPositionListChangeDelegate
 import com.merseyside.adapters.interfaces.simple.ISimpleAdapter
 import com.merseyside.adapters.listDelegates.PositionListChangeDelegate
 import com.merseyside.adapters.listDelegates.interfaces.AdapterPositionListChangeDelegate
@@ -12,7 +12,6 @@ import com.merseyside.adapters.utils.getFilter
 import com.merseyside.adapters.utils.isFilterable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 
 abstract class SimpleAdapter<Item, Model : AdapterViewModel<Item>>(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main)

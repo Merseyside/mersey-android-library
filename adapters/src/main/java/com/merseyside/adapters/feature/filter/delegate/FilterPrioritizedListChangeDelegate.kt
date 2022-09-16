@@ -1,10 +1,10 @@
-package com.merseyside.adapters.feature.filter
+package com.merseyside.adapters.feature.filter.delegate
 
-import com.merseyside.adapters.feature.compare.validatePriority
+import com.merseyside.adapters.feature.compare.Priority.validatePriority
+import com.merseyside.adapters.feature.filter.FilterFeature
 import com.merseyside.adapters.listDelegates.PrioritizedListChangeDelegate
 import com.merseyside.adapters.listDelegates.interfaces.AdapterPrioritizedListChangeDelegate
 import com.merseyside.adapters.model.ComparableAdapterParentViewModel
-import com.merseyside.merseyLib.kotlin.coroutines.CoroutineWorkManager
 
 open class FilterPrioritizedListChangeDelegate<Parent, Model>(
     override val listChangeDelegate: PrioritizedListChangeDelegate<Parent, Model>,

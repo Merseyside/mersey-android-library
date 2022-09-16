@@ -12,8 +12,8 @@ import androidx.databinding.BindingAdapter
 import coil.load
 import coil.request.ImageRequest
 import coil.transform.RoundedCornersTransformation
-import com.merseyside.merseyLib.kotlin.firstNotNull
-import com.merseyside.merseyLib.kotlin.safeLet
+import com.merseyside.merseyLib.kotlin.utils.firstNotNull
+import com.merseyside.merseyLib.kotlin.utils.safeLet
 import com.merseyside.utils.coil.CircleCropStroke
 import com.merseyside.utils.coil.CircleCropTransformation
 import com.merseyside.utils.ext.getDrawableResourceIdByName

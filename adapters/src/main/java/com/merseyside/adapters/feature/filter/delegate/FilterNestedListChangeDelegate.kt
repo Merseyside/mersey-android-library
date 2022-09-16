@@ -1,13 +1,14 @@
-package com.merseyside.adapters.feature.filter
+package com.merseyside.adapters.feature.filter.delegate
 
 import com.merseyside.adapters.base.BaseAdapter
+import com.merseyside.adapters.feature.filter.FilterFeature
+import com.merseyside.adapters.feature.filter.NestedFilterFeature
 import com.merseyside.adapters.feature.filter.interfaces.Filterable
 import com.merseyside.adapters.listDelegates.NestedListChangeDelegate
 import com.merseyside.adapters.listDelegates.interfaces.AdapterNestedListChangeDelegate
 import com.merseyside.adapters.listDelegates.utils.UpdateTransaction
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
-import com.merseyside.merseyLib.kotlin.coroutines.CoroutineWorkManager
 
 class FilterNestedListChangeDelegate<Parent, Model, InnerData, InnerAdapter>(
     override val listChangeDelegate: NestedListChangeDelegate<Parent, Model, InnerData, InnerAdapter>,

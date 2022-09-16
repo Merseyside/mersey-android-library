@@ -3,7 +3,7 @@ package com.merseyside.merseyLib.features.adapters.delegate.view
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import com.merseyside.adapters.extensions.onItemClicked
+import com.merseyside.adapters.extensions.onClick
 import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
@@ -21,7 +21,7 @@ import com.merseyside.utils.view.ext.onClick
 class DelegateFragment : BaseSampleFragment<FragmentDelegateBinding, DelegateViewModel>() {
 
     private val adapter = AnimalsAdapter().apply {
-        onItemClicked { showMsg("Clicked!") }
+        onClick { showMsg("Clicked!") }
     }
 
     override fun hasTitleBackButton() = true

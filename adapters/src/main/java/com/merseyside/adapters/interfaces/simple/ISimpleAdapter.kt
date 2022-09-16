@@ -79,7 +79,7 @@ interface ISimpleAdapter<Parent, Model> : IBaseAdapter<Parent, Model>,
     override suspend fun addModels(models: List<Model>) {
         mutModels.addAll(models)
         val modelsCount = models.size
-        adapter.notifyItemRangeInserted(getItemsCount() - modelsCount, modelsCount)
+        adapter.notifyItemRangeInserted(getItemCount() - modelsCount, modelsCount)
     }
 
     @InternalAdaptersApi

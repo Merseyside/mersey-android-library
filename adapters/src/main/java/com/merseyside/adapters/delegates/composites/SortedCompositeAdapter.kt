@@ -1,11 +1,10 @@
 package com.merseyside.adapters.delegates.composites
 
-import com.merseyside.adapters.utils.list.SortedList
-import com.merseyside.adapters.delegates.DelegatesManager
+import com.merseyside.adapters.delegates.SimpleDelegatesManager
 import com.merseyside.adapters.extensions.recalculatePositions
 import com.merseyside.adapters.extensions.recalculatePositionsWithAnimation
 import com.merseyside.adapters.feature.compare.Comparator
-import com.merseyside.adapters.feature.filter.FilterPrioritizedListChangeDelegate
+import com.merseyside.adapters.feature.filter.delegate.FilterPrioritizedListChangeDelegate
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.interfaces.sorted.ISortedAdapter
 import com.merseyside.adapters.listDelegates.PrioritizedListChangeDelegate
@@ -15,6 +14,7 @@ import com.merseyside.adapters.model.ComparableAdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.getFilter
 import com.merseyside.adapters.utils.isFilterable
+import com.merseyside.adapters.utils.list.SortedList
 import com.merseyside.adapters.utils.list.createSortedListCallback
 import com.merseyside.utils.reflection.ReflectionUtils
 import kotlinx.coroutines.CoroutineScope
@@ -22,7 +22,7 @@ import kotlinx.coroutines.Dispatchers
 
 abstract class SortedCompositeAdapter<Parent, Model>(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
-    delegatesManager: DelegatesManager<Parent, Model> = DelegatesManager()
+    delegatesManager: SimpleDelegatesManager<Parent, Model> = SimpleDelegatesManager()
 ) : BaseCompositeAdapter<Parent, Model>(scope, delegatesManager),
     ISortedAdapter<Parent, Model>
         where Model : ComparableAdapterParentViewModel<out Parent, Parent> {

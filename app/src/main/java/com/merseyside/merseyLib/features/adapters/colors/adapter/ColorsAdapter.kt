@@ -1,6 +1,6 @@
 package com.merseyside.merseyLib.features.adapters.colors.adapter
 
-import com.merseyside.adapters.extensions.onItemClicked
+import com.merseyside.adapters.extensions.onClick
 import com.merseyside.adapters.feature.filter.interfaces.Filterable
 import com.merseyside.adapters.single.SortedAdapter
 import com.merseyside.merseyLib.BR
@@ -19,7 +19,7 @@ class ColorsAdapter(scope: CoroutineScope) : SortedAdapter<HexColor, ColorItemVi
 
     init {
         comparator = colorsComparator
-        onItemClicked {
+        onClick {
             removeAsync(it)
         }
     }

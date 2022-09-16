@@ -2,7 +2,7 @@ package com.merseyside.adapters.utils.list
 
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.model.ComparableAdapterParentViewModel
-import com.merseyside.merseyLib.kotlin.getMinMax
+import com.merseyside.merseyLib.kotlin.utils.getMinMax
 
 internal fun <Parent, Model : ComparableAdapterParentViewModel<out Parent, Parent>> createSortedListCallback(
     adapter: RecyclerView.Adapter<*>,

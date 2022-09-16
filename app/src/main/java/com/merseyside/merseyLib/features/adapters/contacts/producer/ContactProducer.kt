@@ -1,7 +1,7 @@
 package com.merseyside.merseyLib.features.adapters.contacts.producer
 
 import com.merseyside.merseyLib.features.adapters.contacts.entity.ContactGroup
-import com.merseyside.merseyLib.kotlin.generateRandomString
+import com.merseyside.merseyLib.kotlin.utils.generateRandomString
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 

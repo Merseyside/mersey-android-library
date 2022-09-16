@@ -4,7 +4,7 @@ package com.merseyside.adapters.single
 import com.merseyside.adapters.extensions.recalculatePositions
 import com.merseyside.adapters.extensions.recalculatePositionsWithAnimation
 import com.merseyside.adapters.feature.compare.Comparator
-import com.merseyside.adapters.feature.filter.FilterPrioritizedListChangeDelegate
+import com.merseyside.adapters.feature.filter.delegate.FilterPrioritizedListChangeDelegate
 import com.merseyside.adapters.interfaces.sorted.ISortedAdapter
 import com.merseyside.adapters.listDelegates.PrioritizedListChangeDelegate
 import com.merseyside.adapters.listDelegates.interfaces.AdapterPrioritizedListChangeDelegate

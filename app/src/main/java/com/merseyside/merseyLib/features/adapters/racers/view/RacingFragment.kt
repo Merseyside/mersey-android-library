@@ -6,6 +6,8 @@ import android.view.View
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import com.merseyside.adapters.decorator.SimpleItemOffsetDecorator
+import com.merseyside.adapters.extensions.Behaviour
+import com.merseyside.adapters.extensions.setFlow
 import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
@@ -44,8 +46,10 @@ class RacingFragment : BaseSampleFragment<FragmentRacingBinding, RacingViewModel
             ))
         }
 
-        viewModel.getCheckpointFlow().asLiveData().observe(viewLifecycleOwner) { checkpoint ->
-            adapter.updateAsync(UpdateRequest.Builder(checkpoint).isDeleteOld(false).build())
-        }
+        adapter.setFlow(
+            flow = viewModel.getCheckpointFlow(),
+            viewLifecycleOwner = viewLifecycleOwner,
+            behaviour = Behaviour.ADD_UPDATE(removeOld = false)
+        )
     }
 }

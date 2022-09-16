@@ -78,16 +78,20 @@ class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel
             bColor.addTextChangeListener(textChangeListener)
         }
 
-        requireBinding().sortSwitcher.setOnValueChangeListener(object :
-            ValueSwitcher.OnValueChangeListener {
-            override fun valueChanged(entryValue: String) {
-                adapter.setComparisonRule(ColorsComparator.ColorComparisonRule.valueOf(entryValue.uppercase()))
-            }
-        })
+        requireBinding().sortSwitcher.setOnValueChangeListener(
+            object : ValueSwitcher.OnValueChangeListener {
+                override fun valueChanged(entryValue: String) {
+                    adapter.setComparisonRule(
+                        ColorsComparator.ColorComparisonRule.valueOf(
+                            entryValue.uppercase()
+                        )
+                    )
+                }
+            })
+
 
         viewModel.getColorsFlow().asLiveData().observe(viewLifecycleOwner) {
             if (requireBinding().add.isChecked) {
-
                 adapter.addAsync(it)
             } else {
                 val updateRequest = UpdateRequest.Builder(it)

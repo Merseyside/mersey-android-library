@@ -1,7 +1,7 @@
 package com.merseyside.adapters.single
 
 import com.merseyside.adapters.base.BaseAdapter
-import com.merseyside.adapters.feature.filter.FilterNestedListChangeDelegate
+import com.merseyside.adapters.feature.filter.delegate.FilterNestedListChangeDelegate
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.interfaces.nested.INestedAdapter
 import com.merseyside.adapters.listDelegates.NestedListChangeDelegate
@@ -12,7 +12,6 @@ import com.merseyside.adapters.utils.getFilter
 import com.merseyside.adapters.utils.isFilterable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 
 abstract class NestedAdapter<Item, Model, Data, InnerAdapter>(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main)

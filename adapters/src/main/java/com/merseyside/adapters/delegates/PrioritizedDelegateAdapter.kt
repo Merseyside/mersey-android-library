@@ -1,15 +1,16 @@
 package com.merseyside.adapters.delegates
 
-import com.merseyside.adapters.feature.compare.validatePriority
+import com.merseyside.adapters.feature.compare.Priority.validatePriority
+import com.merseyside.adapters.interfaces.delegate.IPrioritizedDelegateAdapter
 import com.merseyside.adapters.model.ComparableAdapterParentViewModel
 
-abstract class PrioritizedDelegateAdapter<Item : Parent, Parent,
-        Model : ComparableAdapterParentViewModel<Item, out Parent>>(
+abstract class PrioritizedDelegateAdapter<Item : Parent, Parent, Model>(
     priority: Int = 0
-) : DelegateAdapter<Item, Parent, Model>() {
+) : DelegateAdapter<Item, Parent, Model>(), IPrioritizedDelegateAdapter<Item, Parent, Model>
+    where Model : ComparableAdapterParentViewModel<Item, Parent> {
 
-    var priority: Int = priority
-        internal set(value) {
+    override var priority: Int = priority
+        set(value) {
             if (field != value) {
                 validatePriority(value)
                 field = value

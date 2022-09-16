@@ -24,6 +24,7 @@ class PositionListChangeDelegate<Parent, Model>(
     }
 
     override suspend fun update(updateRequest: UpdateRequest<Parent>): Boolean {
+        updateRequest.list.log("list")
         var isUpdated: Boolean
 
         with(updateRequest) {

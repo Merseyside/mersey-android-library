@@ -6,6 +6,7 @@ import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.adapters.utils.runWithDefault
 import com.merseyside.merseyLib.kotlin.extensions.subtractBy
+import com.merseyside.merseyLib.kotlin.logger.log
 
 abstract class BaseListChangeDelegate<Parent, Model>
     : AdapterListChangeDelegate<Parent, Model>

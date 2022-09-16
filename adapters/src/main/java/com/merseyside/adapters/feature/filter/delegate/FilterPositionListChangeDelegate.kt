@@ -1,10 +1,10 @@
-package com.merseyside.adapters.feature.filter
+package com.merseyside.adapters.feature.filter.delegate
 
+import com.merseyside.adapters.feature.filter.FilterFeature
 import com.merseyside.adapters.listDelegates.PositionListChangeDelegate
 import com.merseyside.adapters.listDelegates.interfaces.AdapterPositionListChangeDelegate
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.UpdateRequest
-import com.merseyside.merseyLib.kotlin.coroutines.CoroutineWorkManager
 import com.merseyside.merseyLib.kotlin.logger.ILogger
 
 internal class FilterPositionListChangeDelegate<Parent, Model>(

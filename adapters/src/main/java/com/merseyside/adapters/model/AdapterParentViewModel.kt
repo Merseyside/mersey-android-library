@@ -4,8 +4,8 @@ import androidx.annotation.CallSuper
 import androidx.databinding.BaseObservable
 import androidx.databinding.ObservableBoolean
 import com.merseyside.adapters.utils.ItemCallback
-import com.merseyside.merseyLib.kotlin.ObservableField
-import com.merseyside.merseyLib.kotlin.SingleObservableField
+import com.merseyside.merseyLib.kotlin.observable.ObservableField
+import com.merseyside.merseyLib.kotlin.observable.SingleObservableField
 import com.merseyside.merseyLib.kotlin.contract.Identifiable
 
 @Suppress("UNCHECKED_CAST")

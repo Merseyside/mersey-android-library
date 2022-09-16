@@ -20,5 +20,7 @@ interface AdapterListChangeDelegate<Parent, Model>
 
     suspend fun update(updateRequest: UpdateRequest<Parent>): Boolean
 
+    suspend fun addOrUpdate(items: List<Parent>)
+
     suspend fun getModelByItem(item: Parent): Model?
 }

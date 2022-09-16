@@ -12,6 +12,7 @@ import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.merseyLib.kotlin.contract.Identifiable
+import com.merseyside.merseyLib.kotlin.logger.log
 import com.merseyside.utils.measureAndLogTime
 import kotlinx.coroutines.Job
 
@@ -58,8 +59,7 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
     }
 
     suspend fun addOrUpdate(items: List<Parent>) {
-        if (isEmpty()) add(items)
-        else update(UpdateRequest(items))
+        delegate.addOrUpdate(items)
     }
 
     fun updateAsync(updateRequest: UpdateRequest<Parent>, provideResult: (Boolean) -> Unit = {}) {
@@ -131,13 +131,11 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
     fun onPayloadable(
         holder: TypedBindingHolder<Model>,
         payloads: List<AdapterParentViewModel.Payloadable>
-    ) {
-    }
+    ) {}
 
+    fun getItemCount(): Int
 
-    fun getItemsCount() = models.size
-
-    fun getLastPositionIndex(): Int = getItemsCount() - 1
+    fun getLastPositionIndex(): Int = getItemCount() - 1
 
     fun getItemByPosition(position: Int): Parent {
         return getModelByPosition(position).item

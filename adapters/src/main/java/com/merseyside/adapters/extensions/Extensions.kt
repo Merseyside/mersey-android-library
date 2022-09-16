@@ -2,11 +2,7 @@ package com.merseyside.adapters.extensions
 
 import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.callback.*
-import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.interfaces.selectable.ISelectableAdapter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 suspend inline fun <Item> BaseAdapter<Item, *>.findPosition(predicate: (item: Item) -> Boolean): Int {
     return getAll().find { predicate(it) }?.run {
@@ -35,7 +31,7 @@ inline fun <Item> BaseAdapter<Item, *>.removeIf(predicate: (Item) -> Boolean): L
     return itemsToRemove
 }
 
-fun <Item> HasOnItemClickListener<Item>.onItemClicked(
+fun <Item> HasOnItemClickListener<Item>.onClick(
     onClick: (item: Item) -> Unit
 ): OnItemClickListener<Item> {
     val listener = object : OnItemClickListener<Item> {

@@ -1,5 +1,6 @@
 package com.merseyside.adapters.feature.filter
 
+import com.merseyside.adapters.feature.filter.delegate.Filters
 import com.merseyside.adapters.feature.filter.interfaces.Filterable
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 import com.merseyside.merseyLib.kotlin.extensions.isNotZero

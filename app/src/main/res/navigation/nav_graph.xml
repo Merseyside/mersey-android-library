@@ -39,6 +39,10 @@
         <action
             android:id="@+id/action_mainFragment_to_delegatesFragment"
             app:destination="@id/delegatesFragment" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_moviesFragment"
+            app:destination="@id/moviesFragment" />
     </fragment>
 
     <fragment
@@ -88,6 +92,13 @@
         android:name="com.merseyside.merseyLib.features.adapters.news.view.NewsFragment"
         android:label="news_fragment"
         tools:layout="@layout/fragment_news"
+        app:navGraph="@navigation/nav_graph" />
+
+    <fragment
+        android:id="@+id/moviesFragment"
+        android:name="com.merseyside.merseyLib.features.adapters.movies.view.MoviesFragment"
+        android:label="movies_fragment"
+        tools:layout="@layout/fragment_movies"
         app:navGraph="@navigation/nav_graph" />
 
 </navigation>

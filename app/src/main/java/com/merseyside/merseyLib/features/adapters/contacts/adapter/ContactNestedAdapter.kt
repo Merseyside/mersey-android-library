@@ -2,7 +2,7 @@ package com.merseyside.merseyLib.features.adapters.contacts.adapter
 
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
-import com.merseyside.adapters.extensions.onItemClicked
+import com.merseyside.adapters.extensions.onClick
 import com.merseyside.adapters.feature.filter.FilterFeature
 import com.merseyside.adapters.feature.filter.interfaces.Filterable
 import com.merseyside.adapters.single.NestedAdapter
@@ -19,7 +19,7 @@ class ContactNestedAdapter : NestedAdapter<ContactGroup, ContactGroupItemViewMod
         ContactsInnerFilter()
 
     init {
-        onItemClicked {
+        onClick {
             removeAsync(it)
         }
     }

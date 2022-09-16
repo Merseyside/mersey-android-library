@@ -1,6 +1,7 @@
 package com.merseyside.adapters.feature.style
 
-interface StyleableItem<Definition : StyleDefinition> {
+interface StyleableItem<Style : ComposingStyle> {
 
-    val styleDefinition: Definition
+    var style: Style.() -> Unit
+    val composingStyle: Style
 }

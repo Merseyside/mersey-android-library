@@ -1,6 +1,6 @@
 package com.merseyside.adapters.listDelegates
 
-import com.merseyside.adapters.feature.compare.validatePriority
+import com.merseyside.adapters.feature.compare.Priority.validatePriority
 import com.merseyside.adapters.interfaces.sorted.AdapterPrioritizedListActions
 import com.merseyside.adapters.listDelegates.interfaces.AdapterPrioritizedListChangeDelegate
 import com.merseyside.adapters.model.ComparableAdapterParentViewModel

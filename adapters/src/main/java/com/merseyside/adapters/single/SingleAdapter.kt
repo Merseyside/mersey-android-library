@@ -47,9 +47,7 @@ abstract class SingleAdapter<Item, Model>(scope: CoroutineScope): BaseAdapter<It
         return getLayoutIdForPosition(position)
     }
 
-    override fun createModel(item: Item): Model {
-        return createItemViewModel(item)
-    }
+    override fun createModel(item: Item): Model = createItemViewModel(item)
 
     @CallSuper
     override fun onViewRecycled(holder: TypedBindingHolder<Model>) {

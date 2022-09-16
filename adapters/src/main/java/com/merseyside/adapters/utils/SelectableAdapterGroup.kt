@@ -5,7 +5,7 @@ import com.merseyside.adapters.callback.OnItemSelectedListener
 import com.merseyside.adapters.interfaces.selectable.ISelectableAdapter
 import com.merseyside.adapters.interfaces.selectable.SelectableMode
 import com.merseyside.adapters.single.SelectableAdapter
-import com.merseyside.merseyLib.kotlin.coroutines.CoroutineWorkManager
+import com.merseyside.merseyLib.kotlin.coroutines.CoroutineQueue
 import com.merseyside.merseyLib.kotlin.extensions.isNotZero
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +17,7 @@ class SelectableAdapterGroup<Item>(
     var isAllowToCancelSelection: Boolean = selectableMode == SelectableMode.MULTIPLE
 ) : HasOnItemSelectedListener<Item> {
 
-    private val workManager = CoroutineWorkManager<Any, Unit>(scope = scope)
+    private val workManager = CoroutineQueue<Any, Unit>(scope = scope)
 
     private val groupSelectedListener = object : OnItemSelectedListener<Item> {
         override fun onSelected(item: Item, isSelected: Boolean, isSelectedByUser: Boolean) {
@@ -116,7 +116,7 @@ class SelectableAdapterGroup<Item>(
 
     private suspend fun selectMostAppropriateItem(adapter: ISelectableAdapter<Item, *>) {
         if (!isAllowToCancelSelection) {
-            if (adapter.getItemsCount().isNotZero()) {
+            if (adapter.getItemCount().isNotZero()) {
                 adapter.selectFirstSelectableItem(force = true)
             } else {
                 selectFirstItem()

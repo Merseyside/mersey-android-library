@@ -5,6 +5,7 @@ package com.merseyside.adapters.delegates.composites
 import com.merseyside.adapters.callback.OnItemSelectedListener
 import com.merseyside.adapters.callback.OnSelectEnabledListener
 import com.merseyside.adapters.delegates.DelegatesManager
+import com.merseyside.adapters.delegates.SimpleDelegatesManager
 import com.merseyside.adapters.interfaces.selectable.ISelectableAdapter
 import com.merseyside.adapters.interfaces.selectable.SelectableMode
 import com.merseyside.adapters.model.SelectableAdapterParentViewModel
@@ -15,7 +16,7 @@ import kotlinx.coroutines.Dispatchers
 
 abstract class SelectableCompositeAdapter<Parent, Model>(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
-    delegatesManager: DelegatesManager<Parent, Model> = DelegatesManager(),
+    delegatesManager: SimpleDelegatesManager<Parent, Model> = SimpleDelegatesManager(),
     selectableMode: SelectableMode = SelectableMode.SINGLE,
     override var isAllowToCancelSelection: Boolean = selectableMode == SelectableMode.MULTIPLE,
     isSelectEnabled: Boolean = true,

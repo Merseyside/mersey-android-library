@@ -1,8 +1,9 @@
 package com.merseyside.adapters.feature.filter
 
+import com.merseyside.adapters.feature.filter.delegate.Filters
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.runWithDefault
-import com.merseyside.merseyLib.kotlin.coroutines.CoroutineWorkManager
+import com.merseyside.merseyLib.kotlin.coroutines.CoroutineQueue
 import com.merseyside.merseyLib.kotlin.logger.ILogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -29,7 +30,7 @@ abstract class FilterFeature<Parent, Model : AdapterParentViewModel<out Parent, 
     private val isBind: Boolean
         get() = this::workManager.isInitialized
 
-    internal lateinit var workManager: CoroutineWorkManager<Any, Unit>
+    internal lateinit var workManager: CoroutineQueue<Any, Unit>
 
     internal var provideFullList: () -> List<Model> = { emptyList() }
     internal var provideFilteredList: () -> List<Model> = { provideFullList() }

@@ -37,12 +37,6 @@ interface INestedAdapter<Parent, Model, InnerData, InnerAdapter> : ISortedAdapte
         return adapterList.find { it.first.areItemsTheSame(model.item) }?.second
     }
 
-    private fun getFilterableAdapters(): List<Filterable<InnerData, *>> {
-        return adapterList
-            .map { it.second }
-            .filterIsInstance<Filterable<InnerData, *>>()
-    }
-
     /* Models list actions */
 
     override fun getNestedAdapterByModel(model: Model): InnerAdapter {

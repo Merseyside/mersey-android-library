@@ -5,27 +5,24 @@ package com.merseyside.adapters.base
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.callback.HasOnItemClickListener
 import com.merseyside.adapters.callback.OnItemClickListener
-import com.merseyside.adapters.feature.filter.FilterListChangeDelegate
+import com.merseyside.adapters.feature.filter.delegate.FilterListChangeDelegate
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.listDelegates.ListChangeDelegate
 import com.merseyside.adapters.model.AdapterParentViewModel
-import com.merseyside.adapters.model.AdapterViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
-import com.merseyside.adapters.utils.ItemCallback
-import com.merseyside.merseyLib.kotlin.contract.Identifiable
-import com.merseyside.merseyLib.kotlin.coroutines.CoroutineWorkManager
+import com.merseyside.merseyLib.kotlin.coroutines.CoroutineQueue
+import com.merseyside.merseyLib.kotlin.logger.ILogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 
 abstract class BaseAdapter<Parent, Model>(
-    internal val scope: CoroutineScope
+    val scope: CoroutineScope
 ) : RecyclerView.Adapter<TypedBindingHolder<Model>>(),
-    ItemCallback<AdapterParentViewModel<out Parent, Parent>>,
-    HasOnItemClickListener<Parent>, IBaseAdapter<Parent, Model>
+    HasOnItemClickListener<Parent>, IBaseAdapter<Parent, Model>, ILogger
         where Model : AdapterParentViewModel<out Parent, Parent> {
 
-    internal val workManager = CoroutineWorkManager<Any, Unit>(scope = scope)
+    internal val workManager = CoroutineQueue<Any, Unit>(scope = scope)
 
     override val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>
         get() = this
@@ -107,4 +104,6 @@ abstract class BaseAdapter<Parent, Model>(
     open fun removeListeners() {
         removeAllClickListeners()
     }
+
+    override val tag: String = "BaseAdapter"
 }

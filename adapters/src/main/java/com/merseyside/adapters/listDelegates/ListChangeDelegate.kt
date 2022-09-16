@@ -52,6 +52,11 @@ abstract class ListChangeDelegate<Parent, Model : AdapterParentViewModel<out Par
         return applyUpdateTransaction(updateTransaction)
     }
 
+    override suspend fun addOrUpdate(items: List<Parent>) {
+        if (getModels().isEmpty()) add(items)
+        else update(items)
+    }
+
     override suspend fun applyUpdateTransaction(
         updateTransaction: UpdateTransaction<Parent, Model>
     ): Boolean {
