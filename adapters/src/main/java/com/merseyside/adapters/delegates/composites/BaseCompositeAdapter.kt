@@ -19,6 +19,7 @@ abstract class BaseCompositeAdapter<Parent, ParentModel>(
 
     open val delegatesManager: DelegatesManager<DelegateAdapter<out Parent, Parent, ParentModel>, Parent, ParentModel> = delegatesManager
 
+    @InternalAdaptersApi
     override val adapter: RecyclerView.Adapter<TypedBindingHolder<ParentModel>>
         get() = this
 

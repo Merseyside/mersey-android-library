@@ -1,3 +1,5 @@
+@file:OptIn(InternalAdaptersApi::class)
+
 package com.merseyside.adapters.utils
 
 import com.merseyside.adapters.base.BaseAdapter

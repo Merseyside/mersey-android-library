@@ -3,6 +3,7 @@ package com.merseyside.adapters.feature.compositeScreen
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import com.merseyside.adapters.feature.compositeScreen.adapter.ViewCompositeAdapter
+import com.merseyside.adapters.feature.compositeScreen.delegate.ViewAdapterViewModel
 import com.merseyside.adapters.feature.compositeScreen.delegate.ViewDelegate
 import com.merseyside.adapters.feature.compositeScreen.delegate.ViewDelegateAdapter
 import com.merseyside.adapters.feature.compositeScreen.dsl.context.ComposeContext
@@ -14,13 +15,13 @@ abstract class ScreenComposer(
     val viewLifecleOwner: LifecycleOwner
 ) : ILogger {
 
-    abstract val delegates: List<ViewDelegateAdapter<out SCV, *, *>>
+    abstract val delegates: List<ViewDelegateAdapter<out SCV, *, out ViewAdapterViewModel>>
 
     abstract suspend fun composeScreen(): ComposeContext
 
     private suspend fun composeInternal() = runWithDefault {
         if (adapter.delegatesManager.isEmpty()) {
-            adapter.delegatesManager.addDelegateList(delegates as List<ViewDelegate>)
+            adapter.delegatesManager.addDelegateList(delegates)
         }
 
         val screenContext = composeScreen()

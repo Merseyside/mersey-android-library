@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import com.merseyside.adapters.extensions.onClick
 import com.merseyside.adapters.feature.compositeScreen.SCV
 import com.merseyside.adapters.feature.compositeScreen.ScreenComposer
+import com.merseyside.adapters.feature.compositeScreen.delegate.ViewAdapterViewModel
 import com.merseyside.adapters.feature.compositeScreen.delegate.ViewDelegateAdapter
 import com.merseyside.adapters.feature.compositeScreen.dsl.context.compose
 import com.merseyside.adapters.feature.compositeScreen.view.list.ComposingListDelegate
@@ -25,7 +26,7 @@ class MovieScreenComposer(
 
     private var dataLiveData: LiveData<String>? = null
 
-    override val delegates: kotlin.collections.List<ViewDelegateAdapter<out SCV, *, *>> = listOf(
+    override val delegates: kotlin.collections.List<ViewDelegateAdapter<out SCV, *, out ViewAdapterViewModel>> = listOf(
         ComposingTextDelegate(),
         ComposingListDelegate()
     )

@@ -14,8 +14,10 @@ import com.merseyside.adapters.utils.InternalAdaptersApi
 open class ComposingListDelegate :
     NestedViewDelegateAdapter<ComposingList, ComposingListStyle, ComposingListViewModel>() {
 
-    override fun getNestedView(binding: ViewDataBinding): RecyclerView? {
-        return (binding as ViewComposingListBinding).list
+    override fun getNestedView(binding: ViewDataBinding, model: ComposingListViewModel): RecyclerView? {
+        return (binding as ViewComposingListBinding).list.also { recyclerView ->
+            model.item.decorator?.let { recyclerView.addItemDecoration(it) }
+        }
     }
 
     override fun getLayoutIdForItem(viewType: Int) = R.layout.view_composing_list
@@ -28,7 +30,9 @@ open class ComposingListDelegate :
         delegatesManager: DelegatesManager<*, *, *>
     ): ViewCompositeAdapter {
         return super.initNestedAdapter(model, delegatesManager).also { adapter ->
-            adapter.onClick { view -> model.item.notifyOnClick(view) }
+            with(adapter) {
+                onClick { view -> model.item.notifyOnClick(view) }
+            }
         }
     }
 

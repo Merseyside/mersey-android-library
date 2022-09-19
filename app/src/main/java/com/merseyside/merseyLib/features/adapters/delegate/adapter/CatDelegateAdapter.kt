@@ -5,6 +5,7 @@ import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.features.adapters.delegate.entity.Animal
 import com.merseyside.merseyLib.features.adapters.delegate.entity.Cat
+import com.merseyside.merseyLib.features.adapters.delegate.model.AnimalItemViewModel
 import com.merseyside.merseyLib.features.adapters.delegate.model.CatItemViewModel
 
 class CatDelegateAdapter: DelegateAdapter<Cat, Animal, CatItemViewModel>() {

@@ -6,13 +6,9 @@ import com.merseyside.adapters.feature.compositeScreen.StyleableComposingView
 import com.merseyside.adapters.feature.compositeScreen.dsl.context.ComposeContext
 import com.merseyside.adapters.feature.style.ComposingStyle
 
-open class ComposingText internal constructor(id: String): StyleableComposingView<ComposingTextStyle>(id) {
+open class ComposingText(id: String): StyleableComposingView<ComposingTextStyle>(id) {
 
     override val composingStyle: ComposingTextStyle = ComposingTextStyle()
-    override var style: ComposingTextStyle.() -> Unit = {}
-        set(value) {
-            composingStyle.apply(value)
-        }
 
     var text: String = ""
 
@@ -37,8 +33,6 @@ class ComposingTextStyle: ComposingStyle() {
     @DimenRes var textSize: Int? = null
     var gravity: Int? = null
     var maxLines: Int? = null
-
-
 
     companion object {
         operator fun invoke(init: ComposingTextStyle.() -> Unit): ComposingTextStyle {

@@ -17,6 +17,12 @@ abstract class ComposingView(private val id: String) : Identifiable<String>,
 
 abstract class StyleableComposingView<Style : ComposingStyle> (
     id: String
-) : ComposingView(id), StyleableItem<Style>
+) : ComposingView(id), StyleableItem<Style> {
+
+    override var style: Style.() -> Unit = {}
+        set(value) {
+            composingStyle.apply(value)
+        }
+}
 
 typealias SCV = StyleableComposingView<*>

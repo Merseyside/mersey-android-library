@@ -24,6 +24,7 @@ abstract class BaseAdapter<Parent, Model>(
 
     internal val workManager = CoroutineQueue<Any, Unit>(scope = scope)
 
+    @InternalAdaptersApi
     override val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>
         get() = this
 

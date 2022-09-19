@@ -21,7 +21,7 @@ interface INestedDelegateAdapter<Item : Parent, Parent, Model, Data, InnerAdapte
 
     fun initNestedAdapter(model: Model, delegatesManager: DelegatesManager<*, *, *>): InnerAdapter
 
-    fun getNestedView(binding: ViewDataBinding): RecyclerView?
+    fun getNestedView(binding: ViewDataBinding, model: Model): RecyclerView?
 
     private fun getNestedAdapterByModel(model: Model): InnerAdapter {
         return getAdapterIfExists(model) ?: initNestedAdapter(model, delegatesManagerProvider())
@@ -58,7 +58,7 @@ interface INestedDelegateAdapter<Item : Parent, Parent, Model, Data, InnerAdapte
 
     @InternalAdaptersApi
     fun bindNestedAdapter(holder: TypedBindingHolder<Model>, model: Model, position: Int) {
-        getNestedView(holder.binding)?.apply {
+        getNestedView(holder.binding, model)?.apply {
             val adapter = getNestedAdapterByModel(model)
             setInnerData(adapter, model)
             if (this.adapter != adapter) {

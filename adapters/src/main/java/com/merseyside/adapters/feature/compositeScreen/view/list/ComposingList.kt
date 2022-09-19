@@ -1,5 +1,6 @@
 package com.merseyside.adapters.feature.compositeScreen.view.list
 
+import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.feature.compositeScreen.SCV
 import com.merseyside.adapters.feature.compositeScreen.StyleableComposingView
 import com.merseyside.adapters.feature.compositeScreen.dsl.context.ListComposerContext
@@ -12,9 +13,8 @@ open class ComposingList(
     val viewList: List<SCV> = emptyList()
 ) : StyleableComposingView<ComposingListStyle>(id) {
 
-    override var style: ComposingListStyle.() -> Unit = {}
-    override val composingStyle: ComposingListStyle by lazy { ComposingListStyle().apply(style) }
-
+    var decorator: RecyclerView.ItemDecoration? = null
+    override val composingStyle: ComposingListStyle = ComposingListStyle()
 
     override fun toString(): String {
         return "${getId()}: $viewList"

@@ -13,7 +13,7 @@ import com.merseyside.utils.ext.findKey
 import com.merseyside.utils.ext.findValue
 
 open class DelegatesManager<Delegate, Parent, ParentModel>(
-    delegates: List<Delegate> = emptyList()
+    delegates: List<DelegateAdapter<out Parent, Parent, out ParentModel>> = emptyList()
 ) where ParentModel : AdapterParentViewModel<out Parent, Parent>,
     Delegate : DelegateAdapter<out Parent, Parent, ParentModel> {
 
@@ -27,18 +27,26 @@ open class DelegatesManager<Delegate, Parent, ParentModel>(
         addDelegateList(delegates)
     }
 
-    open fun addDelegateList(delegates: List<Delegate>) {
+    open fun addDelegateListInternal(delegates: List<Delegate>) {
         val size = count
         delegates.forEachIndexed { index, delegateAdapter ->
             addDelegate(delegateAdapter, size + index)
         }
     }
 
-    fun addDelegates(vararg delegates: Delegate) {
+    fun addDelegateList(delegates: List<DelegateAdapter<out Parent, Parent, out ParentModel>>) {
+        addDelegateListInternal(delegates as List<Delegate>)
+    }
+
+    private fun addDelegatesInternal(vararg delegates: Delegate) {
         addDelegateList(delegates.toList())
     }
 
-    fun addDelegate(delegate: Delegate, key: Int = count) {
+    fun addDelegates(vararg delegates: DelegateAdapter<out Parent, Parent, out ParentModel>) {
+        addDelegateList(delegates.toList() as List<Delegate>)
+    }
+
+    private fun addDelegate(delegate: Delegate, key: Int = count) {
         if (!delegates.containsKey(key)) {
             delegates.put(key, delegate)
             if (delegate is INestedDelegateAdapter<*, *, *, *, *>) {
@@ -49,10 +57,8 @@ open class DelegatesManager<Delegate, Parent, ParentModel>(
 
     @Suppress("UNCHECKED_CAST")
     fun createViewHolder(parent: ViewGroup, viewType: Int): TypedBindingHolder<ParentModel> {
-        return requireDelegate { getDelegateByViewType(viewType) }.createViewHolder(
-            parent,
-            viewType
-        )
+        return requireDelegate { getDelegateByViewType(viewType) }
+            .createViewHolder(parent, viewType)
     }
 
     internal fun onBindViewHolder(holder: TypedBindingHolder<ParentModel>, model: ParentModel, position: Int) {
@@ -66,7 +72,7 @@ open class DelegatesManager<Delegate, Parent, ParentModel>(
         } else throw IllegalStateException("Delegates are empty. Please, add delegates before using this!")
     }
 
-    fun getDelegateByViewType(Int: Int): DelegateAdapter<out Parent, Parent, ParentModel> {
+    fun getDelegateByViewType(Int: Int): Delegate {
         return requireDelegate { delegates.get(Int) }
     }
 
@@ -77,7 +83,7 @@ open class DelegatesManager<Delegate, Parent, ParentModel>(
         } else throw IllegalArgumentException("View type of passed delegate not found!")
     }
 
-    fun hasDelegate(delegate: DelegateAdapter<out Parent, Parent, ParentModel>): Boolean {
+    fun hasDelegate(delegate: Delegate): Boolean {
         return delegates.findValue { it.second == delegate } != null
     }
 
@@ -122,7 +128,7 @@ open class DelegatesManager<Delegate, Parent, ParentModel>(
 
     fun isEmpty(): Boolean = delegates.isEmpty()
 
-    internal open fun getResponsibleDelegate(model: ParentModel): DelegateAdapter<out Parent, Parent, ParentModel> {
+    internal open fun getResponsibleDelegate(model: ParentModel): Delegate {
         return if (count.isNotZero()) {
             requireDelegate { delegates.findValue { it.second.isResponsibleFor(model.item) } }
         } else throw IllegalStateException("Delegates are empty. Please, add delegates before using this!")
@@ -142,8 +148,8 @@ open class DelegatesManager<Delegate, Parent, ParentModel>(
     }
 
     private fun requireDelegate(
-        block: () -> DelegateAdapter<out Parent, Parent, ParentModel>?
-    ): DelegateAdapter<out Parent, Parent, ParentModel> {
+        block: () -> Delegate?
+    ): Delegate {
         return block() ?: throw NullPointerException("Delegate was required but have null!")
     }
 }
