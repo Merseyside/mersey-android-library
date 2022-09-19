@@ -53,8 +53,7 @@ class MovieScreenComposer(
                     List("inner_list3") {
                         List("inner_list4",
                             initList = {
-                                style =
-                                    { margins = ComposingStyle.Margins(R.dimen.very_small_spacing) }
+                                style = { margins = ComposingStyle.Margins(R.dimen.very_small_spacing) }
                                 onClick { item ->
                                     "on item click $item".log()
                                 }

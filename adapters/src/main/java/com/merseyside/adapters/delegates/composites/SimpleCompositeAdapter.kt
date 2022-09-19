@@ -1,7 +1,6 @@
 package com.merseyside.adapters.delegates.composites
 
 import com.merseyside.adapters.base.BaseAdapter
-import com.merseyside.adapters.delegates.DelegatesManager
 import com.merseyside.adapters.delegates.SimpleDelegatesManager
 import com.merseyside.adapters.interfaces.expandable.ExpandableMode
 import com.merseyside.adapters.interfaces.selectable.SelectableMode
@@ -11,21 +10,21 @@ import kotlinx.coroutines.Dispatchers
 
 open class SimpleCompositeAdapter(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
-    delegatesManager: SimpleDelegatesManager<Any, AdapterViewModel<Any>> = SimpleDelegatesManager()
-) : CompositeAdapter<Any, AdapterViewModel<Any>>(scope, delegatesManager)
+    delegatesManager: SimpleDelegatesManager<Any, AdapterParentViewModel<out Any, Any>> = SimpleDelegatesManager()
+) : CompositeAdapter<Any, AdapterParentViewModel<out Any, Any>>(scope, delegatesManager)
 
 open class SimpleSortedCompositeAdapter(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
-    delegatesManager: SimpleDelegatesManager<Any, ComparableAdapterViewModel<Any>> = SimpleDelegatesManager()
-) : SortedCompositeAdapter<Any, ComparableAdapterViewModel<Any>>(scope, delegatesManager)
+    delegatesManager: SimpleDelegatesManager<Any, ComparableAdapterParentViewModel<out Any, Any>> = SimpleDelegatesManager()
+) : SortedCompositeAdapter<Any, ComparableAdapterParentViewModel<out Any, Any>>(scope, delegatesManager)
 
 open class SimpleSelectableCompositeAdapter(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
-    delegatesManager: SimpleDelegatesManager<Any, SelectableAdapterViewModel<Any>> = SimpleDelegatesManager(),
+    delegatesManager: SimpleDelegatesManager<Any, SelectableAdapterParentViewModel<out Any, Any>> = SimpleDelegatesManager(),
     selectableMode: SelectableMode = SelectableMode.SINGLE,
     isAllowToCancelSelection: Boolean = selectableMode == SelectableMode.MULTIPLE,
     isSelectEnabled: Boolean = true
-) : SelectableCompositeAdapter<Any, SelectableAdapterViewModel<Any>>(
+) : SelectableCompositeAdapter<Any, SelectableAdapterParentViewModel<out Any, Any>>(
     scope,
     delegatesManager,
     selectableMode,
@@ -35,17 +34,17 @@ open class SimpleSelectableCompositeAdapter(
 
 abstract class SimpleNestedCompositeAdapter<Data, InnerAdapter>(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
-    delegatesManager: SimpleDelegatesManager<Any, NestedAdapterViewModel<Any, Data>> = SimpleDelegatesManager()
-) : NestedCompositeAdapter<Any, NestedAdapterViewModel<Any, Data>, Data, InnerAdapter>(
+    delegatesManager: SimpleDelegatesManager<Any, NestedAdapterParentViewModel<out Any, Any, Data>> = SimpleDelegatesManager()
+) : NestedCompositeAdapter<Any, NestedAdapterParentViewModel<out Any, Any, Data>, Data, InnerAdapter>(
     scope,
     delegatesManager
 ) where InnerAdapter : BaseAdapter<Data, *>
 
 abstract class SimpleExpandableCompositeAdapter<Data, InnerAdapter>(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
-    delegatesManager: SimpleDelegatesManager<Any, ExpandableAdapterViewModel<Any, Data>> = SimpleDelegatesManager(),
+    delegatesManager: SimpleDelegatesManager<Any, ExpandableAdapterParentViewModel<out Any, Any, Data>> = SimpleDelegatesManager(),
     expandableMode: ExpandableMode = ExpandableMode.MULTIPLE
-) : ExpandableCompositeAdapter<Any, ExpandableAdapterViewModel<Any, Data>, Data, InnerAdapter>(
+) : ExpandableCompositeAdapter<Any, ExpandableAdapterParentViewModel<out Any, Any, Data>, Data, InnerAdapter>(
     scope,
     delegatesManager,
     expandableMode
