@@ -1,8 +1,8 @@
 package com.merseyside.merseyLib.features.adapters.movies.adapter.views
 
-import com.merseyside.adapters.feature.compositeScreen.dsl.context.ListComposerContext
-import com.merseyside.adapters.feature.compositeScreen.dsl.context.ComposeContext
-import com.merseyside.adapters.feature.compositeScreen.view.list.ComposingList
+import com.merseyside.adapters.feature.composable.dsl.context.ListComposerContext
+import com.merseyside.adapters.feature.composable.dsl.context.ComposeContext
+import com.merseyside.adapters.feature.composable.view.list.simple.ComposingList
 import com.merseyside.adapters.feature.style.ComposingStyle
 import com.merseyside.merseyLib.R
 

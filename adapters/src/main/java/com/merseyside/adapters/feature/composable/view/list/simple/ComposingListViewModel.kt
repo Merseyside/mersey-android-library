@@ -1,6 +1,6 @@
-package com.merseyside.adapters.feature.compositeScreen.view.list
+package com.merseyside.adapters.feature.composable.view.list.simple
 
-import com.merseyside.adapters.feature.compositeScreen.SCV
+import com.merseyside.adapters.feature.composable.SCV
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 
 class ComposingListViewModel(

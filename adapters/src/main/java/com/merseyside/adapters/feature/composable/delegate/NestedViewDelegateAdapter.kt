@@ -1,9 +1,9 @@
-package com.merseyside.adapters.feature.compositeScreen.delegate
+package com.merseyside.adapters.feature.composable.delegate
 
 import com.merseyside.adapters.delegates.DelegatesManager
-import com.merseyside.adapters.feature.compositeScreen.SCV
-import com.merseyside.adapters.feature.compositeScreen.StyleableComposingView
-import com.merseyside.adapters.feature.compositeScreen.adapter.ViewCompositeAdapter
+import com.merseyside.adapters.feature.composable.SCV
+import com.merseyside.adapters.feature.composable.StyleableComposingView
+import com.merseyside.adapters.feature.composable.adapter.ViewCompositeAdapter
 import com.merseyside.adapters.feature.style.ComposingStyle
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.interfaces.delegate.INestedDelegateAdapter

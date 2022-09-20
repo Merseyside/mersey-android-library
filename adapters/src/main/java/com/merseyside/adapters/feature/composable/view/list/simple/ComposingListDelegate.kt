@@ -1,4 +1,4 @@
-package com.merseyside.adapters.feature.compositeScreen.view.list
+package com.merseyside.adapters.feature.composable.view.list.simple
 
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
@@ -7,8 +7,8 @@ import com.merseyside.adapters.R
 import com.merseyside.adapters.databinding.ViewComposingListBinding
 import com.merseyside.adapters.delegates.DelegatesManager
 import com.merseyside.adapters.extensions.onClick
-import com.merseyside.adapters.feature.compositeScreen.adapter.ViewCompositeAdapter
-import com.merseyside.adapters.feature.compositeScreen.delegate.NestedViewDelegateAdapter
+import com.merseyside.adapters.feature.composable.adapter.ViewCompositeAdapter
+import com.merseyside.adapters.feature.composable.delegate.NestedViewDelegateAdapter
 import com.merseyside.adapters.utils.InternalAdaptersApi
 
 open class ComposingListDelegate :

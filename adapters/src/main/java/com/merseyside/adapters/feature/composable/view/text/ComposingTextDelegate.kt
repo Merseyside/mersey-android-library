@@ -1,4 +1,4 @@
-package com.merseyside.adapters.feature.compositeScreen.view.text
+package com.merseyside.adapters.feature.composable.view.text
 
 import android.content.Context
 import androidx.core.content.ContextCompat
@@ -6,7 +6,7 @@ import androidx.databinding.ViewDataBinding
 import com.merseyside.adapters.BR
 import com.merseyside.adapters.R
 import com.merseyside.adapters.databinding.ViewComposingTextBinding
-import com.merseyside.adapters.feature.compositeScreen.delegate.ViewDelegateAdapter
+import com.merseyside.adapters.feature.composable.delegate.ViewDelegateAdapter
 import com.merseyside.merseyLib.kotlin.utils.safeLet
 import com.merseyside.utils.view.ext.setTextSizePx
 

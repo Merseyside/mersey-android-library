@@ -1,35 +1,40 @@
 package com.merseyside.merseyLib.features.adapters.movies.adapter
 
+import android.content.Context
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.merseyside.adapters.decorator.SimpleItemOffsetDecorator
 import com.merseyside.adapters.extensions.onClick
-import com.merseyside.adapters.feature.compositeScreen.SCV
-import com.merseyside.adapters.feature.compositeScreen.ScreenComposer
-import com.merseyside.adapters.feature.compositeScreen.delegate.ViewAdapterViewModel
-import com.merseyside.adapters.feature.compositeScreen.delegate.ViewDelegateAdapter
-import com.merseyside.adapters.feature.compositeScreen.dsl.context.compose
-import com.merseyside.adapters.feature.compositeScreen.view.list.ComposingListDelegate
-import com.merseyside.adapters.feature.compositeScreen.view.text.ComposingText as Text
-import com.merseyside.adapters.feature.compositeScreen.view.text.ComposingTextDelegate
+import com.merseyside.adapters.feature.composable.SCV
+import com.merseyside.adapters.feature.composable.AdapterComposer
+import com.merseyside.adapters.feature.composable.delegate.ViewAdapterViewModel
+import com.merseyside.adapters.feature.composable.delegate.ViewDelegateAdapter
+import com.merseyside.adapters.feature.composable.dsl.context.compose
+import com.merseyside.adapters.feature.composable.view.list.simple.ComposingListDelegate
+import com.merseyside.adapters.feature.composable.view.text.ComposingText as Text
+import com.merseyside.adapters.feature.composable.view.text.ComposingTextDelegate
 import com.merseyside.adapters.feature.style.ComposingStyle
 import com.merseyside.merseyLib.R
+import kotlin.collections.List as ArrayList
 import com.merseyside.merseyLib.kotlin.extensions.launchDelayed
+import com.merseyside.merseyLib.kotlin.logger.ILogger
 import com.merseyside.merseyLib.time.units.Seconds
 import com.merseyside.merseyLib.features.adapters.movies.adapter.views.MarginComposingList as List
 
-
-class MovieScreenComposer(
+class MovieScreenAdapterComposer(
+    private val context: Context,
     adapter: MovieCompositeAdapter,
     viewLifecycleOwner: LifecycleOwner
-) : ScreenComposer(adapter, viewLifecycleOwner) {
+) : AdapterComposer(adapter, viewLifecycleOwner), ILogger {
 
     private var dataLiveData: LiveData<String>? = null
 
-    override val delegates: kotlin.collections.List<ViewDelegateAdapter<out SCV, *, out ViewAdapterViewModel>> = listOf(
-        ComposingTextDelegate(),
-        ComposingListDelegate()
-    )
+    override val delegates: ArrayList<ViewDelegateAdapter<out SCV, *, out ViewAdapterViewModel>> =
+        listOf(
+            ComposingTextDelegate(),
+            ComposingListDelegate()
+        )
 
     override suspend fun composeScreen() = compose {
         Text("shrinked") {
@@ -54,6 +59,7 @@ class MovieScreenComposer(
                         List("inner_list4",
                             initList = {
                                 style = { margins = ComposingStyle.Margins(R.dimen.very_small_spacing) }
+                                decorator = SimpleItemOffsetDecorator(context, R.dimen.very_small_spacing)
                                 onClick { item ->
                                     "on item click $item".log()
                                 }
@@ -131,11 +137,13 @@ class MovieScreenComposer(
     }
 
     init {
-        buildAsync()
+        invalidateAsync()
 
         adapter.scope.launchDelayed(Seconds(2).millis) {
             val mld = MutableLiveData("some data")
             addTextDataSource(mld)
         }
     }
+
+    override val tag = "MovieScreen"
 }

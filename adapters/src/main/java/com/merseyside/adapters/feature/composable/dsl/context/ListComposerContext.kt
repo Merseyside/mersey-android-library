@@ -1,6 +1,6 @@
-package com.merseyside.adapters.feature.compositeScreen.dsl.context
+package com.merseyside.adapters.feature.composable.dsl.context
 
-import com.merseyside.adapters.feature.compositeScreen.StyleableComposingView
+import com.merseyside.adapters.feature.composable.StyleableComposingView
 
 object list {
     operator fun invoke(

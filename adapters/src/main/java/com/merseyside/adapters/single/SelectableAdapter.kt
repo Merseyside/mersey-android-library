@@ -12,10 +12,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
 abstract class SelectableAdapter<Item, Model>(
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
     selectableMode: SelectableMode = SelectableMode.SINGLE,
     override var isAllowToCancelSelection: Boolean = selectableMode == SelectableMode.MULTIPLE,
-    isSelectEnabled: Boolean = true,
-    scope: CoroutineScope = CoroutineScope(Dispatchers.Main)
+    isSelectEnabled: Boolean = true
 ) : SortedAdapter<Item, Model>(scope), ISelectableAdapter<Item, Model>
         where Model : SelectableAdapterViewModel<Item> {
 

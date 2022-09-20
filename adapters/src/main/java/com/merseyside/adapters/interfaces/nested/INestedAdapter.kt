@@ -4,6 +4,7 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.feature.filter.interfaces.Filterable
+import com.merseyside.adapters.interfaces.selectable.ISelectableAdapter
 import com.merseyside.adapters.interfaces.sorted.ISortedAdapter
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
@@ -11,7 +12,7 @@ import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.merseyLib.kotlin.extensions.remove
 
 
-interface INestedAdapter<Parent, Model, InnerData, InnerAdapter> : ISortedAdapter<Parent, Model>,
+interface INestedAdapter<Parent, Model, InnerData, InnerAdapter> : ISelectableAdapter<Parent, Model>,
     AdapterNestedListActions<Parent, Model, InnerData, InnerAdapter>
         where Model : NestedAdapterParentViewModel<out Parent, Parent, InnerData>,
               InnerAdapter : BaseAdapter<InnerData, out AdapterParentViewModel<out InnerData, InnerData>> {

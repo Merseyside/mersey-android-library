@@ -1,4 +1,4 @@
-package com.merseyside.adapters.feature.compositeScreen
+package com.merseyside.adapters.feature.composable
 
 import com.merseyside.adapters.callback.HasOnItemClickListener
 import com.merseyside.adapters.callback.OnItemClickListener

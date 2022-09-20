@@ -1,12 +1,9 @@
-package com.merseyside.adapters.feature.compositeScreen.view.text
+package com.merseyside.adapters.feature.composable.view.text
 
 import androidx.databinding.Bindable
 import com.merseyside.adapters.BR
-import com.merseyside.adapters.feature.compositeScreen.ComposingView
-import com.merseyside.adapters.feature.compositeScreen.SCV
+import com.merseyside.adapters.feature.composable.SCV
 import com.merseyside.adapters.model.AdapterParentViewModel
-import com.merseyside.adapters.model.AdapterViewModel
-import com.merseyside.utils.binding.getText
 
 class ComposingTextViewModel(
     item: ComposingText

@@ -19,7 +19,7 @@ import kotlinx.coroutines.Dispatchers
 abstract class NestedCompositeAdapter<Parent, Model, Data, InnerAdapter>(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
     delegatesManager: SimpleDelegatesManager<Parent, Model> = SimpleDelegatesManager()
-) : SortedCompositeAdapter<Parent, Model>(scope, delegatesManager),
+) : SelectableCompositeAdapter<Parent, Model>(scope, delegatesManager),
     INestedAdapter<Parent, Model, Data, InnerAdapter>
         where Model : NestedAdapterParentViewModel<out Parent, Parent, Data>,
               InnerAdapter : BaseAdapter<Data, out AdapterParentViewModel<out Data, Data>> {

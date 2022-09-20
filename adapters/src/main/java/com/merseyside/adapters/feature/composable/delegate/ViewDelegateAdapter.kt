@@ -1,4 +1,4 @@
-package com.merseyside.adapters.feature.compositeScreen.delegate
+package com.merseyside.adapters.feature.composable.delegate
 
 import android.content.Context
 import androidx.annotation.CallSuper
@@ -6,8 +6,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.ViewDataBinding
 import com.merseyside.adapters.delegates.DelegateAdapter
-import com.merseyside.adapters.feature.compositeScreen.StyleableComposingView
-import com.merseyside.adapters.feature.compositeScreen.SCV
+import com.merseyside.adapters.feature.composable.StyleableComposingView
+import com.merseyside.adapters.feature.composable.SCV
 import com.merseyside.adapters.feature.style.ComposingStyle
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.model.AdapterParentViewModel

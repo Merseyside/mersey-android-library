@@ -2,7 +2,7 @@ package com.merseyside.adapters.feature.style
 
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
-import com.merseyside.adapters.feature.compositeScreen.ComposingView
+import com.merseyside.adapters.feature.composable.ComposingView
 import com.merseyside.utils.getClassName
 
 abstract class ComposingStyle {

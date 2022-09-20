@@ -1,9 +1,9 @@
-package com.merseyside.adapters.feature.compositeScreen.view.text
+package com.merseyside.adapters.feature.composable.view.text
 
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
-import com.merseyside.adapters.feature.compositeScreen.StyleableComposingView
-import com.merseyside.adapters.feature.compositeScreen.dsl.context.ComposeContext
+import com.merseyside.adapters.feature.composable.StyleableComposingView
+import com.merseyside.adapters.feature.composable.dsl.context.ComposeContext
 import com.merseyside.adapters.feature.style.ComposingStyle
 
 open class ComposingText(id: String): StyleableComposingView<ComposingTextStyle>(id) {

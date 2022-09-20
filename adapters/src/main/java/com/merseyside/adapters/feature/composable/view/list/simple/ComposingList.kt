@@ -1,11 +1,11 @@
-package com.merseyside.adapters.feature.compositeScreen.view.list
+package com.merseyside.adapters.feature.composable.view.list.simple
 
 import androidx.recyclerview.widget.RecyclerView
-import com.merseyside.adapters.feature.compositeScreen.SCV
-import com.merseyside.adapters.feature.compositeScreen.StyleableComposingView
-import com.merseyside.adapters.feature.compositeScreen.dsl.context.ListComposerContext
-import com.merseyside.adapters.feature.compositeScreen.dsl.context.ComposeContext
-import com.merseyside.adapters.feature.compositeScreen.dsl.context.list
+import com.merseyside.adapters.feature.composable.SCV
+import com.merseyside.adapters.feature.composable.StyleableComposingView
+import com.merseyside.adapters.feature.composable.dsl.context.ListComposerContext
+import com.merseyside.adapters.feature.composable.dsl.context.ComposeContext
+import com.merseyside.adapters.feature.composable.dsl.context.list
 import com.merseyside.adapters.feature.style.ComposingStyle
 
 open class ComposingList(

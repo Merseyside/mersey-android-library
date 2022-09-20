@@ -15,7 +15,7 @@ import kotlinx.coroutines.Dispatchers
 
 abstract class NestedAdapter<Item, Model, Data, InnerAdapter>(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main)
-) : SortedAdapter<Item, Model>(scope),
+) : SelectableAdapter<Item, Model>(scope),
     INestedAdapter<Item, Model, Data, InnerAdapter>
         where Model : NestedAdapterViewModel<Item, Data>,
               InnerAdapter : BaseAdapter<Data, out AdapterParentViewModel<out Data, Data>> {

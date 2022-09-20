@@ -11,8 +11,6 @@ import com.merseyside.adapters.listDelegates.interfaces.AdapterListChangeDelegat
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.UpdateRequest
-import com.merseyside.merseyLib.kotlin.contract.Identifiable
-import com.merseyside.merseyLib.kotlin.logger.log
 import com.merseyside.utils.measureAndLogTime
 import kotlinx.coroutines.Job
 
@@ -30,7 +28,7 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
     val hashMap: MutableMap<Any, Model>
 
     @InternalAdaptersApi
-    val onClick: (Parent) -> Unit
+    val callbackClick: (Parent) -> Unit
 
     @CallSuper
     fun addAsync(item: Parent, onComplete: (Model?) -> Unit = {}) {
@@ -92,7 +90,7 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
     @InternalAdaptersApi
     @CallSuper
     suspend fun onModelCreated(model: Model) {
-        model.clickEvent.observe(onClick)
+        model.clickEvent.observe(callbackClick)
     }
 
     suspend fun notifyModelUpdated(model: Model, payloads: List<AdapterParentViewModel.Payloadable>)
