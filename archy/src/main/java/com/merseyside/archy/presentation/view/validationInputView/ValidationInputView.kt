@@ -17,6 +17,11 @@ import com.merseyside.utils.colorStateList.colorToSimpleStateList
 import com.merseyside.utils.delegate.*
 import com.merseyside.utils.textWatcher.ValidationTextWatcher
 import com.merseyside.utils.view.ext.requireResourceFromAttr
+import com.merseyside.utils.view.viewScope
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 open class ValidationInputView(
     context: Context,
@@ -44,7 +49,7 @@ open class ValidationInputView(
 
     private var onTextChangedListener: (String) -> Unit = {}
     var formatter: ((String) -> String)? = null
-    var validator: ((String) -> ValidationState)? = null
+    var validator: (suspend (String) -> ValidationState)? = null
 
     private val inputWidth by attrs.dimensionPixelSizeOrNull()
     private val inputHeight by attrs.dimensionPixelSizeOrNull()
@@ -71,7 +76,6 @@ open class ValidationInputView(
     protected open val errorStrokeColor by attrs.color(
         defaultValue = requireResourceFromAttr(R.attr.colorError)
     )
-
 
     protected open val hintColor by attrs.color(
         defaultValue = requireResourceFromAttr(R.attr.colorOnSurface)
@@ -261,13 +265,31 @@ open class ValidationInputView(
         }
     }
 
+    private var deferred: Deferred<ValidationState>? = null
+
     private fun validate(text: String) {
-        applyState(
-            validator?.invoke(text) ?: run {
-                Logger.logInfo("Validator not set")
-                FILLING
+        validator?.let {
+            deferred?.cancel()
+            deferred = viewScope.async {
+                it.invoke(text)
             }
-        )
+            viewScope.launch {
+                deferred?.let { validateData(it) }
+            }
+
+        } ?: run {
+            Logger.logInfo("Validator not set")
+            applyState(FILLING)
+        }
+    }
+
+    private suspend fun validateData(someDeferred: Deferred<ValidationState>) {
+       try {
+           applyState(someDeferred.await())
+       }catch (e:CancellationException){
+           Logger.log(e.message)
+       }
+
     }
 
     fun setOnTextChangedListener(listener: (String) -> Unit) {
