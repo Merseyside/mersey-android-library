@@ -11,6 +11,7 @@ import androidx.core.view.updateLayoutParams
 import com.merseyside.archy.R
 import com.merseyside.archy.databinding.ViewValidationInputBinding
 import com.merseyside.archy.presentation.view.validationInputView.ValidationState.*
+import com.merseyside.merseyLib.kotlin.extensions.isNotZero
 import com.merseyside.merseyLib.kotlin.logger.Logger
 import com.merseyside.utils.attributes.AttributeHelper
 import com.merseyside.utils.colorStateList.colorToSimpleStateList
@@ -18,10 +19,7 @@ import com.merseyside.utils.delegate.*
 import com.merseyside.utils.textWatcher.ValidationTextWatcher
 import com.merseyside.utils.view.ext.requireResourceFromAttr
 import com.merseyside.utils.view.viewScope
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 open class ValidationInputView(
     context: Context,
@@ -50,6 +48,7 @@ open class ValidationInputView(
     private var onTextChangedListener: (String) -> Unit = {}
     var formatter: ((String) -> String)? = null
     var validator: (suspend (String) -> ValidationState)? = null
+    private val debounce by attrs.int(defaultValue = defaultDebounce)
 
     private val inputWidth by attrs.dimensionPixelSizeOrNull()
     private val inputHeight by attrs.dimensionPixelSizeOrNull()
@@ -100,6 +99,7 @@ open class ValidationInputView(
     protected open val errorMessageColor by attrs.color(
         defaultValue = requireResourceFromAttr(R.attr.colorError)
     )
+
 
     protected open val defaultIcon by attrs.drawableOrNull(resName = "icon")
     protected open val successIcon by attrs.drawableOrNull()
@@ -265,16 +265,19 @@ open class ValidationInputView(
         }
     }
 
-    private var deferred: Deferred<ValidationState>? = null
+    private var validateDeferred: Deferred<ValidationState>? = null
 
     private fun validate(text: String) {
         validator?.let {
-            deferred?.cancel()
-            deferred = viewScope.async {
+            validateDeferred?.cancel()
+            validateDeferred = viewScope.async {
+                if (debounce.isNotZero()) {
+                    delay(debounce.toLong())
+                }
                 it.invoke(text)
             }
             viewScope.launch {
-                deferred?.let { validateData(it) }
+                validateDeferred?.let { validateData(it) }
             }
 
         } ?: run {
@@ -283,13 +286,12 @@ open class ValidationInputView(
         }
     }
 
-    private suspend fun validateData(someDeferred: Deferred<ValidationState>) {
-       try {
-           applyState(someDeferred.await())
-       }catch (e:CancellationException){
-           Logger.log(e.message)
-       }
-
+    private suspend fun validateData(deferred: Deferred<ValidationState>) {
+        try {
+            applyState(deferred.await())
+        } catch (e: CancellationException) {
+            Logger.log(e.message)
+        }
     }
 
     fun setOnTextChangedListener(listener: (String) -> Unit) {
@@ -298,6 +300,10 @@ open class ValidationInputView(
 
     fun isTypingState(): Boolean {
         return editText.isFocused
+    }
+
+    companion object {
+        private const val defaultDebounce = 300
     }
 }
 

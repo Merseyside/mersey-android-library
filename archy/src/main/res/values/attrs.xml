@@ -101,6 +101,7 @@
         <attr name="validTextError" format="string" />
         <attr name="validTextDefault" format="string" />
         <attr name="validMaxLength" format="integer" />
+        <attr name="validDebounce" format="integer" />
         <attr name="validCursorVisibility" format="boolean" />
         <!-- взял с системных атрибутов -->
         <attr name="validInputType">
