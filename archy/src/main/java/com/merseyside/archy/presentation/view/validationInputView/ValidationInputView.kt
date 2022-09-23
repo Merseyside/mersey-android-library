@@ -63,7 +63,6 @@ open class ValidationInputView(
     private var textSuccess by attrs.string(defaultValue = "")
     private var textError by attrs.string(defaultValue = "")
 
-
     protected open val strokeColor by attrs.color(
         defaultValue = requireResourceFromAttr(R.attr.colorOnSurface)
     )
@@ -100,7 +99,6 @@ open class ValidationInputView(
         defaultValue = requireResourceFromAttr(R.attr.colorError)
     )
 
-
     protected open val defaultIcon by attrs.drawableOrNull(resName = "icon")
     protected open val successIcon by attrs.drawableOrNull()
     protected open val errorIcon by attrs.drawableOrNull()
@@ -118,6 +116,22 @@ open class ValidationInputView(
     var getErrorMsg: (text: String) -> String = { textError }
     var getSuccessMsg: (text: String) -> String = { textSuccess }
 
+    fun setErrorText(text: String) {
+        if (textError != text) {
+            textError = text
+
+            if (validationState == ERROR)
+                updateViewsWithState()
+        }
+    }
+
+    fun setSuccessText(text: String) {
+        if (textSuccess != text) {
+            textSuccess = text
+            if (validationState == OK)
+                updateViewsWithState()
+        }
+    }
 
     private var validationState = FILLING
 
@@ -189,7 +203,6 @@ open class ValidationInputView(
             if (isTypingState()) FILLING
             else state
         } else state
-
 
         return if (validationState != newState) {
             validationState = newState
