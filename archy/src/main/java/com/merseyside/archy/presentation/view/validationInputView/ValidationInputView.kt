@@ -136,6 +136,10 @@ open class ValidationInputView(
     private var validationState = FILLING
 
     init {
+        updateViewsWithState()
+    }
+
+    init {
         orientation = VERTICAL
         inputLayout.id = View.generateViewId()
         editText.id = View.generateViewId()
