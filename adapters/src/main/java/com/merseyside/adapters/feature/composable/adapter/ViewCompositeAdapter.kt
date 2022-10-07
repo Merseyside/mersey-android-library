@@ -1,20 +1,23 @@
 package com.merseyside.adapters.feature.composable.adapter
 
 import com.merseyside.adapters.delegates.composites.CompositeAdapter
-import com.merseyside.adapters.feature.composable.SCV
+import com.merseyside.adapters.feature.composable.view.base.SCV
 import com.merseyside.adapters.feature.composable.delegate.ViewDelegatesManager
+import com.merseyside.adapters.feature.composable.model.ViewAdapterViewModel
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.model.AdapterParentViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
-open class ViewCompositeAdapter(
+open class ViewCompositeAdapter<Parent, Model>(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
-    override val delegatesManager: ViewDelegatesManager = ViewDelegatesManager()
-) : CompositeAdapter<SCV, AdapterParentViewModel<out SCV, SCV>>(scope, delegatesManager) {
+    override val delegatesManager: ViewDelegatesManager<Parent, Model> = ViewDelegatesManager()
+) : CompositeAdapter<Parent, Model>(scope, delegatesManager)
+        where Parent: SCV,
+              Model : AdapterParentViewModel<out Parent, Parent> {
 
     override fun onBindViewHolder(
-        holder: TypedBindingHolder<AdapterParentViewModel<out SCV, SCV>>,
+        holder: TypedBindingHolder<Model>,
         position: Int,
         payloads: List<Any>
     ) {
@@ -22,8 +25,10 @@ open class ViewCompositeAdapter(
         onModelUpdated(holder.model)
     }
 
-    internal open fun onModelUpdated(model: AdapterParentViewModel<out SCV, SCV>) {
+    internal open fun onModelUpdated(model: Model) {
         val delegate = delegatesManager.getResponsibleDelegate(model.item)
         delegate?.onModelUpdated(model)
     }
 }
+
+typealias SimpleViewCompositeAdapter = ViewCompositeAdapter<SCV, ViewAdapterViewModel>

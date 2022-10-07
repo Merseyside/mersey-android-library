@@ -1,15 +1,17 @@
 package com.merseyside.adapters.feature.composable
 
 import com.merseyside.adapters.feature.composable.adapter.ViewCompositeAdapter
-import com.merseyside.adapters.feature.composable.delegate.ViewAdapterViewModel
 import com.merseyside.adapters.feature.composable.delegate.ViewDelegateAdapter
 import com.merseyside.adapters.feature.composable.dsl.context.ComposeContext
+import com.merseyside.adapters.feature.composable.model.ViewAdapterViewModel
+import com.merseyside.adapters.feature.composable.view.base.SCV
 import com.merseyside.adapters.utils.runWithDefault
 
-interface HasComposableAdapter {
+interface HasComposableAdapter<Model>
+        where Model : ViewAdapterViewModel {
 
-    val adapter: ViewCompositeAdapter
-    val delegates: List<ViewDelegateAdapter<out SCV, *, out ViewAdapterViewModel>>
+    val adapter: ViewCompositeAdapter<SCV, Model>
+    val delegates: List<ViewDelegateAdapter<out SCV, *, out Model>>
 
     suspend fun composeScreen(): ComposeContext
 
@@ -33,4 +35,9 @@ interface HasComposableAdapter {
     suspend fun invalidate() {
         composeInternal()
     }
+}
+
+interface HasSimpleComposableAdapter : HasComposableAdapter<ViewAdapterViewModel> {
+
+    override val adapter: ViewCompositeAdapter<SCV, ViewAdapterViewModel>
 }

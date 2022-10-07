@@ -49,3 +49,4 @@ abstract class SimpleExpandableCompositeAdapter<Data, InnerAdapter>(
     delegatesManager,
     expandableMode
 ) where InnerAdapter : BaseAdapter<Data, *>
+

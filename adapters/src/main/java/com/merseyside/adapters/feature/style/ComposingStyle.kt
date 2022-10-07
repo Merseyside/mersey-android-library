@@ -1,11 +1,13 @@
 package com.merseyside.adapters.feature.style
 
+import androidx.annotation.CallSuper
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
-import com.merseyside.adapters.feature.composable.ComposingView
+import com.merseyside.adapters.feature.composable.view.base.ComposingView
+import com.merseyside.merseyLib.kotlin.logger.ILogger
 import com.merseyside.utils.getClassName
 
-abstract class ComposingStyle {
+abstract class ComposingStyle : ILogger {
     var width: Int? = null
     var height: Int? = null
 
@@ -41,6 +43,7 @@ abstract class ComposingStyle {
         }
     }
 
+    @CallSuper
     open fun getStringBuilder(): StringBuilder {
         val builder = StringBuilder()
         builder.apply {

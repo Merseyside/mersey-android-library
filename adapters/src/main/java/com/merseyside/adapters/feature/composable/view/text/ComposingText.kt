@@ -2,8 +2,9 @@ package com.merseyside.adapters.feature.composable.view.text
 
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
-import com.merseyside.adapters.feature.composable.StyleableComposingView
+import com.merseyside.adapters.feature.composable.view.base.StyleableComposingView
 import com.merseyside.adapters.feature.composable.dsl.context.ComposeContext
+import com.merseyside.adapters.feature.composable.view.base.addView
 import com.merseyside.adapters.feature.style.ComposingStyle
 
 open class ComposingText(id: String): StyleableComposingView<ComposingTextStyle>(id) {
@@ -12,18 +13,19 @@ open class ComposingText(id: String): StyleableComposingView<ComposingTextStyle>
 
     var text: String = ""
 
-    override fun toString(): String {
-        return "${getId()}: $text"
-    }
-
     companion object {
         context (ComposeContext) operator fun invoke(
             id: String,
             init: ComposingText.() -> Unit
         ): ComposingText {
-            return ComposingText(id).apply(init).also { text ->
-                add(text)
-            }
+            return ComposingText(id).apply(init).addView()
+        }
+    }
+
+    override fun getStringBuilder(): StringBuilder {
+        return super.getStringBuilder().apply {
+            appendLine()
+            append("text: ").appendLine(text)
         }
     }
 }
@@ -39,4 +41,6 @@ class ComposingTextStyle: ComposingStyle() {
             return ComposingTextStyle().apply(init)
         }
     }
+
+    override val tag: String = "TextStyle"
 }

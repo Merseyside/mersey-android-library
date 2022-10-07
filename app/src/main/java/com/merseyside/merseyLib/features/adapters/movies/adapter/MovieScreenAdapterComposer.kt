@@ -6,11 +6,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.merseyside.adapters.decorator.SimpleItemOffsetDecorator
 import com.merseyside.adapters.extensions.onClick
-import com.merseyside.adapters.feature.composable.SCV
-import com.merseyside.adapters.feature.composable.AdapterComposer
-import com.merseyside.adapters.feature.composable.delegate.ViewAdapterViewModel
+import com.merseyside.adapters.extensions.onItemSelected
+import com.merseyside.adapters.feature.composable.view.base.SCV
+import com.merseyside.adapters.feature.composable.SimpleAdapterComposer
+import com.merseyside.adapters.feature.composable.adapter.SimpleViewCompositeAdapter
+import com.merseyside.adapters.feature.composable.adapter.ViewCompositeAdapter
 import com.merseyside.adapters.feature.composable.delegate.ViewDelegateAdapter
 import com.merseyside.adapters.feature.composable.dsl.context.compose
+import com.merseyside.adapters.feature.composable.model.ViewAdapterViewModel
+import com.merseyside.adapters.feature.composable.view.list.selectable.ComposingSelectableList
+import com.merseyside.adapters.feature.composable.view.list.selectable.ComposingSelectableListDelegate
 import com.merseyside.adapters.feature.composable.view.list.simple.ComposingListDelegate
 import com.merseyside.adapters.feature.composable.view.text.ComposingText as Text
 import com.merseyside.adapters.feature.composable.view.text.ComposingTextDelegate
@@ -24,14 +29,15 @@ import com.merseyside.merseyLib.features.adapters.movies.adapter.views.MarginCom
 
 class MovieScreenAdapterComposer(
     private val context: Context,
-    adapter: MovieCompositeAdapter,
-    viewLifecycleOwner: LifecycleOwner
-) : AdapterComposer(adapter, viewLifecycleOwner), ILogger {
+    override val adapter: SimpleViewCompositeAdapter,
+    viewLifecycleOwner: LifecycleOwner,
+) : SimpleAdapterComposer(viewLifecycleOwner), ILogger {
 
     private var dataLiveData: LiveData<String>? = null
 
     override val delegates: ArrayList<ViewDelegateAdapter<out SCV, *, out ViewAdapterViewModel>> =
         listOf(
+            ComposingSelectableListDelegate(),
             ComposingTextDelegate(),
             ComposingListDelegate()
         )
@@ -49,6 +55,16 @@ class MovieScreenAdapterComposer(
         if (dataLiveData?.value != null) {
             Text("data") {
                 text = "Text from data source ${dataLiveData?.value}"
+            }
+        }
+
+        ComposingSelectableList("selectable_list",
+            initList = {
+                onItemSelected { item, isSelected, _ -> isSelected.log("selected")}
+            }
+        ) {
+            Text("kek") {
+                text = "lol"
             }
         }
 

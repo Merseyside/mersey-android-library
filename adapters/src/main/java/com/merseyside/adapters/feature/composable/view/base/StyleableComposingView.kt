@@ -1,18 +1,35 @@
-package com.merseyside.adapters.feature.composable
+package com.merseyside.adapters.feature.composable.view.base
 
+import androidx.annotation.CallSuper
 import com.merseyside.adapters.callback.HasOnItemClickListener
 import com.merseyside.adapters.callback.OnItemClickListener
+import com.merseyside.adapters.feature.composable.dsl.context.ComposeContext
 import com.merseyside.adapters.feature.style.ComposingStyle
 import com.merseyside.adapters.feature.style.StyleableItem
 import com.merseyside.merseyLib.kotlin.contract.Identifiable
+import com.merseyside.utils.getClassName
 
 abstract class ComposingView(private val id: String) : Identifiable<String>,
     HasOnItemClickListener<ComposingView> {
-    override fun getId(): String {
-        return id
-    }
+    override fun getId() = id
 
     override var clickListeners: MutableList<OnItemClickListener<ComposingView>> = ArrayList()
+
+    @CallSuper
+    open fun getStringBuilder(): StringBuilder {
+        val builder = StringBuilder()
+        builder.apply {
+            appendLine()
+            append("View: ").appendLine(getClassName())
+            append("id: ").appendLine(id)
+        }
+
+        return builder
+    }
+
+    final override fun toString(): String {
+        return getStringBuilder().toString()
+    }
 }
 
 abstract class StyleableComposingView<Style : ComposingStyle> (
@@ -23,6 +40,12 @@ abstract class StyleableComposingView<Style : ComposingStyle> (
         set(value) {
             composingStyle.apply(value)
         }
+}
+
+context(ComposeContext)
+fun <View : SCV> View.addView(): View {
+    add(this)
+    return this
 }
 
 typealias SCV = StyleableComposingView<*>

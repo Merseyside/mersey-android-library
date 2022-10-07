@@ -1,6 +1,6 @@
 package com.merseyside.adapters.feature.composable.dsl.context
 
-import com.merseyside.adapters.feature.composable.SCV
+import com.merseyside.adapters.feature.composable.view.base.SCV
 
 object compose {
     operator fun invoke(init: ComposeContext.() -> Unit): ComposeContext  {

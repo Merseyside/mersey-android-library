@@ -4,7 +4,7 @@
     <data>
         <variable
             name="model"
-            type="com.merseyside.adapters.feature.composable.view.list.simple.ComposingListViewModel" />
+            type="com.merseyside.adapters.feature.composable.view.list.simple.ListModel" />
     </data>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -13,12 +13,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layoutManager="com.merseyside.utils.layout.LinearLayoutManager"/>
-
-
-<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent">-->
-
-<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
 
 </layout>

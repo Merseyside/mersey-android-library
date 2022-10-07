@@ -88,6 +88,6 @@ dependencies {
     androidLibz.forEach { lib -> implementation(lib) }
     androidBundles.forEach { bundle -> implementation(bundle) }
 
-    kapt(androidLibs.daggerCompiler)
-    kapt(androidLibs.roomCompiler)
+    kapt(androidLibs.dagger.compiler)
+    kapt(androidLibs.room.compiler)
 }

@@ -2,7 +2,7 @@ package com.merseyside.adapters.feature.composable.view.text
 
 import androidx.databinding.Bindable
 import com.merseyside.adapters.BR
-import com.merseyside.adapters.feature.composable.SCV
+import com.merseyside.adapters.feature.composable.view.base.SCV
 import com.merseyside.adapters.model.AdapterParentViewModel
 
 class ComposingTextViewModel(

@@ -1,6 +1,6 @@
 package com.merseyside.adapters.feature.composable.dsl.context
 
-import com.merseyside.adapters.feature.composable.StyleableComposingView
+import com.merseyside.adapters.feature.composable.view.base.StyleableComposingView
 
 object list {
     operator fun invoke(

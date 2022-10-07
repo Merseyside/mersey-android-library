@@ -6,8 +6,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.ViewDataBinding
 import com.merseyside.adapters.delegates.DelegateAdapter
-import com.merseyside.adapters.feature.composable.StyleableComposingView
-import com.merseyside.adapters.feature.composable.SCV
+import com.merseyside.adapters.feature.composable.view.base.StyleableComposingView
+import com.merseyside.adapters.feature.composable.view.base.SCV
 import com.merseyside.adapters.feature.style.ComposingStyle
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.model.AdapterParentViewModel

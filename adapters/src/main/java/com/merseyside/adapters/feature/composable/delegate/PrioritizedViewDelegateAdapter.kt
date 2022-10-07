@@ -1,14 +1,15 @@
 package com.merseyside.adapters.feature.composable.delegate
 
 import com.merseyside.adapters.feature.compare.Priority.validatePriority
-import com.merseyside.adapters.feature.composable.SCV
-import com.merseyside.adapters.feature.composable.StyleableComposingView
+import com.merseyside.adapters.feature.composable.view.base.SCV
+import com.merseyside.adapters.feature.composable.view.base.StyleableComposingView
 import com.merseyside.adapters.feature.style.ComposingStyle
 import com.merseyside.adapters.interfaces.delegate.IPrioritizedDelegateAdapter
 import com.merseyside.adapters.model.ComparableAdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 
-abstract class PrioritizedViewDelegateAdapter<View : StyleableComposingView<Style>, Style : ComposingStyle, Model>(
+abstract class PrioritizedViewDelegateAdapter<View : StyleableComposingView<Style>,
+        Style : ComposingStyle, Model>(
     priority: Int = 0
 ) : ViewDelegateAdapter<View, Style, Model>(),
     IPrioritizedDelegateAdapter<View, SCV, Model>
