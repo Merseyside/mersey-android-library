@@ -1,7 +1,7 @@
-package com.merseyside.adapters.feature.filter.listManager
+package com.merseyside.adapters.feature.filtering.listManager
 
 import com.merseyside.adapters.config.update.UpdateLogic
-import com.merseyside.adapters.feature.filter.AdapterFilter
+import com.merseyside.adapters.feature.filtering.AdapterFilter
 import com.merseyside.adapters.interfaces.base.AdapterListActions
 import com.merseyside.adapters.listManager.AdapterListManager
 import com.merseyside.adapters.modelList.ModelList

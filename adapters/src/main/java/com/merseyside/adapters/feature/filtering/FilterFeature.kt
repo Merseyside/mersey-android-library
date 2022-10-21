@@ -1,4 +1,4 @@
-package com.merseyside.adapters.feature.filter
+package com.merseyside.adapters.feature.filtering
 
 import com.merseyside.adapters.config.AdapterConfig
 import com.merseyside.adapters.config.contract.FilterProvider

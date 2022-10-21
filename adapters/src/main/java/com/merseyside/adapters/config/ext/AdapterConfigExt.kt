@@ -2,8 +2,8 @@ package com.merseyside.adapters.base.config.ext
 
 import com.merseyside.adapters.config.feature.Feature
 import com.merseyside.adapters.config.AdapterConfig
-import com.merseyside.adapters.feature.filter.AdapterFilter
-import com.merseyside.adapters.feature.filter.FilterFeature
+import com.merseyside.adapters.feature.filtering.AdapterFilter
+import com.merseyside.adapters.feature.filtering.FilterFeature
 import com.merseyside.adapters.feature.sorting.Comparator
 import com.merseyside.adapters.feature.sorting.SortFeature
 import com.merseyside.adapters.model.VM

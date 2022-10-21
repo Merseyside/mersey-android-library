@@ -1,6 +1,6 @@
-package com.merseyside.adapters.feature.filter
+package com.merseyside.adapters.feature.filtering
 
-import com.merseyside.adapters.feature.filter.listManager.Filters
+import com.merseyside.adapters.feature.filtering.listManager.Filters
 import com.merseyside.adapters.utils.runWithDefault
 import com.merseyside.merseyLib.kotlin.coroutines.CoroutineQueue
 import com.merseyside.merseyLib.kotlin.logger.ILogger

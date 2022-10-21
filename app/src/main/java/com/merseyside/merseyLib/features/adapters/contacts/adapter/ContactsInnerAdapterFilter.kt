@@ -1,6 +1,6 @@
 package com.merseyside.merseyLib.features.adapters.contacts.adapter
 
-import com.merseyside.adapters.feature.filter.NestedAdapterFilter
+import com.merseyside.adapters.feature.filtering.NestedAdapterFilter
 import com.merseyside.merseyLib.features.adapters.contacts.entity.ContactGroup
 import com.merseyside.merseyLib.features.adapters.contacts.model.ContactGroupItemViewModel
 

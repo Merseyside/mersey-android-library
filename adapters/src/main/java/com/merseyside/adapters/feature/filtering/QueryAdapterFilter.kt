@@ -1,4 +1,4 @@
-package com.merseyside.adapters.feature.filter
+package com.merseyside.adapters.feature.filtering
 
 import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
 import com.merseyside.adapters.model.VM

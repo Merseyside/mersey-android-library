@@ -1,6 +1,6 @@
-package com.merseyside.adapters.feature.filter.ext
+package com.merseyside.adapters.feature.filtering.ext
 
-import com.merseyside.adapters.feature.filter.AdapterFilter
+import com.merseyside.adapters.feature.filtering.AdapterFilter
 import com.merseyside.adapters.model.VM
 
 fun AdapterFilter<*, *>.addAndApply(key: String, filter: Any, onComplete: (Boolean) -> Unit = {}) {

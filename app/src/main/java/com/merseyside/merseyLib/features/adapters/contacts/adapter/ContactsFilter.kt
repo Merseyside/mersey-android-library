@@ -1,6 +1,6 @@
 package com.merseyside.merseyLib.features.adapters.contacts.adapter
 
-import com.merseyside.adapters.feature.filter.AdapterFilter
+import com.merseyside.adapters.feature.filtering.AdapterFilter
 import com.merseyside.merseyLib.features.adapters.contacts.model.ContactItemViewModel
 
 class ContactsFilter : AdapterFilter<String, ContactItemViewModel>() {

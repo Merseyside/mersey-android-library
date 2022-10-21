@@ -1,5 +1,3 @@
-@file:OptIn(InternalAdaptersApi::class)
-
 package com.merseyside.adapters.single
 
 import android.view.LayoutInflater
@@ -23,8 +21,6 @@ abstract class SimpleAdapter<Item, Model>(
     protected abstract fun getLayoutIdForPosition(position: Int): Int
     protected abstract fun getBindingVariable(): Int
     protected abstract fun createItemViewModel(item: Item): Model
-
-
 
     override fun bindModel(holder: TypedBindingHolder<Model>, model: Model, position: Int) {
         bind(holder, model)

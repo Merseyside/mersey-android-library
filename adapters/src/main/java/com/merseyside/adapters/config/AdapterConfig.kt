@@ -7,10 +7,10 @@ import com.merseyside.adapters.config.contract.ModelListProvider
 import com.merseyside.adapters.config.contract.UpdateLogicProvider
 import com.merseyside.adapters.config.feature.ConfigurableFeature
 import com.merseyside.adapters.config.feature.Feature
-import com.merseyside.adapters.feature.filter.FilterFeature
+import com.merseyside.adapters.feature.filtering.FilterFeature
 import com.merseyside.adapters.config.update.simple.SimpleUpdate
-import com.merseyside.adapters.feature.filter.listManager.FilterListManager
-import com.merseyside.adapters.feature.filter.listManager.FilterNestedListManager
+import com.merseyside.adapters.feature.filtering.listManager.FilterListManager
+import com.merseyside.adapters.feature.filtering.listManager.FilterNestedListManager
 import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.interfaces.nested.INestedAdapter
 import com.merseyside.adapters.listManager.impl.ListManager

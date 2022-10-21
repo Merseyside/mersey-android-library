@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
-import com.merseyside.adapters.feature.filter.Filtering
+import com.merseyside.adapters.feature.filtering.Filtering
 import com.merseyside.adapters.feature.sorting.Sorting
 import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.archy.presentation.view.valueSwitcher.ValueSwitcher

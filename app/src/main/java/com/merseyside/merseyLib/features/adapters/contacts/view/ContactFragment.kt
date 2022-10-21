@@ -4,9 +4,9 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.asLiveData
-import com.merseyside.adapters.feature.filter.Filtering
-import com.merseyside.adapters.feature.filter.ext.addAndApply
-import com.merseyside.adapters.feature.filter.ext.removeAndApply
+import com.merseyside.adapters.feature.filtering.Filtering
+import com.merseyside.adapters.feature.filtering.ext.addAndApply
+import com.merseyside.adapters.feature.filtering.ext.removeAndApply
 import com.merseyside.adapters.feature.sorting.Sorting
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R

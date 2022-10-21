@@ -1,9 +1,9 @@
-package com.merseyside.adapters.feature.filter.listManager
+package com.merseyside.adapters.feature.filtering.listManager
 
 import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.base.config.ext.getAdapterFilter
-import com.merseyside.adapters.feature.filter.AdapterFilter
-import com.merseyside.adapters.feature.filter.NestedAdapterFilter
+import com.merseyside.adapters.feature.filtering.AdapterFilter
+import com.merseyside.adapters.feature.filtering.NestedAdapterFilter
 import com.merseyside.adapters.interfaces.nested.AdapterNestedListActions
 import com.merseyside.adapters.listManager.AdapterNestedListManager
 import com.merseyside.adapters.model.AdapterParentViewModel
