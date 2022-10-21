@@ -12,6 +12,7 @@ import com.merseyside.adapters.single.SelectableAdapter
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.merseyLib.kotlin.logger.Logger
 
+
 interface ISelectableAdapter<Parent, Model>
     : IBaseAdapter<Parent, Model>, HasOnItemSelectedListener<Parent>
         where Model : SelectableAdapterParentViewModel<out Parent, Parent> {

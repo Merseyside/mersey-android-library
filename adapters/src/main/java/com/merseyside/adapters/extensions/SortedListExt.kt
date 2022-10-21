@@ -1,7 +1,7 @@
 package com.merseyside.adapters.extensions
 
-import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.list.SortedList
+import com.merseyside.adapters.model.VM
 
 fun SortedList<*>.isEmpty(): Boolean {
     return this.size() == 0
@@ -12,7 +12,7 @@ fun SortedList<*>.isNotEmpty(): Boolean {
 }
 
 @Throws(IllegalArgumentException::class)
-fun <Model : AdapterParentViewModel<out Parent, Parent>, Parent> SortedList<Model>.isEquals(
+fun <Model : VM<Parent>, Parent> SortedList<Model>.isEquals(
     list: List<Model>
 ): Boolean {
 

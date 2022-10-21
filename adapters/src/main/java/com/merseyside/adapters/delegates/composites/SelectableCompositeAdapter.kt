@@ -13,6 +13,7 @@ import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import com.merseyside.adapters.model.VM
 
 abstract class SelectableCompositeAdapter<Parent, Model>(
     adapterConfig: AdapterConfig<Parent, Model> = AdapterConfig(),

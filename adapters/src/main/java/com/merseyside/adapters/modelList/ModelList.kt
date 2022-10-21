@@ -2,8 +2,9 @@ package com.merseyside.adapters.modelList
 
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.merseyLib.kotlin.logger.ILogger
+import com.merseyside.adapters.model.VM
 
-abstract class ModelList<Parent, Model : AdapterParentViewModel<out Parent, Parent>> : List<Model>, ILogger {
+abstract class ModelList<Parent, Model : VM<Parent>> : List<Model>, ILogger {
 
     internal lateinit var listCallback: ModelListCallback<Model>
 

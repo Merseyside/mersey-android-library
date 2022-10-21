@@ -1,15 +1,15 @@
 package com.merseyside.adapters.feature.filter
 
 import com.merseyside.adapters.feature.filter.listManager.Filters
-import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.runWithDefault
 import com.merseyside.merseyLib.kotlin.coroutines.CoroutineQueue
 import com.merseyside.merseyLib.kotlin.logger.ILogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
+import com.merseyside.adapters.model.VM
 
-abstract class AdapterFilter<Parent, Model : AdapterParentViewModel<out Parent, Parent>> : ILogger {
+abstract class AdapterFilter<Parent, Model : VM<Parent>> : ILogger {
 
     private var filterCallback: FilterCallback<Model>? = null
 

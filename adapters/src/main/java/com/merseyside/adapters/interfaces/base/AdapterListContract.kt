@@ -1,8 +1,8 @@
 package com.merseyside.adapters.interfaces.base
 
-import com.merseyside.adapters.model.AdapterParentViewModel
+import com.merseyside.adapters.model.VM
 
-interface AdapterListContract<Parent, Model : AdapterParentViewModel<out Parent, Parent>> {
+interface AdapterListContract<Parent, Model : VM<Parent>> {
 
     val provideModelByItem: suspend (Parent) -> Model
 }

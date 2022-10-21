@@ -2,12 +2,12 @@ package com.merseyside.adapters.config.update.sorted
 
 import com.merseyside.adapters.config.update.UpdateActions
 import com.merseyside.adapters.config.update.UpdateLogic
-import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.adapters.utils.runWithDefault
 import com.merseyside.merseyLib.kotlin.extensions.subtractBy
+import com.merseyside.adapters.model.VM
 
-class SortedUpdate<Parent, Model : AdapterParentViewModel<out Parent, Parent>>(
+class SortedUpdate<Parent, Model : VM<Parent>>(
     override var updateActions: UpdateActions<Parent, Model>
 ) : UpdateLogic<Parent, Model> {
 

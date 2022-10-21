@@ -3,9 +3,9 @@
 package com.merseyside.adapters.base
 
 import androidx.recyclerview.widget.RecyclerView
+import com.merseyside.adapters.base.config.ext.hasFeature
 import com.merseyside.adapters.config.AdapterConfig
 import com.merseyside.adapters.config.delegate
-import com.merseyside.adapters.base.config.hasFeature
 import com.merseyside.adapters.config.workManager
 import com.merseyside.adapters.callback.HasOnItemClickListener
 import com.merseyside.adapters.callback.OnItemClickListener
@@ -13,6 +13,7 @@ import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.listManager.AdapterListManager
 import com.merseyside.adapters.model.AdapterParentViewModel
+import com.merseyside.adapters.model.VM
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.merseyLib.kotlin.coroutines.CoroutineQueue
 import com.merseyside.merseyLib.kotlin.logger.ILogger
@@ -24,7 +25,7 @@ abstract class BaseAdapter<Parent, Model>(
     open val adapterConfig: AdapterConfig<Parent, Model>,
 ) : RecyclerView.Adapter<TypedBindingHolder<Model>>(),
     HasOnItemClickListener<Parent>, IBaseAdapter<Parent, Model>, ILogger
-        where Model : AdapterParentViewModel<out Parent, Parent> {
+        where Model : VM<Parent> {
 
     override val workManager: CoroutineQueue<Any, Unit> by adapterConfig.workManager()
 

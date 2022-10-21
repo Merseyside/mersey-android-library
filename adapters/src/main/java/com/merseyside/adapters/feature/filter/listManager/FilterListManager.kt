@@ -4,14 +4,14 @@ import com.merseyside.adapters.config.update.UpdateLogic
 import com.merseyside.adapters.feature.filter.AdapterFilter
 import com.merseyside.adapters.interfaces.base.AdapterListActions
 import com.merseyside.adapters.listManager.AdapterListManager
-import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.modelList.ModelList
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.merseyLib.kotlin.extensions.move
 import com.merseyside.merseyLib.kotlin.logger.ILogger
+import com.merseyside.adapters.model.VM
 
-open class FilterListManager<Parent, Model : AdapterParentViewModel<out Parent, Parent>>(
+open class FilterListManager<Parent, Model : VM<Parent>>(
     override val modelList: ModelList<Parent, Model>,
     override val listActions: AdapterListActions<Parent, Model>,
     val adapterFilter: AdapterFilter<Parent, Model>

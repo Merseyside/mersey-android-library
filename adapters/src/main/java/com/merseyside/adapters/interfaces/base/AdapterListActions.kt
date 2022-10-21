@@ -1,8 +1,6 @@
 package com.merseyside.adapters.interfaces.base
 
-import com.merseyside.adapters.model.AdapterParentViewModel
-import com.merseyside.adapters.modelList.ModelListCallback
-import com.merseyside.adapters.utils.InternalAdaptersApi
+import com.merseyside.adapters.model.VM
 
-interface AdapterListActions<Parent, Model : AdapterParentViewModel<out Parent, Parent>> :
+interface AdapterListActions<Parent, Model : VM<Parent>> :
     AdapterListContract<Parent, Model>

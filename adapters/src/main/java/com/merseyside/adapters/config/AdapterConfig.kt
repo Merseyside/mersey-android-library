@@ -1,12 +1,12 @@
 package com.merseyside.adapters.config
 
 import com.merseyside.adapters.base.BaseAdapter
+import com.merseyside.adapters.base.config.ext.getFeatureByKey
+import com.merseyside.adapters.base.config.ext.hasFeature
 import com.merseyside.adapters.config.contract.ModelListProvider
 import com.merseyside.adapters.config.contract.UpdateLogicProvider
 import com.merseyside.adapters.config.feature.ConfigurableFeature
 import com.merseyside.adapters.config.feature.Feature
-import com.merseyside.adapters.base.config.getFeatureByKey
-import com.merseyside.adapters.base.config.hasFeature
 import com.merseyside.adapters.feature.filter.FilterFeature
 import com.merseyside.adapters.config.update.simple.SimpleUpdate
 import com.merseyside.adapters.feature.filter.listManager.FilterListManager
@@ -17,8 +17,8 @@ import com.merseyside.adapters.listManager.impl.ListManager
 import com.merseyside.adapters.listManager.impl.NestedListManager
 import com.merseyside.adapters.listManager.AdapterListManager
 import com.merseyside.adapters.listManager.AdapterNestedListManager
-import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
+import com.merseyside.adapters.model.VM
 import com.merseyside.adapters.modelList.ModelList
 import com.merseyside.adapters.modelList.ModelListCallback
 import com.merseyside.adapters.modelList.SimpleModelList
@@ -30,7 +30,7 @@ import kotlin.reflect.KProperty
 
 open class AdapterConfig<Parent, Model> internal constructor(
     config: AdapterConfig<Parent, Model>.() -> Unit = {}
-) where Model : AdapterParentViewModel<out Parent, Parent> {
+) where Model : VM<Parent> {
     protected lateinit var adapter: IBaseAdapter<Parent, Model>
 
     internal val featureList = ArrayList<Feature<Parent, Model>>()
@@ -103,7 +103,7 @@ open class AdapterConfig<Parent, Model> internal constructor(
     }
 }
 
-fun <Parent, Model : AdapterParentViewModel<out Parent, Parent>>
+fun <Parent, Model : VM<Parent>>
         AdapterConfig<Parent, Model>.workManager(
 ) = object : ReadOnlyProperty<IBaseAdapter<Parent, Model>, CoroutineQueue<Any, Unit>> {
 
@@ -123,7 +123,7 @@ fun <Parent, Model : AdapterParentViewModel<out Parent, Parent>>
 }
 
 
-fun <Parent, Model : AdapterParentViewModel<out Parent, Parent>>
+fun <Parent, Model : VM<Parent>>
         AdapterConfig<Parent, Model>.delegate(
 ) = object :
     ReadOnlyProperty<IBaseAdapter<Parent, Model>, AdapterListManager<Parent, Model>> {
@@ -146,7 +146,7 @@ fun <Parent, Model : AdapterParentViewModel<out Parent, Parent>>
 class NestedAdapterConfig<Parent, Model, Data, InnerAdapter> internal constructor() :
     AdapterConfig<Parent, Model>()
         where Model : NestedAdapterParentViewModel<out Parent, Parent, Data>,
-              InnerAdapter : BaseAdapter<Data, out AdapterParentViewModel<out Data, Data>> {
+              InnerAdapter : BaseAdapter<Data, out VM<Data>> {
 
     fun getDelegate(
         adapter: INestedAdapter<Parent, Model, Data, InnerAdapter>
@@ -168,7 +168,7 @@ class NestedAdapterConfig<Parent, Model, Data, InnerAdapter> internal constructo
 }
 
 fun <Parent, Model : NestedAdapterParentViewModel<out Parent, Parent, Data>, Data,
-        InnerAdapter : BaseAdapter<Data, out AdapterParentViewModel<out Data, Data>>>
+        InnerAdapter : BaseAdapter<Data, out VM<Data>>>
         NestedAdapterConfig<Parent, Model, Data, InnerAdapter>.delegate(
 ) = object : ReadOnlyProperty<INestedAdapter<Parent, Model, Data, InnerAdapter>,
         AdapterNestedListManager<Parent, Model, Data, InnerAdapter>> {
@@ -187,20 +187,20 @@ fun <Parent, Model : NestedAdapterParentViewModel<out Parent, Parent, Data>, Dat
     }
 }
 
-fun <Parent, Model : AdapterParentViewModel<out Parent, Parent>> config(
+fun <Parent, Model : VM<Parent>> config(
     scope: CoroutineScope
 ): AdapterConfig<Parent, Model> {
     return AdapterConfig { coroutineScope = scope }
 }
 
-fun <Parent, Model : AdapterParentViewModel<out Parent, Parent>> config(
+fun <Parent, Model : VM<Parent>> config(
     init: AdapterConfig<Parent, Model>.() -> Unit
 ): AdapterConfig<Parent, Model> {
     return AdapterConfig(init)
 }
 
 fun <Parent, Model : NestedAdapterParentViewModel<out Parent, Parent, Data>, Data,
-        InnerAdapter : BaseAdapter<Data, out AdapterParentViewModel<out Data, Data>>> config(
+        InnerAdapter : BaseAdapter<Data, out VM<Data>>> config(
     init: NestedAdapterConfig<Parent, Model, Data, InnerAdapter>.() -> Unit
 ): NestedAdapterConfig<Parent, Model, Data, InnerAdapter> {
     val config = NestedAdapterConfig<Parent, Model, Data, InnerAdapter>()

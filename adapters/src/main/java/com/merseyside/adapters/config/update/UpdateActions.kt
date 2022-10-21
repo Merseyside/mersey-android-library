@@ -1,8 +1,8 @@
 package com.merseyside.adapters.config.update
 
-import com.merseyside.adapters.model.AdapterParentViewModel
+import com.merseyside.adapters.model.VM
 
-interface UpdateActions<Parent, Model : AdapterParentViewModel<out Parent, Parent>> {
+interface UpdateActions<Parent, Model : VM<Parent>> {
     suspend fun add(items: List<Parent>): List<Model>
 
     suspend fun add(position: Int, items: List<Parent>): List<Model>

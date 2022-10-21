@@ -5,6 +5,7 @@ import com.merseyside.adapters.config.update.UpdateActions
 import com.merseyside.adapters.config.update.UpdateLogic
 import com.merseyside.adapters.interfaces.base.AdapterListActions
 import com.merseyside.adapters.model.AdapterParentViewModel
+import com.merseyside.adapters.model.VM
 import com.merseyside.adapters.modelList.ModelList
 import com.merseyside.adapters.modelList.SimpleModelList
 import com.merseyside.adapters.utils.InternalAdaptersApi
@@ -13,7 +14,7 @@ import com.merseyside.adapters.utils.runWithDefault
 import com.merseyside.merseyLib.kotlin.contract.Identifiable
 
 interface AdapterListManager<Parent, Model>: UpdateActions<Parent, Model>
-    where Model : AdapterParentViewModel<out Parent, Parent> {
+    where Model : VM<Parent> {
 
     val listActions: AdapterListActions<Parent, Model>
     var updateLogic: UpdateLogic<Parent, Model>

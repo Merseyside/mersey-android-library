@@ -1,9 +1,9 @@
 package com.merseyside.adapters.config.feature
 
-import com.merseyside.adapters.model.AdapterParentViewModel
+import com.merseyside.adapters.model.VM
 
 abstract class ConfigurableFeature<Parent, Model, Config> : Feature<Parent, Model>()
-    where Model: AdapterParentViewModel<out Parent, Parent> {
+    where Model: VM<Parent> {
 
     abstract fun prepare(configure: Config.() -> Unit)
 

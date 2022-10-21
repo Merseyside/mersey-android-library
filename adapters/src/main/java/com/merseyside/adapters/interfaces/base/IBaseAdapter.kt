@@ -19,11 +19,12 @@ import com.merseyside.utils.measureAndLogTime
 import kotlinx.coroutines.Job
 import kotlin.math.max
 import kotlin.math.min
+import com.merseyside.adapters.model.VM
 
 @SuppressLint("NotifyDataSetChanged")
 interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
     HasOnItemClickListener<Parent>, ModelListCallback<Model>
-        where Model : AdapterParentViewModel<out Parent, Parent> {
+        where Model : VM<Parent> {
 
     val workManager: CoroutineQueue<Any, Unit>
 

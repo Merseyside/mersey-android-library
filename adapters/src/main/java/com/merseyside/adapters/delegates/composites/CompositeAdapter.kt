@@ -8,16 +8,16 @@ import com.merseyside.adapters.config.AdapterConfig
 import com.merseyside.adapters.delegates.DelegateAdapter
 import com.merseyside.adapters.delegates.DelegatesManager
 import com.merseyside.adapters.holder.TypedBindingHolder
-import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import com.merseyside.adapters.model.VM
 
 open class CompositeAdapter<Parent, ParentModel>(
     adapterConfig: AdapterConfig<Parent, ParentModel> = AdapterConfig(),
     delegatesManager: DelegatesManager<DelegateAdapter<out Parent, Parent, ParentModel>, Parent, ParentModel> = DelegatesManager()
 ) : BaseAdapter<Parent, ParentModel>(adapterConfig)
-    where ParentModel : AdapterParentViewModel<out Parent, Parent> {
+    where ParentModel : VM<Parent> {
 
     open val delegatesManager: DelegatesManager<DelegateAdapter<out Parent, Parent, ParentModel>, Parent, ParentModel> = delegatesManager
 

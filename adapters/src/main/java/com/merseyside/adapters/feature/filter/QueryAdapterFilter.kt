@@ -1,9 +1,9 @@
 package com.merseyside.adapters.feature.filter
 
-import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
+import com.merseyside.adapters.model.VM
 
-abstract class QueryAdapterFilter<Parent, Model : AdapterParentViewModel<out Parent, Parent>> :
+abstract class QueryAdapterFilter<Parent, Model : VM<Parent>> :
     AdapterFilter<Parent, Model>() {
 
     abstract fun filter(model: Model, query: String): Boolean

@@ -5,16 +5,16 @@ import android.view.ViewGroup
 import androidx.core.util.isEmpty
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.interfaces.delegate.INestedDelegateAdapter
-import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.merseyLib.kotlin.extensions.isNotZero
 import com.merseyside.utils.ext.containsKey
 import com.merseyside.utils.ext.filterValues
 import com.merseyside.utils.ext.findKey
 import com.merseyside.utils.ext.findValue
+import com.merseyside.adapters.model.VM
 
 open class DelegatesManager<Delegate, Parent, ParentModel>(
     delegates: List<DelegateAdapter<out Parent, Parent, out ParentModel>> = emptyList()
-) where ParentModel : AdapterParentViewModel<out Parent, Parent>,
+) where ParentModel : VM<Parent>,
     Delegate : DelegateAdapter<out Parent, Parent, ParentModel> {
 
     protected val delegates = SparseArray<Delegate>()
@@ -155,4 +155,4 @@ open class DelegatesManager<Delegate, Parent, ParentModel>(
 }
 
 class SimpleDelegatesManager<Parent, ParentModel>: DelegatesManager<DelegateAdapter<out Parent, Parent, ParentModel>, Parent, ParentModel>()
-    where ParentModel : AdapterParentViewModel<out Parent, Parent>
+    where ParentModel : VM<Parent>

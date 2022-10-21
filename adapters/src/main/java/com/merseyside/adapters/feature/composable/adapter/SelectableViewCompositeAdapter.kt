@@ -4,8 +4,6 @@ import com.merseyside.adapters.config.AdapterConfig
 import com.merseyside.adapters.feature.composable.delegate.ViewDelegatesManager
 import com.merseyside.adapters.feature.composable.view.selectable.CSV
 import com.merseyside.adapters.model.SelectableAdapterParentViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 
 class SelectableViewCompositeAdapter<Parent, Model>(
     adapterConfig: AdapterConfig<Parent, Model> = AdapterConfig(),

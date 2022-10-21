@@ -1,9 +1,9 @@
 package com.merseyside.adapters.feature.sorting
 
-import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.merseyLib.kotlin.coroutines.CoroutineQueue
+import com.merseyside.adapters.model.VM
 
-abstract class Comparator<Parent, Model : AdapterParentViewModel<out Parent, Parent>>(
+abstract class Comparator<Parent, Model : VM<Parent>>(
     protected var animation: Boolean = true
 ) {
 

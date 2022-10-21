@@ -1,7 +1,7 @@
 package com.merseyside.adapters.feature.filter.listManager
 
 import com.merseyside.adapters.base.BaseAdapter
-import com.merseyside.adapters.base.config.getAdapterFilter
+import com.merseyside.adapters.base.config.ext.getAdapterFilter
 import com.merseyside.adapters.feature.filter.AdapterFilter
 import com.merseyside.adapters.feature.filter.NestedAdapterFilter
 import com.merseyside.adapters.interfaces.nested.AdapterNestedListActions

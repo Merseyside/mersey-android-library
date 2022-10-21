@@ -7,6 +7,7 @@ import com.merseyside.adapters.feature.composable.delegate.ViewDelegatesManager
 import com.merseyside.adapters.feature.composable.model.ViewAdapterViewModel
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.model.AdapterParentViewModel
+import com.merseyside.adapters.model.VM
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
@@ -15,7 +16,7 @@ open class ViewCompositeAdapter<Parent, Model>(
     override val delegatesManager: ViewDelegatesManager<Parent, Model> = ViewDelegatesManager()
 ) : CompositeAdapter<Parent, Model>(adapterConfig, delegatesManager)
         where Parent: SCV,
-              Model : AdapterParentViewModel<out Parent, Parent> {
+              Model : VM<Parent> {
 
     override fun onBindViewHolder(
         holder: TypedBindingHolder<Model>,

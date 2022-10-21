@@ -5,9 +5,10 @@ import com.merseyside.adapters.extensions.subList
 import com.merseyside.adapters.feature.sorting.Comparator
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.list.SortedList
+import com.merseyside.adapters.model.VM
 import kotlinx.coroutines.runBlocking
 
-class SortedModelList<Parent, Model : AdapterParentViewModel<out Parent, Parent>>(
+class SortedModelList<Parent, Model : VM<Parent>>(
     internal val sortedList: SortedList<Model>,
     private val comparator: Comparator<Parent, Model>
 ) : ModelList<Parent, Model>() {

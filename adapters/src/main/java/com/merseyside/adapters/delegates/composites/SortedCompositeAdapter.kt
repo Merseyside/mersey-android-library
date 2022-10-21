@@ -25,7 +25,7 @@
 //    delegatesManager: SimpleDelegatesManager<Parent, Model> = SimpleDelegatesManager()
 //) : CompositeAdapter<Parent, Model>(scope, delegatesManager),
 //    ISimpleAdapter<Parent, Model>
-//        where Model : ComparableAdapterParentViewModel<out Parent, Parent> {
+//        where Model : ComparableVM<Parent> {
 //
 //    var comparator: Comparator<Parent, Model>? = null
 //        set(value) {

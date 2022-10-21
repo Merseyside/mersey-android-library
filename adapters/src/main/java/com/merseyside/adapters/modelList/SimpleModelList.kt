@@ -2,8 +2,9 @@ package com.merseyside.adapters.modelList
 
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.merseyLib.kotlin.extensions.move
+import com.merseyside.adapters.model.VM
 
-open class SimpleModelList<Parent, Model : AdapterParentViewModel<out Parent, Parent>>(
+open class SimpleModelList<Parent, Model : VM<Parent>>(
     private val mutModels: MutableList<Model> = ArrayList()
 ) : ModelList<Parent, Model>() {
 

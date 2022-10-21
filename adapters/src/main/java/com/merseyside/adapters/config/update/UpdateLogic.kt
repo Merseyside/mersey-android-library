@@ -1,11 +1,11 @@
 package com.merseyside.adapters.config.update
 
-import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.adapters.utils.runWithDefault
 import com.merseyside.merseyLib.kotlin.extensions.subtractBy
+import com.merseyside.adapters.model.VM
 
-interface UpdateLogic<Parent, Model : AdapterParentViewModel<out Parent, Parent>> {
+interface UpdateLogic<Parent, Model : VM<Parent>> {
 
     var updateActions: UpdateActions<Parent, Model>
 

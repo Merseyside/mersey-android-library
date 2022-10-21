@@ -4,13 +4,13 @@ import com.merseyside.adapters.config.AdapterConfig
 import com.merseyside.adapters.config.contract.FilterProvider
 import com.merseyside.adapters.config.feature.ConfigurableFeature
 import com.merseyside.adapters.interfaces.base.IBaseAdapter
-import com.merseyside.adapters.model.AdapterParentViewModel
 import java.lang.NullPointerException
+import com.merseyside.adapters.model.VM
 
 class QueryFilterFeature<Parent, Model> :
     ConfigurableFeature<Parent, Model, QueryConfig<Parent, Model>>(),
     FilterProvider<Parent, Model>
-        where Model : AdapterParentViewModel<out Parent, Parent> {
+        where Model : VM<Parent> {
 
     override lateinit var adapterFilter: AdapterFilter<Parent, Model>
     override val config: QueryConfig<Parent, Model> = QueryConfig()
@@ -33,14 +33,14 @@ class QueryFilterFeature<Parent, Model> :
 }
 
 class QueryConfig<Parent, Model>
-        where Model : AdapterParentViewModel<out Parent, Parent> {
+        where Model : VM<Parent> {
 
     var filter: QueryAdapterFilter<Parent, Model>? = null
 }
 
 object QueryFiltering {
     context (AdapterConfig<Parent, Model>) operator fun <Parent,
-            Model : AdapterParentViewModel<out Parent, Parent>, TConfig : QueryConfig<Parent, Model>> invoke(
+            Model : VM<Parent>, TConfig : QueryConfig<Parent, Model>> invoke(
         config: TConfig.() -> Unit
     ): QueryFilterFeature<Parent, Model> {
         return QueryFilterFeature<Parent, Model>().also { feature ->

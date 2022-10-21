@@ -1,6 +1,7 @@
-package com.merseyside.adapters.feature.filter
+package com.merseyside.adapters.feature.filter.ext
 
-import com.merseyside.adapters.model.AdapterParentViewModel
+import com.merseyside.adapters.feature.filter.AdapterFilter
+import com.merseyside.adapters.model.VM
 
 fun AdapterFilter<*, *>.addAndApply(key: String, filter: Any, onComplete: (Boolean) -> Unit = {}) {
     addFilter(key, filter)
@@ -13,6 +14,6 @@ fun AdapterFilter<*, *>.removeAndApply(key: String, onComplete: (Boolean) -> Uni
 }
 
 fun <Parent, Model> AdapterFilter<Parent, Model>.getFilteredItems(): List<Model>
-    where Model : AdapterParentViewModel<out Parent, Parent> {
+    where Model : VM<Parent> {
     return provideFilteredList()
 }

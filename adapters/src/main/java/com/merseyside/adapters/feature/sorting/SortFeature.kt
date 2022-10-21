@@ -4,7 +4,6 @@ import com.merseyside.adapters.config.AdapterConfig
 import com.merseyside.adapters.config.contract.ModelListProvider
 import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.modelList.SortedModelList
-import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.list.SortedList
 import com.merseyside.adapters.config.contract.UpdateLogicProvider
 import com.merseyside.adapters.config.feature.ConfigurableFeature
@@ -12,10 +11,11 @@ import com.merseyside.adapters.config.update.sorted.SortedUpdate
 import com.merseyside.adapters.config.update.UpdateActions
 import com.merseyside.adapters.config.update.UpdateLogic
 import com.merseyside.adapters.extensions.recalculatePositions
+import com.merseyside.adapters.model.VM
 
 open class SortFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Config<Parent, Model>>(),
     ModelListProvider<Parent, Model>, UpdateLogicProvider<Parent, Model>
-        where Model : AdapterParentViewModel<out Parent, Parent> {
+        where Model : VM<Parent> {
 
     override val config: Config<Parent, Model> = Config()
     override lateinit var modelList: SortedModelList<Parent, Model>
@@ -49,14 +49,14 @@ open class SortFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Confi
 }
 
 class Config<Parent, Model>
-        where Model : AdapterParentViewModel<out Parent, Parent> {
+        where Model : VM<Parent> {
 
     lateinit var comparator: Comparator<Parent, Model>
 }
 
 object Sorting {
     context (AdapterConfig<Parent, Model>) operator fun <Parent,
-            Model : AdapterParentViewModel<out Parent, Parent>, TConfig : Config<Parent, Model>> invoke(
+            Model : VM<Parent>, TConfig : Config<Parent, Model>> invoke(
         config: TConfig.() -> Unit
     ): SortFeature<Parent, Model> {
         return SortFeature<Parent, Model>().also { feature ->
