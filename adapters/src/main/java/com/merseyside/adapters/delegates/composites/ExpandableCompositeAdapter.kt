@@ -1,6 +1,8 @@
 package com.merseyside.adapters.delegates.composites
 
 import com.merseyside.adapters.base.BaseAdapter
+import com.merseyside.adapters.config.AdapterConfig
+import com.merseyside.adapters.config.NestedAdapterConfig
 import com.merseyside.adapters.callback.OnItemExpandedListener
 import com.merseyside.adapters.delegates.DelegatesManager
 import com.merseyside.adapters.delegates.SimpleDelegatesManager
@@ -13,10 +15,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
 abstract class ExpandableCompositeAdapter<Parent, Model, Data, InnerAdapter>(
-    scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
+    adapterConfig: NestedAdapterConfig<Parent, Model, Data, InnerAdapter> = NestedAdapterConfig(),
     delegatesManager: SimpleDelegatesManager<Parent, Model> = SimpleDelegatesManager(),
     override var expandableMode: ExpandableMode = ExpandableMode.MULTIPLE
-) : NestedCompositeAdapter<Parent, Model, Data, InnerAdapter>(scope, delegatesManager),
+) : NestedCompositeAdapter<Parent, Model, Data, InnerAdapter>(adapterConfig, delegatesManager),
     IExpandableAdapter<Parent, Model, Data, InnerAdapter>
         where Model : ExpandableAdapterParentViewModel<out Parent, Parent, Data>,
               InnerAdapter : BaseAdapter<Data, out AdapterParentViewModel<out Data, Data>> {

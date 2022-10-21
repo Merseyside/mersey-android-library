@@ -3,7 +3,6 @@ package com.merseyside.archy.presentation.view.floatingListView
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
-import android.os.Build
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
@@ -13,8 +12,6 @@ import androidx.annotation.IdRes
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.merseyside.adapters.base.BaseAdapter
-import com.merseyside.adapters.single.SimpleAdapter
 import com.merseyside.archy.R
 import com.merseyside.archy.databinding.ViewFloatingListBinding
 import com.merseyside.utils.delegate.getValue

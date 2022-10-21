@@ -1,7 +1,7 @@
 package com.merseyside.adapters.extensions
 
+import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.list.SortedList
-import com.merseyside.adapters.model.ComparableAdapterParentViewModel
 
 fun SortedList<*>.isEmpty(): Boolean {
     return this.size() == 0
@@ -12,7 +12,7 @@ fun SortedList<*>.isNotEmpty(): Boolean {
 }
 
 @Throws(IllegalArgumentException::class)
-fun <Model : ComparableAdapterParentViewModel<out Parent, Parent>, Parent> SortedList<Model>.isEquals(
+fun <Model : AdapterParentViewModel<out Parent, Parent>, Parent> SortedList<Model>.isEquals(
     list: List<Model>
 ): Boolean {
 
@@ -21,7 +21,7 @@ fun <Model : ComparableAdapterParentViewModel<out Parent, Parent>, Parent> Sorte
     } else {
 
         list.forEachIndexed { index, model ->
-            val value = this.get(index)
+            val value = this[index]
             if (!value.areItemsTheSame(model.item)) {
                 return@isEquals false
             }
@@ -65,18 +65,12 @@ suspend inline fun <Item> SortedList<Item>.batchedUpdate(crossinline block: susp
     try {
         beginBatchedUpdates()
         //runWithDefault {
-            block()
+        block()
         //}
     } finally {
         endBatchedUpdates()
     }
 }
-
-//fun <Model> SortedList<Model>.getAll(): List<Model> {
-//    val list = mutableListOf<Model>()
-//    forEach { list.add(it) }
-//    return list
-//}
 
 suspend fun <Model> SortedList<Model>.recalculatePositions() {
     val models = getAll()
@@ -92,4 +86,13 @@ suspend fun <Model> SortedList<Model>.recalculatePositionsWithAnimation() {
             recalculatePositionOfItemAt(pos)
         }
     }
+}
+
+fun <Model> SortedList<Model>.toList(): List<Model> {
+    return getAll()
+}
+
+fun <Model> SortedList<Model>.subList(fromIndex: Int, toIndex: Int): List<Model> {
+    val list = toList()
+    return list.subList(fromIndex, toIndex)
 }

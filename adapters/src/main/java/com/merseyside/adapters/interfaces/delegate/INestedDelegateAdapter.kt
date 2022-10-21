@@ -11,7 +11,7 @@ import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.merseyLib.kotlin.extensions.remove
 
 interface INestedDelegateAdapter<Item : Parent, Parent, Model, Data, InnerAdapter>
-    : IPrioritizedDelegateAdapter<Item, Parent, Model>
+    : IDelegateAdapter<Item, Parent, Model>
         where Model : NestedAdapterParentViewModel<Item, Parent, out Data>,
               InnerAdapter : BaseAdapter<Data, out AdapterParentViewModel<out Data, Data>> {
 

@@ -2,34 +2,68 @@
 
 package com.merseyside.adapters.single
 
-import com.merseyside.adapters.feature.filter.delegate.FilterPositionListChangeDelegate
-import com.merseyside.adapters.interfaces.simple.ISimpleAdapter
-import com.merseyside.adapters.listDelegates.PositionListChangeDelegate
-import com.merseyside.adapters.listDelegates.interfaces.AdapterPositionListChangeDelegate
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.annotation.CallSuper
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
+import androidx.recyclerview.widget.RecyclerView
+import com.merseyside.adapters.base.BaseAdapter
+import com.merseyside.adapters.config.AdapterConfig
+import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.model.AdapterViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
-import com.merseyside.adapters.utils.getFilter
-import com.merseyside.adapters.utils.isFilterable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
-abstract class SimpleAdapter<Item, Model : AdapterViewModel<Item>>(
-    scope: CoroutineScope = CoroutineScope(Dispatchers.Main)
-) : SingleAdapter<Item, Model>(scope), ISimpleAdapter<Item, Model> {
-    final override val mutModels: MutableList<Model> = ArrayList()
-    override val models: List<Model> = mutModels
+abstract class SimpleAdapter<Item, Model>(
+    adapterConfig: AdapterConfig<Item, Model> = AdapterConfig()
+): BaseAdapter<Item, Model>(adapterConfig)
+    where Model : AdapterViewModel<Item> {
+    protected abstract fun getLayoutIdForPosition(position: Int): Int
+    protected abstract fun getBindingVariable(): Int
+    protected abstract fun createItemViewModel(item: Item): Model
 
-    override val defaultDelegate: PositionListChangeDelegate<Item, Model> by lazy {
-        PositionListChangeDelegate(this)
+
+
+    override fun bindModel(holder: TypedBindingHolder<Model>, model: Model, position: Int) {
+        bind(holder, model)
     }
 
-    override val filterDelegate: FilterPositionListChangeDelegate<Item, Model> by lazy {
-        FilterPositionListChangeDelegate(defaultDelegate, getFilter())
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TypedBindingHolder<Model> {
+        val layoutInflater: LayoutInflater = LayoutInflater.from(parent.context)
+        val binding: ViewDataBinding =
+            DataBindingUtil.inflate(layoutInflater, viewType, parent, false)
+
+        return getBindingHolder(binding)
     }
 
-    override val delegate: AdapterPositionListChangeDelegate<Item, Model> by lazy {
-        if (isFilterable()) filterDelegate else defaultDelegate
+    open fun getBindingHolder(binding: ViewDataBinding): TypedBindingHolder<Model> {
+        return TypedBindingHolder(binding)
     }
 
-    override fun getItemCount() = models.size
+    @CallSuper
+    internal open fun bind(holder: TypedBindingHolder<Model>, model: Model) {
+        holder.bind(getBindingVariable(), model)
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return getLayoutIdForPosition(position)
+    }
+
+    override fun createModel(item: Item): Model = createItemViewModel(item)
+
+    @CallSuper
+    override fun onViewRecycled(holder: TypedBindingHolder<Model>) {
+        super.onViewRecycled(holder)
+        if (holder.absoluteAdapterPosition != RecyclerView.NO_POSITION &&
+            holder.absoluteAdapterPosition < itemCount) {
+
+            getModelByPosition(holder.absoluteAdapterPosition).apply {
+                bindItemList.remove(this)
+                onRecycled()
+            }
+        }
+    }
+
 }

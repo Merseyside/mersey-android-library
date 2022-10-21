@@ -1,10 +1,10 @@
 package com.merseyside.merseyLib.features.adapters.colors.adapter
 
-import com.merseyside.adapters.feature.filter.FilterFeature
+import com.merseyside.adapters.feature.filter.AdapterFilter
 import com.merseyside.merseyLib.features.adapters.colors.entity.HexColor
 import com.merseyside.merseyLib.features.adapters.colors.model.ColorItemViewModel
 
-class ColorsFilter : FilterFeature<HexColor, ColorItemViewModel>() {
+class ColorsFilter : AdapterFilter<HexColor, ColorItemViewModel>() {
 
     override fun filter(model: ColorItemViewModel, key: String, filter: Any): Boolean {
         val query = filter as String

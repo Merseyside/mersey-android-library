@@ -1,13 +1,9 @@
 package com.merseyside.merseyLib.features.adapters.contacts.model
 
-import com.merseyside.adapters.model.ComparableAdapterViewModel
+import com.merseyside.adapters.model.AdapterViewModel
 
-class ContactItemViewModel(item: String): ComparableAdapterViewModel<String>(item) {
+class ContactItemViewModel(item: String): AdapterViewModel<String>(item) {
     override fun areItemsTheSame(other: String): Boolean {
         return item == other
-    }
-
-    override fun compareTo(other: String): Int {
-        return this.item.compareTo(other)
     }
 }

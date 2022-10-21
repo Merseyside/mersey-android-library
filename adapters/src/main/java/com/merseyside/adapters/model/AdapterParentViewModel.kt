@@ -3,7 +3,7 @@ package com.merseyside.adapters.model
 import androidx.annotation.CallSuper
 import androidx.databinding.BaseObservable
 import androidx.databinding.ObservableBoolean
-import com.merseyside.adapters.utils.ItemCallback
+import com.merseyside.adapters.feature.positioning.PositionHandler
 import com.merseyside.merseyLib.kotlin.observable.ObservableField
 import com.merseyside.merseyLib.kotlin.observable.SingleObservableField
 import com.merseyside.merseyLib.kotlin.contract.Identifiable
@@ -14,12 +14,12 @@ abstract class AdapterParentViewModel<Item : Parent, Parent>(
     clickable: Boolean = true,
     deletable: Boolean = true,
     filterable: Boolean = true
-) : BaseObservable() {
+) : BaseObservable(), PositionHandler {
 
     var item: Item = item
         internal set
 
-    private var position: Int = NO_ITEM_POSITION
+    override var position: Int = NO_ITEM_POSITION
 
     private val mutClickEvent = SingleObservableField<Item>()
     internal val clickEvent: ObservableField<Item> = mutClickEvent
@@ -72,25 +72,9 @@ abstract class AdapterParentViewModel<Item : Parent, Parent>(
         return null as Void?
     }
 
-    @Throws(IllegalStateException::class)
-    fun getPosition(): Int {
-        if (position == NO_ITEM_POSITION) {
-            throw IllegalStateException("View has not initialized!")
-        }
-
-        return position
-    }
-
-    fun onPositionChanged(toPosition: Int) {
-        if (position != toPosition) {
-            onPositionChanged(fromPosition = position, toPosition = toPosition)
-            position = toPosition
-        }
-    }
-
-    protected open fun onPositionChanged(fromPosition: Int, toPosition: Int) {}
-
     open fun onRecycled() {}
+
+    override fun onPositionChanged(fromPosition: Int, toPosition: Int) {}
 
     internal fun areItemsTheSame(parent: Parent): Boolean {
         return try {

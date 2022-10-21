@@ -1,8 +1,10 @@
 package com.merseyside.merseyLib.features.adapters.racers.adapter
 
-import com.merseyside.adapters.single.SortedAdapter
-import com.merseyside.adapters.model.AdapterParentViewModel
+import com.merseyside.adapters.config.AdapterConfig
+import com.merseyside.adapters.config.config
 import com.merseyside.adapters.holder.TypedBindingHolder
+import com.merseyside.adapters.model.AdapterParentViewModel
+import com.merseyside.adapters.single.SimpleAdapter
 import com.merseyside.animators.template.SetTextFadeOutInAnimator
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
@@ -12,10 +14,9 @@ import com.merseyside.merseyLib.features.adapters.racers.model.CheckpointItemVie
 import com.merseyside.merseyLib.time.units.Millis
 import com.merseyside.merseyLib.time.units.compareTo
 import com.merseyside.utils.view.ext.setTextColorAttr
-import kotlinx.coroutines.CoroutineScope
 
-class RacersAdapter(scope: CoroutineScope) :
-    SortedAdapter<Checkpoint, CheckpointItemViewModel>(scope) {
+class RacersAdapter(config: AdapterConfig<Checkpoint, CheckpointItemViewModel>) :
+    SimpleAdapter<Checkpoint, CheckpointItemViewModel>(config) {
     override fun getLayoutIdForPosition(position: Int) = R.layout.item_checkpoint
     override fun getBindingVariable() = BR.viewModel
     override fun createItemViewModel(item: Checkpoint) = CheckpointItemViewModel(item)
@@ -58,5 +59,27 @@ class RacersAdapter(scope: CoroutineScope) :
         } else {
             R.attr.negative_text_color
         }
+    }
+
+    companion object {
+
+        operator fun invoke(configure: AdapterConfig<Checkpoint, CheckpointItemViewModel>.() -> Unit): RacersAdapter {
+            return RacersAdapter(config(configure))
+        }
+//        fun getConfig() = config<Checkpoint, CheckpointItemViewModel> {
+//            install(RacersSortFeature()) {
+//                comparator = object: Comparator<Checkpoint, CheckpointItemViewModel>() {
+//                    override fun compare(
+//                        model1: CheckpointItemViewModel,
+//                        model2: CheckpointItemViewModel
+//                    ): Int {
+//                        return model1.item.gap.compareTo(model2.item.gap)
+//                    }
+//
+//                }
+//            }
+//
+//            install(PositionFeature())
+//        }
     }
 }

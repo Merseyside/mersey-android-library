@@ -2,9 +2,9 @@
 
 package com.merseyside.adapters.delegates.composites
 
+import com.merseyside.adapters.config.AdapterConfig
 import com.merseyside.adapters.callback.OnItemSelectedListener
 import com.merseyside.adapters.callback.OnSelectEnabledListener
-import com.merseyside.adapters.delegates.DelegatesManager
 import com.merseyside.adapters.delegates.SimpleDelegatesManager
 import com.merseyside.adapters.interfaces.selectable.ISelectableAdapter
 import com.merseyside.adapters.interfaces.selectable.SelectableMode
@@ -15,12 +15,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
 abstract class SelectableCompositeAdapter<Parent, Model>(
-    scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
+    adapterConfig: AdapterConfig<Parent, Model> = AdapterConfig(),
     delegatesManager: SimpleDelegatesManager<Parent, Model> = SimpleDelegatesManager(),
     selectableMode: SelectableMode = SelectableMode.SINGLE,
     override var isAllowToCancelSelection: Boolean = selectableMode == SelectableMode.MULTIPLE,
     isSelectEnabled: Boolean = true,
-) : SortedCompositeAdapter<Parent, Model>(scope, delegatesManager),
+) : CompositeAdapter<Parent, Model>(adapterConfig, delegatesManager),
     ISelectableAdapter<Parent, Model>
         where Model : SelectableAdapterParentViewModel<out Parent, Parent> {
 
@@ -82,7 +82,7 @@ abstract class SelectableCompositeAdapter<Parent, Model>(
         }
     }
 
-    override suspend fun setModelSelected(model: Model?, isSelectedByUser: Boolean): Boolean {
+    override fun setModelSelected(model: Model?, isSelectedByUser: Boolean): Boolean {
         return if (super.setModelSelected(model, isSelectedByUser)) {
             recyclerView?.invalidateItemDecorations()
             true

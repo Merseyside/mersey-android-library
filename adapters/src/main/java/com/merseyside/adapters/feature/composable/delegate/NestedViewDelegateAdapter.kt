@@ -4,7 +4,6 @@ import com.merseyside.adapters.delegates.DelegatesManager
 import com.merseyside.adapters.feature.composable.view.base.SCV
 import com.merseyside.adapters.feature.composable.view.base.StyleableComposingView
 import com.merseyside.adapters.feature.composable.adapter.ViewCompositeAdapter
-import com.merseyside.adapters.feature.composable.model.ViewAdapterViewModel
 import com.merseyside.adapters.feature.style.ComposingStyle
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.interfaces.delegate.INestedDelegateAdapter
@@ -13,7 +12,7 @@ import com.merseyside.adapters.model.NestedAdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 
 abstract class NestedViewDelegateAdapter<View, Style, Model, InnerParent, InnerModel, InnerAdapter> :
-    PrioritizedViewDelegateAdapter<View, Style, Model>(),
+    ViewDelegateAdapter<View, Style, Model>(),
     INestedDelegateAdapter<View, SCV, Model, InnerParent, InnerAdapter>
         where View : StyleableComposingView<Style>,
               InnerParent : SCV,

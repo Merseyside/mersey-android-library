@@ -2,6 +2,7 @@
 
 package com.merseyside.adapters.single
 
+import com.merseyside.adapters.config.AdapterConfig
 import com.merseyside.adapters.callback.OnItemSelectedListener
 import com.merseyside.adapters.callback.OnSelectEnabledListener
 import com.merseyside.adapters.interfaces.selectable.ISelectableAdapter
@@ -10,13 +11,14 @@ import com.merseyside.adapters.model.SelectableAdapterViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.isActive
 
 abstract class SelectableAdapter<Item, Model>(
-    scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
+    adapterConfig: AdapterConfig<Item, Model> = AdapterConfig(),
     selectableMode: SelectableMode = SelectableMode.SINGLE,
     override var isAllowToCancelSelection: Boolean = selectableMode == SelectableMode.MULTIPLE,
     isSelectEnabled: Boolean = true
-) : SortedAdapter<Item, Model>(scope), ISelectableAdapter<Item, Model>
+) : SimpleAdapter<Item, Model>(adapterConfig), ISelectableAdapter<Item, Model>
         where Model : SelectableAdapterViewModel<Item> {
 
     internal var groupAdapter: Boolean = false
@@ -79,7 +81,7 @@ abstract class SelectableAdapter<Item, Model>(
 
     override var isGroupAdapter: Boolean = false
 
-    override suspend fun setModelSelected(model: Model?, isSelectedByUser: Boolean): Boolean {
+    override fun setModelSelected(model: Model?, isSelectedByUser: Boolean): Boolean {
         return if (super.setModelSelected(model, isSelectedByUser)) {
             recyclerView?.invalidateItemDecorations()
             true

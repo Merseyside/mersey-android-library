@@ -4,11 +4,13 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import com.merseyside.adapters.extensions.onClick
+import com.merseyside.adapters.feature.sorting.Sorting
 import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.application.base.BaseSampleFragment
 import com.merseyside.merseyLib.databinding.FragmentDelegateBinding
+import com.merseyside.merseyLib.features.adapters.colors.adapter.AnimalsComparator
 import com.merseyside.merseyLib.features.adapters.delegate.adapter.AnimalsAdapter
 import com.merseyside.merseyLib.features.adapters.delegate.di.DaggerDelegateComponent
 import com.merseyside.merseyLib.features.adapters.delegate.di.DelegateModule
@@ -20,7 +22,11 @@ import com.merseyside.utils.view.ext.onClick
 
 class DelegateFragment : BaseSampleFragment<FragmentDelegateBinding, DelegateViewModel>() {
 
-    private val adapter = AnimalsAdapter().apply {
+    private val adapter = AnimalsAdapter {
+        Sorting {
+            comparator = AnimalsComparator()
+        }
+    }.apply {
         onClick { showMsg("Clicked!") }
     }
 

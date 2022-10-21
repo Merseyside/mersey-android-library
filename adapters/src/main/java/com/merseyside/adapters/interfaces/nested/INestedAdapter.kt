@@ -1,11 +1,12 @@
+@file:OptIn(InternalAdaptersApi::class)
+
 package com.merseyside.adapters.interfaces.nested
 
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.base.BaseAdapter
-import com.merseyside.adapters.feature.filter.interfaces.Filterable
 import com.merseyside.adapters.interfaces.selectable.ISelectableAdapter
-import com.merseyside.adapters.interfaces.sorted.ISortedAdapter
+import com.merseyside.adapters.listManager.AdapterNestedListManager
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
@@ -17,7 +18,14 @@ interface INestedAdapter<Parent, Model, InnerData, InnerAdapter> : ISelectableAd
         where Model : NestedAdapterParentViewModel<out Parent, Parent, InnerData>,
               InnerAdapter : BaseAdapter<InnerData, out AdapterParentViewModel<out InnerData, InnerData>> {
 
+//    @InternalAdaptersApi
+//    val provideInnerAdapter: (Model) -> InnerAdapter
+//    @InternalAdaptersApi
+//    val removeInnerAdapter: (Model) -> InnerAdapter
+
     var adapterList: MutableList<Pair<Model, InnerAdapter>>
+
+    override val delegate: AdapterNestedListManager<Parent, Model, InnerData, InnerAdapter>
 
     fun initNestedAdapter(model: Model): InnerAdapter
     fun getNestedView(binding: ViewDataBinding): RecyclerView?

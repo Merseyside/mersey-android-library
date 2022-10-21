@@ -8,7 +8,7 @@ import com.merseyside.adapters.model.NestedAdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 
 abstract class NestedDelegateAdapter<Item : Parent, Parent, Model, Data, InnerAdapter>
-    : PrioritizedDelegateAdapter<Item, Parent, Model>(),
+    : DelegateAdapter<Item, Parent, Model>(),
     INestedDelegateAdapter<Item, Parent, Model, Data, InnerAdapter>
         where Model : NestedAdapterParentViewModel<Item, Parent, Data>,
               InnerAdapter : BaseAdapter<Data, out AdapterParentViewModel<out Data, Data>> {

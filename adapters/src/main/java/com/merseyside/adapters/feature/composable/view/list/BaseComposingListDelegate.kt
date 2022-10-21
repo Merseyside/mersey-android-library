@@ -10,10 +10,8 @@ import com.merseyside.adapters.extensions.onClick
 import com.merseyside.adapters.feature.composable.view.base.SCV
 import com.merseyside.adapters.feature.composable.adapter.ViewCompositeAdapter
 import com.merseyside.adapters.feature.composable.delegate.NestedViewDelegateAdapter
-import com.merseyside.adapters.feature.composable.model.ViewAdapterViewModel
 import com.merseyside.adapters.feature.composable.view.list.simple.ComposingList
 import com.merseyside.adapters.feature.composable.view.list.simple.ComposingListStyle
-import com.merseyside.adapters.feature.composable.view.selectable.CSV
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi

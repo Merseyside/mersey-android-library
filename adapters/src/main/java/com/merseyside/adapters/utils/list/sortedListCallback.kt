@@ -1,10 +1,13 @@
+@file:OptIn(InternalAdaptersApi::class)
+
 package com.merseyside.adapters.utils.list
 
 import androidx.recyclerview.widget.RecyclerView
-import com.merseyside.adapters.model.ComparableAdapterParentViewModel
+import com.merseyside.adapters.model.AdapterParentViewModel
+import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.merseyLib.kotlin.utils.getMinMax
 
-internal fun <Parent, Model : ComparableAdapterParentViewModel<out Parent, Parent>> createSortedListCallback(
+internal fun <Parent, Model : AdapterParentViewModel<out Parent, Parent>> createSortedListCallback(
     adapter: RecyclerView.Adapter<*>,
     models: () -> List<Model>,
     comparator: (model1: Model, model2: Model) -> Int

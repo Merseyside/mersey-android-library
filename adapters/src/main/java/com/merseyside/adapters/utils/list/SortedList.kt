@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.ListUpdateCallback
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 import com.merseyside.adapters.utils.runWithDefault
+import com.merseyside.merseyLib.kotlin.logger.log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -25,7 +26,6 @@ import kotlinx.coroutines.withContext
  */
 class SortedList<T> @JvmOverloads constructor(
     private val mTClass: Class<T>,
-    callback: Callback<T>,
     initialCapacity: Int = MIN_CAPACITY
 ) {
     private var mData: Array<T>
@@ -53,7 +53,7 @@ class SortedList<T> @JvmOverloads constructor(
      * The callback instance that controls the behavior of the SortedList and get notified when
      * changes happen.
      */
-    private var mCallback: Callback<T>
+    private lateinit var mCallback: Callback<T>
     private var mBatchedCallback: BatchedCallback<T>? = null
     private var mSize: Int
     /**
@@ -71,8 +71,11 @@ class SortedList<T> @JvmOverloads constructor(
      */
     init {
         mData = java.lang.reflect.Array.newInstance(mTClass, initialCapacity) as Array<T>
-        mCallback = callback
         mSize = 0
+    }
+
+    fun setCallback(callback: Callback<T>) {
+        mCallback = callback
     }
 
     fun getAll(): List<T> {
@@ -367,7 +370,7 @@ class SortedList<T> @JvmOverloads constructor(
     /**
      * This method assumes that newItems are sorted and deduplicated.
      */
-    private suspend fun merge(newData: Array<T>, newDataSize: Int) = runWithDefault {
+    private suspend fun merge(newData: Array<T>, newDataSize: Int) {
         val forceBatchedUpdates = mCallback !is BatchedCallback<*>
         if (forceBatchedUpdates) {
             beginBatchedUpdates()

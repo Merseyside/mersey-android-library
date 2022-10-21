@@ -1,15 +1,27 @@
 package com.merseyside.merseyLib.features.adapters.delegate.adapter
 
-import com.merseyside.adapters.delegates.composites.SortedCompositeAdapter
+import com.merseyside.adapters.config.AdapterConfig
+import com.merseyside.adapters.config.config
+import com.merseyside.adapters.delegates.composites.CompositeAdapter
 import com.merseyside.merseyLib.features.adapters.delegate.entity.Animal
 import com.merseyside.merseyLib.features.adapters.delegate.model.AnimalItemViewModel
 
-class AnimalsAdapter: SortedCompositeAdapter<Animal, AnimalItemViewModel<out Animal>>() {
+class AnimalsAdapter(
+    adapterConfig: AdapterConfig<Animal, AnimalItemViewModel<out Animal>>
+) : CompositeAdapter<Animal, AnimalItemViewModel<out Animal>>(adapterConfig) {
 
     init {
         delegatesManager.addDelegates(
             CatDelegateAdapter(),
             DogDelegateAdapter()
         )
+    }
+
+    companion object {
+        operator fun invoke(
+            configure: AdapterConfig<Animal, AnimalItemViewModel<out Animal>>.() -> Unit
+        ): AnimalsAdapter {
+            return AnimalsAdapter(config(configure))
+        }
     }
 }

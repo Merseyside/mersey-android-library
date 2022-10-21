@@ -11,7 +11,7 @@ abstract class SelectableAdapterParentViewModel<Item : Parent, Parent>(
     clickable: Boolean = true,
     deletable: Boolean = true,
     filterable: Boolean = true
-) : ComparableAdapterParentViewModel<Item, Parent>(
+) : AdapterParentViewModel<Item, Parent>(
     item, clickable, deletable, filterable
 ) {
 

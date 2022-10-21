@@ -3,32 +3,40 @@
 package com.merseyside.adapters.base
 
 import androidx.recyclerview.widget.RecyclerView
+import com.merseyside.adapters.config.AdapterConfig
+import com.merseyside.adapters.config.delegate
+import com.merseyside.adapters.base.config.hasFeature
+import com.merseyside.adapters.config.workManager
 import com.merseyside.adapters.callback.HasOnItemClickListener
 import com.merseyside.adapters.callback.OnItemClickListener
-import com.merseyside.adapters.feature.filter.delegate.FilterListChangeDelegate
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.interfaces.base.IBaseAdapter
-import com.merseyside.adapters.listDelegates.ListChangeDelegate
+import com.merseyside.adapters.listManager.AdapterListManager
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.merseyLib.kotlin.coroutines.CoroutineQueue
 import com.merseyside.merseyLib.kotlin.logger.ILogger
-import kotlinx.coroutines.CoroutineScope
+import com.merseyside.utils.reflection.ReflectionUtils
 import kotlinx.coroutines.Job
 
+@Suppress("LeakingThis")
 abstract class BaseAdapter<Parent, Model>(
-    val scope: CoroutineScope
+    open val adapterConfig: AdapterConfig<Parent, Model>,
 ) : RecyclerView.Adapter<TypedBindingHolder<Model>>(),
     HasOnItemClickListener<Parent>, IBaseAdapter<Parent, Model>, ILogger
         where Model : AdapterParentViewModel<out Parent, Parent> {
 
-    internal val workManager = CoroutineQueue<Any, Unit>(scope = scope)
+    override val workManager: CoroutineQueue<Any, Unit> by adapterConfig.workManager()
+
+    override val models: List<Model>
+        get() = delegate.modelList
+
+    override val delegate: AdapterListManager<Parent, Model> by adapterConfig.delegate()
+
 
     @InternalAdaptersApi
     override val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>
         get() = this
-
-    override val hashMap: MutableMap<Any, Model> by lazy { mutableMapOf() }
 
     protected var isRecyclable: Boolean = true
 
@@ -44,8 +52,17 @@ abstract class BaseAdapter<Parent, Model>(
         }
     }
 
-    internal abstract val defaultDelegate: ListChangeDelegate<Parent, Model>
-    internal abstract val filterDelegate: FilterListChangeDelegate<Parent, Model>
+    override val modelClass: Class<Model> by lazy {
+        ReflectionUtils.getGenericParameterClass(
+            this.javaClass,
+            BaseAdapter::class.java,
+            1
+        ) as Class<Model>
+    }
+
+    init {
+        adapterConfig.initAdapterWithConfig(this)
+    }
 
     internal abstract fun createModel(item: Parent): Model
 
@@ -58,9 +75,12 @@ abstract class BaseAdapter<Parent, Model>(
         super.onAttachedToRecyclerView(recyclerView)
     }
 
+    override fun getItemCount(): Int {
+        return delegate.getItemCount()
+    }
+
     override fun onBindViewHolder(holder: TypedBindingHolder<Model>, position: Int) {
         val model = getModelByPosition(position)
-        model.onPositionChanged(position)
         bindModel(holder, model, position)
 
         bindItemList.add(model)
@@ -104,6 +124,10 @@ abstract class BaseAdapter<Parent, Model>(
 
     open fun removeListeners() {
         removeAllClickListeners()
+    }
+
+    override fun hasFeature(key: String): Boolean {
+        return adapterConfig.hasFeature(key)
     }
 
     override val tag: String = "BaseAdapter"

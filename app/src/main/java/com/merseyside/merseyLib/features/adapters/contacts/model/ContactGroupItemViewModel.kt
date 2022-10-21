@@ -10,10 +10,6 @@ class ContactGroupItemViewModel(
         return item.group == other.group
     }
 
-    override fun compareTo(other: ContactGroup): Int {
-        return item.group.compareTo(other.group)
-    }
-
     override fun getNestedData(): List<String> {
         return item.contacts
     }

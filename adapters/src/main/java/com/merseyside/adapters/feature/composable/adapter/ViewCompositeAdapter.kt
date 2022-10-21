@@ -1,5 +1,6 @@
 package com.merseyside.adapters.feature.composable.adapter
 
+import com.merseyside.adapters.config.AdapterConfig
 import com.merseyside.adapters.delegates.composites.CompositeAdapter
 import com.merseyside.adapters.feature.composable.view.base.SCV
 import com.merseyside.adapters.feature.composable.delegate.ViewDelegatesManager
@@ -10,9 +11,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
 open class ViewCompositeAdapter<Parent, Model>(
-    scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
+    adapterConfig: AdapterConfig<Parent, Model> = AdapterConfig(),
     override val delegatesManager: ViewDelegatesManager<Parent, Model> = ViewDelegatesManager()
-) : CompositeAdapter<Parent, Model>(scope, delegatesManager)
+) : CompositeAdapter<Parent, Model>(adapterConfig, delegatesManager)
         where Parent: SCV,
               Model : AdapterParentViewModel<out Parent, Parent> {
 

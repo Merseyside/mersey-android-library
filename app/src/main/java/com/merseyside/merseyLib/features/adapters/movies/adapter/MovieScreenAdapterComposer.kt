@@ -10,7 +10,6 @@ import com.merseyside.adapters.extensions.onItemSelected
 import com.merseyside.adapters.feature.composable.view.base.SCV
 import com.merseyside.adapters.feature.composable.SimpleAdapterComposer
 import com.merseyside.adapters.feature.composable.adapter.SimpleViewCompositeAdapter
-import com.merseyside.adapters.feature.composable.adapter.ViewCompositeAdapter
 import com.merseyside.adapters.feature.composable.delegate.ViewDelegateAdapter
 import com.merseyside.adapters.feature.composable.dsl.context.compose
 import com.merseyside.adapters.feature.composable.model.ViewAdapterViewModel
@@ -155,7 +154,7 @@ class MovieScreenAdapterComposer(
     init {
         invalidateAsync()
 
-        adapter.scope.launchDelayed(Seconds(2).millis) {
+        adapter.adapterConfig.coroutineScope.launchDelayed(Seconds(2).millis) {
             val mld = MutableLiveData("some data")
             addTextDataSource(mld)
         }

@@ -6,26 +6,34 @@ import android.annotation.SuppressLint
 import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.callback.HasOnItemClickListener
+import com.merseyside.adapters.feature.positioning.PositionFeature
 import com.merseyside.adapters.holder.TypedBindingHolder
-import com.merseyside.adapters.listDelegates.interfaces.AdapterListChangeDelegate
+import com.merseyside.adapters.listManager.AdapterListManager
 import com.merseyside.adapters.model.AdapterParentViewModel
+import com.merseyside.adapters.modelList.ModelListCallback
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.UpdateRequest
+import com.merseyside.merseyLib.kotlin.coroutines.CoroutineQueue
+import com.merseyside.merseyLib.kotlin.extensions.isZero
 import com.merseyside.utils.measureAndLogTime
 import kotlinx.coroutines.Job
+import kotlin.math.max
+import kotlin.math.min
 
 @SuppressLint("NotifyDataSetChanged")
 interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
-    HasOnItemClickListener<Parent>
+    HasOnItemClickListener<Parent>, ModelListCallback<Model>
         where Model : AdapterParentViewModel<out Parent, Parent> {
 
+    val workManager: CoroutineQueue<Any, Unit>
+
+    val models: List<Model>
+
     @InternalAdaptersApi
-    val delegate: AdapterListChangeDelegate<Parent, Model>
+    val delegate: AdapterListManager<Parent, Model>
 
     @InternalAdaptersApi
     val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>
-
-    val hashMap: MutableMap<Any, Model>
 
     @InternalAdaptersApi
     val callbackClick: (Parent) -> Unit
@@ -36,16 +44,15 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
     }
 
     suspend fun add(item: Parent): Model? {
-        return delegate.add(listOf(item)).firstOrNull()
+        return delegate.add(item)
     }
-
 
     fun addAsync(items: List<Parent>, onComplete: (Unit) -> Unit = {}) {
         doAsync(onComplete) { add(items) }
     }
 
     /**
-     * Delegates items adding to [AdapterListChangeDelegate]
+     * Delegates items adding to [AdapterListManager]
      * @return Added models
      */
     suspend fun add(items: List<Parent>) {
@@ -57,7 +64,11 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
     }
 
     suspend fun addOrUpdate(items: List<Parent>) {
-        delegate.addOrUpdate(items)
+        if (delegate.getItemCount().isZero()) {
+            add(items)
+        } else {
+            update(items)
+        }
     }
 
     fun updateAsync(updateRequest: UpdateRequest<Parent>, provideResult: (Boolean) -> Unit = {}) {
@@ -79,21 +90,10 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
     }
 
     @InternalAdaptersApi
-    override suspend fun updateModel(model: Model, item: Parent): Boolean {
-        val payload = model.payload(item)
-        return if (containsModel(model)) {
-            notifyModelUpdated(model, payload)
-            true
-        } else false
-    }
-
-    @InternalAdaptersApi
     @CallSuper
     suspend fun onModelCreated(model: Model) {
         model.clickEvent.observe(callbackClick)
     }
-
-    suspend fun notifyModelUpdated(model: Model, payloads: List<AdapterParentViewModel.Payloadable>)
 
     /**
      * Removes model by item
@@ -118,6 +118,41 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
         return delegate.remove(items)
     }
 
+    @CallSuper
+    override fun onInserted(models: List<Model>, position: Int, count: Int) {
+        if (count == 1) {
+            adapter.notifyItemInserted(position)
+        } else {
+            adapter.notifyItemRangeInserted(position, count)
+        }
+
+        notifyPositionsChanged(position)
+    }
+
+    @CallSuper
+    override fun onRemoved(models: List<Model>, position: Int, count: Int) {
+        if (count == 1) {
+            adapter.notifyItemRemoved(position)
+        } else {
+            adapter.notifyItemRangeRemoved(position, count)
+        }
+
+        notifyPositionsChanged(position)
+    }
+
+    override fun onChanged(
+        model: Model,
+        position: Int,
+        payloads: List<AdapterParentViewModel.Payloadable>
+    ) {
+        adapter.notifyItemChanged(position)
+    }
+
+    override fun onMoved(fromPosition: Int, toPosition: Int) {
+        adapter.notifyItemMoved(fromPosition, toPosition)
+        notifyPositionsChanged(toPosition, fromPosition)
+    }
+
 
     fun notifyAdapterRemoved() {}
 
@@ -129,7 +164,8 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
     fun onPayloadable(
         holder: TypedBindingHolder<Model>,
         payloads: List<AdapterParentViewModel.Payloadable>
-    ) {}
+    ) {
+    }
 
     fun getItemCount(): Int
 
@@ -140,10 +176,8 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
     }
 
     fun getModelByPosition(position: Int): Model {
-        return models[position]
+        return delegate.getModelByPosition(position)
     }
-
-    suspend fun getPositionOfModel(model: Model): Int
 
     fun getModelByItemAsync(item: Parent, onComplete: (Model?) -> Unit) {
         doAsync(onComplete) { getModelByItem(item) }
@@ -167,8 +201,8 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
     }
 
     fun find(item: Parent): Model? {
-        return models.find {
-            it.areItemsTheSame(item)
+        return models.find { model ->
+            model.areItemsTheSame(item)
         }
     }
 
@@ -184,7 +218,7 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
     /**
      * @return true if modelList has items else - false
      */
-    fun isEmpty(): Boolean = models.isEmpty()
+    fun isEmpty(): Boolean = getItemCount().isZero()
 
     fun isNotEmpty(): Boolean = !isEmpty()
 
@@ -207,11 +241,79 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
     }
 
     fun getAll(): List<Parent> {
-        return models.map { it.item }
+        return models.map { model -> model.item }
+    }
+
+    suspend fun removeAll() {
+        delegate.clear()
+        adapter.notifyDataSetChanged()
+    }
+
+    suspend fun getPositionOfModel(model: Model): Int {
+        return delegate.getPositionOfModel(model)
     }
 
     fun <Result> doAsync(
         provideResult: (Result) -> Unit = {},
         work: suspend IBaseAdapter<Parent, Model>.() -> Result,
     ): Job?
+
+    /* Position */
+
+    fun addAsync(position: Int, item: Parent, onComplete: (Unit) -> Unit) {
+        doAsync(onComplete) { add(position, item) }
+    }
+
+    suspend fun add(position: Int, item: Parent) {
+        delegate.add(position, item)
+    }
+
+    fun addAsync(position: Int, items: List<Parent>, onComplete: (Unit) -> Unit) {
+        doAsync(onComplete) { add(position, items) }
+    }
+
+    suspend fun add(position: Int, items: List<Parent>) {
+        delegate.add(position, items)
+    }
+
+    suspend fun addBefore(beforeItem: Parent, item: Parent) {
+        val position = getPositionOfItem(beforeItem)
+        add(position, item)
+    }
+
+    suspend fun addBefore(beforeItem: Parent, items: List<Parent>) {
+        val position = getPositionOfItem(beforeItem)
+        add(position, items)
+    }
+
+    suspend fun addAfter(afterItem: Parent, item: Parent) {
+        val position = getPositionOfItem(afterItem)
+        add(position + 1, item)
+    }
+
+    suspend fun addAfter(afterItem: Parent, item: List<Parent>) {
+        val position = getPositionOfItem(afterItem)
+        add(position + 1, item)
+    }
+
+    fun notifyPositionsChanged(newPosition: Int, oldPosition: Int = -1) {
+        if (hasFeature(PositionFeature.key)) {
+            val range = calculateChangedPositionsRange(newPosition, oldPosition)
+            for (index in range) {
+                models[index].onPositionChanged(index)
+            }
+        }
+    }
+
+    fun calculateChangedPositionsRange(newPosition: Int, oldPosition: Int = -1): IntRange {
+        return if (oldPosition == -1) {
+            newPosition..models.lastIndex
+        } else {
+            min(oldPosition, newPosition).. max(oldPosition, newPosition)
+        }
+    }
+
+    fun hasFeature(key: String): Boolean
+
+    val modelClass: Class<Model>
 }

@@ -1,19 +1,19 @@
-@file:OptIn(InternalAdaptersApi::class)
 @file:Suppress("UNCHECKED_CAST")
+@file:OptIn(InternalAdaptersApi::class)
 
 package com.merseyside.adapters.interfaces.selectable
 
 import com.merseyside.adapters.callback.HasOnItemSelectedListener
 import com.merseyside.adapters.callback.OnItemSelectedListener
 import com.merseyside.adapters.callback.OnSelectEnabledListener
-import com.merseyside.adapters.interfaces.sorted.ISortedAdapter
+import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.model.SelectableAdapterParentViewModel
 import com.merseyside.adapters.single.SelectableAdapter
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.merseyLib.kotlin.logger.Logger
 
 interface ISelectableAdapter<Parent, Model>
-    : ISortedAdapter<Parent, Model>, HasOnItemSelectedListener<Parent>
+    : IBaseAdapter<Parent, Model>, HasOnItemSelectedListener<Parent>
         where Model : SelectableAdapterParentViewModel<out Parent, Parent> {
 
     var selectableMode: SelectableMode
@@ -51,17 +51,16 @@ interface ISelectableAdapter<Parent, Model>
         model.selectEvent.observe(internalOnSelect)
     }
 
-    override suspend fun addModels(models: List<Model>) {
-        val isNoData = isEmpty()
-        super.addModels(models)
-        if (isNoData) {
+    override fun onInserted(models: List<Model>, position: Int, count: Int) {
+        super.onInserted(models, position, count)
+        if (getItemCount() > count) {
             if (isSelectEnabled && findSelectedItems().isEmpty()) {
                 selectFirstSelectableItem()
             }
         }
     }
 
-    suspend fun selectFirstSelectableItem(force: Boolean = false) {
+    fun selectFirstSelectableItem(force: Boolean = false) {
         if (force || (!isAllowToCancelSelection && !isGroupAdapter) || selectFirstOnAdd) {
             models.forEach { item ->
                 if (setModelSelected(item)) return
@@ -119,7 +118,7 @@ interface ISelectableAdapter<Parent, Model>
         return item != null && item.isSelectable
     }
 
-    suspend fun setModelSelected(model: Model?, isSelectedByUser: Boolean = false): Boolean {
+    fun setModelSelected(model: Model?, isSelectedByUser: Boolean = false): Boolean {
         return if (model != null && canModelBeSelected(model)) {
             if (!model.isSelected) {
                 if (selectableMode == SelectableMode.SINGLE) {
