@@ -19,15 +19,6 @@ abstract class NestedAdapter<Item, Model, Data, InnerAdapter>(
         where Model : NestedAdapterViewModel<Item, Data>,
               InnerAdapter : BaseAdapter<Data, out AdapterParentViewModel<out Data, Data>> {
 
-//    override val provideInnerAdapter: (Model) -> InnerAdapter = { model ->
-//        getNestedAdapterByModel(model)
-//    }
-
-//    @InternalAdaptersApi
-//    override val removeInnerAdapter: (Model) -> InnerAdapter = { model ->
-//        removeNestedAdapterByModel(model)
-//    }
-
     override var adapterList: MutableList<Pair<Model, InnerAdapter>> = ArrayList()
 
     @InternalAdaptersApi

@@ -22,28 +22,13 @@ class SortedModelList<Parent, Model : VM<Parent>>(
 
             override fun onRemoved(position: Int, count: Int) {
                 listCallback.onRemoved(emptyList(), position, count)
-//                for (i in position until models().size) {
-//                    models()[i].onPositionChanged(i)
-//                }
-//
-//                adapter.notifyItemRangeRemoved(position, count)
             }
 
             override fun onMoved(fromPosition: Int, toPosition: Int) {
                 listCallback.onMoved(fromPosition, toPosition)
-//                val minMax = getMinMax(fromPosition, toPosition)
-//
-//                for (i in minMax.first..minMax.second) {
-//                    models()[i].onPositionChanged(i)
-//                }
-//
-//                adapter.notifyItemMoved(fromPosition, toPosition)
             }
 
-            override fun onChanged(position: Int, count: Int) {
-                //listCallback.onChanged(getModels()[position], position)
-//                adapter.notifyItemRangeChanged(position, count)
-            }
+            override fun onChanged(position: Int, count: Int) {}
 
             override fun compare(item1: Model, item2: Model): Int {
                 return comparator.compare(item1, item2)

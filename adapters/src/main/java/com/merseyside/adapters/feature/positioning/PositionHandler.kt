@@ -6,15 +6,6 @@ interface PositionHandler {
 
     var position: Int
 
-//    @Throws(IllegalStateException::class)
-//    fun getPosition(): Int {
-//        if (position == AdapterParentViewModel.NO_ITEM_POSITION) {
-//            throw IllegalStateException("View has not initialized!")
-//        }
-//
-//        return position
-//    }
-
     @InternalAdaptersApi
     fun onPositionChanged(toPosition: Int) {
         if (position != toPosition) {
