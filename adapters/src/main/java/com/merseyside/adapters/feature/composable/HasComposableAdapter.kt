@@ -1,10 +1,10 @@
 package com.merseyside.adapters.feature.composable
 
-import com.merseyside.adapters.feature.composable.adapter.ViewCompositeAdapter
-import com.merseyside.adapters.feature.composable.delegate.ViewDelegateAdapter
-import com.merseyside.adapters.feature.composable.dsl.context.ComposeContext
-import com.merseyside.adapters.feature.composable.model.ViewAdapterViewModel
-import com.merseyside.adapters.feature.composable.view.base.SCV
+import com.merseyside.adapters.compose.adapter.ViewCompositeAdapter
+import com.merseyside.adapters.compose.delegate.ViewDelegateAdapter
+import com.merseyside.adapters.compose.dsl.context.ComposeContext
+import com.merseyside.adapters.compose.model.ViewAdapterViewModel
+import com.merseyside.adapters.compose.view.base.SCV
 import com.merseyside.adapters.utils.runWithDefault
 
 interface HasComposableAdapter<Model>

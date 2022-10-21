@@ -7,18 +7,18 @@ import androidx.lifecycle.MutableLiveData
 import com.merseyside.adapters.decorator.SimpleItemOffsetDecorator
 import com.merseyside.adapters.extensions.onClick
 import com.merseyside.adapters.extensions.onItemSelected
-import com.merseyside.adapters.feature.composable.view.base.SCV
-import com.merseyside.adapters.feature.composable.SimpleAdapterComposer
-import com.merseyside.adapters.feature.composable.adapter.SimpleViewCompositeAdapter
-import com.merseyside.adapters.feature.composable.delegate.ViewDelegateAdapter
-import com.merseyside.adapters.feature.composable.dsl.context.compose
-import com.merseyside.adapters.feature.composable.model.ViewAdapterViewModel
-import com.merseyside.adapters.feature.composable.view.list.selectable.ComposingSelectableList
-import com.merseyside.adapters.feature.composable.view.list.selectable.ComposingSelectableListDelegate
-import com.merseyside.adapters.feature.composable.view.list.simple.ComposingListDelegate
-import com.merseyside.adapters.feature.composable.view.text.ComposingText as Text
-import com.merseyside.adapters.feature.composable.view.text.ComposingTextDelegate
-import com.merseyside.adapters.feature.style.ComposingStyle
+import com.merseyside.adapters.compose.view.base.SCV
+import com.merseyside.adapters.compose.SimpleAdapterComposer
+import com.merseyside.adapters.compose.adapter.SimpleViewCompositeAdapter
+import com.merseyside.adapters.compose.delegate.ViewDelegateAdapter
+import com.merseyside.adapters.compose.dsl.context.compose
+import com.merseyside.adapters.compose.model.ViewAdapterViewModel
+import com.merseyside.adapters.compose.view.list.selectable.ComposingSelectableList
+import com.merseyside.adapters.compose.view.list.selectable.ComposingSelectableListDelegate
+import com.merseyside.adapters.compose.view.list.simple.ComposingListDelegate
+import com.merseyside.adapters.compose.view.text.ComposingText
+import com.merseyside.adapters.compose.view.text.ComposingTextDelegate
+import com.merseyside.adapters.compose.style.ComposingStyle
 import com.merseyside.merseyLib.R
 import kotlin.collections.List as ArrayList
 import com.merseyside.merseyLib.kotlin.extensions.launchDelayed
@@ -42,7 +42,7 @@ class MovieScreenAdapterComposer(
         )
 
     override suspend fun composeScreen() = compose {
-        Text("shrinked") {
+        ComposingText("shrinked") {
             style = {
                 width = 150
                 height = 400
@@ -52,7 +52,7 @@ class MovieScreenAdapterComposer(
         }
 
         if (dataLiveData?.value != null) {
-            Text("data") {
+            ComposingText("data") {
                 text = "Text from data source ${dataLiveData?.value}"
             }
         }
@@ -62,7 +62,7 @@ class MovieScreenAdapterComposer(
                 onItemSelected { item, isSelected, _ -> isSelected.log("selected")}
             }
         ) {
-            Text("kek") {
+            ComposingText("kek") {
                 text = "lol"
             }
         }
@@ -81,45 +81,45 @@ class MovieScreenAdapterComposer(
                             }
                         ) {
 
-                            Text("text4_1") {
+                            ComposingText("text4_1") {
                                 style = { textColor = R.color.green }
                                 text = "text item 4_1"
                             }
 
-                            Text("text4_2") {
+                            ComposingText("text4_2") {
                                 style = { textColor = R.color.blue_primary }
                                 text = "text item 4_2 ${dataLiveData?.value ?: ""}"
                             }
                         }
 
-                        Text("text3_1") {
+                        ComposingText("text3_1") {
                             style = { textColor = R.color.green }
                             text = "text item 3_1"
                         }
 
-                        Text("text3_2") {
+                        ComposingText("text3_2") {
                             style = { textColor = R.color.blue_primary }
                             text = "text item 3_2 ${dataLiveData?.value ?: ""}"
                         }
                     }
 
-                    Text("text2_1") {
+                    ComposingText("text2_1") {
                         style = { textColor = R.color.green }
                         text = "text item 2_1"
                     }
 
-                    Text("text2_2") {
+                    ComposingText("text2_2") {
                         style = { textColor = R.color.blue_primary }
                         text = "text item 2_2 ${dataLiveData?.value ?: ""}"
                     }
                 }
 
-                Text("text1_1") {
+                ComposingText("text1_1") {
                     style = { textColor = R.color.green }
                     text = "text item 1_1"
                 }
 
-                Text("text1_2") {
+                ComposingText("text1_2") {
                     onClick { "click".log() }
                     style = { textColor = R.color.blue_primary }
                     text =
@@ -128,18 +128,18 @@ class MovieScreenAdapterComposer(
             }
 
 
-            Text("text1") {
+            ComposingText("text1") {
                 style = { textColor = R.color.green }
                 text = "text item 1"
             }
         }
 
-        Text("large") {
+        ComposingText("large") {
             style = { textSize = R.dimen.large_text_size }
             text = "large text size"
         }
 
-        Text("default") {
+        ComposingText("default") {
             text = "dafault text with background"
             style = { backgroundColor = R.color.green }
         }

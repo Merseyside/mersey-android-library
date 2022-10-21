@@ -8,8 +8,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import com.merseyside.adapters.callback.HasOnItemClickListener
 import com.merseyside.adapters.callback.OnItemClickListener
-import com.merseyside.adapters.feature.style.Styleable
-import com.merseyside.adapters.feature.style.StyleableItem
+import com.merseyside.adapters.compose.style.Styleable
+import com.merseyside.adapters.compose.style.StyleableItem
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.interfaces.delegate.IDelegateAdapter
 import com.merseyside.adapters.model.AdapterParentViewModel

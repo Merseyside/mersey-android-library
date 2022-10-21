@@ -4,8 +4,8 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.lifecycleScope
+import com.merseyside.adapters.compose.adapter.SimpleViewCompositeAdapter
 import com.merseyside.adapters.config.config
-import com.merseyside.adapters.feature.composable.adapter.SimpleViewCompositeAdapter
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.application.base.BaseSampleFragment
