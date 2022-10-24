@@ -12,17 +12,16 @@ import com.merseyside.adapters.compose.view.base.SCV
 import com.merseyside.adapters.compose.delegate.NestedViewDelegateAdapter
 import com.merseyside.adapters.compose.view.list.simple.ComposingList
 import com.merseyside.adapters.compose.view.list.simple.ComposingListStyle
-import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
+import com.merseyside.adapters.model.VM
 import com.merseyside.adapters.utils.InternalAdaptersApi
 
 abstract class BaseComposingListDelegate<View, Model, InnerParent, InnerModel, InnerAdapter>
     : NestedViewDelegateAdapter<View, ComposingListStyle, Model, InnerParent, InnerModel, InnerAdapter>()
-        where
-              View : ComposingList,
+        where View : ComposingList,
               Model : NestedAdapterParentViewModel<View, SCV, out InnerParent>,
               InnerParent: SCV,
-              InnerModel : AdapterParentViewModel<out InnerParent, InnerParent>,
+              InnerModel : VM<InnerParent>,
               InnerAdapter : ViewCompositeAdapter<InnerParent, out InnerModel> {
 
     override fun getLayoutIdForItem(viewType: Int) = R.layout.view_composing_list

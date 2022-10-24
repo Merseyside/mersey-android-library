@@ -129,7 +129,7 @@ interface ISelectableAdapter<Parent, Model>
                         if (selectedList.isNotEmpty()) {
                             with(selectedList.first()) {
                                 isSelected = false
-                                notifyAllSelectedListeners(
+                                notifyOnSelected(
                                     model.item,
                                     model.isSelected,
                                     isSelectedByUser = false
@@ -145,12 +145,12 @@ interface ISelectableAdapter<Parent, Model>
                 }
 
                 model.isSelected = true
-                notifyAllSelectedListeners(model.item, model.isSelected, isSelectedByUser)
+                notifyOnSelected(model.item, model.isSelected, isSelectedByUser)
             } else if (isAllowToCancelSelection) {
                 model.isSelected = false
                 selectedList.remove(model)
 
-                notifyAllSelectedListeners(model.item, model.isSelected, isSelectedByUser)
+                notifyOnSelected(model.item, model.isSelected, isSelectedByUser)
             }
             true
         } else {
@@ -160,7 +160,7 @@ interface ISelectableAdapter<Parent, Model>
 
     private fun notifyModelsSelected(models: List<Model>, isSelectedByUser: Boolean) {
         models.forEach { model ->
-            notifyAllSelectedListeners(
+            notifyOnSelected(
                 model.item,
                 model.isSelected,
                 isSelectedByUser

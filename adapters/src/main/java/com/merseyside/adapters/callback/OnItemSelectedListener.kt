@@ -22,7 +22,7 @@ interface HasOnItemSelectedListener<Item> {
         this.selectedListeners.remove(listener)
     }
 
-    fun notifyAllSelectedListeners(item: Item, isSelected: Boolean, isSelectedByUser: Boolean) {
+    fun notifyOnSelected(item: Item, isSelected: Boolean, isSelectedByUser: Boolean) {
         selectedListeners.forEach { listener ->
             listener.onSelected(item, isSelected, isSelectedByUser)
         }

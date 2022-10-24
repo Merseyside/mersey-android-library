@@ -17,5 +17,5 @@ abstract class AdapterComposer<Model>(
 }
 
 abstract class SimpleAdapterComposer(
-    viewLifecleOwner: LifecycleOwner
-): AdapterComposer<ViewAdapterViewModel>(viewLifecleOwner), HasSimpleComposableAdapter
+    viewLifecycleOwner: LifecycleOwner
+): AdapterComposer<ViewAdapterViewModel>(viewLifecycleOwner), HasSimpleComposableAdapter

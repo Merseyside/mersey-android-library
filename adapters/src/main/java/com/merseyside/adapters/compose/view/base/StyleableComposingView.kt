@@ -13,7 +13,9 @@ abstract class ComposingView(private val id: String) : Identifiable<String>,
     HasOnItemClickListener<ComposingView> {
     override fun getId() = id
 
-    override var clickListeners: MutableList<OnItemClickListener<ComposingView>> = ArrayList()
+    override val clickListeners: MutableList<OnItemClickListener<ComposingView>> by lazy {
+        ArrayList()
+    }
 
     @CallSuper
     open fun getStringBuilder(): StringBuilder {
@@ -34,13 +36,7 @@ abstract class ComposingView(private val id: String) : Identifiable<String>,
 
 abstract class StyleableComposingView<Style : ComposingStyle> (
     id: String
-) : ComposingView(id), StyleableItem<Style> {
-
-    override var style: Style.() -> Unit = {}
-        set(value) {
-            composingStyle.apply(value)
-        }
-}
+) : ComposingView(id), StyleableItem<Style>
 
 context(ComposeContext)
 fun <View : SCV> View.addView(): View {

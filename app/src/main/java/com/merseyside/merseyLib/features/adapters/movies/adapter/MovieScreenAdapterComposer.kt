@@ -16,7 +16,7 @@ import com.merseyside.adapters.compose.model.ViewAdapterViewModel
 import com.merseyside.adapters.compose.view.list.selectable.ComposingSelectableList
 import com.merseyside.adapters.compose.view.list.selectable.ComposingSelectableListDelegate
 import com.merseyside.adapters.compose.view.list.simple.ComposingListDelegate
-import com.merseyside.adapters.compose.view.text.ComposingText
+import com.merseyside.adapters.compose.view.text.ComposingText as Text
 import com.merseyside.adapters.compose.view.text.ComposingTextDelegate
 import com.merseyside.adapters.compose.style.ComposingStyle
 import com.merseyside.merseyLib.R
@@ -42,17 +42,18 @@ class MovieScreenAdapterComposer(
         )
 
     override suspend fun composeScreen() = compose {
-        ComposingText("shrinked") {
+        Text("shrinked",
             style = {
                 width = 150
                 height = 400
                 textColor = R.color.red
-            }
+            })
+        {
             text = "shrinked width text"
         }
 
         if (dataLiveData?.value != null) {
-            ComposingText("data") {
+            Text("data") {
                 text = "Text from data source ${dataLiveData?.value}"
             }
         }
@@ -62,7 +63,8 @@ class MovieScreenAdapterComposer(
                 onItemSelected { item, isSelected, _ -> isSelected.log("selected")}
             }
         ) {
-            ComposingText("kek") {
+            Text("kek") {
+                onClick { "clicked".log() }
                 text = "lol"
             }
         }
@@ -72,76 +74,75 @@ class MovieScreenAdapterComposer(
                 List("inner_list2") {
                     List("inner_list3") {
                         List("inner_list4",
+                            style = { margins = ComposingStyle.Margins(R.dimen.very_small_spacing) },
                             initList = {
-                                style = { margins = ComposingStyle.Margins(R.dimen.very_small_spacing) }
                                 decorator = SimpleItemOffsetDecorator(context, R.dimen.very_small_spacing)
                                 onClick { item ->
                                     "on item click $item".log()
                                 }
-                            }
-                        ) {
+                            }) {
 
-                            ComposingText("text4_1") {
-                                style = { textColor = R.color.green }
+                            Text("text4_1",
+                                style = { textColor = R.color.green }) {
                                 text = "text item 4_1"
                             }
 
-                            ComposingText("text4_2") {
-                                style = { textColor = R.color.blue_primary }
+                            Text("text4_2",
+                                style = { textColor = R.color.blue_primary }) {
                                 text = "text item 4_2 ${dataLiveData?.value ?: ""}"
                             }
                         }
 
-                        ComposingText("text3_1") {
-                            style = { textColor = R.color.green }
+                        Text("text3_1",
+                            style = { textColor = R.color.green }) {
                             text = "text item 3_1"
                         }
 
-                        ComposingText("text3_2") {
-                            style = { textColor = R.color.blue_primary }
+                        Text("text3_2",
+                            style = { textColor = R.color.blue_primary }) {
                             text = "text item 3_2 ${dataLiveData?.value ?: ""}"
                         }
                     }
 
-                    ComposingText("text2_1") {
-                        style = { textColor = R.color.green }
+                    Text("text2_1",
+                        style = { textColor = R.color.green }) {
                         text = "text item 2_1"
                     }
 
-                    ComposingText("text2_2") {
-                        style = { textColor = R.color.blue_primary }
+                    Text("text2_2",
+                        style = { textColor = R.color.blue_primary }) {
                         text = "text item 2_2 ${dataLiveData?.value ?: ""}"
                     }
                 }
 
-                ComposingText("text1_1") {
-                    style = { textColor = R.color.green }
+                Text("text1_1",
+                    style = { textColor = R.color.green }) {
                     text = "text item 1_1"
                 }
 
-                ComposingText("text1_2") {
+                Text("text1_2",
+                    style = { textColor = R.color.blue_primary }) {
                     onClick { "click".log() }
-                    style = { textColor = R.color.blue_primary }
                     text =
                         if (dataLiveData?.value == null) "text item 1_2" else "updated text item 1_2"
                 }
             }
 
 
-            ComposingText("text1") {
-                style = { textColor = R.color.green }
+            Text("text1",
+                style = { textColor = R.color.green }) {
                 text = "text item 1"
             }
         }
 
-        ComposingText("large") {
-            style = { textSize = R.dimen.large_text_size }
+        Text("large",
+            style = { textSize = R.dimen.large_text_size }) {
             text = "large text size"
         }
 
-        ComposingText("default") {
+        Text("default",
+            style = { backgroundColor = R.color.green }) {
             text = "dafault text with background"
-            style = { backgroundColor = R.color.green }
         }
     }
 

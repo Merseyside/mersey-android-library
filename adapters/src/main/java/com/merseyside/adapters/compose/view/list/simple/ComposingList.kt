@@ -11,22 +11,23 @@ import com.merseyside.adapters.compose.style.ComposingStyle
 
 open class ComposingList(
     id: String,
+    override val composingStyle: ComposingListStyle,
     open val viewList: List<SCV> = emptyList()
 ) : StyleableComposingView<ComposingListStyle>(id) {
 
     var decorator: RecyclerView.ItemDecoration? = null
-    override val composingStyle: ComposingListStyle = ComposingListStyle()
 
     companion object {
         context(ComposeContext) operator fun invoke(
             id: String,
+            style: ComposingListStyle.() -> Unit = {},
             initList: ComposingList.() -> Unit = {},
             contextInit: ListComposerContext.() -> Unit
         ): ComposingList {
             val listContext = list(contextInit)
             val views = listContext.views
 
-            return ComposingList(id, views)
+            return ComposingList(id, ComposingListStyle(style), views)
                 .apply(initList)
                 .addView()
         }
@@ -43,7 +44,7 @@ open class ComposingList(
 open class ComposingListStyle : ComposingStyle() {
 
     companion object {
-        operator fun invoke(init: ComposingStyle.() -> Unit): ComposingListStyle {
+        operator fun invoke(init: ComposingListStyle.() -> Unit): ComposingListStyle {
             return ComposingListStyle().apply(init)
         }
     }

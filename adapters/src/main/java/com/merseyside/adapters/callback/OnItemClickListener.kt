@@ -8,7 +8,7 @@ interface OnItemClickListener<Item> {
 }
 
 interface HasOnItemClickListener<Item> {
-    var clickListeners: MutableList<OnItemClickListener<Item>>
+    val clickListeners: MutableList<OnItemClickListener<Item>>
 
     fun setOnItemClickListener(listener: OnItemClickListener<Item>) {
         clickListeners.add(listener)
