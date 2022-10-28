@@ -1,5 +1,6 @@
 package com.merseyside.adapters.feature.filtering
 
+import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.config.AdapterConfig
 import com.merseyside.adapters.config.contract.FilterProvider
 import com.merseyside.adapters.config.feature.ConfigurableFeature
@@ -19,8 +20,11 @@ open class FilterFeature<Parent, Model> :
         adapterFilter = config.filter ?: throw NullPointerException("Pass filter instance")
     }
 
-    override fun install(adapter: IBaseAdapter<Parent, Model>) {
-        super.install(adapter)
+    override fun install(
+        adapterConfig: AdapterConfig<Parent, Model>,
+        adapter: BaseAdapter<Parent, Model>
+    ) {
+        super.install(adapterConfig, adapter)
         adapterFilter.workManager = adapter.workManager
     }
 

@@ -23,7 +23,8 @@ abstract class SimpleAdapter<Item, Model>(
     protected abstract fun createItemViewModel(item: Item): Model
 
     override fun bindModel(holder: TypedBindingHolder<Model>, model: Model, position: Int) {
-        bind(holder, model)
+        super.bindModel(holder, model, position)
+        holder.bind(getBindingVariable(), model)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TypedBindingHolder<Model> {
@@ -36,11 +37,6 @@ abstract class SimpleAdapter<Item, Model>(
 
     open fun getBindingHolder(binding: ViewDataBinding): TypedBindingHolder<Model> {
         return TypedBindingHolder(binding)
-    }
-
-    @CallSuper
-    internal open fun bind(holder: TypedBindingHolder<Model>, model: Model) {
-        holder.bind(getBindingVariable(), model)
     }
 
     override fun getItemViewType(position: Int): Int {

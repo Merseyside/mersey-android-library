@@ -7,7 +7,9 @@ import androidx.lifecycle.asLiveData
 import com.merseyside.adapters.feature.filtering.Filtering
 import com.merseyside.adapters.feature.filtering.ext.addAndApply
 import com.merseyside.adapters.feature.filtering.ext.removeAndApply
+import com.merseyside.adapters.feature.selecting.group.SelectingGroup
 import com.merseyside.adapters.feature.sorting.Sorting
+import com.merseyside.adapters.interfaces.selectable.SelectableMode
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.application.base.BaseSampleFragment
@@ -32,6 +34,10 @@ class ContactFragment : BaseSampleFragment<FragmentContactsBinding, ContactViewM
 
         Filtering {
             filter = contactsFilter
+        }
+
+        SelectingGroup {
+            selectableMode = SelectableMode.MULTIPLE
         }
     }
 

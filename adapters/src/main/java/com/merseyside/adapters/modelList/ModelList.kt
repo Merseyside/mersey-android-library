@@ -6,7 +6,27 @@ import com.merseyside.adapters.model.VM
 
 abstract class ModelList<Parent, Model : VM<Parent>> : List<Model>, ILogger {
 
-    internal lateinit var listCallback: ModelListCallback<Model>
+    internal val callbacks: MutableList<ModelListCallback<Model>> = ArrayList()
+
+    fun addModelListCallback(callback: ModelListCallback<Model>) {
+        callbacks.add(callback)
+    }
+
+    fun onInserted(models: List<Model>, position: Int, count: Int = 1) {
+        callbacks.forEach { it.onInserted(models, position, count) }
+    }
+
+    fun onRemoved(models: List<Model>, position: Int, count: Int = 1) {
+        callbacks.forEach { it.onRemoved(models, position, count) }
+    }
+
+    fun onChanged(model: Model, position: Int, payloads: List<AdapterParentViewModel.Payloadable>) {
+        callbacks.forEach { it.onChanged(model, position, payloads) }
+    }
+
+    fun onMoved(fromPosition: Int, toPosition: Int) {
+        callbacks.forEach { it.onMoved(fromPosition, toPosition) }
+    }
 
     abstract fun getModels(): List<Model>
 
@@ -44,6 +64,8 @@ abstract class ModelList<Parent, Model : VM<Parent>> : List<Model>, ILogger {
     fun getPositionOfModel(model: Model): Int {
         return getModels().indexOf(model)
     }
+
+    abstract fun getModelByItem(item: Parent): Model?
 
     override val tag: String = "ModelList"
 }

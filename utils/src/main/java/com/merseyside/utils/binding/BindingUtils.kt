@@ -6,6 +6,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.merseyside.merseyLib.kotlin.extensions.flatWithAnd
 import com.merseyside.merseyLib.kotlin.extensions.flatWithOr
+import com.merseyside.merseyLib.kotlin.logger.log
 import com.merseyside.utils.view.ext.getActivity
 
 /**

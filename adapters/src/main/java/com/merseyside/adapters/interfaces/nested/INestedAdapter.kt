@@ -6,29 +6,29 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.interfaces.selectable.ISelectableAdapter
-import com.merseyside.adapters.listManager.AdapterNestedListManager
+import com.merseyside.adapters.listManager.INestedModelListManager
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.merseyLib.kotlin.extensions.remove
 
-
 interface INestedAdapter<Parent, Model, InnerData, InnerAdapter> : ISelectableAdapter<Parent, Model>,
-    AdapterNestedListActions<Parent, Model, InnerData, InnerAdapter>
+    NestedAdapterActions<Parent, Model, InnerData, InnerAdapter>, HasNestedAdapterListener<InnerData>
         where Model : NestedAdapterParentViewModel<out Parent, Parent, InnerData>,
               InnerAdapter : BaseAdapter<InnerData, out AdapterParentViewModel<out InnerData, InnerData>> {
 
-//    @InternalAdaptersApi
-//    val provideInnerAdapter: (Model) -> InnerAdapter
-//    @InternalAdaptersApi
-//    val removeInnerAdapter: (Model) -> InnerAdapter
-
     var adapterList: MutableList<Pair<Model, InnerAdapter>>
 
-    override val delegate: AdapterNestedListManager<Parent, Model, InnerData, InnerAdapter>
+    override val delegate: INestedModelListManager<Parent, Model, InnerData, InnerAdapter>
 
     fun initNestedAdapter(model: Model): InnerAdapter
     fun getNestedView(binding: ViewDataBinding): RecyclerView?
+
+    private fun internalInitInnerAdapter(model: Model): InnerAdapter {
+        return initNestedAdapter(model).also { innerAdapter ->
+            onInitAdapterListener?.onInitNestedAdapter(innerAdapter)
+        }
+    }
 
     @OptIn(InternalAdaptersApi::class)
     suspend fun getAdapterByItem(item: Parent): InnerAdapter? {
@@ -49,7 +49,7 @@ interface INestedAdapter<Parent, Model, InnerData, InnerAdapter> : ISelectableAd
     /* Models list actions */
 
     override fun getNestedAdapterByModel(model: Model): InnerAdapter {
-        return getAdapterIfExists(model) ?: initNestedAdapter(model).also { adapter ->
+        return getAdapterIfExists(model) ?: internalInitInnerAdapter(model).also { adapter ->
             putAdapter(model, adapter)
         }
     }

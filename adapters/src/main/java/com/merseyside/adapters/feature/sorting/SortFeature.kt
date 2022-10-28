@@ -1,8 +1,8 @@
 package com.merseyside.adapters.feature.sorting
 
+import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.config.AdapterConfig
 import com.merseyside.adapters.config.contract.ModelListProvider
-import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.modelList.SortedModelList
 import com.merseyside.adapters.utils.list.SortedList
 import com.merseyside.adapters.config.contract.UpdateLogicProvider
@@ -27,8 +27,11 @@ open class SortFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Confi
         comparator = config.comparator
     }
 
-    override fun install(adapter: IBaseAdapter<Parent, Model>) {
-        super.install(adapter)
+    override fun install(
+        adapterConfig: AdapterConfig<Parent, Model>,
+        adapter: BaseAdapter<Parent, Model>
+    ) {
+        super.install(adapterConfig, adapter)
 
         val sortedList = SortedList(modelClass)
         modelList = SortedModelList(sortedList, comparator)

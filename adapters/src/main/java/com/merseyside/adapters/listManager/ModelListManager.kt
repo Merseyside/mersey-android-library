@@ -3,8 +3,7 @@ package com.merseyside.adapters.listManager
 import androidx.annotation.CallSuper
 import com.merseyside.adapters.config.update.UpdateActions
 import com.merseyside.adapters.config.update.UpdateLogic
-import com.merseyside.adapters.interfaces.base.AdapterListActions
-import com.merseyside.adapters.model.AdapterParentViewModel
+import com.merseyside.adapters.interfaces.base.AdapterActions
 import com.merseyside.adapters.model.VM
 import com.merseyside.adapters.modelList.ModelList
 import com.merseyside.adapters.modelList.SimpleModelList
@@ -13,10 +12,10 @@ import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.adapters.utils.runWithDefault
 import com.merseyside.merseyLib.kotlin.contract.Identifiable
 
-interface AdapterListManager<Parent, Model>: UpdateActions<Parent, Model>
+interface ModelListManager<Parent, Model>: UpdateActions<Parent, Model>
     where Model : VM<Parent> {
 
-    val listActions: AdapterListActions<Parent, Model>
+    val adapterActions: AdapterActions<Parent, Model>
     var updateLogic: UpdateLogic<Parent, Model>
 
     val modelList: ModelList<Parent, Model>
@@ -32,7 +31,7 @@ interface AdapterListManager<Parent, Model>: UpdateActions<Parent, Model>
     }
 
     private suspend fun provideModel(item: Parent): Model {
-        return listActions.provideModelByItem(item)
+        return adapterActions.provideModelByItem(item)
     }
 
     fun getPositionOfItem(item: Parent, models: List<Model> = modelList): Int {

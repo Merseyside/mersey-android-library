@@ -17,11 +17,15 @@ open class SimpleModelList<Parent, Model : VM<Parent>>(
         payloads: List<AdapterParentViewModel.Payloadable>
     ) {
         val position = getPositionOfModel(model)
-        listCallback.onChanged(model, position, payloads)
+        onChanged(model, position, payloads)
     }
 
     override fun get(index: Int): Model {
         return mutModels[index]
+    }
+
+    override fun getModelByItem(item: Parent): Model? {
+        return mutModels.find { it.areItemsTheSame(item) }
     }
 
     override fun iterator(): Iterator<Model> {
@@ -32,7 +36,7 @@ open class SimpleModelList<Parent, Model : VM<Parent>>(
         val position = getPositionOfModel(model)
         return try {
             val removedModel = mutModels.removeAt(position)
-            listCallback.onRemoved(listOf(removedModel), position)
+            onRemoved(listOf(removedModel), position)
             true
         } catch (e: IndexOutOfBoundsException) {
             false
@@ -53,27 +57,27 @@ open class SimpleModelList<Parent, Model : VM<Parent>>(
 
     override suspend fun addAll(models: List<Model>) {
         mutModels.addAll(models)
-        listCallback.onInserted(models, size, models.size)
+        onInserted(models, size, models.size)
     }
 
     override suspend fun add(model: Model) {
         mutModels.add(model)
-        listCallback.onInserted(listOf(model), size)
+        onInserted(listOf(model), size)
     }
 
     override suspend fun addAll(position: Int, models: List<Model>) {
         mutModels.addAll(position, models)
-        listCallback.onInserted(models, position, models.size)
+        onInserted(models, position, models.size)
     }
 
     override suspend fun add(position: Int, model: Model) {
         mutModels.add(position, model)
-        listCallback.onInserted(listOf(model), position)
+        onInserted(listOf(model), position)
     }
 
     suspend fun move(fromIndex: Int, toIndex: Int) {
         mutModels.move(fromIndex, toIndex)
-        listCallback.onMoved(fromIndex, toIndex)
+        onMoved(fromIndex, toIndex)
     }
 
     override fun clear() {

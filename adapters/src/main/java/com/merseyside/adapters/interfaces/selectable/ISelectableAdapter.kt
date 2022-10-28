@@ -42,10 +42,6 @@ interface ISelectableAdapter<Parent, Model>
         }
     }
 
-    fun removeOnItemClickListener(listener: OnItemSelectedListener<Parent>) {
-        selectedListeners.remove(listener)
-    }
-
     override suspend fun onModelCreated(model: Model) {
         super.onModelCreated(model)
         model.isSelectable = isSelectEnabled
@@ -168,7 +164,7 @@ interface ISelectableAdapter<Parent, Model>
         }
     }
 
-    private fun findSelectedItems(): List<Model> {
+    private fun findSelectedItems(): List<Model> {//
         return if (selectedList.isEmpty()) {
             models.filter { model ->
                 isItemSelected(model)

@@ -2,8 +2,8 @@ package com.merseyside.adapters.feature.filtering.listManager
 
 import com.merseyside.adapters.config.update.UpdateLogic
 import com.merseyside.adapters.feature.filtering.AdapterFilter
-import com.merseyside.adapters.interfaces.base.AdapterListActions
-import com.merseyside.adapters.listManager.AdapterListManager
+import com.merseyside.adapters.interfaces.base.AdapterActions
+import com.merseyside.adapters.listManager.ModelListManager
 import com.merseyside.adapters.modelList.ModelList
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.UpdateRequest
@@ -13,9 +13,9 @@ import com.merseyside.adapters.model.VM
 
 open class FilterListManager<Parent, Model : VM<Parent>>(
     override val modelList: ModelList<Parent, Model>,
-    override val listActions: AdapterListActions<Parent, Model>,
+    override val adapterActions: AdapterActions<Parent, Model>,
     val adapterFilter: AdapterFilter<Parent, Model>
-): AdapterListManager<Parent, Model>, ILogger {
+): ModelListManager<Parent, Model>, ILogger {
 
     override lateinit var updateLogic: UpdateLogic<Parent, Model>
     override val hashMap: MutableMap<Any, Model> = mutableMapOf()

@@ -1,5 +1,6 @@
 package com.merseyside.adapters.feature.filtering
 
+import com.merseyside.adapters.config.contract.HasWorkManager
 import com.merseyside.adapters.feature.filtering.listManager.Filters
 import com.merseyside.adapters.utils.runWithDefault
 import com.merseyside.merseyLib.kotlin.coroutines.CoroutineQueue
@@ -9,7 +10,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import com.merseyside.adapters.model.VM
 
-abstract class AdapterFilter<Parent, Model : VM<Parent>> : ILogger {
+abstract class AdapterFilter<Parent, Model : VM<Parent>> : HasWorkManager, ILogger {
 
     private var filterCallback: FilterCallback<Model>? = null
 
@@ -30,7 +31,7 @@ abstract class AdapterFilter<Parent, Model : VM<Parent>> : ILogger {
     private val isBind: Boolean
         get() = this::workManager.isInitialized
 
-    internal lateinit var workManager: CoroutineQueue<Any, Unit>
+    override lateinit var workManager: CoroutineQueue<Any, Unit>
 
     internal var provideFullList: () -> List<Model> = { emptyList() }
     internal var provideFilteredList: () -> List<Model> = { provideFullList() }
@@ -178,21 +179,21 @@ abstract class AdapterFilter<Parent, Model : VM<Parent>> : ILogger {
         notAppliedFilters.log("$prefix not applied =")
     }
 
-    fun <Result> doAsync(
-        onComplete: (Result) -> Unit = {},
-        onError: () -> Unit = {},
-        work: suspend AdapterFilter<Parent, Model>.() -> Result,
-    ): Job? {
-        return if (isBind) {
-            workManager.addAndExecute {
-                val result = work()
-                onComplete(result)
-            }
-        } else {
-            onError()
-            null
-        }
-    }
+//    fun <Result> doAsync(
+//        onComplete: (Result) -> Unit = {},
+//        onError: () -> Unit = {},
+//        work: suspend () -> Result,
+//    ): Job? {
+//        return if (isBind) {
+//            workManager.addAndExecute {
+//                val result = work()
+//                onComplete(result)
+//            }
+//        } else {
+//            onError()
+//            null
+//        }
+//    }
 
     interface FilterCallback<Model> {
         suspend fun onFiltered(models: List<Model>)

@@ -6,32 +6,29 @@ import android.annotation.SuppressLint
 import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.callback.HasOnItemClickListener
+import com.merseyside.adapters.config.contract.HasWorkManager
 import com.merseyside.adapters.feature.positioning.PositionFeature
 import com.merseyside.adapters.holder.TypedBindingHolder
-import com.merseyside.adapters.listManager.AdapterListManager
+import com.merseyside.adapters.listManager.ModelListManager
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.modelList.ModelListCallback
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.UpdateRequest
-import com.merseyside.merseyLib.kotlin.coroutines.CoroutineQueue
 import com.merseyside.merseyLib.kotlin.extensions.isZero
 import com.merseyside.utils.measureAndLogTime
-import kotlinx.coroutines.Job
 import kotlin.math.max
 import kotlin.math.min
 import com.merseyside.adapters.model.VM
 
 @SuppressLint("NotifyDataSetChanged")
-interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
-    HasOnItemClickListener<Parent>, ModelListCallback<Model>
+interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
+    HasOnItemClickListener<Parent>, ModelListCallback<Model>, HasWorkManager
         where Model : VM<Parent> {
-
-    val workManager: CoroutineQueue<Any, Unit>
 
     val models: List<Model>
 
     @InternalAdaptersApi
-    val delegate: AdapterListManager<Parent, Model>
+    val delegate: ModelListManager<Parent, Model>
 
     @InternalAdaptersApi
     val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>
@@ -53,7 +50,7 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
     }
 
     /**
-     * Delegates items adding to [AdapterListManager]
+     * Delegates items adding to [ModelListManager]
      * @return Added models
      */
     suspend fun add(items: List<Parent>) {
@@ -253,11 +250,6 @@ interface IBaseAdapter<Parent, Model> : AdapterListActions<Parent, Model>,
     suspend fun getPositionOfModel(model: Model): Int {
         return delegate.getPositionOfModel(model)
     }
-
-    fun <Result> doAsync(
-        provideResult: (Result) -> Unit = {},
-        work: suspend IBaseAdapter<Parent, Model>.() -> Result,
-    ): Job?
 
     /* Position */
 

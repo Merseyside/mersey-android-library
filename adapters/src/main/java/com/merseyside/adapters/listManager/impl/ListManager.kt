@@ -1,15 +1,15 @@
 package com.merseyside.adapters.listManager.impl
 
 import com.merseyside.adapters.config.update.UpdateLogic
-import com.merseyside.adapters.interfaces.base.AdapterListActions
-import com.merseyside.adapters.listManager.AdapterListManager
+import com.merseyside.adapters.interfaces.base.AdapterActions
+import com.merseyside.adapters.listManager.ModelListManager
 import com.merseyside.adapters.modelList.ModelList
 import com.merseyside.adapters.model.VM
 
 open class ListManager<Parent, Model>(
     override val modelList: ModelList<Parent, Model>,
-    override val listActions: AdapterListActions<Parent, Model>
-) : AdapterListManager<Parent, Model>
+    override val adapterActions: AdapterActions<Parent, Model>
+) : ModelListManager<Parent, Model>
         where Model : VM<Parent> {
 
     override val hashMap: MutableMap<Any, Model> = mutableMapOf()

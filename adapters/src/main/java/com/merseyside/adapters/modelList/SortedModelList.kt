@@ -1,5 +1,6 @@
 package com.merseyside.adapters.modelList
 
+import com.merseyside.adapters.extensions.find
 import com.merseyside.adapters.extensions.removeAll
 import com.merseyside.adapters.extensions.subList
 import com.merseyside.adapters.feature.sorting.Comparator
@@ -17,15 +18,15 @@ class SortedModelList<Parent, Model : VM<Parent>>(
         val callback = object : SortedList.Callback<Model>() {
             override fun onInserted(position: Int, count: Int) {
                 val models = getModels().subList(position, position + count - 1)
-                listCallback.onInserted(models, position, count)
+                onInserted(models, position, count)
             }
 
             override fun onRemoved(position: Int, count: Int) {
-                listCallback.onRemoved(emptyList(), position, count)
+                onRemoved(emptyList(), position, count)
             }
 
             override fun onMoved(fromPosition: Int, toPosition: Int) {
-                listCallback.onMoved(fromPosition, toPosition)
+                onMoved(fromPosition, toPosition)
             }
 
             override fun onChanged(position: Int, count: Int) {}
@@ -48,6 +49,10 @@ class SortedModelList<Parent, Model : VM<Parent>>(
 
     override fun getModels(): List<Model> {
         return sortedList.getAll()
+    }
+
+    override fun getModelByItem(item: Parent): Model? {
+        return sortedList.find { it.areItemsTheSame(item) }
     }
 
     override suspend fun addAll(position: Int, models: List<Model>) {
@@ -96,7 +101,7 @@ class SortedModelList<Parent, Model : VM<Parent>>(
     ) {
         val position = getPositionOfModel(model)
         sortedList.recalculatePositionOfItemAt(position)
-        listCallback.onChanged(model, getPositionOfModel(model), payloads)
+        onChanged(model, getPositionOfModel(model), payloads)
     }
 
     override fun clear() {

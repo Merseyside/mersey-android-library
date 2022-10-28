@@ -44,7 +44,7 @@ fun <Item> HasOnItemClickListener<Item>.onClick(
     return listener
 }
 
-fun <Item : Any> HasOnItemSelectedListener<Item>.onItemSelected(
+fun <Item> HasOnItemSelectedListener<Item>.onItemSelected(
     onSelected: (
         item: Item,
         isSelected: Boolean,

@@ -17,6 +17,10 @@ open class BaseBindingHolder(val binding: ViewDataBinding)
     open val model: Any
         get() = _model
 
+    init {
+        binding.lifecycleOwner = itemView.getActivity()
+    }
+
     @CallSuper
     fun bind(variable: Int, obj: Any) {
         _model = obj
@@ -24,8 +28,6 @@ open class BaseBindingHolder(val binding: ViewDataBinding)
         binding.apply {
             setVariable(variable, obj)
             executePendingBindings()
-
-            lifecycleOwner = itemView.getActivity()
         }
     }
 

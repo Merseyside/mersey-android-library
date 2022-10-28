@@ -1,8 +1,8 @@
 package com.merseyside.adapters.config
 
 import com.merseyside.adapters.base.BaseAdapter
-import com.merseyside.adapters.base.config.ext.getFeatureByKey
-import com.merseyside.adapters.base.config.ext.hasFeature
+import com.merseyside.adapters.config.ext.getFeatureByKey
+import com.merseyside.adapters.config.ext.hasFeature
 import com.merseyside.adapters.config.contract.ModelListProvider
 import com.merseyside.adapters.config.contract.UpdateLogicProvider
 import com.merseyside.adapters.config.feature.ConfigurableFeature
@@ -10,13 +10,13 @@ import com.merseyside.adapters.config.feature.Feature
 import com.merseyside.adapters.feature.filtering.FilterFeature
 import com.merseyside.adapters.config.update.simple.SimpleUpdate
 import com.merseyside.adapters.feature.filtering.listManager.FilterListManager
-import com.merseyside.adapters.feature.filtering.listManager.FilterNestedListManager
+import com.merseyside.adapters.feature.filtering.listManager.FilterINestedModelListManager
 import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.interfaces.nested.INestedAdapter
 import com.merseyside.adapters.listManager.impl.ListManager
-import com.merseyside.adapters.listManager.impl.NestedListManager
-import com.merseyside.adapters.listManager.AdapterListManager
-import com.merseyside.adapters.listManager.AdapterNestedListManager
+import com.merseyside.adapters.listManager.ModelListManager
+import com.merseyside.adapters.listManager.INestedModelListManager
+import com.merseyside.adapters.listManager.impl.NestedModelListManager
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 import com.merseyside.adapters.model.VM
 import com.merseyside.adapters.modelList.ModelList
@@ -26,23 +26,26 @@ import com.merseyside.merseyLib.kotlin.coroutines.CoroutineQueue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KProperty
 
 open class AdapterConfig<Parent, Model> internal constructor(
     config: AdapterConfig<Parent, Model>.() -> Unit = {}
 ) where Model : VM<Parent> {
-    protected lateinit var adapter: IBaseAdapter<Parent, Model>
+    protected lateinit var adapter: BaseAdapter<Parent, Model>
 
     internal val featureList = ArrayList<Feature<Parent, Model>>()
+
+    private lateinit var _modelListManager: ModelListManager<Parent, Model>
+    open val modelListManager: ModelListManager<Parent, Model>
+        get() = _modelListManager
+
+    lateinit var modelList: ModelList<Parent, Model>
 
     init {
         apply(config)
     }
 
     var coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Main)
-    val workManager: CoroutineQueue<Any, Unit> by lazy {
-        CoroutineQueue(coroutineScope)
-    }
+    val workManager: CoroutineQueue<Any, Unit> by lazy { CoroutineQueue(coroutineScope) }
 
     fun install(feature: Feature<Parent, Model>) {
         featureList.add(feature)
@@ -56,135 +59,120 @@ open class AdapterConfig<Parent, Model> internal constructor(
         featureList.add(feature)
     }
 
-    open fun initAdapterWithConfig(adapter: IBaseAdapter<Parent, Model>) {
+    open fun initAdapterWithConfig(adapter: BaseAdapter<Parent, Model>) {
         this.adapter = adapter
-        featureList.forEach { feature ->
-            feature.install(adapter)
-        }
+        initModelList(adapter)
+        initModelListManager(adapter)
+
+        featureList
+            .filter { !it.isInstalled }
+            .forEach { feature ->
+                feature.install(this, adapter)
+            }
     }
 
-    open fun getModelList(listCallback: ModelListCallback<Model>): ModelList<Parent, Model> {
+    protected fun initModelList(listCallback: ModelListCallback<Model>): ModelList<Parent, Model> {
         val listProviders: List<ModelListProvider<Parent, Model>> =
             featureList.filterIsInstance<ModelListProvider<Parent, Model>>()
 
         if (listProviders.size > 1) throw IllegalArgumentException(
-            "There are few list" +
-                    " provider features. Have to be zero or one"
+            "There are few list provider features. Have to be zero or one"
         )
 
         return if (listProviders.isEmpty()) {
             SimpleModelList()
         } else {
-            listProviders.first().modelList
-        }.also { modelList -> modelList.listCallback = listCallback }
+            val listProvider = listProviders.first()
+            val listProviderFeature = listProvider as Feature<Parent, Model>
+            listProviderFeature.install(this, adapter)
+
+            listProvider.modelList
+
+        }.also { modelList ->
+            modelList.addModelListCallback(listCallback)
+            this.modelList = modelList
+        }
     }
 
-    fun initWithUpdateLogic(listChangeDelegate: AdapterListManager<Parent, Model>) {
+    fun initWithUpdateLogic(listChangeDelegate: ModelListManager<Parent, Model>) {
         val updateLogic = featureList.filterIsInstance<UpdateLogicProvider<Parent, Model>>()
             .firstOrNull()?.updateLogic(listChangeDelegate) ?: SimpleUpdate(listChangeDelegate)
 
         listChangeDelegate.updateLogic = updateLogic
     }
 
-    fun getDelegate(adapter: IBaseAdapter<Parent, Model>): AdapterListManager<Parent, Model> {
-        return if (hasFeature(FilterFeature.key)) {
-            val filterFeature = getFeatureByKey(FilterFeature.key) as FilterFeature<Parent, Model>
-            FilterListManager(
-                modelList = getModelList(adapter),
-                listActions = adapter,
-                adapterFilter = filterFeature.adapterFilter
-            )
-        } else {
-            ListManager(
-                modelList = getModelList(adapter),
-                listActions = adapter
-            )
-        }.also { initWithUpdateLogic(it) }
+    fun initModelListManager(adapter: IBaseAdapter<Parent, Model>): ModelListManager<Parent, Model> {
+        if (!this::_modelListManager.isInitialized) {
+            _modelListManager = if (hasFeature(FilterFeature.key)) {
+                val filterFeature =
+                    getFeatureByKey(FilterFeature.key) as FilterFeature<Parent, Model>
+                FilterListManager(
+                    modelList = initModelList(adapter),
+                    adapterActions = adapter,
+                    adapterFilter = filterFeature.adapterFilter
+                )
+            } else {
+                ListManager(
+                    modelList = initModelList(adapter),
+                    adapterActions = adapter
+                )
+            }.also { initWithUpdateLogic(it) }
+        }
+
+        return _modelListManager
     }
 }
 
 fun <Parent, Model : VM<Parent>>
         AdapterConfig<Parent, Model>.workManager(
-) = object : ReadOnlyProperty<IBaseAdapter<Parent, Model>, CoroutineQueue<Any, Unit>> {
+) = ReadOnlyProperty<IBaseAdapter<Parent, Model>, CoroutineQueue<Any, Unit>> { _, _ -> workManager }
 
-    var value: CoroutineQueue<Any, Unit>? = null
 
-    override fun getValue(
-        thisRef: IBaseAdapter<Parent, Model>,
-        property: KProperty<*>
-    ): CoroutineQueue<Any, Unit> {
-        if (value == null) {
-            value = workManager
-        }
-
-        return value!!
+fun <Parent, Model : VM<Parent>> AdapterConfig<Parent, Model>.listManager() =
+    ReadOnlyProperty<IBaseAdapter<Parent, Model>, ModelListManager<Parent, Model>> { thisRef, _ ->
+        initModelListManager(thisRef)
     }
-
-}
-
-
-fun <Parent, Model : VM<Parent>>
-        AdapterConfig<Parent, Model>.delegate(
-) = object :
-    ReadOnlyProperty<IBaseAdapter<Parent, Model>, AdapterListManager<Parent, Model>> {
-
-    var value: AdapterListManager<Parent, Model>? = null
-
-    override fun getValue(
-        thisRef: IBaseAdapter<Parent, Model>,
-        property: KProperty<*>
-    ): AdapterListManager<Parent, Model> {
-        if (value == null) {
-            value = getDelegate(thisRef)
-        }
-
-        return value!!
-    }
-
-}
 
 class NestedAdapterConfig<Parent, Model, Data, InnerAdapter> internal constructor() :
     AdapterConfig<Parent, Model>()
         where Model : NestedAdapterParentViewModel<out Parent, Parent, Data>,
               InnerAdapter : BaseAdapter<Data, out VM<Data>> {
 
-    fun getDelegate(
+    private lateinit var _modelList: INestedModelListManager<Parent, Model, Data, InnerAdapter>
+
+    override val modelListManager: ModelListManager<Parent, Model>
+        get() = _modelList
+
+    fun initModelListManager(
         adapter: INestedAdapter<Parent, Model, Data, InnerAdapter>
-    ): AdapterNestedListManager<Parent, Model, Data, InnerAdapter> {
-        return if (hasFeature(FilterFeature.key)) {
-            val filterFeature = getFeatureByKey(FilterFeature.key) as FilterFeature<Parent, Model>
-            FilterNestedListManager(
-                modelList = getModelList(adapter),
-                listActions = adapter,
-                adapterFilter = filterFeature.adapterFilter
-            )
-        } else {
-            NestedListManager(
-                getModelList(adapter),
-                adapter
-            )
-        }.also { initWithUpdateLogic(it) }
+    ): INestedModelListManager<Parent, Model, Data, InnerAdapter> {
+        if (!this::_modelList.isInitialized) {
+            _modelList = if (hasFeature(FilterFeature.key)) {
+                val filterFeature =
+                    getFeatureByKey(FilterFeature.key) as FilterFeature<Parent, Model>
+                FilterINestedModelListManager(
+                    modelList = initModelList(adapter),
+                    adapterActions = adapter,
+                    adapterFilter = filterFeature.adapterFilter
+                )
+            } else {
+                NestedModelListManager(
+                    initModelList(adapter),
+                    adapter
+                )
+            }.also { initWithUpdateLogic(it) }
+        }
+
+        return _modelList
     }
 }
 
 fun <Parent, Model : NestedAdapterParentViewModel<out Parent, Parent, Data>, Data,
         InnerAdapter : BaseAdapter<Data, out VM<Data>>>
-        NestedAdapterConfig<Parent, Model, Data, InnerAdapter>.delegate(
-) = object : ReadOnlyProperty<INestedAdapter<Parent, Model, Data, InnerAdapter>,
-        AdapterNestedListManager<Parent, Model, Data, InnerAdapter>> {
-
-    var value: AdapterNestedListManager<Parent, Model, Data, InnerAdapter>? = null
-
-    override fun getValue(
-        thisRef: INestedAdapter<Parent, Model, Data, InnerAdapter>,
-        property: KProperty<*>
-    ): AdapterNestedListManager<Parent, Model, Data, InnerAdapter> {
-        if (value == null) {
-            value = getDelegate(thisRef)
-        }
-
-        return value!!
-    }
+        NestedAdapterConfig<Parent, Model, Data, InnerAdapter>.listManager(
+) = ReadOnlyProperty<INestedAdapter<Parent, Model, Data, InnerAdapter>,
+        INestedModelListManager<Parent, Model, Data, InnerAdapter>> { thisRef, _ ->
+    initModelListManager(thisRef)
 }
 
 fun <Parent, Model : VM<Parent>> config(

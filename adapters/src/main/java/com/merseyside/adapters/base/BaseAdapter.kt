@@ -2,23 +2,24 @@
 
 package com.merseyside.adapters.base
 
+import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
-import com.merseyside.adapters.base.config.ext.hasFeature
+import com.merseyside.adapters.config.ext.hasFeature
 import com.merseyside.adapters.config.AdapterConfig
-import com.merseyside.adapters.config.delegate
+import com.merseyside.adapters.config.listManager
 import com.merseyside.adapters.config.workManager
 import com.merseyside.adapters.callback.HasOnItemClickListener
 import com.merseyside.adapters.callback.OnItemClickListener
+import com.merseyside.adapters.config.contract.OnBindItemListener
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.interfaces.base.IBaseAdapter
-import com.merseyside.adapters.listManager.AdapterListManager
+import com.merseyside.adapters.listManager.ModelListManager
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.VM
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.merseyLib.kotlin.coroutines.CoroutineQueue
 import com.merseyside.merseyLib.kotlin.logger.ILogger
 import com.merseyside.utils.reflection.ReflectionUtils
-import kotlinx.coroutines.Job
 
 @Suppress("LeakingThis")
 abstract class BaseAdapter<Parent, Model>(
@@ -27,12 +28,14 @@ abstract class BaseAdapter<Parent, Model>(
     HasOnItemClickListener<Parent>, IBaseAdapter<Parent, Model>, ILogger
         where Model : VM<Parent> {
 
+    var onBindItemListener: OnBindItemListener<Parent, Model>? = null
+
     override val workManager: CoroutineQueue<Any, Unit> by adapterConfig.workManager()
 
     override val models: List<Model>
         get() = delegate.modelList
 
-    override val delegate: AdapterListManager<Parent, Model> by adapterConfig.delegate()
+    override val delegate: ModelListManager<Parent, Model> by adapterConfig.listManager()
 
 
     @InternalAdaptersApi
@@ -91,13 +94,6 @@ abstract class BaseAdapter<Parent, Model>(
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
-    internal abstract fun bindModel(
-        holder: TypedBindingHolder<Model>,
-        model: Model,
-        position: Int
-    )
-
     override fun onBindViewHolder(
         holder: TypedBindingHolder<Model>,
         position: Int,
@@ -113,14 +109,14 @@ abstract class BaseAdapter<Parent, Model>(
         }
     }
 
-    override fun <Result> doAsync(
-        provideResult: (Result) -> Unit,
-        work: suspend IBaseAdapter<Parent, Model>.() -> Result,
-    ): Job? {
-        return workManager.addAndExecute {
-            val result = work()
-            provideResult(result)
-        }
+    @Suppress("UNCHECKED_CAST")
+    @CallSuper
+    internal open fun bindModel(
+        holder: TypedBindingHolder<Model>,
+        model: Model,
+        position: Int
+    ) {
+        onBindItemListener?.onBindViewHolder(holder, model, position)
     }
 
     open fun removeListeners() {

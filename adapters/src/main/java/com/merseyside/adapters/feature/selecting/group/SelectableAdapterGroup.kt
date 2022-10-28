@@ -1,23 +1,20 @@
-package com.merseyside.adapters.utils
+package com.merseyside.adapters.feature.selecting.group
 
 import com.merseyside.adapters.callback.HasOnItemSelectedListener
 import com.merseyside.adapters.callback.OnItemSelectedListener
+import com.merseyside.adapters.config.contract.HasWorkManager
+import com.merseyside.adapters.feature.selecting.AdapterSelect
 import com.merseyside.adapters.interfaces.selectable.ISelectableAdapter
 import com.merseyside.adapters.interfaces.selectable.SelectableMode
-import com.merseyside.adapters.single.SelectableAdapter
 import com.merseyside.merseyLib.kotlin.coroutines.CoroutineQueue
 import com.merseyside.merseyLib.kotlin.extensions.isNotZero
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 
 class SelectableAdapterGroup<Item>(
-    scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
-    var selectableMode: SelectableMode = SelectableMode.SINGLE,
+    var selectableMode: SelectableMode,
     var isAllowToCancelSelection: Boolean = selectableMode == SelectableMode.MULTIPLE
-) : HasOnItemSelectedListener<Item> {
+) : HasOnItemSelectedListener<Item>, HasWorkManager {
 
-    private val workManager = CoroutineQueue<Any, Unit>(scope = scope)
+    override lateinit var workManager: CoroutineQueue<Any, Unit>
 
     private val groupSelectedListener = object : OnItemSelectedListener<Item> {
         override fun onSelected(item: Item, isSelected: Boolean, isSelectedByUser: Boolean) {
@@ -29,7 +26,7 @@ class SelectableAdapterGroup<Item>(
                         if (adaptersWithSelectedItems.isNotEmpty()) {
                             adaptersWithSelectedItems
                                 .find { it.getSelectedItem() != item }
-                                ?.clearSelections()
+                                ?.clear()
                         }
                     }
                 }
@@ -50,31 +47,31 @@ class SelectableAdapterGroup<Item>(
 
     override val selectedListeners: MutableList<OnItemSelectedListener<Item>> =
         mutableListOf(groupSelectedListener)
-    private val adapters: MutableList<SelectableAdapter<Item, *>> = mutableListOf()
+    private val adapters: MutableList<AdapterSelect<Item, *>> = mutableListOf()
 
-    suspend fun addAsync(adapter: SelectableAdapter<Item, *>, onComplete: (Unit) -> Unit = {}) {
+    fun addAsync(adapter: AdapterSelect<Item, *>, onComplete: (Unit) -> Unit = {}) {
         doAsync(onComplete) { add(adapter) }
     }
 
-    suspend fun add(adapter: SelectableAdapter<Item, *>) {
-        adapter.groupAdapter = true
+    fun add(adapter: AdapterSelect<Item, *>) {
+        adapter.isGroupAdapter = true
         adapters.add(adapter)
         selectedListeners.forEach { listener ->
             adapter.addOnItemSelectedListener(listener)
         }
 
         if (!isAllowToCancelSelection && adapters.size == 1) {
-            adapter.selectFirstOnAdd()
+            adapter.selectFirstOnAdd = true
         }
     }
 
-    suspend fun removeAsync(adapter: SelectableAdapter<Item, *>, onComplete: (Unit) -> Unit = {}) {
+    suspend fun removeAsync(adapter: AdapterSelect<Item, *>, onComplete: (Unit) -> Unit = {}) {
         doAsync(onComplete) { remove(adapter) }
     }
 
-    suspend fun remove(adapter: SelectableAdapter<Item, *>) {
+    suspend fun remove(adapter: AdapterSelect<Item, *>) {
         adapters.remove(adapter)
-        if (adapter.getSelectedItemsCount().isNotZero() &&
+        if (adapter.size.isNotZero() &&
             !isAllowToCancelSelection && selectableMode == SelectableMode.SINGLE
         ) {
             selectFirstItem()
@@ -91,7 +88,7 @@ class SelectableAdapterGroup<Item>(
     override fun removeOnItemSelectedListener(listener: OnItemSelectedListener<Item>) {
         super.removeOnItemSelectedListener(listener)
         adapters.forEach {
-            it.removeOnItemClickListener(listener)
+            it.removeOnItemSelectedListener(listener)
         }
     }
 
@@ -101,36 +98,26 @@ class SelectableAdapterGroup<Item>(
         }
     }
 
-    private suspend fun selectFirstItem() {
+    private fun selectFirstItem() {
         adapters.forEach { adapter ->
             if (adapter.isSelectEnabled) {
-                adapter.selectFirstSelectableItem(force = true)
+                adapter.selectFirstSelectableItem()
                 return
             }
         }
     }
 
-    private fun getAdaptersWithSelectedItems(): List<SelectableAdapter<Item, *>> {
-        return adapters.filter { it.getSelectedItemsCount().isNotZero() }
+    private fun getAdaptersWithSelectedItems(): List<AdapterSelect<Item, *>> {
+        return adapters.filter { it.size.isNotZero() }
     }
 
-    private suspend fun selectMostAppropriateItem(adapter: ISelectableAdapter<Item, *>) {
+    private fun selectMostAppropriateItem(adapter: ISelectableAdapter<Item, *>) {
         if (!isAllowToCancelSelection) {
             if (adapter.getItemCount().isNotZero()) {
                 adapter.selectFirstSelectableItem(force = true)
             } else {
                 selectFirstItem()
             }
-        }
-    }
-
-    fun <Result> doAsync(
-        provideResult: (Result) -> Unit = {},
-        work: suspend SelectableAdapterGroup<Item>.() -> Result,
-    ): Job? {
-        return workManager.addAndExecute {
-            val result = work()
-            provideResult(result)
         }
     }
 }
