@@ -4,9 +4,7 @@ import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.config.AdapterConfig
 import com.merseyside.adapters.config.feature.ConfigurableFeature
 import com.merseyside.adapters.extensions.onItemSelected
-import com.merseyside.adapters.interfaces.selectable.SelectableMode
 import com.merseyside.adapters.model.VM
-import com.merseyside.merseyLib.kotlin.logger.log
 
 class SelectFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Config<Parent, Model>>()
         where Model : VM<Parent> {

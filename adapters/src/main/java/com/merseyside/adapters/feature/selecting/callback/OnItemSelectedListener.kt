@@ -1,10 +1,11 @@
-package com.merseyside.adapters.callback
+package com.merseyside.adapters.feature.selecting.callback
 
-import com.merseyside.adapters.interfaces.selectable.ISelectableAdapter
+import com.merseyside.adapters.feature.selecting.AdapterSelect
+
 
 interface OnItemSelectedListener<Item> {
     fun onSelected(item: Item, isSelected: Boolean, isSelectedByUser: Boolean)
-    fun onSelectedRemoved(adapterList: ISelectableAdapter<Item, *>, items: List<Item>)
+    fun onSelectedRemoved(adapterList: AdapterSelect<Item, *>, items: List<Item>)
 }
 
 interface OnSelectEnabledListener {

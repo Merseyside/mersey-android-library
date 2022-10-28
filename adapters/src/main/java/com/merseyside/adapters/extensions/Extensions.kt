@@ -2,7 +2,9 @@ package com.merseyside.adapters.extensions
 
 import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.callback.*
-import com.merseyside.adapters.interfaces.selectable.ISelectableAdapter
+import com.merseyside.adapters.feature.selecting.AdapterSelect
+import com.merseyside.adapters.feature.selecting.callback.HasOnItemSelectedListener
+import com.merseyside.adapters.feature.selecting.callback.OnItemSelectedListener
 
 suspend inline fun <Item> BaseAdapter<Item, *>.findPosition(predicate: (item: Item) -> Boolean): Int {
     return getAll().find { predicate(it) }?.run {
@@ -57,7 +59,7 @@ fun <Item> HasOnItemSelectedListener<Item>.onItemSelected(
         }
 
         override fun onSelectedRemoved(
-            adapterList: ISelectableAdapter<Item, *>,
+            adapterList: AdapterSelect<Item, *>,
             items: List<Item>
         ) {}
     }

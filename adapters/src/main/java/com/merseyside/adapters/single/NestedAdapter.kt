@@ -13,7 +13,7 @@ import com.merseyside.adapters.utils.InternalAdaptersApi
 
 abstract class NestedAdapter<Item, Model, Data, InnerAdapter>(
     adapterConfig: NestedAdapterConfig<Item, Model, Data, InnerAdapter> = NestedAdapterConfig(),
-) : SelectableAdapter<Item, Model>(adapterConfig),
+) : SimpleAdapter<Item, Model>(adapterConfig),
     INestedAdapter<Item, Model, Data, InnerAdapter>
         where Model : NestedAdapterViewModel<Item, Data>,
               InnerAdapter : BaseAdapter<Data, out AdapterParentViewModel<out Data, Data>> {

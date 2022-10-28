@@ -15,7 +15,7 @@ import com.merseyside.adapters.utils.InternalAdaptersApi
 abstract class NestedCompositeAdapter<Parent, Model, Data, InnerAdapter>(
     final override val adapterConfig: NestedAdapterConfig<Parent, Model, Data, InnerAdapter> = NestedAdapterConfig(),
     delegatesManager: SimpleDelegatesManager<Parent, Model> = SimpleDelegatesManager()
-) : SelectableCompositeAdapter<Parent, Model>(adapterConfig, delegatesManager),
+) : CompositeAdapter<Parent, Model>(adapterConfig, delegatesManager),
     INestedAdapter<Parent, Model, Data, InnerAdapter>
         where Model : NestedAdapterParentViewModel<out Parent, Parent, Data>,
               InnerAdapter : BaseAdapter<Data, out AdapterParentViewModel<out Data, Data>> {

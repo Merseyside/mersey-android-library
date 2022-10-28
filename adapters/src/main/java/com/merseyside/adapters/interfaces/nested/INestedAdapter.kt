@@ -5,14 +5,14 @@ package com.merseyside.adapters.interfaces.nested
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.base.BaseAdapter
-import com.merseyside.adapters.interfaces.selectable.ISelectableAdapter
+import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.listManager.INestedModelListManager
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.merseyLib.kotlin.extensions.remove
 
-interface INestedAdapter<Parent, Model, InnerData, InnerAdapter> : ISelectableAdapter<Parent, Model>,
+interface INestedAdapter<Parent, Model, InnerData, InnerAdapter> : IBaseAdapter<Parent, Model>,
     NestedAdapterActions<Parent, Model, InnerData, InnerAdapter>, HasNestedAdapterListener<InnerData>
         where Model : NestedAdapterParentViewModel<out Parent, Parent, InnerData>,
               InnerAdapter : BaseAdapter<InnerData, out AdapterParentViewModel<out InnerData, InnerData>> {

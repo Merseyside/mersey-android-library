@@ -1,11 +1,10 @@
 package com.merseyside.adapters.feature.selecting.group
 
-import com.merseyside.adapters.callback.HasOnItemSelectedListener
-import com.merseyside.adapters.callback.OnItemSelectedListener
+import com.merseyside.adapters.feature.selecting.callback.HasOnItemSelectedListener
+import com.merseyside.adapters.feature.selecting.callback.OnItemSelectedListener
 import com.merseyside.adapters.config.contract.HasWorkManager
 import com.merseyside.adapters.feature.selecting.AdapterSelect
-import com.merseyside.adapters.interfaces.selectable.ISelectableAdapter
-import com.merseyside.adapters.interfaces.selectable.SelectableMode
+import com.merseyside.adapters.feature.selecting.SelectableMode
 import com.merseyside.merseyLib.kotlin.coroutines.CoroutineQueue
 import com.merseyside.merseyLib.kotlin.extensions.isNotZero
 
@@ -38,7 +37,7 @@ class SelectableAdapterGroup<Item>(
         }
 
         override fun onSelectedRemoved(
-            adapterList: ISelectableAdapter<Item, *>,
+            adapterList: AdapterSelect<Item, *>,
             items: List<Item>
         ) {
             doAsync { selectMostAppropriateItem(adapterList) }
@@ -111,10 +110,10 @@ class SelectableAdapterGroup<Item>(
         return adapters.filter { it.size.isNotZero() }
     }
 
-    private fun selectMostAppropriateItem(adapter: ISelectableAdapter<Item, *>) {
+    private fun selectMostAppropriateItem(adapter: AdapterSelect<Item, *>) {
         if (!isAllowToCancelSelection) {
-            if (adapter.getItemCount().isNotZero()) {
-                adapter.selectFirstSelectableItem(force = true)
+            if (adapter.size.isNotZero()) {
+                adapter.selectFirstSelectableItem()
             } else {
                 selectFirstItem()
             }

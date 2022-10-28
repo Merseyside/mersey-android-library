@@ -1,11 +1,10 @@
 package com.merseyside.adapters.feature.selecting
 
-import com.merseyside.adapters.callback.HasOnItemSelectedListener
-import com.merseyside.adapters.callback.OnItemSelectedListener
+import com.merseyside.adapters.feature.selecting.callback.HasOnItemSelectedListener
+import com.merseyside.adapters.feature.selecting.callback.OnItemSelectedListener
 import com.merseyside.adapters.config.contract.HasWorkManager
 import com.merseyside.adapters.config.contract.OnBindItemListener
 import com.merseyside.adapters.holder.TypedBindingHolder
-import com.merseyside.adapters.interfaces.selectable.SelectableMode
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.VM
 import com.merseyside.adapters.modelList.ModelList

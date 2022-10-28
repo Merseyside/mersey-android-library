@@ -9,7 +9,7 @@ import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.ExpandableAdapterViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 
-abstract class Expandable<Item, Model, Data, InnerAdapter>(
+abstract class ExpandableAdapter<Item, Model, Data, InnerAdapter>(
     adapterConfig: NestedAdapterConfig<Item, Model, Data, InnerAdapter> = NestedAdapterConfig(),
     override var expandableMode: ExpandableMode = ExpandableMode.MULTIPLE
 ) : NestedAdapter<Item, Model, Data, InnerAdapter>(adapterConfig),

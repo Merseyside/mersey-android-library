@@ -6,7 +6,7 @@ import com.merseyside.adapters.config.ext.getAdapterSelect
 import com.merseyside.adapters.config.feature.NestedConfigurableFeature
 import com.merseyside.adapters.interfaces.nested.INestedAdapter
 import com.merseyside.adapters.interfaces.nested.OnInitNestedAdapterListener
-import com.merseyside.adapters.interfaces.selectable.SelectableMode
+import com.merseyside.adapters.feature.selecting.SelectableMode
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 import com.merseyside.adapters.model.VM
 

@@ -5,8 +5,7 @@ import com.merseyside.adapters.config.config
 import com.merseyside.adapters.feature.filtering.Filtering
 import com.merseyside.adapters.feature.selecting.SelectState
 import com.merseyside.adapters.feature.selecting.Selecting
-import com.merseyside.adapters.feature.selecting.group.SelectingGroup
-import com.merseyside.adapters.interfaces.selectable.SelectableMode
+import com.merseyside.adapters.feature.selecting.SelectableMode
 import com.merseyside.adapters.single.SimpleAdapter
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R

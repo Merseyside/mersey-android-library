@@ -1,7 +1,7 @@
 package com.merseyside.adapters.compose.view.base.selectable
 
-import com.merseyside.adapters.callback.HasOnItemSelectedListener
-import com.merseyside.adapters.callback.OnItemSelectedListener
+import com.merseyside.adapters.feature.selecting.callback.HasOnItemSelectedListener
+import com.merseyside.adapters.feature.selecting.callback.OnItemSelectedListener
 import com.merseyside.adapters.compose.view.base.StyleableComposingView
 import com.merseyside.adapters.compose.view.list.simple.ComposingListStyle
 

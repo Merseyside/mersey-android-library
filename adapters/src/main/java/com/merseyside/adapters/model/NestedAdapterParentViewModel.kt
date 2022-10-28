@@ -5,7 +5,7 @@ abstract class NestedAdapterParentViewModel<Item: Parent, Parent, Data>(
     clickable: Boolean = true,
     deletable: Boolean = true,
     filterable: Boolean = true
-) : SelectableAdapterParentViewModel<Item, Parent>(
+) : AdapterParentViewModel<Item, Parent>(
     item, clickable, deletable, filterable
 ) {
 

@@ -1,11 +1,10 @@
 package com.merseyside.adapters.compose.view.list.selectable
 
-import com.merseyside.adapters.callback.HasOnItemSelectedListener
-import com.merseyside.adapters.callback.OnItemSelectedListener
+import com.merseyside.adapters.feature.selecting.callback.HasOnItemSelectedListener
+import com.merseyside.adapters.feature.selecting.callback.OnItemSelectedListener
 import com.merseyside.adapters.compose.dsl.context.ComposeContext
 import com.merseyside.adapters.compose.dsl.context.SelectableListComposerContext
 import com.merseyside.adapters.compose.dsl.context.selectableList
-import com.merseyside.adapters.compose.style.ComposingStyle
 import com.merseyside.adapters.compose.view.base.SCV
 import com.merseyside.adapters.compose.view.base.addView
 import com.merseyside.adapters.compose.view.list.simple.ComposingList

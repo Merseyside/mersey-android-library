@@ -14,7 +14,7 @@ import com.merseyside.adapters.compose.delegate.ViewDelegateAdapter
 import com.merseyside.adapters.compose.dsl.context.compose
 import com.merseyside.adapters.compose.model.ViewAdapterViewModel
 import com.merseyside.adapters.compose.view.list.selectable.ComposingSelectableList
-import com.merseyside.adapters.compose.view.list.selectable.ComposingSelectableListDelegate
+//import com.merseyside.adapters.compose.view.list.selectable.ComposingSelectableListDelegate
 import com.merseyside.adapters.compose.view.list.simple.ComposingListDelegate
 import com.merseyside.adapters.compose.view.text.ComposingText as Text
 import com.merseyside.adapters.compose.view.text.ComposingTextDelegate
@@ -36,7 +36,7 @@ class MovieScreenAdapterComposer(
 
     override val delegates: ArrayList<ViewDelegateAdapter<out SCV, *, out ViewAdapterViewModel>> =
         listOf(
-            ComposingSelectableListDelegate(),
+            //ComposingSelectableListDelegate(),
             ComposingTextDelegate(),
             ComposingListDelegate()
         )
@@ -58,16 +58,16 @@ class MovieScreenAdapterComposer(
             }
         }
 
-        ComposingSelectableList("selectable_list",
-            initList = {
-                onItemSelected { item, isSelected, _ -> isSelected.log("selected")}
-            }
-        ) {
-            Text("kek") {
-                onClick { "clicked".log() }
-                text = "lol"
-            }
-        }
+//        ComposingSelectableList("selectable_list",
+//            initList = {
+//                onItemSelected { item, isSelected, _ -> isSelected.log("selected")}
+//            }
+//        ) {
+//            Text("kek") {
+//                onClick { "clicked".log() }
+//                text = "lol"
+//            }
+//        }
 
         List("list") {
             List("inner_list1") {

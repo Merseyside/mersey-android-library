@@ -7,6 +7,7 @@ import com.merseyside.adapters.feature.positioning.PositionHandler
 import com.merseyside.merseyLib.kotlin.observable.ObservableField
 import com.merseyside.merseyLib.kotlin.observable.SingleObservableField
 import com.merseyside.merseyLib.kotlin.contract.Identifiable
+import com.merseyside.merseyLib.kotlin.logger.log
 
 @Suppress("UNCHECKED_CAST")
 abstract class AdapterParentViewModel<Item : Parent, Parent>(
@@ -58,6 +59,7 @@ abstract class AdapterParentViewModel<Item : Parent, Parent>(
     @CallSuper
     open fun onClick() {
         if (isClickable) {
+            "here".log()
             mutClickEvent.value = item
         }
     }
