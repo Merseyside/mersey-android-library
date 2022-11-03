@@ -1,29 +1,32 @@
 package com.merseyside.adapters.feature.expanding
 
 import com.merseyside.adapters.base.BaseAdapter
-import com.merseyside.adapters.config.AdapterConfig
+import com.merseyside.adapters.config.NestedAdapterConfig
 import com.merseyside.adapters.config.feature.ConfigurableFeature
+import com.merseyside.adapters.config.feature.NestedConfigurableFeature
+import com.merseyside.adapters.interfaces.nested.INestedAdapter
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 import com.merseyside.adapters.model.VM
 
-class ExpandFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Config<Parent, Model>>()
-        where Model : VM<Parent> {
+class ExpandFeature<Parent, Model, InnerData, InnerAdapter> :
+    NestedConfigurableFeature<Parent, Model, InnerData, InnerAdapter, Config<Parent, Model>>()
+        where Model : NestedAdapterParentViewModel<out Parent, Parent, InnerData>,
+              InnerAdapter : BaseAdapter<InnerData, *> {
+
 
     override lateinit var config: Config<Parent, Model>
     override val featureKey: String = KEY
 
-    internal lateinit var adapterExpand: AdapterExpand<Parent, Model>
+    lateinit var adapterExpand: AdapterExpand<Parent, Model>
 
     override fun prepare(configure: Config<Parent, Model>.() -> Unit) {
         config = Config(configure)
     }
 
     override fun install(
-        adapterConfig: AdapterConfig<Parent, Model>,
-        adapter: BaseAdapter<Parent, Model>
+        adapterConfig: NestedAdapterConfig<Parent, Model, InnerData, InnerAdapter>,
+        adapter: INestedAdapter<Parent, Model, InnerData, InnerAdapter>
     ) {
-        super.install(adapterConfig, adapter)
-
         with(config) {
             adapterExpand = AdapterExpand(
                 variableId,
@@ -60,13 +63,15 @@ class Config<Parent, Model>(
 
 }
 
-object Expanding { //TODO find the way how to use NestedAdapterConfig in context. Got an error!
-    context (AdapterConfig<Parent, Model>) operator fun
-            <Parent, Model : NestedAdapterParentViewModel<out Parent, Parent, *>,
-            TConfig : Config<Parent, Model>> invoke(
+object Expanding {
+    context (NestedAdapterConfig<Parent, Model, InnerData, InnerAdapter>) operator fun
+            <Parent, Model, InnerData, InnerAdapter, TConfig> invoke(
         config: TConfig.() -> Unit
-    ): ExpandFeature<Parent, Model> {
-        return ExpandFeature<Parent, Model>().also { feature ->
+    ): ExpandFeature<Parent, Model, InnerData, InnerAdapter>
+            where Model : NestedAdapterParentViewModel<out Parent, Parent, InnerData>,
+                  InnerAdapter : BaseAdapter<InnerData, *>,
+                  TConfig : Config<Parent, Model> {
+        return ExpandFeature<Parent, Model, InnerData, InnerAdapter>().also { feature ->
             feature as ConfigurableFeature<Parent, Model, TConfig>
             install(feature, config)
         }
