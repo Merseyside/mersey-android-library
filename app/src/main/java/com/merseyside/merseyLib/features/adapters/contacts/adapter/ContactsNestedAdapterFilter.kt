@@ -4,7 +4,7 @@ import com.merseyside.adapters.feature.filtering.NestedAdapterFilter
 import com.merseyside.merseyLib.features.adapters.contacts.entity.ContactGroup
 import com.merseyside.merseyLib.features.adapters.contacts.model.ContactGroupItemViewModel
 
-class ContactsInnerAdapterFilter : NestedAdapterFilter<ContactGroup, ContactGroupItemViewModel>() {
+class ContactsNestedAdapterFilter : NestedAdapterFilter<ContactGroup, ContactGroupItemViewModel>() {
 
     override fun filter(model: ContactGroupItemViewModel, key: String, filter: Any): Boolean {
         return true

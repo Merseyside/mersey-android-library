@@ -11,6 +11,7 @@ open class ComposingListDelegate : BaseComposingListDelegate<ComposingList, Comp
 
     override fun createItemViewModel(item: ComposingList) = ComposingListViewModel(item)
     override fun createCompositeAdapter(
+        model: ComposingListViewModel,
         delegateManager: ViewDelegatesManager<SCV, ViewAdapterViewModel>
     ) = ViewCompositeAdapter(delegatesManager = delegateManager)
 }

@@ -3,12 +3,13 @@ package com.merseyside.adapters.compose.view.text
 import androidx.databinding.Bindable
 import com.merseyside.adapters.BR
 import com.merseyside.adapters.compose.view.base.SCV
+import com.merseyside.adapters.compose.view.base.model.ViewVM
 import com.merseyside.adapters.compose.view.text.ComposingText
 import com.merseyside.adapters.model.AdapterParentViewModel
 
-class ComposingTextViewModel(
-    item: ComposingText
-) : AdapterParentViewModel<ComposingText, SCV>(item) {
+open class ComposingTextViewModel<Item : ComposingText<*>>(
+    item: Item
+) : ViewVM<Item>(item) {
 
     override fun notifyUpdate() {
         super.notifyUpdate()

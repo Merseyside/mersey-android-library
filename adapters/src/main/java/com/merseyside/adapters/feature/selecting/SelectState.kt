@@ -1,7 +1,6 @@
 package com.merseyside.adapters.feature.selecting
 
 import androidx.databinding.ObservableBoolean
-import com.merseyside.merseyLib.kotlin.logger.log
 import com.merseyside.merseyLib.kotlin.observable.MutableObservableField
 import com.merseyside.merseyLib.kotlin.observable.ObservableField
 import com.merseyside.merseyLib.kotlin.observable.combineFields
@@ -12,23 +11,19 @@ class SelectState(
 ) {
 
     internal var globalSelectable = MutableObservableField(true)
-    internal val itemSelectableField = MutableObservableField(selectable)
+    private val itemSelectable = MutableObservableField(selectable)
 
+    val selectedObservable = ObservableBoolean(selected)
+    val selectableObservable = ObservableBoolean(selectable)
+
+    private val selectableField: ObservableField<Boolean> = combineFields(
+        globalSelectable, itemSelectable
+    ) { first, second -> first && second }
 
     private var listener: OnSelectStateListener? = null
 
-    interface OnSelectStateListener {
-        fun onSelected(selected: Boolean)
-
-        fun onSelectable(selectable: Boolean)
-    }
-
-    val selectedObservable = ObservableBoolean(selected)
-    val selectableField: ObservableField<Boolean> = combineFields(
-        globalSelectable, itemSelectableField) { first, second -> first && second }
-
     var selected: Boolean = selected
-        set(value) {
+        internal set(value) {
             if (field != value) {
                 field = value
 
@@ -39,15 +34,22 @@ class SelectState(
 
     var selectable: Boolean
         get() = selectableField.value!!
-        set(value) { itemSelectableField.value = value }
+        internal set(value) { itemSelectable.value = value }
+
+    init {
+        selectableField.observe { value ->
+            selectableObservable.set(value)
+            listener?.onSelectable(value)
+        }
+    }
 
     fun setOnSelectStateListener(listener: OnSelectStateListener) {
         this.listener = listener
     }
 
-    init {
-        selectableField.observe { value ->
-            listener?.onSelectable(value)
-        }
+    interface OnSelectStateListener {
+        fun onSelected(selected: Boolean)
+
+        fun onSelectable(selectable: Boolean)
     }
 }

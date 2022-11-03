@@ -5,15 +5,18 @@ import com.merseyside.adapters.feature.selecting.callback.OnItemSelectedListener
 import com.merseyside.adapters.config.contract.HasWorkManager
 import com.merseyside.adapters.feature.selecting.AdapterSelect
 import com.merseyside.adapters.feature.selecting.SelectableMode
+import com.merseyside.adapters.utils.AdapterWorkManager
 import com.merseyside.merseyLib.kotlin.coroutines.CoroutineQueue
 import com.merseyside.merseyLib.kotlin.extensions.isNotZero
+import com.merseyside.merseyLib.kotlin.logger.log
+import com.merseyside.merseyLib.kotlin.logger.logSimpleTag
 
 class SelectableAdapterGroup<Item>(
     var selectableMode: SelectableMode,
     var isAllowToCancelSelection: Boolean = selectableMode == SelectableMode.MULTIPLE
 ) : HasOnItemSelectedListener<Item>, HasWorkManager {
 
-    override lateinit var workManager: CoroutineQueue<Any, Unit>
+    override lateinit var workManager: AdapterWorkManager
 
     private val groupSelectedListener = object : OnItemSelectedListener<Item> {
         override fun onSelected(item: Item, isSelected: Boolean, isSelectedByUser: Boolean) {
@@ -24,7 +27,7 @@ class SelectableAdapterGroup<Item>(
 
                         if (adaptersWithSelectedItems.isNotEmpty()) {
                             adaptersWithSelectedItems
-                                .find { it.getSelectedItem() != item }
+                                .find { it.getSelectedItem().logSimpleTag("kek") != item }
                                 ?.clear()
                         }
                     }
@@ -40,7 +43,7 @@ class SelectableAdapterGroup<Item>(
             adapterList: AdapterSelect<Item, *>,
             items: List<Item>
         ) {
-            doAsync { selectMostAppropriateItem(adapterList) }
+            workManager.doAsync { selectMostAppropriateItem(adapterList) }
         }
     }
 
@@ -49,7 +52,7 @@ class SelectableAdapterGroup<Item>(
     private val adapters: MutableList<AdapterSelect<Item, *>> = mutableListOf()
 
     fun addAsync(adapter: AdapterSelect<Item, *>, onComplete: (Unit) -> Unit = {}) {
-        doAsync(onComplete) { add(adapter) }
+        workManager.doAsync(onComplete) { add(adapter) }
     }
 
     fun add(adapter: AdapterSelect<Item, *>) {
@@ -65,7 +68,7 @@ class SelectableAdapterGroup<Item>(
     }
 
     suspend fun removeAsync(adapter: AdapterSelect<Item, *>, onComplete: (Unit) -> Unit = {}) {
-        doAsync(onComplete) { remove(adapter) }
+        workManager.doAsync(onComplete) { remove(adapter) }
     }
 
     suspend fun remove(adapter: AdapterSelect<Item, *>) {

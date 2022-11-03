@@ -3,28 +3,28 @@ package com.merseyside.merseyLib.features.adapters.movies.adapter
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.merseyside.adapters.decorator.SimpleItemOffsetDecorator
-import com.merseyside.adapters.extensions.onClick
-import com.merseyside.adapters.extensions.onItemSelected
-import com.merseyside.adapters.compose.view.base.SCV
 import com.merseyside.adapters.compose.SimpleAdapterComposer
 import com.merseyside.adapters.compose.adapter.SimpleViewCompositeAdapter
 import com.merseyside.adapters.compose.delegate.ViewDelegateAdapter
 import com.merseyside.adapters.compose.dsl.context.compose
 import com.merseyside.adapters.compose.model.ViewAdapterViewModel
-import com.merseyside.adapters.compose.view.list.selectable.ComposingSelectableList
-//import com.merseyside.adapters.compose.view.list.selectable.ComposingSelectableListDelegate
-import com.merseyside.adapters.compose.view.list.simple.ComposingListDelegate
-import com.merseyside.adapters.compose.view.text.ComposingText as Text
-import com.merseyside.adapters.compose.view.text.ComposingTextDelegate
 import com.merseyside.adapters.compose.style.ComposingStyle
+import com.merseyside.adapters.compose.view.base.SCV
+import com.merseyside.adapters.compose.view.checkBox.CheckBox
+import com.merseyside.adapters.compose.view.checkBox.ComposingCheckBoxDelegate
+import com.merseyside.adapters.compose.view.list.selectable.ComposingSelectableList
+import com.merseyside.adapters.compose.view.list.selectable.ComposingSelectableListDelegate
+import com.merseyside.adapters.compose.view.list.simple.ComposingListDelegate
+import com.merseyside.adapters.compose.view.text.ComposingTextDelegate
+import com.merseyside.adapters.compose.view.text.Text
+import com.merseyside.adapters.extensions.onClick
+import com.merseyside.adapters.extensions.onItemSelected
+import com.merseyside.adapters.feature.selecting.SelectableMode
+import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
-import kotlin.collections.List as ArrayList
-import com.merseyside.merseyLib.kotlin.extensions.launchDelayed
 import com.merseyside.merseyLib.kotlin.logger.ILogger
-import com.merseyside.merseyLib.time.units.Seconds
 import com.merseyside.merseyLib.features.adapters.movies.adapter.views.MarginComposingList as List
+import kotlin.collections.List as ArrayList
 
 class MovieScreenAdapterComposer(
     private val context: Context,
@@ -34,10 +34,11 @@ class MovieScreenAdapterComposer(
 
     private var dataLiveData: LiveData<String>? = null
 
-    override val delegates: ArrayList<ViewDelegateAdapter<out SCV, *, out ViewAdapterViewModel>> =
+    override val delegates: ArrayList<ViewDelegateAdapter<out SCV, out ComposingStyle, out ViewAdapterViewModel>> =
         listOf(
-            //ComposingSelectableListDelegate(),
+            ComposingCheckBoxDelegate(),
             ComposingTextDelegate(),
+            ComposingSelectableListDelegate(),
             ComposingListDelegate()
         )
 
@@ -58,16 +59,33 @@ class MovieScreenAdapterComposer(
             }
         }
 
-//        ComposingSelectableList("selectable_list",
-//            initList = {
-//                onItemSelected { item, isSelected, _ -> isSelected.log("selected")}
-//            }
-//        ) {
-//            Text("kek") {
-//                onClick { "clicked".log() }
-//                text = "lol"
-//            }
-//        }
+        ComposingSelectableList("selectable_list",
+            initList = {
+                variableId = BR.selectCallback
+                selectableMode = SelectableMode.MULTIPLE
+                //isAllowToCancelSelection = true
+
+                onItemSelected { item, isSelected, _ -> isSelected.log("selected")}
+            }
+        ) {
+            CheckBox("kek",
+                style = {
+                    textColor = R.color.red
+                }) {
+                onClick { "clicked".log() }
+                text = "lol"
+                checked = true
+            }
+
+            CheckBox("kek1",
+                style = {
+                    textColor = R.color.red
+                }) {
+                onClick { "clicked".log() }
+                text = "lol"
+                //checked = true
+            }
+        }
 
         List("list") {
             List("inner_list1") {
@@ -76,7 +94,7 @@ class MovieScreenAdapterComposer(
                         List("inner_list4",
                             style = { margins = ComposingStyle.Margins(R.dimen.very_small_spacing) },
                             initList = {
-                                decorator = SimpleItemOffsetDecorator(context, R.dimen.very_small_spacing)
+                                //decorator = SimpleItemOffsetDecorator(context, R.dimen.very_small_spacing)
                                 onClick { item ->
                                     "on item click $item".log()
                                 }
@@ -103,7 +121,7 @@ class MovieScreenAdapterComposer(
                             text = "text item 3_2 ${dataLiveData?.value ?: ""}"
                         }
                     }
-
+//
                     Text("text2_1",
                         style = { textColor = R.color.green }) {
                         text = "text item 2_1"
@@ -114,7 +132,7 @@ class MovieScreenAdapterComposer(
                         text = "text item 2_2 ${dataLiveData?.value ?: ""}"
                     }
                 }
-
+//
                 Text("text1_1",
                     style = { textColor = R.color.green }) {
                     text = "text item 1_1"
@@ -155,10 +173,10 @@ class MovieScreenAdapterComposer(
     init {
         invalidateAsync()
 
-        adapter.adapterConfig.coroutineScope.launchDelayed(Seconds(2).millis) {
-            val mld = MutableLiveData("some data")
-            addTextDataSource(mld)
-        }
+//        adapter.adapterConfig.coroutineScope.launchDelayed(Seconds(2).millis) {
+//            val mld = MutableLiveData("some data")
+//            addTextDataSource(mld)
+//        }
     }
 
     override val tag = "MovieScreen"

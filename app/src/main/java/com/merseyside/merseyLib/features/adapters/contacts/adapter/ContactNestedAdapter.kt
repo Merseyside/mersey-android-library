@@ -22,6 +22,7 @@ class ContactNestedAdapter(config: ContactNestedAdapterConfig) : NestedAdapter<C
     }
 
     override fun getLayoutIdForPosition(position: Int) = R.layout.item_group_contact
+
     override fun getBindingVariable() = BR.model
 
     override fun createItemViewModel(item: ContactGroup) = ContactGroupItemViewModel(item)

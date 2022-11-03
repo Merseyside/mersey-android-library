@@ -1,6 +1,6 @@
 package com.merseyside.adapters.compose.dsl.context
 
-import com.merseyside.adapters.compose.view.base.StyleableComposingView
+import com.merseyside.adapters.compose.view.base.SCV
 
 object list {
     operator fun invoke(
@@ -12,4 +12,4 @@ object list {
     }
 }
 
-class ListComposerContext: ScreenComposerContext<StyleableComposingView<*>>()
+class ListComposerContext: ScreenComposerContext<SCV>()

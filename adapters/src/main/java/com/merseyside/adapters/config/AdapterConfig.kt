@@ -4,6 +4,7 @@ import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.config.ext.getFeatureByKey
 import com.merseyside.adapters.config.ext.hasFeature
 import com.merseyside.adapters.config.contract.ModelListProvider
+import com.merseyside.adapters.config.contract.OnBindItemListener
 import com.merseyside.adapters.config.contract.UpdateLogicProvider
 import com.merseyside.adapters.config.feature.ConfigurableFeature
 import com.merseyside.adapters.config.feature.Feature
@@ -11,6 +12,7 @@ import com.merseyside.adapters.feature.filtering.FilterFeature
 import com.merseyside.adapters.config.update.simple.SimpleUpdate
 import com.merseyside.adapters.feature.filtering.listManager.FilterListManager
 import com.merseyside.adapters.feature.filtering.listManager.FilterINestedModelListManager
+import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.interfaces.nested.INestedAdapter
 import com.merseyside.adapters.listManager.impl.ListManager
@@ -22,14 +24,17 @@ import com.merseyside.adapters.model.VM
 import com.merseyside.adapters.modelList.ModelList
 import com.merseyside.adapters.modelList.ModelListCallback
 import com.merseyside.adapters.modelList.SimpleModelList
+import com.merseyside.adapters.utils.AdapterWorkManager
 import com.merseyside.merseyLib.kotlin.coroutines.CoroutineQueue
+import com.merseyside.merseyLib.kotlin.logger.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlin.properties.ReadOnlyProperty
 
 open class AdapterConfig<Parent, Model> internal constructor(
     config: AdapterConfig<Parent, Model>.() -> Unit = {}
-) where Model : VM<Parent> {
+): OnBindItemListener<Parent, Model>
+        where Model : VM<Parent> {
     protected lateinit var adapter: BaseAdapter<Parent, Model>
 
     internal val featureList = ArrayList<Feature<Parent, Model>>()
@@ -40,12 +45,21 @@ open class AdapterConfig<Parent, Model> internal constructor(
 
     lateinit var modelList: ModelList<Parent, Model>
 
-    init {
-        apply(config)
-    }
+    var errorHandler: ((Exception) -> Unit)? = null
 
     var coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Main)
-    val workManager: CoroutineQueue<Any, Unit> by lazy { CoroutineQueue(coroutineScope) }
+    val workManager: AdapterWorkManager
+
+    private val onBindViewListeners: MutableList<OnBindItemListener<Parent, Model>> = ArrayList()
+
+    init {
+        apply(config)
+        if (errorHandler == null) errorHandler = { e -> throw e }
+        workManager = AdapterWorkManager(
+            CoroutineQueue<Any, Unit>(coroutineScope).apply { fallOnException = true },
+            errorHandler!!
+        )
+    }
 
     fun install(feature: Feature<Parent, Model>) {
         featureList.add(feature)
@@ -61,6 +75,9 @@ open class AdapterConfig<Parent, Model> internal constructor(
 
     open fun initAdapterWithConfig(adapter: BaseAdapter<Parent, Model>) {
         this.adapter = adapter
+        adapter.workManager = workManager
+        adapter.onBindItemListener = this
+
         initModelList(adapter)
         initModelListManager(adapter)
 
@@ -121,12 +138,15 @@ open class AdapterConfig<Parent, Model> internal constructor(
 
         return _modelListManager
     }
+
+    fun addOnBindItemListener(listener: OnBindItemListener<Parent, Model>) {
+        onBindViewListeners.add(listener)
+    }
+
+    override fun onBindViewHolder(holder: TypedBindingHolder<Model>, model: Model, position: Int) {
+        onBindViewListeners.forEach { it.onBindViewHolder(holder, model, position) }
+    }
 }
-
-fun <Parent, Model : VM<Parent>>
-        AdapterConfig<Parent, Model>.workManager(
-) = ReadOnlyProperty<IBaseAdapter<Parent, Model>, CoroutineQueue<Any, Unit>> { _, _ -> workManager }
-
 
 fun <Parent, Model : VM<Parent>> AdapterConfig<Parent, Model>.listManager() =
     ReadOnlyProperty<IBaseAdapter<Parent, Model>, ModelListManager<Parent, Model>> { thisRef, _ ->

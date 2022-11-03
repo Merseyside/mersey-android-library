@@ -27,7 +27,7 @@ open class DelegatesManager<Delegate, Parent, ParentModel>(
         addDelegateList(delegates)
     }
 
-    open fun addDelegateListInternal(delegates: List<Delegate>) {
+    private fun addDelegateListInternal(delegates: List<Delegate>) {
         val size = count
         delegates.forEachIndexed { index, delegateAdapter ->
             addDelegate(delegateAdapter, size + index)
@@ -36,10 +36,6 @@ open class DelegatesManager<Delegate, Parent, ParentModel>(
 
     fun addDelegateList(delegates: List<DelegateAdapter<out Parent, Parent, out ParentModel>>) {
         addDelegateListInternal(delegates as List<Delegate>)
-    }
-
-    private fun addDelegatesInternal(vararg delegates: Delegate) {
-        addDelegateList(delegates.toList())
     }
 
     fun addDelegates(vararg delegates: DelegateAdapter<out Parent, Parent, out ParentModel>) {
@@ -57,8 +53,7 @@ open class DelegatesManager<Delegate, Parent, ParentModel>(
 
     @Suppress("UNCHECKED_CAST")
     fun createViewHolder(parent: ViewGroup, viewType: Int): TypedBindingHolder<ParentModel> {
-        return requireDelegate { getDelegateByViewType(viewType) }
-            .createViewHolder(parent, viewType)
+        return getDelegateByViewType(viewType).createViewHolder(parent, viewType)
     }
 
     internal fun onBindViewHolder(holder: TypedBindingHolder<ParentModel>, model: ParentModel, position: Int) {
@@ -72,8 +67,8 @@ open class DelegatesManager<Delegate, Parent, ParentModel>(
         } else throw IllegalStateException("Delegates are empty. Please, add delegates before using this!")
     }
 
-    fun getDelegateByViewType(Int: Int): Delegate {
-        return requireDelegate { delegates.get(Int) }
+    fun getDelegateByViewType(viewType: Int): Delegate {
+        return requireDelegate { delegates.get(viewType) }
     }
 
     fun getDelegateKey(delegate: Delegate): Int {
@@ -150,7 +145,9 @@ open class DelegatesManager<Delegate, Parent, ParentModel>(
     private fun requireDelegate(
         block: () -> Delegate?
     ): Delegate {
-        return block() ?: throw NullPointerException("Delegate was required but have null!")
+        return block() ?: run {
+            throw NullPointerException("Delegate was required but have null!")
+        }
     }
 }
 

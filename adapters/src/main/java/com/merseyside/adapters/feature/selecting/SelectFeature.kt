@@ -36,7 +36,7 @@ class SelectFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Config<P
             adapterSelect.onItemSelected(onSelect)
         }
 
-        adapter.onBindItemListener = adapterSelect
+        adapterConfig.addOnBindItemListener(adapterSelect)
     }
 
     companion object {
@@ -63,7 +63,7 @@ class Config<Parent, Model>(
     item: Parent,
     isSelected: Boolean,
     isSelectedByUser: Boolean
-    ) -> Unit = { item, isSelected, isSelectedByUser ->  }
+    ) -> Unit = { _, _, _ ->  }
 
     init {
         apply(configure)

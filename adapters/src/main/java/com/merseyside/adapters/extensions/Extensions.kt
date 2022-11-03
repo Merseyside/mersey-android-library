@@ -76,7 +76,7 @@ fun <Item> HasOnItemExpandedListener<Item>.onItemExpanded(
     ) -> Unit
 ): OnItemExpandedListener<Item> {
     val listener = object : OnItemExpandedListener<Item> {
-        override fun onExpandedStateChanged(
+        override fun onExpanded(
             item: Item,
             isExpanded: Boolean,
             isExpandedByUser: Boolean

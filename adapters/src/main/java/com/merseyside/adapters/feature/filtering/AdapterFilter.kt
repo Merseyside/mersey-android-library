@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import com.merseyside.adapters.model.VM
+import com.merseyside.adapters.utils.AdapterWorkManager
 
 abstract class AdapterFilter<Parent, Model : VM<Parent>> : HasWorkManager, ILogger {
 
@@ -21,7 +22,7 @@ abstract class AdapterFilter<Parent, Model : VM<Parent>> : HasWorkManager, ILogg
         private set(value) {
             if (value != field) {
                 field = value
-                doAsync { filterCallback?.onFilterStateChanged(value) }
+                workManager.doAsync { filterCallback?.onFilterStateChanged(value) }
             }
         }
 
@@ -31,7 +32,7 @@ abstract class AdapterFilter<Parent, Model : VM<Parent>> : HasWorkManager, ILogg
     private val isBind: Boolean
         get() = this::workManager.isInitialized
 
-    override lateinit var workManager: CoroutineQueue<Any, Unit>
+    override lateinit var workManager: AdapterWorkManager
 
     internal var provideFullList: () -> List<Model> = { emptyList() }
     internal var provideFilteredList: () -> List<Model> = { provideFullList() }
@@ -110,7 +111,7 @@ abstract class AdapterFilter<Parent, Model : VM<Parent>> : HasWorkManager, ILogg
      * @return true if filters applied, false otherwise.
      */
     open fun applyFiltersAsync(onComplete: (Boolean) -> Unit = {}) {
-        doAsync(
+        workManager.doAsync(
             onComplete,
             onError = {
                 putAppliedFilters()
@@ -166,7 +167,7 @@ abstract class AdapterFilter<Parent, Model : VM<Parent>> : HasWorkManager, ILogg
     internal fun setFilterCallback(callback: FilterCallback<Model>) {
         this.filterCallback = callback
         if (isFiltered) {
-            doAsync { callback.onFilterStateChanged(true) }
+            workManager.doAsync { callback.onFilterStateChanged(true) }
         }
     }
 
@@ -178,22 +179,6 @@ abstract class AdapterFilter<Parent, Model : VM<Parent>> : HasWorkManager, ILogg
         filters.log("$prefix filters =")
         notAppliedFilters.log("$prefix not applied =")
     }
-
-//    fun <Result> doAsync(
-//        onComplete: (Result) -> Unit = {},
-//        onError: () -> Unit = {},
-//        work: suspend () -> Result,
-//    ): Job? {
-//        return if (isBind) {
-//            workManager.addAndExecute {
-//                val result = work()
-//                onComplete(result)
-//            }
-//        } else {
-//            onError()
-//            null
-//        }
-//    }
 
     interface FilterCallback<Model> {
         suspend fun onFiltered(models: List<Model>)

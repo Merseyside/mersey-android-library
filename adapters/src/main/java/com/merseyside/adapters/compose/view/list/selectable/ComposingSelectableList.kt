@@ -8,14 +8,19 @@ import com.merseyside.adapters.compose.dsl.context.selectableList
 import com.merseyside.adapters.compose.view.base.SCV
 import com.merseyside.adapters.compose.view.base.addView
 import com.merseyside.adapters.compose.view.list.simple.ComposingList
-import com.merseyside.adapters.compose.view.base.selectable.CSV
 import com.merseyside.adapters.compose.view.list.simple.ComposingListStyle
+import com.merseyside.adapters.feature.selecting.SelectableMode
 
 class ComposingSelectableList(
     id: String,
     override val composingStyle: ComposingSelectableListStyle,
-    override val viewList: List<CSV> = emptyList()
+    override val viewList: List<SCV> = emptyList()
 ): ComposingList(id, composingStyle, viewList), HasOnItemSelectedListener<SCV> {
+
+    var variableId: Int = 0
+    var selectableMode: SelectableMode = SelectableMode.SINGLE
+    var isSelectEnabled: Boolean = true
+    var isAllowToCancelSelection: Boolean = false
 
     override val selectedListeners: MutableList<OnItemSelectedListener<SCV>> = ArrayList()
 
@@ -44,5 +49,5 @@ open class ComposingSelectableListStyle : ComposingListStyle() {
         }
     }
 
-    override val tag: String = "ListStyle"
+    override val tag: String = "SelectableListStyle"
 }

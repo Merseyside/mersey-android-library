@@ -22,7 +22,7 @@ abstract class ComposingView(private val id: String) : Identifiable<String>,
         val builder = StringBuilder()
         builder.apply {
             appendLine()
-            append("View: ").appendLine(getClassName())
+            append("View: ").appendLine(this@ComposingView.getClassName())
             append("id: ").appendLine(id)
         }
 

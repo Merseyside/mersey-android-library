@@ -1,6 +1,6 @@
 package com.merseyside.adapters.compose.dsl.context
 
-import com.merseyside.adapters.compose.view.base.selectable.CSV
+import com.merseyside.adapters.compose.view.base.SCV
 
 object selectableList {
     operator fun invoke(
@@ -12,4 +12,4 @@ object selectableList {
     }
 }
 
-class SelectableListComposerContext: ScreenComposerContext<CSV>()
+class SelectableListComposerContext: ScreenComposerContext<SCV>()

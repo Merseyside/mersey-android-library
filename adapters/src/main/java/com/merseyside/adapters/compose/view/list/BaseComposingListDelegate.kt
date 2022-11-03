@@ -36,10 +36,9 @@ abstract class BaseComposingListDelegate<View, Model, InnerParent, InnerModel, I
 
     @InternalAdaptersApi
     override fun initNestedAdapter(
-        model: Model,
-        delegatesManager: DelegatesManager<*, *, *>
+        model: Model
     ): InnerAdapter {
-        return super.initNestedAdapter(model, delegatesManager).also { adapter ->
+        return super.initNestedAdapter(model).also { adapter ->
             with(adapter) {
                 onClick { view -> model.item.notifyOnClick(view) }
             }

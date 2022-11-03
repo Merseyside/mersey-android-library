@@ -19,6 +19,9 @@ import com.merseyside.utils.measureAndLogTime
 import kotlin.math.max
 import kotlin.math.min
 import com.merseyside.adapters.model.VM
+import com.merseyside.adapters.utils.AdapterWorkManager
+import com.merseyside.merseyLib.kotlin.logger.log
+import kotlinx.coroutines.Job
 
 @SuppressLint("NotifyDataSetChanged")
 interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
@@ -38,7 +41,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
 
     @CallSuper
     fun addAsync(item: Parent, onComplete: (Model?) -> Unit = {}) {
-        doAsync(onComplete) { add(item) }
+        workManager.doAsync(onComplete) { add(item) }
     }
 
     suspend fun add(item: Parent): Model? {
@@ -46,7 +49,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
     }
 
     fun addAsync(items: List<Parent>, onComplete: (Unit) -> Unit = {}) {
-        doAsync(onComplete) { add(items) }
+        workManager.doAsync(onComplete) { add(items) }
     }
 
     /**
@@ -58,7 +61,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
     }
 
     fun addOrUpdateAsync(items: List<Parent>, onComplete: (Unit) -> Unit = {}) {
-        doAsync(onComplete) { addOrUpdate(items) }
+        workManager.doAsync(onComplete) { addOrUpdate(items) }
     }
 
     suspend fun addOrUpdate(items: List<Parent>) {
@@ -70,7 +73,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
     }
 
     fun updateAsync(updateRequest: UpdateRequest<Parent>, provideResult: (Boolean) -> Unit = {}) {
-        doAsync(provideResult) { update(updateRequest) }
+        workManager.doAsync(provideResult) { update(updateRequest) }
     }
 
     suspend fun update(updateRequest: UpdateRequest<Parent>): Boolean {
@@ -80,7 +83,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
     }
 
     fun updateAsync(items: List<Parent>, onComplete: (Boolean) -> Unit = {}) {
-        doAsync(onComplete) { update(items) }
+        workManager.doAsync(onComplete) { update(items) }
     }
 
     suspend fun update(items: List<Parent>): Boolean {
@@ -101,7 +104,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
 
     @CallSuper
     fun removeAsync(item: Parent, onComplete: (Model?) -> Unit = {}) {
-        doAsync(onComplete) { remove(item) }
+        workManager.doAsync(onComplete) { remove(item) }
     }
 
     suspend fun remove(item: Parent): Model? {
@@ -109,7 +112,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
     }
 
     fun removeAsync(items: List<Parent>, onComplete: (List<Model>) -> Unit = {}) {
-        doAsync(onComplete) { remove(items) }
+        workManager.doAsync(onComplete) { remove(items) }
     }
 
     suspend fun remove(items: List<Parent>): List<Model> {
@@ -178,7 +181,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
     }
 
     fun getModelByItemAsync(item: Parent, onComplete: (Model?) -> Unit) {
-        doAsync(onComplete) { getModelByItem(item) }
+        workManager.doAsync(onComplete) { getModelByItem(item) }
     }
 
     @InternalAdaptersApi
@@ -206,7 +209,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
 
     @CallSuper
     fun clearAsync(onComplete: (Unit) -> Unit = {}) {
-        doAsync(onComplete) { clear() }
+        workManager.doAsync(onComplete) { clear() }
     }
 
     suspend fun clear() {
@@ -254,7 +257,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
     /* Position */
 
     fun addAsync(position: Int, item: Parent, onComplete: (Unit) -> Unit) {
-        doAsync(onComplete) { add(position, item) }
+        workManager.doAsync(onComplete) { add(position, item) }
     }
 
     suspend fun add(position: Int, item: Parent) {
@@ -262,7 +265,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
     }
 
     fun addAsync(position: Int, items: List<Parent>, onComplete: (Unit) -> Unit) {
-        doAsync(onComplete) { add(position, items) }
+        workManager.doAsync(onComplete) { add(position, items) }
     }
 
     suspend fun add(position: Int, items: List<Parent>) {
@@ -302,11 +305,12 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
         return if (oldPosition == -1) {
             newPosition..models.lastIndex
         } else {
-            min(oldPosition, newPosition).. max(oldPosition, newPosition)
+            min(oldPosition, newPosition)..max(oldPosition, newPosition)
         }
     }
 
     fun hasFeature(key: String): Boolean
 
-    val modelClass: Class<Model>
+    @Throws(IllegalStateException::class)
+    fun getModelClass(): Class<Model>
 }

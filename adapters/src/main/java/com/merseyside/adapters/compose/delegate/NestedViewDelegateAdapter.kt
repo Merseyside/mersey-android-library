@@ -25,15 +25,17 @@ abstract class NestedViewDelegateAdapter<View, Style, Model, InnerParent, InnerM
 
     override lateinit var delegatesManagerProvider: () -> DelegatesManager<*, *, *>
 
-    abstract fun createCompositeAdapter(delegateManager: ViewDelegatesManager<InnerParent, InnerModel>): InnerAdapter
+    abstract fun createCompositeAdapter(
+        model: Model,
+        delegateManager: ViewDelegatesManager<InnerParent, InnerModel>,
+    ): InnerAdapter
 
     override fun initNestedAdapter(
         model: Model,
-        delegatesManager: DelegatesManager<*, *, *>
     ): InnerAdapter {
 
-        val innerDelegateManager = delegatesManager as ViewDelegatesManager<InnerParent, InnerModel>
-        return createCompositeAdapter(innerDelegateManager)
+        val innerDelegateManager = delegatesManagerProvider() as ViewDelegatesManager<InnerParent, InnerModel>
+        return createCompositeAdapter(model, innerDelegateManager)
     }
 
     @InternalAdaptersApi

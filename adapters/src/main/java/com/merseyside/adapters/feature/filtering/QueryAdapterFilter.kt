@@ -1,7 +1,7 @@
 package com.merseyside.adapters.feature.filtering
 
-import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
 import com.merseyside.adapters.model.VM
+import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
 
 abstract class QueryAdapterFilter<Parent, Model : VM<Parent>> :
     AdapterFilter<Parent, Model>() {
@@ -9,7 +9,7 @@ abstract class QueryAdapterFilter<Parent, Model : VM<Parent>> :
     abstract fun filter(model: Model, query: String): Boolean
 
     fun setQuery(query: String?, onComplete: (Boolean) -> Unit = {}) {
-        doAsync(onComplete) { setQuery(query) }
+        workManager.doAsync(onComplete) { setQuery(query) }
     }
 
     suspend fun setQuery(query: String?): Boolean {

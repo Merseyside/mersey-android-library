@@ -7,10 +7,10 @@ import com.merseyside.adapters.compose.dsl.context.ComposeContext
 import com.merseyside.adapters.compose.view.base.addView
 import com.merseyside.adapters.compose.style.ComposingStyle
 
-open class ComposingText(
+open class ComposingText<Style : ComposingTextStyle>(
     id: String,
-    override val composingStyle: ComposingTextStyle
-) : StyleableComposingView<ComposingTextStyle>(id) {
+    override val composingStyle: Style
+) : StyleableComposingView<Style>(id) {
 
     var text: String = ""
 
@@ -18,8 +18,8 @@ open class ComposingText(
         context (ComposeContext) operator fun invoke(
             id: String,
             style: ComposingTextStyle.() -> Unit = {},
-            init: ComposingText.() -> Unit
-        ): ComposingText {
+            init: Text.() -> Unit
+        ): Text {
             return ComposingText(id, ComposingTextStyle(style))
                 .apply(init)
                 .addView()
@@ -34,7 +34,7 @@ open class ComposingText(
     }
 }
 
-class ComposingTextStyle : ComposingStyle() {
+open class ComposingTextStyle : ComposingStyle() {
     @ColorRes
     var textColor: Int? = null
 
@@ -51,3 +51,5 @@ class ComposingTextStyle : ComposingStyle() {
 
     override val tag: String = "TextStyle"
 }
+
+typealias Text = ComposingText<ComposingTextStyle>

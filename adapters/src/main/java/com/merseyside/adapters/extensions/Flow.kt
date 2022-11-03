@@ -26,7 +26,7 @@ fun <Parent> BaseAdapter<Parent, *>.setListFlow(
     with(viewLifecycleOwner) {
         lifecycleScope.launch {
             flow.flowWithLifecycle(lifecycle).collect { items ->
-                doAsync {
+                workManager.doAsync {
                     when (behaviour) {
                         is Behaviour.ADD -> {
                             add(items)

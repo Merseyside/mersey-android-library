@@ -1,6 +1,6 @@
-package com.merseyside.adapters.compose.model
+package com.merseyside.adapters.compose.view.base.model
 
 import com.merseyside.adapters.compose.view.base.SCV
 import com.merseyside.adapters.model.AdapterParentViewModel
 
-typealias ViewAdapterViewModel = AdapterParentViewModel<out SCV, SCV>
+typealias ViewVM<View> = AdapterParentViewModel<View, SCV>

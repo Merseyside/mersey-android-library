@@ -2,28 +2,30 @@ package com.merseyside.adapters.compose.view.checkBox
 
 import com.merseyside.adapters.compose.dsl.context.ComposeContext
 import com.merseyside.adapters.compose.view.base.addView
-import com.merseyside.adapters.compose.view.base.selectable.SelectableComposingStyle
-import com.merseyside.adapters.compose.view.base.selectable.SelectableComposingView
+import com.merseyside.adapters.compose.view.text.ComposingText
+import com.merseyside.adapters.compose.view.text.ComposingTextStyle
 
-open class ComposingCheckBox(
+open class ComposingCheckBox<Style : ComposingCheckBoxStyle>(
     id: String,
-    override val composingStyle: ComposingCheckBoxStyle
-): SelectableComposingView<ComposingCheckBoxStyle>(id) {
+    override val composingStyle: Style
+): ComposingText<Style>(id, composingStyle) {
+
+    var checked: Boolean = false
 
     companion object {
         context (ComposeContext) operator fun invoke(
             id: String,
             style: ComposingCheckBoxStyle.() -> Unit = {},
-            init: ComposingCheckBox.() -> Unit
-        ): ComposingCheckBox {
-            return ComposingCheckBox(id, ComposingCheckBoxStyle(style))
+            init: CheckBox.() -> Unit
+        ): CheckBox {
+            return CheckBox(id, ComposingCheckBoxStyle(style))
                 .apply(init)
                 .addView()
         }
     }
 }
 
-class ComposingCheckBoxStyle: SelectableComposingStyle() {
+open class ComposingCheckBoxStyle: ComposingTextStyle() {
     companion object {
         operator fun invoke(init: ComposingCheckBoxStyle.() -> Unit): ComposingCheckBoxStyle {
             return ComposingCheckBoxStyle().apply(init)
@@ -31,3 +33,4 @@ class ComposingCheckBoxStyle: SelectableComposingStyle() {
     }
 }
 
+typealias CheckBox = ComposingCheckBox<ComposingCheckBoxStyle>

@@ -36,7 +36,7 @@ abstract class DelegateAdapter<Item : Parent, Parent, Model> :
             ?: throw NullPointerException("Parent is null!")
     }
 
-    internal fun isResponsibleForItemClass(clazz: Class<out Parent>): Boolean {
+    open fun isResponsibleForItemClass(clazz: Class<out Parent>): Boolean {
         return persistentClass == clazz
     }
 
@@ -76,10 +76,11 @@ abstract class DelegateAdapter<Item : Parent, Parent, Model> :
     open fun getBindingHolder(binding: ViewDataBinding) = TypedBindingHolder<Model>(binding)
 
     @Suppress("UNCHECKED_CAST")
-    private val persistentClass: Class<Item> =
+    private val persistentClass: Class<Item> by lazy {
         ReflectionUtils.getGenericParameterClass(
             this.javaClass,
             DelegateAdapter::class.java,
             0
         ) as Class<Item>
+    }
 }

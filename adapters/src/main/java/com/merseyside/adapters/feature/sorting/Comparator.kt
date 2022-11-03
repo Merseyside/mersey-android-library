@@ -1,21 +1,20 @@
 package com.merseyside.adapters.feature.sorting
 
-import com.merseyside.merseyLib.kotlin.coroutines.CoroutineQueue
 import com.merseyside.adapters.model.VM
+import com.merseyside.adapters.utils.AdapterWorkManager
 
 abstract class Comparator<Parent, Model : VM<Parent>>(
     protected var animation: Boolean = true
 ) {
 
     private lateinit var callback: OnComparatorUpdateCallback
-    internal lateinit var workManager: CoroutineQueue<Any, Unit>
+    internal lateinit var workManager: AdapterWorkManager
 
     abstract fun compare(model1: Model, model2: Model): Int
 
-    fun updateAsync(onComplete: () -> Unit = {}) {
-        workManager.addAndExecute {
+    fun updateAsync(onComplete: (Unit) -> Unit = {}) {
+        workManager.doAsync(onComplete) {
             update()
-            onComplete()
         }
     }
 

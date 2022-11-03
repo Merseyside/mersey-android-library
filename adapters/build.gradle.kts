@@ -41,6 +41,16 @@ android {
             )
         }
     }
+
+    sourceSets.getByName("main") {
+        res.srcDirs(
+            "src/main/res/",
+            "src/main/res/layouts/view",
+            "src/main/res/layouts/list",
+            "src/main/res/value/values-light",
+            "src/main/res/value/values-night"
+        )
+    }
 }
 
 kotlinConvention {

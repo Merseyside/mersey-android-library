@@ -1,3 +1,5 @@
+@file:Suppress("UNCHECKED_CAST")
+
 package com.merseyside.adapters.feature.selecting
 
 import com.merseyside.adapters.feature.selecting.callback.HasOnItemSelectedListener
@@ -9,10 +11,13 @@ import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.VM
 import com.merseyside.adapters.modelList.ModelList
 import com.merseyside.adapters.modelList.ModelListCallback
-import com.merseyside.merseyLib.kotlin.coroutines.CoroutineQueue
-import com.merseyside.merseyLib.kotlin.logger.log
+import com.merseyside.adapters.utils.AdapterWorkManager
+import com.merseyside.merseyLib.kotlin.logger.ILogger
+import org.jetbrains.annotations.Contract
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
-@Suppress("UNCHECKED_CAST")
+
 class AdapterSelect<Parent, Model>(
     private val modelList: ModelList<Parent, Model>,
     private val variableId: Int,
@@ -20,7 +25,7 @@ class AdapterSelect<Parent, Model>(
     isSelectEnabled: Boolean,
     private var isAllowToCancelSelection: Boolean
 ) : HasOnItemSelectedListener<Parent>, OnBindItemListener<Parent, Model>,
-    OnSelectCallback, ModelListCallback<Model>, HasWorkManager
+    ModelListCallback<Model>, HasWorkManager, ILogger
         where Model : VM<Parent> {
 
     internal var isGroupAdapter: Boolean = false
@@ -30,12 +35,24 @@ class AdapterSelect<Parent, Model>(
         ArrayList()
     }
 
-    override lateinit var workManager: CoroutineQueue<Any, Unit>
+    override lateinit var workManager: AdapterWorkManager
 
     private val selectedList: MutableList<SelectableItem> = ArrayList()
 
     val size: Int
         get() = selectedList.size
+
+    private val onSelectCallback: OnSelectCallback = object : OnSelectCallback {
+        override fun onSelect(item: SelectableItem) {
+            changeItemSelectedState(item)
+        }
+
+        override fun onSelect(item: SelectableItem, selected: Boolean) {
+            if (item.isSelected() != selected) {
+                onSelect(item)
+            }
+        }
+    }
 
     var selectableMode: SelectableMode = selectableMode
         set(value) {
@@ -64,7 +81,8 @@ class AdapterSelect<Parent, Model>(
                 }
 
                 if (selectedList.isEmpty() && selectableMode == SelectableMode.SINGLE &&
-                        !isAllowToCancelSelection) {
+                    !isAllowToCancelSelection
+                ) {
                     selectFirstItemIfNeed()
                 }
             }
@@ -74,24 +92,18 @@ class AdapterSelect<Parent, Model>(
         modelList.addModelListCallback(this)
     }
 
-
     override fun onBindViewHolder(
         holder: TypedBindingHolder<Model>,
         model: Model,
         position: Int
     ) {
-        holder.bind(variableId, this as OnSelectCallback)
+        holder.bind(variableId, onSelectCallback)
     }
 
 
     override fun onInserted(models: List<Model>, position: Int, count: Int) {
-        if (modelList.size == count) {
-            if (isSelectEnabled && selectedList.isEmpty() && selectableMode == SelectableMode.SINGLE) {
-                selectFirstItemIfNeed()
-            }
-        }
-
         initNewModels(models)
+        addSelectedItems(models.filterIsInstance<SelectableItem>())
     }
 
     private fun initNewModels(models: List<Model>) {
@@ -114,7 +126,6 @@ class AdapterSelect<Parent, Model>(
 
     override fun onMoved(fromPosition: Int, toPosition: Int) {}
 
-
     override fun addOnItemSelectedListener(listener: OnItemSelectedListener<Parent>) {
         super.addOnItemSelectedListener(listener)
 
@@ -129,7 +140,7 @@ class AdapterSelect<Parent, Model>(
 
     suspend fun selectItem(item: Parent) {
         val selectable = modelList.getModelByItem(item).requireSelectable()
-        setItemSelected(selectable)
+        changeItemSelectedState(selectable)
     }
 
     fun getSelectedItem(): Parent? {
@@ -166,24 +177,46 @@ class AdapterSelect<Parent, Model>(
         } else false
     }
 
-    fun setItemSelected(item: SelectableItem, isSelectedByUser: Boolean = false): Boolean {
+    private fun addSelectedItems(list: List<SelectableItem>) {
+        val selected = list.filter { it.isSelected() }
+        if (selectableMode == SelectableMode.SINGLE) {
+            if (selected.isEmpty()) {
+                if (isAllowToCancelSelection) return
+                else selectFirstItemIfNeed()
+            } else {
+                clear()
+                val lastSelectedItem = selected.last()
+                selectedList.add(lastSelectedItem)
+                notifyItemSelected(lastSelectedItem, false)
+
+                //make another items not selected
+                val wrongSelectedItems = selected.toMutableList().apply { remove(lastSelectedItem) }
+                wrongSelectedItems.forEach {
+                    it.selectState.selected = false
+                    notifyItemSelected(it, false)
+                }
+            }
+        } else {
+            selectedList.addAll(selected)
+            selected.forEach { notifyItemSelected(it, false) }
+        }
+    }
+
+    fun changeItemSelectedState(item: SelectableItem, isSelectedByUser: Boolean = false): Boolean {
 
         return with(item) {
             if (canItemBeSelected(item)) {
                 when (selectableMode) {
                     SelectableMode.SINGLE -> {
                         if (!isSelected()) {
-                            selectedList.log()
                             val selectedItem = selectedList.firstOrNull()
                             if (selectedItem != null) {
                                 updateItemWithState(
                                     selectedItem,
-                                    newState = false,
                                     isSelectedByUser = false
                                 )
                             }
 
-                            selectedList.clear()
                             updateItemWithState(item, isSelectedByUser = isSelectedByUser)
                         } else {
                             if (isAllowToCancelSelection) {
@@ -226,8 +259,18 @@ class AdapterSelect<Parent, Model>(
 
     fun selectFirstSelectableItem() {
         modelList.forEach { item ->
-            if (setItemSelected(item.asSelectable())) return
+            if (changeItemSelectedState(item.asSelectable())) return
         }
+    }
+
+    @ExperimentalContracts
+    @Contract
+    internal fun Model?.isSelectable(): Boolean {
+        contract {
+            returns(true) implies (this@isSelectable != null && this@isSelectable is SelectableItem)
+        }
+
+        return this != null && this is SelectableItem
     }
 
     internal fun Model?.asSelectable(): SelectableItem {
@@ -266,18 +309,12 @@ class AdapterSelect<Parent, Model>(
         }
     }
 
-    override fun onSelect(item: SelectableItem) {
-        if (canItemBeSelected(item)) {
-            setItemSelected(item)
-        }
-    }
-
     private fun notifyItemsSelected(items: Set<SelectableItem>, isSelectedByUser: Boolean) {
         items.forEach { notifyItemSelected(it, isSelectedByUser) }
     }
 
     private fun notifyItemSelected(item: SelectableItem, isSelectedByUser: Boolean) {
-        notifyOnSelected((item as Model).item, item.isSelected(), isSelectedByUser)
+        notifyOnSelected((item.asModel()).item, item.isSelected(), isSelectedByUser)
     }
 
     fun clear() {
@@ -286,4 +323,6 @@ class AdapterSelect<Parent, Model>(
         }
         selectedList.clear()
     }
+
+    override val tag: String = "AdapterSelect"
 }

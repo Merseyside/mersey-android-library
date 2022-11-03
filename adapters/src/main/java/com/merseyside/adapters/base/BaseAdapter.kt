@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.config.ext.hasFeature
 import com.merseyside.adapters.config.AdapterConfig
 import com.merseyside.adapters.config.listManager
-import com.merseyside.adapters.config.workManager
 import com.merseyside.adapters.callback.HasOnItemClickListener
 import com.merseyside.adapters.callback.OnItemClickListener
 import com.merseyside.adapters.config.contract.OnBindItemListener
@@ -16,8 +15,8 @@ import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.listManager.ModelListManager
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.VM
+import com.merseyside.adapters.utils.AdapterWorkManager
 import com.merseyside.adapters.utils.InternalAdaptersApi
-import com.merseyside.merseyLib.kotlin.coroutines.CoroutineQueue
 import com.merseyside.merseyLib.kotlin.logger.ILogger
 import com.merseyside.utils.reflection.ReflectionUtils
 
@@ -28,15 +27,14 @@ abstract class BaseAdapter<Parent, Model>(
     HasOnItemClickListener<Parent>, IBaseAdapter<Parent, Model>, ILogger
         where Model : VM<Parent> {
 
-    var onBindItemListener: OnBindItemListener<Parent, Model>? = null
+    override lateinit var workManager: AdapterWorkManager
 
-    override val workManager: CoroutineQueue<Any, Unit> by adapterConfig.workManager()
+    var onBindItemListener: OnBindItemListener<Parent, Model>? = null
 
     override val models: List<Model>
         get() = delegate.modelList
 
     override val delegate: ModelListManager<Parent, Model> by adapterConfig.listManager()
-
 
     @InternalAdaptersApi
     override val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>
@@ -56,8 +54,8 @@ abstract class BaseAdapter<Parent, Model>(
         }
     }
 
-    override val modelClass: Class<Model> by lazy {
-        ReflectionUtils.getGenericParameterClass(
+    override fun getModelClass(): Class<Model> {
+        return ReflectionUtils.getGenericParameterClass(
             this.javaClass,
             BaseAdapter::class.java,
             1
@@ -89,9 +87,9 @@ abstract class BaseAdapter<Parent, Model>(
 
         bindItemList.add(model)
 
-        if (!isRecyclable || !holder.isRecyclable) {
-            holder.setIsRecyclable(isRecyclable)
-        }
+//        if (!isRecyclable || !holder.isRecyclable) {
+//            holder.setIsRecyclable(isRecyclable)
+//        }
     }
 
     override fun onBindViewHolder(

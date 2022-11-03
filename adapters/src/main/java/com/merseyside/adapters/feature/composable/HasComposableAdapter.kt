@@ -4,6 +4,7 @@ import com.merseyside.adapters.compose.adapter.ViewCompositeAdapter
 import com.merseyside.adapters.compose.delegate.ViewDelegateAdapter
 import com.merseyside.adapters.compose.dsl.context.ComposeContext
 import com.merseyside.adapters.compose.model.ViewAdapterViewModel
+import com.merseyside.adapters.compose.style.ComposingStyle
 import com.merseyside.adapters.compose.view.base.SCV
 import com.merseyside.adapters.utils.runWithDefault
 
@@ -11,7 +12,7 @@ interface HasComposableAdapter<Model>
         where Model : ViewAdapterViewModel {
 
     val adapter: ViewCompositeAdapter<SCV, Model>
-    val delegates: List<ViewDelegateAdapter<out SCV, *, out Model>>
+    val delegates: List<ViewDelegateAdapter<out SCV, out ComposingStyle, out Model>>
 
     suspend fun composeScreen(): ComposeContext
 
@@ -29,7 +30,7 @@ interface HasComposableAdapter<Model>
     }
 
     fun invalidateAsync(onComplete: (Unit) -> Unit = {}) {
-        adapter.doAsync(onComplete) { invalidate() }
+        adapter.workManager.doAsync(onComplete) { invalidate() }
     }
 
     suspend fun invalidate() {

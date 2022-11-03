@@ -19,12 +19,12 @@ interface INestedDelegateAdapter<Item : Parent, Parent, Model, Data, InnerAdapte
 
     val adapterList: MutableList<Pair<Model, InnerAdapter>>
 
-    fun initNestedAdapter(model: Model, delegatesManager: DelegatesManager<*, *, *>): InnerAdapter
+    fun initNestedAdapter(model: Model): InnerAdapter
 
     fun getNestedView(binding: ViewDataBinding, model: Model): RecyclerView?
 
     private fun getNestedAdapterByModel(model: Model): InnerAdapter {
-        return getAdapterIfExists(model) ?: initNestedAdapter(model, delegatesManagerProvider())
+        return getAdapterIfExists(model) ?: initNestedAdapter(model)
             .also { adapter ->
                 putAdapter(model, adapter)
             }

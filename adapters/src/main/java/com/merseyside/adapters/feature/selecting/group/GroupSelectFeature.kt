@@ -28,9 +28,9 @@ class GroupSelectFeature<Parent, Model, InnerData, InnerAdapter> :
     private val onInitNestedAdapterListener = object : OnInitNestedAdapterListener<InnerData> {
         override fun onInitNestedAdapter(adapter: BaseAdapter<InnerData, *>) {
             val innerAdapterConfig = adapter.adapterConfig
-            val adapterSelect = innerAdapterConfig.getAdapterSelect()
-            adapterSelect?.let {
-                selectAdapterGroup.addAsync(it)
+            innerAdapterConfig.getAdapterSelect()?.apply {
+                selectableMode = config.selectableMode
+                selectAdapterGroup.addAsync(this)
             }
         }
     }

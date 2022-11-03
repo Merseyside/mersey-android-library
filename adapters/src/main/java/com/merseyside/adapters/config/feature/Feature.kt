@@ -14,11 +14,8 @@ abstract class Feature<Parent, Model : VM<Parent>> {
         adapterConfig: AdapterConfig<Parent, Model>,
         adapter: BaseAdapter<Parent, Model>
     ) {
-        modelClass = adapter.modelClass
         isInstalled = true
     }
-
-    protected lateinit var modelClass: Class<Model>
 
     abstract val featureKey: String
 }

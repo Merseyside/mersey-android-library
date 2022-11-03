@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.asLiveData
+import com.merseyside.adapters.feature.expanding.Expanding
 import com.merseyside.adapters.feature.filtering.Filtering
 import com.merseyside.adapters.feature.filtering.ext.addAndApply
 import com.merseyside.adapters.feature.filtering.ext.removeAndApply
@@ -16,7 +17,7 @@ import com.merseyside.merseyLib.application.base.BaseSampleFragment
 import com.merseyside.merseyLib.databinding.FragmentContactsBinding
 import com.merseyside.merseyLib.features.adapters.contacts.adapter.ContactNestedAdapter
 import com.merseyside.merseyLib.features.adapters.contacts.adapter.ContactsComparator
-import com.merseyside.merseyLib.features.adapters.contacts.adapter.ContactsInnerAdapterFilter
+import com.merseyside.merseyLib.features.adapters.contacts.adapter.ContactsNestedAdapterFilter
 import com.merseyside.merseyLib.features.adapters.contacts.di.ContactsModule
 import com.merseyside.merseyLib.features.adapters.contacts.di.DaggerContactsComponent
 import com.merseyside.merseyLib.features.adapters.contacts.model.ContactViewModel
@@ -25,7 +26,7 @@ import com.merseyside.utils.view.ext.onClick
 
 class ContactFragment : BaseSampleFragment<FragmentContactsBinding, ContactViewModel>() {
 
-    private val contactsFilter = ContactsInnerAdapterFilter()
+    private val contactsFilter = ContactsNestedAdapterFilter()
 
     private val adapter = ContactNestedAdapter {
         Sorting {
@@ -37,7 +38,11 @@ class ContactFragment : BaseSampleFragment<FragmentContactsBinding, ContactViewM
         }
 
         SelectingGroup {
-            selectableMode = SelectableMode.MULTIPLE
+            selectableMode = SelectableMode.SINGLE
+        }
+
+        Expanding {
+            variableId = BR.expandCallback
         }
     }
 
@@ -52,9 +57,9 @@ class ContactFragment : BaseSampleFragment<FragmentContactsBinding, ContactViewM
 
         newValue?.let { value ->
             if (value.isNotEmpty()) {
-                contactsFilter.addAndApply(ContactsInnerAdapterFilter.QUERY_KEY, newValue)
+                contactsFilter.addAndApply(ContactsNestedAdapterFilter.QUERY_KEY, newValue)
             } else {
-                contactsFilter.removeAndApply(ContactsInnerAdapterFilter.QUERY_KEY)
+                contactsFilter.removeAndApply(ContactsNestedAdapterFilter.QUERY_KEY)
             }
         }
 

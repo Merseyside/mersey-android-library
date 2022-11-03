@@ -33,6 +33,12 @@ open class SortFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Confi
     ) {
         super.install(adapterConfig, adapter)
 
+        val modelClass: Class<Model> = try {
+            adapter.getModelClass()
+        } catch(e: IllegalStateException) {
+            getModelClass()
+        }
+
         val sortedList = SortedList(modelClass)
         modelList = SortedModelList(sortedList, comparator)
 
@@ -42,6 +48,10 @@ open class SortFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Confi
                 modelList.sortedList.recalculatePositions()
             }
         })
+    }
+
+    open fun getModelClass(): Class<Model> {
+        throw NotImplementedError("Can not identify model class. Please pass it explicitly.")
     }
 
     override fun updateLogic(updateActions: UpdateActions<Parent, Model>): UpdateLogic<Parent, Model> {

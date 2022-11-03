@@ -106,6 +106,14 @@ interface ModelListManager<Parent, Model>: UpdateActions<Parent, Model>
         return try {
             val model = getModelByItem(item)
             model?.let { removeModel(model) }
+
+            if (item is Identifiable<*>) {
+                val id = item.getId()
+                id?.let {
+                    hashMap.remove(id)
+                }
+            }
+
             model
         } catch (e: IllegalArgumentException) {
             null
