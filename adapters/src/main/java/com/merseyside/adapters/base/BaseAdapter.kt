@@ -19,6 +19,7 @@ import com.merseyside.adapters.utils.AdapterWorkManager
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.merseyLib.kotlin.logger.ILogger
 import com.merseyside.utils.reflection.ReflectionUtils
+import kotlinx.coroutines.Job
 
 @Suppress("LeakingThis")
 abstract class BaseAdapter<Parent, Model>(
@@ -123,6 +124,14 @@ abstract class BaseAdapter<Parent, Model>(
 
     override fun hasFeature(key: String): Boolean {
         return adapterConfig.hasFeature(key)
+    }
+
+    fun <Result> doAsync(
+        onComplete: (Result) -> Unit = {},
+        onError: ((e: Exception) -> Unit)? = null,
+        work: suspend () -> Result,
+    ): Job? {
+        return workManager.doAsync(onComplete, onError, work)
     }
 
     override val tag: String = "BaseAdapter"
