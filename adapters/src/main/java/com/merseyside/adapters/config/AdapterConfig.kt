@@ -10,15 +10,13 @@ import com.merseyside.adapters.config.feature.ConfigurableFeature
 import com.merseyside.adapters.config.feature.Feature
 import com.merseyside.adapters.feature.filtering.FilterFeature
 import com.merseyside.adapters.config.update.simple.SimpleUpdate
-import com.merseyside.adapters.feature.filtering.listManager.FilterListManager
-import com.merseyside.adapters.feature.filtering.listManager.FilterINestedModelListManager
+import com.merseyside.adapters.feature.filtering.listManager.FilterModelListManager
+import com.merseyside.adapters.feature.filtering.listManager.FilterNestedModelListManager
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.interfaces.nested.INestedAdapter
-import com.merseyside.adapters.listManager.impl.ListManager
-import com.merseyside.adapters.listManager.ModelListManager
-import com.merseyside.adapters.listManager.INestedModelListManager
-import com.merseyside.adapters.listManager.impl.NestedModelListManager
+import com.merseyside.adapters.listManager.INestedIModelListManager
+import com.merseyside.adapters.listManager.impl.NestedModelIModelListManager
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 import com.merseyside.adapters.model.VM
 import com.merseyside.adapters.modelList.ModelList
@@ -26,7 +24,6 @@ import com.merseyside.adapters.modelList.ModelListCallback
 import com.merseyside.adapters.modelList.SimpleModelList
 import com.merseyside.adapters.utils.AdapterWorkManager
 import com.merseyside.merseyLib.kotlin.coroutines.CoroutineQueue
-import com.merseyside.merseyLib.kotlin.logger.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlin.properties.ReadOnlyProperty
@@ -39,9 +36,9 @@ open class AdapterConfig<Parent, Model> internal constructor(
 
     internal val featureList = ArrayList<Feature<Parent, Model>>()
 
-    private lateinit var _modelListManager: ModelListManager<Parent, Model>
-    open val modelListManager: ModelListManager<Parent, Model>
-        get() = _modelListManager
+    private lateinit var _modelIModelListManager: com.merseyside.adapters.listManager.IModelListManager<Parent, Model>
+    open val IModelListManager: com.merseyside.adapters.listManager.IModelListManager<Parent, Model>
+        get() = _modelIModelListManager
 
     lateinit var modelList: ModelList<Parent, Model>
 
@@ -112,7 +109,7 @@ open class AdapterConfig<Parent, Model> internal constructor(
         }
     }
 
-    fun initWithUpdateLogic(listChangeDelegate: ModelListManager<Parent, Model>) {
+    fun initWithUpdateLogic(listChangeDelegate: com.merseyside.adapters.listManager.IModelListManager<Parent, Model>) {
         val updateLogic = featureList.filterIsInstance<UpdateLogicProvider<Parent, Model>>()
             .firstOrNull()?.updateLogic(listChangeDelegate) ?: SimpleUpdate(listChangeDelegate)
 
@@ -120,25 +117,25 @@ open class AdapterConfig<Parent, Model> internal constructor(
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun initModelListManager(adapter: IBaseAdapter<Parent, Model>): ModelListManager<Parent, Model> {
-        if (!this::_modelListManager.isInitialized) {
-            _modelListManager = if (hasFeature(FilterFeature.key)) {
+    fun initModelListManager(adapter: IBaseAdapter<Parent, Model>): com.merseyside.adapters.listManager.IModelListManager<Parent, Model> {
+        if (!this::_modelIModelListManager.isInitialized) {
+            _modelIModelListManager = if (hasFeature(FilterFeature.key)) {
                 val filterFeature =
                     getFeatureByKey(FilterFeature.key) as FilterFeature<Parent, Model>
-                FilterListManager(
+                FilterModelListManager(
                     modelList = initModelList(adapter),
                     adapterActions = adapter,
                     adapterFilter = filterFeature.adapterFilter
                 )
             } else {
-                ListManager(
+                com.merseyside.adapters.listManager.impl.IModelListManager(
                     modelList = initModelList(adapter),
                     adapterActions = adapter
                 )
             }.also { initWithUpdateLogic(it) }
         }
 
-        return _modelListManager
+        return _modelIModelListManager
     }
 
     fun addOnBindItemListener(listener: OnBindItemListener<Parent, Model>) {
@@ -151,7 +148,7 @@ open class AdapterConfig<Parent, Model> internal constructor(
 }
 
 fun <Parent, Model : VM<Parent>> AdapterConfig<Parent, Model>.listManager() =
-    ReadOnlyProperty<IBaseAdapter<Parent, Model>, ModelListManager<Parent, Model>> { thisRef, _ ->
+    ReadOnlyProperty<IBaseAdapter<Parent, Model>, com.merseyside.adapters.listManager.IModelListManager<Parent, Model>> { thisRef, _ ->
         initModelListManager(thisRef)
     }
 
@@ -160,26 +157,26 @@ class NestedAdapterConfig<Parent, Model, Data, InnerAdapter> internal constructo
         where Model : NestedAdapterParentViewModel<out Parent, Parent, Data>,
               InnerAdapter : BaseAdapter<Data, out VM<Data>> {
 
-    private lateinit var _modelList: INestedModelListManager<Parent, Model, Data, InnerAdapter>
+    private lateinit var _modelList: INestedIModelListManager<Parent, Model, Data, InnerAdapter>
 
-    override val modelListManager: ModelListManager<Parent, Model>
+    override val IModelListManager: com.merseyside.adapters.listManager.IModelListManager<Parent, Model>
         get() = _modelList
 
     @Suppress("UNCHECKED_CAST")
     fun initModelListManager(
         adapter: INestedAdapter<Parent, Model, Data, InnerAdapter>
-    ): INestedModelListManager<Parent, Model, Data, InnerAdapter> {
+    ): INestedIModelListManager<Parent, Model, Data, InnerAdapter> {
         if (!this::_modelList.isInitialized) {
             _modelList = if (hasFeature(FilterFeature.key)) {
                 val filterFeature =
                     getFeatureByKey(FilterFeature.key) as FilterFeature<Parent, Model>
-                FilterINestedModelListManager(
+                FilterNestedModelListManager(
                     modelList = initModelList(adapter),
                     adapterActions = adapter,
                     adapterFilter = filterFeature.adapterFilter
                 )
             } else {
-                NestedModelListManager(
+                NestedModelIModelListManager(
                     initModelList(adapter),
                     adapter
                 )
@@ -194,7 +191,7 @@ fun <Parent, Model : NestedAdapterParentViewModel<out Parent, Parent, Data>, Dat
         InnerAdapter : BaseAdapter<Data, out VM<Data>>>
         NestedAdapterConfig<Parent, Model, Data, InnerAdapter>.listManager(
 ) = ReadOnlyProperty<INestedAdapter<Parent, Model, Data, InnerAdapter>,
-        INestedModelListManager<Parent, Model, Data, InnerAdapter>> { thisRef, _ ->
+        INestedIModelListManager<Parent, Model, Data, InnerAdapter>> { thisRef, _ ->
     initModelListManager(thisRef)
 }
 

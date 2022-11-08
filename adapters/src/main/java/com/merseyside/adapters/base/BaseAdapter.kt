@@ -12,7 +12,7 @@ import com.merseyside.adapters.callback.OnItemClickListener
 import com.merseyside.adapters.config.contract.OnBindItemListener
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.interfaces.base.IBaseAdapter
-import com.merseyside.adapters.listManager.ModelListManager
+import com.merseyside.adapters.listManager.IModelListManager
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.VM
 import com.merseyside.adapters.utils.AdapterWorkManager
@@ -35,7 +35,7 @@ abstract class BaseAdapter<Parent, Model>(
     override val models: List<Model>
         get() = delegate.modelList
 
-    override val delegate: ModelListManager<Parent, Model> by adapterConfig.listManager()
+    override val delegate: IModelListManager<Parent, Model> by adapterConfig.listManager()
 
     @InternalAdaptersApi
     override val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>

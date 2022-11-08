@@ -6,7 +6,7 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.interfaces.base.IBaseAdapter
-import com.merseyside.adapters.listManager.INestedModelListManager
+import com.merseyside.adapters.listManager.INestedIModelListManager
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
@@ -19,7 +19,7 @@ interface INestedAdapter<Parent, Model, InnerData, InnerAdapter> : IBaseAdapter<
 
     var adapterList: MutableList<Pair<Model, InnerAdapter>>
 
-    override val delegate: INestedModelListManager<Parent, Model, InnerData, InnerAdapter>
+    override val delegate: INestedIModelListManager<Parent, Model, InnerData, InnerAdapter>
 
     fun initNestedAdapter(model: Model): InnerAdapter
     fun getNestedView(binding: ViewDataBinding): RecyclerView?

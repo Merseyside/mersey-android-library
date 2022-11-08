@@ -9,7 +9,7 @@ import com.merseyside.adapters.callback.HasOnItemClickListener
 import com.merseyside.adapters.config.contract.HasWorkManager
 import com.merseyside.adapters.feature.positioning.PositionFeature
 import com.merseyside.adapters.holder.TypedBindingHolder
-import com.merseyside.adapters.listManager.ModelListManager
+import com.merseyside.adapters.listManager.IModelListManager
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.VM
 import com.merseyside.adapters.modelList.ModelListCallback
@@ -28,7 +28,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
     val models: List<Model>
 
     @InternalAdaptersApi
-    val delegate: ModelListManager<Parent, Model>
+    val delegate: IModelListManager<Parent, Model>
 
     @InternalAdaptersApi
     val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>
@@ -50,7 +50,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
     }
 
     /**
-     * Delegates items adding to [ModelListManager]
+     * Delegates items adding to [IModelListManager]
      * @return Added models
      */
     suspend fun add(items: List<Parent>) {

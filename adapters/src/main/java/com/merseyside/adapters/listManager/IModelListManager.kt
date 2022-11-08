@@ -12,7 +12,7 @@ import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.adapters.utils.runWithDefault
 import com.merseyside.merseyLib.kotlin.contract.Identifiable
 
-interface ModelListManager<Parent, Model>: UpdateActions<Parent, Model>
+interface IModelListManager<Parent, Model>: UpdateActions<Parent, Model>
     where Model : VM<Parent> {
 
     val adapterActions: AdapterActions<Parent, Model>

@@ -5,7 +5,7 @@ import com.merseyside.adapters.interfaces.nested.NestedAdapterActions
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 
-interface INestedModelListManager<Parent, Model, InnerData, InnerAdapter> : ModelListManager<Parent, Model>
+interface INestedIModelListManager<Parent, Model, InnerData, InnerAdapter> : IModelListManager<Parent, Model>
         where Model : NestedAdapterParentViewModel<out Parent, Parent, InnerData>,
               InnerAdapter : BaseAdapter<InnerData, out AdapterParentViewModel<out InnerData, InnerData>> {
 

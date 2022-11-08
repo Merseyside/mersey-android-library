@@ -100,8 +100,10 @@ class SortedModelList<Parent, Model : VM<Parent>>(
         payloads: List<AdapterParentViewModel.Payloadable>
     ) {
         val position = getPositionOfModel(model)
-        sortedList.recalculatePositionOfItemAt(position)
-        onChanged(model, getPositionOfModel(model), payloads)
+        if (position != -1) {
+            sortedList.recalculatePositionOfItemAt(position)
+            onChanged(model, getPositionOfModel(model), payloads)
+        }
     }
 
     override fun clear() {

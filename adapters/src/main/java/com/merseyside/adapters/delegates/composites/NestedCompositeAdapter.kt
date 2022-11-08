@@ -7,7 +7,7 @@ import com.merseyside.adapters.delegates.SimpleDelegatesManager
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.interfaces.nested.INestedAdapter
 import com.merseyside.adapters.interfaces.nested.OnInitNestedAdapterListener
-import com.merseyside.adapters.listManager.INestedModelListManager
+import com.merseyside.adapters.listManager.INestedIModelListManager
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
@@ -24,7 +24,7 @@ abstract class NestedCompositeAdapter<Parent, Model, Data, InnerAdapter>(
     override var onInitAdapterListener: OnInitNestedAdapterListener<Data>? = null
 
     @InternalAdaptersApi
-    override val delegate: INestedModelListManager<Parent, Model, Data, InnerAdapter> by adapterConfig.listManager()
+    override val delegate: INestedIModelListManager<Parent, Model, Data, InnerAdapter> by adapterConfig.listManager()
 
     override fun onBindViewHolder(holder: TypedBindingHolder<Model>, position: Int) {
         super.onBindViewHolder(holder, position)
