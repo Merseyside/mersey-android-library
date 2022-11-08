@@ -26,7 +26,7 @@ class SortedModelList<Parent, Model : VM<Parent>>(
             }
 
             override fun onMoved(fromPosition: Int, toPosition: Int) {
-                onMoved(fromPosition, toPosition)
+                this@SortedModelList.onMoved(fromPosition, toPosition)
             }
 
             override fun onChanged(position: Int, count: Int) {}
