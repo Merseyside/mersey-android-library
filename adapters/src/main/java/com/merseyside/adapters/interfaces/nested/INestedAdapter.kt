@@ -38,16 +38,6 @@ interface INestedAdapter<Parent, Model, InnerData, InnerAdapter> : IBaseAdapter<
         }
     }
 
-    override fun onChanged(
-        model: Model,
-        position: Int,
-        payloads: List<AdapterParentViewModel.Payloadable>
-    ) {
-        super.onChanged(model, position, payloads)
-        val adapter = getNestedAdapterByModel(model)
-        adapter.
-    }
-
     private fun putAdapter(model: Model, adapter: InnerAdapter) {
         adapterList.add(model to adapter)
     }
