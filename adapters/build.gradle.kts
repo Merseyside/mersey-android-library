@@ -41,6 +41,16 @@ android {
             )
         }
     }
+
+    sourceSets.getByName("main") {
+        res.srcDirs(
+            "src/main/res/",
+            "src/main/res/layouts/view",
+            "src/main/res/layouts/list",
+            "src/main/res/value/values-light",
+            "src/main/res/value/values-night"
+        )
+    }
 }
 
 kotlinConvention {
@@ -50,13 +60,16 @@ kotlinConvention {
     )
 }
 
+val androidLibz = listOf(
+    androidLibs.appCompat,
+    androidLibs.material,
+    androidLibs.recyclerView,
+    androidLibs.coroutines,
+    androidLibs.lifecycleRuntime
+)
+
 dependencies {
-    listOf(
-        androidLibs.appCompat,
-        androidLibs.material,
-        androidLibs.recyclerView,
-        androidLibs.coroutines
-    ).forEach { lib -> implementation(lib) }
+    androidLibz.forEach { lib -> implementation(lib) }
 
     api(androidLibs.paging)
     api(common.bundles.mersey.time)

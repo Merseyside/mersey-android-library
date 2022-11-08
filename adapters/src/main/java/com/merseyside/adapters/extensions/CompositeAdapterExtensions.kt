@@ -1,22 +1,22 @@
 package com.merseyside.adapters.extensions
 
 import com.merseyside.adapters.delegates.composites.CompositeAdapter
-import com.merseyside.adapters.model.AdapterParentViewModel
+import com.merseyside.adapters.model.VM
 
 /**
- * Filters modelList by type of [VM]
- * @return models with type of [VM], empty list otherwise.
+ * Filters modelList by type of [ViewModel]
+ * @return models with type of [ViewModel], empty list otherwise.
  */
-inline fun <reified VM, Parent> CompositeAdapter<Parent, *>.filterIsInstance(): List<VM>
-        where VM : AdapterParentViewModel<out Parent, Parent> {
-    return models.filterIsInstance<VM>()
+inline fun <reified ViewModel, Parent> CompositeAdapter<Parent, *>.filterIsInstance(): List<ViewModel>
+        where ViewModel : VM<Parent> {
+    return models.filterIsInstance<ViewModel>()
 }
 
 /**
-* Finds first item with type of [VM]
+* Finds first item with type of [ViewModel]
 * @return first found item, null otherwise.
 */
-inline fun <reified VM, Parent> CompositeAdapter<Parent, *>.findIsInstance(): VM?
-        where VM : AdapterParentViewModel<out Parent, Parent> {
-    return filterIsInstance<VM, Parent>().firstOrNull()
+inline fun <reified ViewModel, Parent> CompositeAdapter<Parent, *>.findIsInstance(): ViewModel?
+        where ViewModel : VM<Parent> {
+    return filterIsInstance<ViewModel, Parent>().firstOrNull()
 }

@@ -2,45 +2,63 @@ package com.merseyside.adapters.model
 
 import androidx.annotation.CallSuper
 import androidx.databinding.BaseObservable
-import com.merseyside.adapters.callback.OnItemClickListener
-import com.merseyside.adapters.utils.ItemCallback
+import androidx.databinding.ObservableBoolean
+import com.merseyside.adapters.feature.positioning.PositionHandler
+import com.merseyside.merseyLib.kotlin.observable.ObservableField
+import com.merseyside.merseyLib.kotlin.observable.SingleObservableField
 import com.merseyside.merseyLib.kotlin.contract.Identifiable
 
 @Suppress("UNCHECKED_CAST")
 abstract class AdapterParentViewModel<Item : Parent, Parent>(
     item: Item,
-    open val deletable: Boolean = true,
-    open val filterable: Boolean = true
-) : BaseObservable() {
+    clickable: Boolean = true,
+    deletable: Boolean = true,
+    filterable: Boolean = true
+) : BaseObservable(), PositionHandler {
 
     var item: Item = item
         internal set
 
-    private var position: Int = NO_ITEM_POSITION
-    private lateinit var itemPosition: ItemCallback<AdapterViewModel<Item>>
+    override var position: Int = NO_ITEM_POSITION
 
-    internal fun setItemPositionInterface(i: ItemCallback<AdapterViewModel<Item>>) {
-        itemPosition = i
-    }
+    private val mutClickEvent = SingleObservableField<Item>()
+    internal val clickEvent: ObservableField<Item> = mutClickEvent
 
-    private val listeners: ArrayList<OnItemClickListener<Parent>> by lazy { ArrayList() }
+    val clickableObservable = ObservableBoolean()
+    val filterableObservable = ObservableBoolean()
+    val deletableObservable = ObservableBoolean()
 
-    fun setOnItemClickListener(listener: OnItemClickListener<Parent>) {
-        if (!this.listeners.contains(listener)) {
-            this.listeners.add(listener)
+    open var isClickable: Boolean = clickable
+        set(value) {
+            if (field != value) {
+                field = value
+
+                clickableObservable.set(value)
+            }
         }
-    }
 
-    fun removeOnItemClickListener(listener: OnItemClickListener<Parent>) {
-        if (listeners.isNotEmpty()) {
-            listeners.remove(listener).toString()
+    open var isFilterable: Boolean = filterable
+        set(value) {
+            if (field != value) {
+                field = value
+
+                filterableObservable.set(value)
+            }
         }
-    }
+
+    open var isDeletable: Boolean = deletable
+        set(value) {
+            if (field != value) {
+                field = value
+
+                deletableObservable.set(value)
+            }
+        }
 
     @CallSuper
     open fun onClick() {
-        if (listeners.isNotEmpty()) {
-            listeners.forEach { it.onItemClicked(item) }
+        if (isClickable) {
+            mutClickEvent.value = item
         }
     }
 
@@ -54,29 +72,9 @@ abstract class AdapterParentViewModel<Item : Parent, Parent>(
         return null as Void?
     }
 
-    @Throws(IllegalStateException::class)
-    fun getPosition(): Int {
-        if (position == NO_ITEM_POSITION) {
-            throw IllegalStateException("View has not initialized!")
-        }
-
-        return position
-    }
-
-    fun getItemCount() = itemPosition.getItemCount()
-    fun isLast() = getPosition() == getItemCount() - 1
-    fun isFirst() = getPosition() == 0
-
-    fun onPositionChanged(toPosition: Int) {
-        if (position != toPosition) {
-            onPositionChanged(fromPosition = position, toPosition = toPosition)
-            position = toPosition
-        }
-    }
-
-    protected open fun onPositionChanged(fromPosition: Int, toPosition: Int) {}
-
     open fun onRecycled() {}
+
+    override fun onPositionChanged(fromPosition: Int, toPosition: Int) {}
 
     internal fun areItemsTheSame(parent: Parent): Boolean {
         return try {

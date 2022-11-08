@@ -211,11 +211,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
     protected abstract fun getTitle(context: Context): String?
 
     fun setTitle(title: String? = null) {
-        val context = if (baseActivity.applicationContext is BaseApplication) {
-            (baseActivity.applicationContext as BaseApplication).context
-        } else {
-            baseActivity
-        }
+        val context = (baseActivity.applicationContext as? BaseApplication)?.context ?: baseActivity
 
         val text = title ?: getTitle(context)
         if (text != null) {

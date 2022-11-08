@@ -5,6 +5,10 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Environment
 import androidx.annotation.ColorInt
+import com.merseyside.merseyLib.kotlin.logger.log
+import com.merseyside.merseyLib.time.Time
+import com.merseyside.merseyLib.time.units.TimeUnit
+import com.merseyside.merseyLib.time.units.minus
 import kotlin.math.roundToInt
 
 fun convertPixelsToDp(context: Context, px: Int): Float {
@@ -29,6 +33,15 @@ fun adjustAlpha(@ColorInt color: Int, factor: Float): Int {
     val green: Int = Color.green(color)
     val blue: Int = Color.blue(color)
     return Color.argb(alpha, red, green, blue)
+}
+
+suspend fun <Result> measureAndLogTime(tag: String = "Measuring", block: suspend () -> Result): Result {
+    val startTime = Time.nowGMT
+    val result = block()
+    val endTime = Time.nowGMT
+    val delta = endTime - startTime
+    delta.log(tag, "elapsed time =")
+    return result
 }
 
 inline fun <reified Clazz> Clazz.getClassName(): String {

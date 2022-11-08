@@ -1,5 +1,6 @@
 package com.merseyside.merseyLib.features.adapters.racers.entity
 
+import com.merseyside.merseyLib.kotlin.contract.Identifiable
 import com.merseyside.merseyLib.time.units.Millis
 
 data class Checkpoint(
@@ -7,4 +8,8 @@ data class Checkpoint(
     val team: Team,
     val time: Millis,
     val gap: Millis
-)
+): Identifiable<String> {
+    override fun getId(): String {
+        return racer.name
+    }
+}

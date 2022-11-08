@@ -17,7 +17,7 @@ abstract class PagedAdapter<M: Any, T : AdapterViewModel<M>>(diffUtil: DiffUtil.
     : PagedListAdapter<M, BaseBindingHolder>(diffUtil),
     HasOnItemClickListener<M> {
 
-    override var listener: OnItemClickListener<M>? = null
+    override var clickListeners: MutableList<OnItemClickListener<M>> = ArrayList()
 
     enum class NetworkState { ERROR, NO_CONNECTION, CONNECTED, LOADING }
     private var networkState: INetworkState? = null
@@ -70,7 +70,7 @@ abstract class PagedAdapter<M: Any, T : AdapterViewModel<M>>(diffUtil: DiffUtil.
                 holder.bind(getBindingVariable(), createItemViewModel(obj))
 
                 holder.itemView.setOnClickListener {
-                    listener?.onItemClicked(obj)
+                    clickListeners.forEach { listener -> listener.onItemClicked(obj) }
                 }
             }
         }

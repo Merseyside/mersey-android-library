@@ -3,7 +3,6 @@ package com.merseyside.archy.presentation.view.floatingListView
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
-import android.os.Build
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +12,6 @@ import androidx.annotation.IdRes
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.merseyside.adapters.single.SimpleAdapter
 import com.merseyside.archy.R
 import com.merseyside.archy.databinding.ViewFloatingListBinding
 import com.merseyside.utils.delegate.getValue
@@ -22,19 +20,21 @@ import com.merseyside.utils.delegate.viewBinding
 /**
  * This class have to be extended from RelativeLayout
  */
-class FloatingListView(context: Context, attrsSet: AttributeSet? = null): RelativeLayout(context, attrsSet) {
+class FloatingListView(context: Context, attrsSet: AttributeSet? = null) :
+    RelativeLayout(context, attrsSet) {
 
     private val binding: ViewFloatingListBinding by viewBinding(R.layout.view_floating_list)
 
-    enum class Orientation {VERTICAL, HORIZONTAL, GRID}
+    enum class Orientation { VERTICAL, HORIZONTAL, GRID }
 
     private lateinit var recyclerView: RecyclerView
     private var relativeView: View? = null
     var orientation: Orientation = Orientation.VERTICAL
 
-    @IdRes var containerId: Int = 0
+    @IdRes
+    var containerId: Int = 0
 
-    private var adapter: SimpleAdapter<*, *>? = null
+    private var adapter: RecyclerView.Adapter<*>? = null
 
     init {
         if (attrsSet != null) {
@@ -56,7 +56,11 @@ class FloatingListView(context: Context, attrsSet: AttributeSet? = null): Relati
                     LinearLayoutManager.VERTICAL,
                     false
                 )
-                Orientation.HORIZONTAL -> LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+                Orientation.HORIZONTAL -> LinearLayoutManager(
+                    context,
+                    LinearLayoutManager.HORIZONTAL,
+                    false
+                )
                 Orientation.GRID -> GridLayoutManager(context, 2)
             }
         }
@@ -74,7 +78,7 @@ class FloatingListView(context: Context, attrsSet: AttributeSet? = null): Relati
 
     }
 
-    fun setAdapter(adapter: SimpleAdapter<*, *>) {
+    fun setAdapter(adapter: RecyclerView.Adapter<*>) {
         recyclerView.adapter = adapter
         this.adapter = adapter
     }
@@ -87,11 +91,7 @@ class FloatingListView(context: Context, attrsSet: AttributeSet? = null): Relati
     }
 
     private fun removeListener() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            relativeView!!.viewTreeObserver.removeGlobalOnLayoutListener(layoutListener)
-        } else {
-            relativeView!!.viewTreeObserver.removeOnGlobalLayoutListener(layoutListener)
-        }
+        relativeView!!.viewTreeObserver.removeOnGlobalLayoutListener(layoutListener)
     }
 
     private val layoutListener = ViewTreeObserver.OnGlobalLayoutListener {
@@ -105,9 +105,9 @@ class FloatingListView(context: Context, attrsSet: AttributeSet? = null): Relati
         }
 
         val layoutParams = LayoutParams(
-                rootView.measuredWidth,
-                rootView.measuredHeight
-            )
+            rootView.measuredWidth,
+            rootView.measuredHeight
+        )
 
         layoutParams.addRule(ALIGN_PARENT_TOP)
         layoutParams.addRule(ALIGN_PARENT_LEFT)
@@ -160,7 +160,8 @@ class FloatingListView(context: Context, attrsSet: AttributeSet? = null): Relati
                     layoutParams.bottomMargin =
                         rootView.height - globalRootCoords[1] - relativeView!!.height
                 } else {
-                    layoutParams.bottomMargin = relativeView!!.height + rootViewBottomPosition - relativeViewBottomPosition
+                    layoutParams.bottomMargin =
+                        relativeView!!.height + rootViewBottomPosition - relativeViewBottomPosition
                 }
             }
 

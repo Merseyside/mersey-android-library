@@ -53,6 +53,12 @@
             android:layout_height="wrap_content"
             android:text="Delegates" />
 
+        <Button
+            android:id="@+id/movies_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Movies"/>
+
     </LinearLayout>
 
 </layout>

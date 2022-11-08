@@ -7,7 +7,7 @@ import com.merseyside.animators.Axis
 import com.merseyside.animators.BaseAnimatorBuilder
 import com.merseyside.animators.BaseSingleAnimator
 import com.merseyside.merseyLib.kotlin.logger.Logger
-import com.merseyside.merseyLib.kotlin.safeLet
+import com.merseyside.merseyLib.kotlin.utils.safeLet
 import com.merseyside.merseyLib.time.units.TimeUnit
 
 class SizeAnimator(

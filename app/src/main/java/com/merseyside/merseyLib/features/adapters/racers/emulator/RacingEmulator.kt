@@ -1,17 +1,19 @@
 package com.merseyside.merseyLib.features.adapters.racers.emulator
 
-import com.merseyside.merseyLib.features.adapters.racers.entity.*
+import com.merseyside.merseyLib.features.adapters.racers.entity.Checkpoint
+import com.merseyside.merseyLib.features.adapters.racers.entity.RacerModel
+import com.merseyside.merseyLib.features.adapters.racers.entity.Statistics
+import com.merseyside.merseyLib.features.adapters.racers.entity.TeamModel
 import com.merseyside.merseyLib.time.units.Millis
 import com.merseyside.merseyLib.time.units.TimeUnit
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlin.coroutines.CoroutineContext
 
-class RacingEmulator(private val teams: List<TeamModel>): CoroutineScope {
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main
+class RacingEmulator(
+    private val teams: List<TeamModel>,
+    private val coroutineScope: CoroutineScope
+) {
 
     private val racers: List<RacerModel> = teams.flatMap { it.racers }
     private val racersEngine: List<RacerEngine>
@@ -38,7 +40,7 @@ class RacingEmulator(private val teams: List<TeamModel>): CoroutineScope {
 
     init {
         racersEngine = racers.map {
-            RacerEngine(it, callback, this)
+            RacerEngine(it, callback, coroutineScope)
         }
     }
 

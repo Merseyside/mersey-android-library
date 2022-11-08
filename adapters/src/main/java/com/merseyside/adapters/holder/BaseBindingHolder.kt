@@ -9,9 +9,17 @@ import com.merseyside.utils.view.ext.getActivity
 open class BaseBindingHolder(val binding: ViewDataBinding)
     : RecyclerView.ViewHolder(binding.root) {
 
+    val isInitialized: Boolean
+        get() = this::_model.isInitialized
+
     private lateinit var _model: Any
 
-    open fun getModel() = _model
+    open val model: Any
+        get() = _model
+
+    init {
+        binding.lifecycleOwner = itemView.getActivity()
+    }
 
     @CallSuper
     fun bind(variable: Int, obj: Any) {
@@ -20,8 +28,6 @@ open class BaseBindingHolder(val binding: ViewDataBinding)
         binding.apply {
             setVariable(variable, obj)
             executePendingBindings()
-
-            lifecycleOwner = itemView.getActivity()
         }
     }
 

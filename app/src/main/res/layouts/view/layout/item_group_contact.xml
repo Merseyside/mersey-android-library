@@ -8,6 +8,10 @@
         <variable
             name="model"
             type="com.merseyside.merseyLib.features.adapters.contacts.model.ContactGroupItemViewModel" />
+
+        <variable
+            name="expandCallback"
+            type="com.merseyside.adapters.feature.expanding.OnExpandCallback" />
     </data>
 
     <LinearLayout
@@ -24,14 +28,16 @@
             android:text="@{model.group}"
             android:background="@color/transparent_white"
             android:textSize="@dimen/medium_text_size"
-            android:paddingStart="@dimen/very_small_spacing"/>
+            android:paddingStart="@dimen/very_small_spacing"
+            android:onClick="@{_ -> expandCallback.onExpand(model) }"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layoutManager="com.merseyside.utils.layout.LinearLayoutManager" />
+            app:layoutManager="com.merseyside.utils.layout.LinearLayoutManager"
+            isVisibleOrGone="@{model.expandState.expandedObservable}"/>
 
     </LinearLayout>
 

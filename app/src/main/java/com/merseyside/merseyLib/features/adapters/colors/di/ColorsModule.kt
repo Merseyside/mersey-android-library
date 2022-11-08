@@ -13,7 +13,7 @@ import dagger.Provides
 class ColorsModule(private val fragment: ColorsFragment) {
 
     @Provides
-    fun provideNewsViewModel(
+    fun provideColorsViewModel(
         @ApplicationContext application: Application,
         colorProducer: ColorProducer
     ) = fragment.viewModel { ColorsViewModel(application, colorProducer) }

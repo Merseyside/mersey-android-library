@@ -7,7 +7,6 @@ open class TypedBindingHolder<T: AdapterParentViewModel<*, *>>(binding: ViewData
     : BaseBindingHolder(binding) {
 
     @Suppress("UNCHECKED_CAST")
-    override fun getModel(): T {
-        return super.getModel() as T
-    }
+    override val model: T
+        get() = super.model as T
 }

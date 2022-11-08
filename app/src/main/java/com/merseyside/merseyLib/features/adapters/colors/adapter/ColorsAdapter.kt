@@ -1,34 +1,32 @@
 package com.merseyside.merseyLib.features.adapters.colors.adapter
 
-import com.merseyside.adapters.extensions.onItemClicked
-import com.merseyside.adapters.feature.filter.interfaces.Filterable
-import com.merseyside.adapters.single.SortedAdapter
+import com.merseyside.adapters.config.AdapterConfig
+import com.merseyside.adapters.config.config
+import com.merseyside.adapters.extensions.onClick
+import com.merseyside.adapters.single.SimpleAdapter
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.features.adapters.colors.entity.HexColor
 import com.merseyside.merseyLib.features.adapters.colors.model.ColorItemViewModel
-import kotlinx.coroutines.CoroutineScope
 
-class ColorsAdapter(scope: CoroutineScope) : SortedAdapter<HexColor, ColorItemViewModel>(scope),
-    Filterable<HexColor, ColorItemViewModel> {
-
-    override val filter = ColorsFilter()
-
-    private val colorsComparator: ColorsComparator =
-        ColorsComparator(ColorsComparator.ColorComparisonRule.ASC)
+class ColorsAdapter(
+    config: AdapterConfig<HexColor, ColorItemViewModel>
+) : SimpleAdapter<HexColor, ColorItemViewModel>(config) {
 
     init {
-        comparator = colorsComparator
-        onItemClicked {
+        onClick {
             removeAsync(it)
         }
     }
 
-    fun setComparisonRule(rule: ColorsComparator.ColorComparisonRule) {
-        colorsComparator.setCompareRule(rule)
-    }
-
     override fun getLayoutIdForPosition(position: Int) = R.layout.item_color
     override fun getBindingVariable() = BR.viewModel
+
     override fun createItemViewModel(item: HexColor) = ColorItemViewModel(item)
+
+    companion object {
+        operator fun invoke(configure: AdapterConfig<HexColor, ColorItemViewModel>.() -> Unit): ColorsAdapter {
+            return ColorsAdapter(config(configure))
+        }
+    }
 }

@@ -1,8 +1,7 @@
 package com.merseyside.adapters.extensions
 
-import androidx.recyclerview.widget.SortedList
-import com.merseyside.adapters.model.ComparableAdapterParentViewModel
-import com.merseyside.adapters.utils.runWithDefault
+import com.merseyside.adapters.utils.list.SortedList
+import com.merseyside.adapters.model.VM
 
 fun SortedList<*>.isEmpty(): Boolean {
     return this.size() == 0
@@ -13,7 +12,7 @@ fun SortedList<*>.isNotEmpty(): Boolean {
 }
 
 @Throws(IllegalArgumentException::class)
-fun <Model : ComparableAdapterParentViewModel<out Parent, Parent>, Parent> SortedList<Model>.isEquals(
+fun <Model : VM<Parent>, Parent> SortedList<Model>.isEquals(
     list: List<Model>
 ): Boolean {
 
@@ -22,7 +21,7 @@ fun <Model : ComparableAdapterParentViewModel<out Parent, Parent>, Parent> Sorte
     } else {
 
         list.forEachIndexed { index, model ->
-            val value = this.get(index)
+            val value = this[index]
             if (!value.areItemsTheSame(model.item)) {
                 return@isEquals false
             }
@@ -31,10 +30,6 @@ fun <Model : ComparableAdapterParentViewModel<out Parent, Parent>, Parent> Sorte
         return true
     }
 }
-
-fun <Model : ComparableAdapterParentViewModel<out Parent, Parent>, Parent> SortedList<Model>.isNotEquals(
-    list: List<Model>
-): Boolean = !this.isEquals(list)
 
 internal inline fun <Model> SortedList<Model>.forEach(onValue: (Model) -> Unit) {
     forEachIndexed { _, item -> onValue(item) }
@@ -58,7 +53,11 @@ internal inline fun <Model> SortedList<Model>.indexOf(predicate: (Model) -> Bool
     return SortedList.INVALID_POSITION
 }
 
-internal fun <Model> SortedList<Model>.removeAll(list: List<Model>) {
+internal suspend fun <Model> SortedList<Model>.contains(model: Model): Boolean {
+    return indexOf(model) != SortedList.INVALID_POSITION
+}
+
+internal suspend fun <Model> SortedList<Model>.removeAll(list: List<Model>) {
     list.forEach { remove(it) }
 }
 
@@ -66,23 +65,34 @@ suspend inline fun <Item> SortedList<Item>.batchedUpdate(crossinline block: susp
     try {
         beginBatchedUpdates()
         //runWithDefault {
-            block()
+        block()
         //}
     } finally {
         endBatchedUpdates()
     }
 }
 
-fun <Item> SortedList<Item>.getAll(): List<Item> {
-    val list = mutableListOf<Item>()
-    forEach { list.add(it) }
-    return list
+suspend fun <Model> SortedList<Model>.recalculatePositions() {
+    val models = getAll()
+    clear()
+    addAll(models)
 }
 
-fun SortedList<*>.recalculatePositions() {
+suspend fun <Model> SortedList<Model>.recalculatePositionsWithAnimation() {
     val models = getAll()
     models.forEach { model ->
-        val pos = indexOf { it == model }
-        recalculatePositionOfItemAt(pos)
+        val pos = indexOf { it == model  }
+        if (pos != SortedList.INVALID_POSITION) {
+            recalculatePositionOfItemAt(pos)
+        }
     }
+}
+
+fun <Model> SortedList<Model>.toList(): List<Model> {
+    return getAll()
+}
+
+fun <Model> SortedList<Model>.subList(fromIndex: Int, toIndex: Int): List<Model> {
+    val list = toList()
+    return list.subList(fromIndex, toIndex)
 }

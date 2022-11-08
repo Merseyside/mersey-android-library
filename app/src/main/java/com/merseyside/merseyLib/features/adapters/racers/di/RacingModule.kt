@@ -2,6 +2,7 @@ package com.merseyside.merseyLib.features.adapters.racers.di
 
 import android.app.Application
 import android.content.Context
+import androidx.lifecycle.lifecycleScope
 import com.merseyside.archy.presentation.di.qualifiers.ApplicationContext
 import com.merseyside.archy.presentation.ext.viewModel
 import com.merseyside.filemanager.AssetHelper
@@ -24,11 +25,18 @@ class RacingModule(private val fragment: RacingFragment) {
     ) = fragment.viewModel { RacingViewModel(application, racingEmulator) }
 
     @Provides
-    fun provideRacingEmulator(teams: List<TeamModel>) = RacingEmulator(teams)
+    fun provideRacingEmulator(teams: List<TeamModel>) =
+        RacingEmulator(
+            teams,
+            fragment.lifecycleScope
+        )
 
     @Provides
     fun provideTeams(@ApplicationContext context: Context): List<TeamModel> {
-        return AssetHelper.jsonAssetToModel(context, "racers.json", ListSerializer(TeamModel.serializer())) ?:
-            throw FileNotFoundException()
+        return AssetHelper.jsonAssetToModel(
+            context,
+            "racers.json",
+            ListSerializer(TeamModel.serializer())
+        ) ?: throw FileNotFoundException()
     }
 }
