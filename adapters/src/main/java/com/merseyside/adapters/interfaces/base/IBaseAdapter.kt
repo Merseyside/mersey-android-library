@@ -143,7 +143,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
         position: Int,
         payloads: List<AdapterParentViewModel.Payloadable>
     ) {
-        adapter.notifyItemChanged(position)
+        adapter.notifyItemChanged(position, payloads)
     }
 
     override fun onMoved(fromPosition: Int, toPosition: Int) {

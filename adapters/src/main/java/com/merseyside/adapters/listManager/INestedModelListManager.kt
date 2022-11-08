@@ -5,8 +5,7 @@ import com.merseyside.adapters.interfaces.nested.NestedAdapterActions
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 
-interface INestedModelListManager<Parent, Model, InnerData, InnerAdapter> :
-    ModelListManager<Parent, Model>
+interface INestedModelListManager<Parent, Model, InnerData, InnerAdapter> : ModelListManager<Parent, Model>
         where Model : NestedAdapterParentViewModel<out Parent, Parent, InnerData>,
               InnerAdapter : BaseAdapter<InnerData, out AdapterParentViewModel<out InnerData, InnerData>> {
 
@@ -25,6 +24,15 @@ interface INestedModelListManager<Parent, Model, InnerData, InnerAdapter> :
     fun removeNestedAdapterByModel(model: Model): Boolean {
         adapterActions.removeNestedAdapterByModel(model)
         return true
+    }
+
+    override suspend fun updateModel(model: Model, item: Parent): Boolean {
+        return super.updateModel(model, item).also {
+            val adapter = adapterActions.getNestedAdapterByModel(model)
+            model.getNestedData()?.let { data ->
+                adapter.addOrUpdate(data)
+            }
+        }
     }
 
     override suspend fun createModel(item: Parent): Model {

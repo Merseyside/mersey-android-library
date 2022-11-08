@@ -31,11 +31,21 @@ interface INestedAdapter<Parent, Model, InnerData, InnerAdapter> : IBaseAdapter<
     }
 
     @OptIn(InternalAdaptersApi::class)
-    suspend fun getAdapterByItem(item: Parent): InnerAdapter? {
+    suspend fun getNestedAdapterByItem(item: Parent): InnerAdapter? {
         val model = getModelByItem(item)
         return model?.let {
             getAdapterIfExists(it)
         }
+    }
+
+    override fun onChanged(
+        model: Model,
+        position: Int,
+        payloads: List<AdapterParentViewModel.Payloadable>
+    ) {
+        super.onChanged(model, position, payloads)
+        val adapter = getNestedAdapterByModel(model)
+        adapter.
     }
 
     private fun putAdapter(model: Model, adapter: InnerAdapter) {
