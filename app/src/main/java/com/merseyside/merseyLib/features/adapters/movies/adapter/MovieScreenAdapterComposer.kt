@@ -3,6 +3,7 @@ package com.merseyside.merseyLib.features.adapters.movies.adapter
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.merseyside.adapters.compose.SimpleAdapterComposer
 import com.merseyside.adapters.compose.adapter.SimpleViewCompositeAdapter
 import com.merseyside.adapters.compose.delegate.ViewDelegateAdapter
@@ -15,14 +16,19 @@ import com.merseyside.adapters.compose.view.checkBox.ComposingCheckBoxDelegate
 import com.merseyside.adapters.compose.view.list.selectable.ComposingSelectableList
 import com.merseyside.adapters.compose.view.list.selectable.ComposingSelectableListDelegate
 import com.merseyside.adapters.compose.view.list.simple.ComposingListDelegate
+import com.merseyside.adapters.compose.view.list.simple.adapterConfig
 import com.merseyside.adapters.compose.view.text.ComposingTextDelegate
 import com.merseyside.adapters.compose.view.text.Text
 import com.merseyside.adapters.extensions.onClick
 import com.merseyside.adapters.extensions.onItemSelected
 import com.merseyside.adapters.feature.selecting.SelectableMode
+import com.merseyside.adapters.feature.sorting.Sorting
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
+import com.merseyside.merseyLib.features.adapters.movies.adapter.comparator.TextComparator
+import com.merseyside.merseyLib.kotlin.extensions.launchDelayed
 import com.merseyside.merseyLib.kotlin.logger.ILogger
+import com.merseyside.merseyLib.time.units.Seconds
 import com.merseyside.merseyLib.features.adapters.movies.adapter.views.MarginComposingList as List
 import kotlin.collections.List as ArrayList
 
@@ -60,10 +66,9 @@ class MovieScreenAdapterComposer(
         }
 
         ComposingSelectableList("selectable_list",
-            initList = {
+            configure = {
                 variableId = BR.selectCallback
-                selectableMode = SelectableMode.MULTIPLE
-                //isAllowToCancelSelection = true
+                selectableMode = SelectableMode.SINGLE
 
                 onItemSelected { item, isSelected, _ -> isSelected.log("selected")}
             }
@@ -75,6 +80,11 @@ class MovieScreenAdapterComposer(
                 onClick { "clicked".log() }
                 text = "lol"
                 checked = true
+            }
+
+            Text("imposter",
+                style = { textColor = R.color.green }) {
+                text = "I'm an imposter in selectable list"
             }
 
             CheckBox("kek1",
@@ -93,16 +103,21 @@ class MovieScreenAdapterComposer(
                     List("inner_list3") {
                         List("inner_list4",
                             style = { margins = ComposingStyle.Margins(R.dimen.very_small_spacing) },
-                            initList = {
+                            configure = {
+                                adapterConfig {
+                                    Sorting {
+                                        comparator = TextComparator()
+                                    }
+                                }
                                 //decorator = SimpleItemOffsetDecorator(context, R.dimen.very_small_spacing)
                                 onClick { item ->
                                     "on item click $item".log()
                                 }
                             }) {
 
-                            Text("text4_1",
+                            Text("text4_3",
                                 style = { textColor = R.color.green }) {
-                                text = "text item 4_1"
+                                text = "text item 4_3"
                             }
 
                             Text("text4_2",
@@ -173,10 +188,10 @@ class MovieScreenAdapterComposer(
     init {
         invalidateAsync()
 
-//        adapter.adapterConfig.coroutineScope.launchDelayed(Seconds(2).millis) {
-//            val mld = MutableLiveData("some data")
-//            addTextDataSource(mld)
-//        }
+        adapter.adapterConfig.coroutineScope.launchDelayed(Seconds(2).millis) {
+            val mld = MutableLiveData("some data")
+            addTextDataSource(mld)
+        }
     }
 
     override val tag = "MovieScreen"

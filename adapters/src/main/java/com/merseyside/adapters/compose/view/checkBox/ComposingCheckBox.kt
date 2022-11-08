@@ -1,6 +1,8 @@
 package com.merseyside.adapters.compose.view.checkBox
 
+import com.merseyside.adapters.compose.delegate.ViewDelegateAdapter
 import com.merseyside.adapters.compose.dsl.context.ComposeContext
+import com.merseyside.adapters.compose.view.base.StyleableComposingView
 import com.merseyside.adapters.compose.view.base.addView
 import com.merseyside.adapters.compose.view.text.ComposingText
 import com.merseyside.adapters.compose.view.text.ComposingTextStyle
@@ -11,6 +13,11 @@ open class ComposingCheckBox<Style : ComposingCheckBoxStyle>(
 ): ComposingText<Style>(id, composingStyle) {
 
     var checked: Boolean = false
+
+    @Suppress("UNCHECKED_CAST")
+    override fun getSuitableDelegate(): ViewDelegateAdapter<out ComposingCheckBox<Style>, Style, *> {
+        return ComposingCheckBoxDelegate() as ViewDelegateAdapter<out ComposingCheckBox<Style>, Style, *>
+    }
 
     companion object {
         context (ComposeContext) operator fun invoke(

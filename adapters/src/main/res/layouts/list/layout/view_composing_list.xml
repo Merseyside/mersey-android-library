@@ -4,7 +4,7 @@
     <data>
         <variable
             name="model"
-            type="com.merseyside.adapters.compose.view.list.simple.ListModel" />
+            type="com.merseyside.adapters.compose.view.list.simple.ComposingListViewModel" />
     </data>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -12,6 +12,7 @@
         android:id="@+id/list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="@{ _ -> model.onClick()}"
         app:layoutManager="com.merseyside.utils.layout.LinearLayoutManager"/>
 
 </layout>

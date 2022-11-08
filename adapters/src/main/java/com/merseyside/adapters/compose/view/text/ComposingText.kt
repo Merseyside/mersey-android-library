@@ -2,6 +2,7 @@ package com.merseyside.adapters.compose.view.text
 
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
+import com.merseyside.adapters.compose.delegate.ViewDelegateAdapter
 import com.merseyside.adapters.compose.view.base.StyleableComposingView
 import com.merseyside.adapters.compose.dsl.context.ComposeContext
 import com.merseyside.adapters.compose.view.base.addView
@@ -24,6 +25,10 @@ open class ComposingText<Style : ComposingTextStyle>(
                 .apply(init)
                 .addView()
         }
+    }
+
+    override fun getSuitableDelegate(): ViewDelegateAdapter<out StyleableComposingView<Style>, Style, *> {
+        return ComposingTextDelegate()
     }
 
     override fun getStringBuilder(): StringBuilder {

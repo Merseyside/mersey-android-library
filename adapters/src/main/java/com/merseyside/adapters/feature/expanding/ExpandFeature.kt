@@ -13,10 +13,7 @@ class ExpandFeature<Parent, Model, InnerData, InnerAdapter> :
         where Model : NestedAdapterParentViewModel<out Parent, Parent, InnerData>,
               InnerAdapter : BaseAdapter<InnerData, *> {
 
-
     override lateinit var config: Config<Parent, Model>
-    override val featureKey: String = KEY
-
     lateinit var adapterExpand: AdapterExpand<Parent, Model>
 
     override fun prepare(configure: Config<Parent, Model>.() -> Unit) {
@@ -38,6 +35,8 @@ class ExpandFeature<Parent, Model, InnerData, InnerAdapter> :
 
         adapterConfig.addOnBindItemListener(adapterExpand)
     }
+
+    override val featureKey: String = KEY
 
     companion object {
         const val KEY = "ExpandingFeature"

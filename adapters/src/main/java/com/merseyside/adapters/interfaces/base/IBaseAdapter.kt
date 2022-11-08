@@ -11,6 +11,7 @@ import com.merseyside.adapters.feature.positioning.PositionFeature
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.listManager.ModelListManager
 import com.merseyside.adapters.model.AdapterParentViewModel
+import com.merseyside.adapters.model.VM
 import com.merseyside.adapters.modelList.ModelListCallback
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.UpdateRequest
@@ -18,10 +19,6 @@ import com.merseyside.merseyLib.kotlin.extensions.isZero
 import com.merseyside.utils.measureAndLogTime
 import kotlin.math.max
 import kotlin.math.min
-import com.merseyside.adapters.model.VM
-import com.merseyside.adapters.utils.AdapterWorkManager
-import com.merseyside.merseyLib.kotlin.logger.log
-import kotlinx.coroutines.Job
 
 @SuppressLint("NotifyDataSetChanged")
 interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,

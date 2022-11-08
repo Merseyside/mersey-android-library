@@ -4,12 +4,12 @@ import com.merseyside.adapters.compose.view.base.SCV
 
 object list {
     operator fun invoke(
-        init: ListComposerContext.() -> Unit
-    ): ListComposerContext {
-        val context = ListComposerContext()
+        init: ListComposeContext.() -> Unit
+    ): ListComposeContext {
+        val context = ListComposeContext()
         context.init()
         return context
     }
 }
 
-class ListComposerContext: ScreenComposerContext<SCV>()
+class ListComposeContext: ScreenComposeContext<SCV>()

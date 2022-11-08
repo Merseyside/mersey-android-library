@@ -12,6 +12,7 @@ import com.merseyside.adapters.config.update.UpdateActions
 import com.merseyside.adapters.config.update.UpdateLogic
 import com.merseyside.adapters.extensions.recalculatePositions
 import com.merseyside.adapters.model.VM
+import com.merseyside.merseyLib.kotlin.logger.log
 
 open class SortFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Config<Parent, Model>>(),
     ModelListProvider<Parent, Model>, UpdateLogicProvider<Parent, Model>
@@ -27,6 +28,7 @@ open class SortFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Confi
         comparator = config.comparator
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun install(
         adapterConfig: AdapterConfig<Parent, Model>,
         adapter: BaseAdapter<Parent, Model>
@@ -34,8 +36,8 @@ open class SortFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Confi
         super.install(adapterConfig, adapter)
 
         val modelClass: Class<Model> = try {
-            adapter.getModelClass()
-        } catch(e: IllegalStateException) {
+            comparator.getModelClass().log() as Class<Model>
+        } catch (e: IllegalStateException) {
             getModelClass()
         }
 
@@ -50,8 +52,10 @@ open class SortFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Confi
         })
     }
 
+    @Suppress("UNCHECKED_CAST")
     open fun getModelClass(): Class<Model> {
-        throw NotImplementedError("Can not identify model class. Please pass it explicitly.")
+        return config.modelClass as? Class<Model> ?: throw NotImplementedError("Can not identify model class." +
+                " Please pass it explicitly.")
     }
 
     override fun updateLogic(updateActions: UpdateActions<Parent, Model>): UpdateLogic<Parent, Model> {
@@ -64,6 +68,7 @@ open class SortFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Confi
 class Config<Parent, Model>
         where Model : VM<Parent> {
 
+    var modelClass: Class<*>? = null
     lateinit var comparator: Comparator<Parent, Model>
 }
 

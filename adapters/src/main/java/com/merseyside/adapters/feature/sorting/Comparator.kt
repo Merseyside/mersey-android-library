@@ -2,6 +2,7 @@ package com.merseyside.adapters.feature.sorting
 
 import com.merseyside.adapters.model.VM
 import com.merseyside.adapters.utils.AdapterWorkManager
+import com.merseyside.utils.reflection.ReflectionUtils
 
 abstract class Comparator<Parent, Model : VM<Parent>>(
     protected var animation: Boolean = true
@@ -28,5 +29,13 @@ abstract class Comparator<Parent, Model : VM<Parent>>(
 
     internal interface OnComparatorUpdateCallback {
         suspend fun onUpdate(animation: Boolean)
+    }
+
+    open fun getModelClass(): Class<*> {
+        return ReflectionUtils.getGenericParameterClass(
+            this.javaClass,
+            Comparator::class.java,
+            1
+        )
     }
 }

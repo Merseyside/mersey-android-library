@@ -88,6 +88,7 @@ open class AdapterConfig<Parent, Model> internal constructor(
             }
     }
 
+    @Suppress("UNCHECKED_CAST")
     protected fun initModelList(listCallback: ModelListCallback<Model>): ModelList<Parent, Model> {
         val listProviders: List<ModelListProvider<Parent, Model>> =
             featureList.filterIsInstance<ModelListProvider<Parent, Model>>()
@@ -118,6 +119,7 @@ open class AdapterConfig<Parent, Model> internal constructor(
         listChangeDelegate.updateLogic = updateLogic
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun initModelListManager(adapter: IBaseAdapter<Parent, Model>): ModelListManager<Parent, Model> {
         if (!this::_modelListManager.isInitialized) {
             _modelListManager = if (hasFeature(FilterFeature.key)) {
@@ -163,6 +165,7 @@ class NestedAdapterConfig<Parent, Model, Data, InnerAdapter> internal constructo
     override val modelListManager: ModelListManager<Parent, Model>
         get() = _modelList
 
+    @Suppress("UNCHECKED_CAST")
     fun initModelListManager(
         adapter: INestedAdapter<Parent, Model, Data, InnerAdapter>
     ): INestedModelListManager<Parent, Model, Data, InnerAdapter> {

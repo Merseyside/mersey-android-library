@@ -15,6 +15,7 @@ import com.merseyside.adapters.compose.view.list.simple.ComposingListStyle
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 import com.merseyside.adapters.model.VM
 import com.merseyside.adapters.utils.InternalAdaptersApi
+import com.merseyside.merseyLib.kotlin.utils.safeLet
 
 abstract class BaseComposingListDelegate<View, Model, InnerParent, InnerModel, InnerAdapter>
     : NestedViewDelegateAdapter<View, ComposingListStyle, Model, InnerParent, InnerModel, InnerAdapter>()
@@ -27,8 +28,11 @@ abstract class BaseComposingListDelegate<View, Model, InnerParent, InnerModel, I
     override fun getLayoutIdForItem(viewType: Int) = R.layout.view_composing_list
 
     override fun getNestedView(binding: ViewDataBinding, model: Model): RecyclerView? {
-        return (binding as ViewComposingListBinding).list.also { recyclerView ->
-            model.item.decorator?.let { recyclerView.addItemDecoration(it) }
+        return (binding.root as RecyclerView).also { recyclerView ->
+            with(model.item.listConfig) {
+                safeLet(layoutManager) { recyclerView.layoutManager = it }
+                safeLet(decorator) { recyclerView.addItemDecoration(it) }
+            }
         }
     }
 
@@ -40,7 +44,7 @@ abstract class BaseComposingListDelegate<View, Model, InnerParent, InnerModel, I
     ): InnerAdapter {
         return super.initNestedAdapter(model).also { adapter ->
             with(adapter) {
-                onClick { view -> model.item.notifyOnClick(view) }
+                onClick { view -> model.item.listConfig.notifyOnClick(view) }
             }
         }
     }

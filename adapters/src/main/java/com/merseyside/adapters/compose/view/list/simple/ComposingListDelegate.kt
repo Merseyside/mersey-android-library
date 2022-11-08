@@ -6,12 +6,15 @@ import com.merseyside.adapters.compose.model.ViewAdapterViewModel
 import com.merseyside.adapters.compose.view.base.SCV
 import com.merseyside.adapters.compose.view.list.BaseComposingListDelegate
 
-open class ComposingListDelegate : BaseComposingListDelegate<ComposingList, ComposingListViewModel,
+open class ComposingListDelegate : BaseComposingListDelegate<ComposingList, ComposingListViewModel<ComposingList>,
         SCV, ViewAdapterViewModel, ViewCompositeAdapter<SCV, ViewAdapterViewModel>>() {
 
     override fun createItemViewModel(item: ComposingList) = ComposingListViewModel(item)
     override fun createCompositeAdapter(
-        model: ComposingListViewModel,
+        model: ComposingListViewModel<ComposingList>,
         delegateManager: ViewDelegatesManager<SCV, ViewAdapterViewModel>
-    ) = ViewCompositeAdapter(delegatesManager = delegateManager)
+    ) = ViewCompositeAdapter(
+        adapterConfig = model.item.listConfig.adapterConfig,
+        delegatesManager = delegateManager
+    )
 }

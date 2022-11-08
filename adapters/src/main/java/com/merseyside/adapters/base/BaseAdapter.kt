@@ -55,6 +55,7 @@ abstract class BaseAdapter<Parent, Model>(
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun getModelClass(): Class<Model> {
         return ReflectionUtils.getGenericParameterClass(
             this.javaClass,
@@ -87,12 +88,9 @@ abstract class BaseAdapter<Parent, Model>(
         bindModel(holder, model, position)
 
         bindItemList.add(model)
-
-//        if (!isRecyclable || !holder.isRecyclable) {
-//            holder.setIsRecyclable(isRecyclable)
-//        }
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun onBindViewHolder(
         holder: TypedBindingHolder<Model>,
         position: Int,
@@ -108,7 +106,6 @@ abstract class BaseAdapter<Parent, Model>(
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
     @CallSuper
     internal open fun bindModel(
         holder: TypedBindingHolder<Model>,

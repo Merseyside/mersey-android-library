@@ -20,7 +20,6 @@ open class ComposingTextDelegate<View : ComposingText<Style>, Style : ComposingT
         style: Style
     ) {
         super.applyStyle(context, viewDataBinding, style)
-        //val textBinding = viewDataBinding as ViewComposingTextBinding
         val text = viewDataBinding.root as TextView
         with(text) {
             safeLet(style.textColor) { color ->
@@ -45,6 +44,7 @@ open class ComposingTextDelegate<View : ComposingText<Style>, Style : ComposingT
 
     override fun getLayoutIdForItem(viewType: Int) = R.layout.view_composing_text
     override fun getBindingVariable() = BR.model
+    @Suppress("UNCHECKED_CAST")
     override fun createItemViewModel(item: View) = ComposingTextViewModel(item) as VM
 
     override fun isResponsibleForItemClass(clazz: Class<out SCV>): Boolean {

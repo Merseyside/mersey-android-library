@@ -3,9 +3,9 @@ package com.merseyside.adapters.compose.view.list.simple
 import com.merseyside.adapters.compose.view.base.SCV
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 
-open class ComposingListViewModel(
-    list: ComposingList
-) : NestedAdapterParentViewModel<ComposingList, SCV, SCV>(list), ListModel {
+open class ComposingListViewModel<L : ComposingList>(
+    list: L
+) : NestedAdapterParentViewModel<L, SCV, SCV>(list) {
 
     override fun getNestedData(): List<SCV> {
         return item.viewList

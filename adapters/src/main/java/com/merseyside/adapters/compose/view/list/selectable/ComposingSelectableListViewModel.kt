@@ -1,13 +1,6 @@
 package com.merseyside.adapters.compose.view.list.selectable
 
-import com.merseyside.adapters.compose.view.base.SCV
-import com.merseyside.adapters.compose.view.list.simple.ListModel
-import com.merseyside.adapters.model.NestedAdapterParentViewModel
+import com.merseyside.adapters.compose.view.list.simple.ComposingListViewModel
 
 class ComposingSelectableListViewModel(list: ComposingSelectableList) :
-    NestedAdapterParentViewModel<ComposingSelectableList, SCV, SCV>(list), ListModel {
-
-    override fun getNestedData(): List<SCV> {
-        return item.viewList
-    }
-}
+    ComposingListViewModel<ComposingSelectableList>(list)

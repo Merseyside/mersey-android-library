@@ -10,7 +10,7 @@ object compose {
     }
 }
 
-open class ScreenComposerContext<View: SCV> {
+open class ScreenComposeContext<View: SCV> {
     private val mutViews: MutableList<View> = ArrayList()
     val views: List<View> = mutViews
 
@@ -23,4 +23,4 @@ open class ScreenComposerContext<View: SCV> {
     }
 }
 
-typealias ComposeContext = ScreenComposerContext<SCV>
+typealias ComposeContext = ScreenComposeContext<SCV>

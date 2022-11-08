@@ -45,8 +45,7 @@ abstract class DelegateAdapter<Item : Parent, Parent, Model> :
     @Suppress("UNCHECKED_CAST")
     internal open fun createViewModel(parent: Parent): Model {
         val item = (parent as? Item) ?: throw IllegalArgumentException(
-            "This delegate is not " +
-                    "responsible for ${parent!!::class}"
+            "This delegate is not responsible for ${parent!!::class}"
         )
         return createItemViewModel(item).also { model -> onModelCreated(model) }
     }
