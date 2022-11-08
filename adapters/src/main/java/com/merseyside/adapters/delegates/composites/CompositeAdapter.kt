@@ -1,36 +1,56 @@
-@file:OptIn(InternalAdaptersApi::class)
 package com.merseyside.adapters.delegates.composites
 
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.merseyside.adapters.base.BaseAdapter
+import com.merseyside.adapters.config.AdapterConfig
+import com.merseyside.adapters.delegates.DelegateAdapter
 import com.merseyside.adapters.delegates.DelegatesManager
-import com.merseyside.adapters.feature.filter.FilterPositionListChangeDelegate
-import com.merseyside.adapters.interfaces.simple.ISimpleAdapter
-import com.merseyside.adapters.listDelegates.PositionListChangeDelegate
-import com.merseyside.adapters.listDelegates.interfaces.AdapterPositionListChangeDelegate
-import com.merseyside.adapters.model.AdapterParentViewModel
+import com.merseyside.adapters.holder.TypedBindingHolder
+import com.merseyside.adapters.model.DA
 import com.merseyside.adapters.utils.InternalAdaptersApi
-import com.merseyside.adapters.utils.getFilter
-import com.merseyside.adapters.utils.isFilterable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.sync.Mutex
+import com.merseyside.adapters.model.VM
 
-open class CompositeAdapter<Parent, Model : AdapterParentViewModel<out Parent, Parent>>(
-    scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
-    delegatesManager: DelegatesManager<Parent, Model> = DelegatesManager()
-) : BaseCompositeAdapter<Parent, Model>(scope, delegatesManager), ISimpleAdapter<Parent, Model> {
+open class CompositeAdapter<Parent, ParentModel>(
+    adapterConfig: AdapterConfig<Parent, ParentModel> = AdapterConfig(),
+    delegatesManager: DelegatesManager<DA<Parent, ParentModel>, Parent, ParentModel> = DelegatesManager()
+) : BaseAdapter<Parent, ParentModel>(adapterConfig)
+        where ParentModel : VM<Parent> {
 
-    final override val mutModels: MutableList<Model> = ArrayList()
-    override val models: List<Model> = mutModels
+    open val delegatesManager: DelegatesManager<DA<Parent, ParentModel>, Parent, ParentModel> =
+        delegatesManager
 
-    override val defaultDelegate: PositionListChangeDelegate<Parent, Model> by lazy {
-        PositionListChangeDelegate(this)
+    init {
+        delegatesManager.setOnDelegateRemoveCallback { delegate ->
+            val removeList = models.filter { delegate.isResponsibleFor(it.item) }
+            removeAsync(removeList.map { it.item })
+        }
     }
 
-    override val filterDelegate: FilterPositionListChangeDelegate<Parent, Model> by lazy {
-        FilterPositionListChangeDelegate(defaultDelegate, getFilter())
+    override fun getItemViewType(position: Int): Int {
+        return delegatesManager.getViewTypeByItem(getModelByPosition(position))
     }
 
-    override val delegate: AdapterPositionListChangeDelegate<Parent, Model> by lazy {
-        if (isFilterable()) filterDelegate else defaultDelegate
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): TypedBindingHolder<ParentModel> {
+        return delegatesManager.createViewHolder(parent, viewType)
+    }
+
+    override fun bindModel(
+        holder: TypedBindingHolder<ParentModel>,
+        model: ParentModel,
+        position: Int
+    ) {
+        super.bindModel(holder, model, position)
+        delegatesManager.onBindViewHolder(holder, model, position)
+    }
+
+    @InternalAdaptersApi
+    override fun createModel(item: Parent): ParentModel {
+        return delegatesManager.createModel(item)
     }
 }

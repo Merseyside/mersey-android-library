@@ -2,7 +2,7 @@ package com.merseyside.merseyLib.features.adapters.racers.model
 
 import androidx.annotation.AttrRes
 import androidx.databinding.Bindable
-import com.merseyside.adapters.model.ComparableAdapterViewModel
+import com.merseyside.adapters.model.AdapterViewModel
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.features.adapters.racers.entity.Checkpoint
@@ -12,22 +12,10 @@ import com.merseyside.merseyLib.time.units.Millis
 import com.merseyside.merseyLib.time.units.compareTo
 import com.merseyside.merseyLib.time.units.minus
 
-class CheckpointItemViewModel(item: Checkpoint) : ComparableAdapterViewModel<Checkpoint>(item) {
+class CheckpointItemViewModel(item: Checkpoint) : AdapterViewModel<Checkpoint>(item) {
 
     private var gapChange: Millis = Millis()
     private var rank: Int = 0
-
-    override fun areContentsTheSame(other: Checkpoint): Boolean {
-        return this.item == other
-    }
-
-    override fun compareTo(other: Checkpoint): Int {
-        return this.item.gap.compareTo(other.gap)
-    }
-
-    override fun areItemsTheSame(other: Checkpoint): Boolean {
-        return this.item.racer == other.racer
-    }
 
     override fun notifyUpdate() {
         notifyPropertyChanged(BR.gap)
@@ -52,7 +40,7 @@ class CheckpointItemViewModel(item: Checkpoint) : ComparableAdapterViewModel<Che
 
     @Bindable
     fun getRank(): String {
-        return "${getPosition() + 1}."
+        return "${position + 1}."
     }
 
     @Bindable

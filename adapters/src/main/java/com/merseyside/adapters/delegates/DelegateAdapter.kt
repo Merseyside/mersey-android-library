@@ -6,15 +6,29 @@ import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import com.merseyside.adapters.callback.HasOnItemClickListener
+import com.merseyside.adapters.callback.OnItemClickListener
+import com.merseyside.adapters.compose.style.Styleable
+import com.merseyside.adapters.compose.style.StyleableItem
 import com.merseyside.adapters.holder.TypedBindingHolder
+import com.merseyside.adapters.interfaces.delegate.IDelegateAdapter
 import com.merseyside.adapters.model.AdapterParentViewModel
+import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.utils.reflection.ReflectionUtils
 
-abstract class DelegateAdapter<Item : Parent, Parent, Model : AdapterParentViewModel<Item, out Parent>> {
+abstract class DelegateAdapter<Item : Parent, Parent, Model> :
+    IDelegateAdapter<Item, Parent, Model>
+        where Model : AdapterParentViewModel<Item, Parent> {
+
+    override var clickListeners: MutableList<OnItemClickListener<Item>> = ArrayList()
+
+    @InternalAdaptersApi
+    override val onClick: (Item) -> Unit = { item ->
+        clickListeners.forEach { listener -> listener.onItemClicked(item) }
+    }
 
     @LayoutRes
     abstract fun getLayoutIdForItem(viewType: Int): Int
-    protected abstract fun getBindingVariable(): Int
 
     @CallSuper
     open fun isResponsibleFor(parent: Parent): Boolean {
@@ -22,19 +36,18 @@ abstract class DelegateAdapter<Item : Parent, Parent, Model : AdapterParentViewM
             ?: throw NullPointerException("Parent is null!")
     }
 
-    internal fun isResponsibleForItemClass(clazz: Class<out Parent>): Boolean {
+    open fun isResponsibleForItemClass(clazz: Class<out Parent>): Boolean {
         return persistentClass == clazz
     }
 
     abstract fun createItemViewModel(item: Item): Model
 
     @Suppress("UNCHECKED_CAST")
-    internal open fun createItemViewModel(parent: Parent): Model {
+    internal open fun createViewModel(parent: Parent): Model {
         val item = (parent as? Item) ?: throw IllegalArgumentException(
-            "This delegate is not " +
-                    "responsible for ${parent!!::class}"
+            "This delegate is not responsible for ${parent!!::class}"
         )
-        return createItemViewModel(item)
+        return createItemViewModel(item).also { model -> onModelCreated(model) }
     }
 
     fun createViewHolder(parent: ViewGroup, viewType: Int): TypedBindingHolder<Model> {
@@ -49,22 +62,24 @@ abstract class DelegateAdapter<Item : Parent, Parent, Model : AdapterParentViewM
         return getBindingHolder(binding)
     }
 
-    open fun onBindViewHolder(holder: TypedBindingHolder<Model>, model: Model, position: Int) {
-        bind(holder, model)
+    @OptIn(InternalAdaptersApi::class)
+    open fun onModelCreated(model: Model) {
+        model.clickEvent.observe(onClick)
     }
 
     @CallSuper
-    internal open fun bind(holder: TypedBindingHolder<Model>, model: Model) {
+    open fun onBindViewHolder(holder: TypedBindingHolder<Model>, model: Model, position: Int) {
         holder.bind(getBindingVariable(), model)
     }
 
     open fun getBindingHolder(binding: ViewDataBinding) = TypedBindingHolder<Model>(binding)
 
     @Suppress("UNCHECKED_CAST")
-    private val persistentClass: Class<Item> =
+    private val persistentClass: Class<Item> by lazy {
         ReflectionUtils.getGenericParameterClass(
             this.javaClass,
             DelegateAdapter::class.java,
             0
         ) as Class<Item>
+    }
 }

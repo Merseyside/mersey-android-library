@@ -81,7 +81,7 @@ kotlinConvention {
     )
 }
 
-val android = listOf(
+val androidLibz = listOf(
     androidLibs.coroutines,
     androidLibs.recyclerView,
     androidLibs.navigation,
@@ -104,11 +104,11 @@ val modulez = listOf(
 dependencies {
     implementation(common.serialization)
     modulez.forEach { module -> implementation(module) }
-    android.forEach { lib -> implementation(lib) }
+    androidLibz.forEach { lib -> implementation(lib) }
 
     implementation(androidLibs.mersey.filemanager) {
         exclude(group = "com.github.Merseyside.mersey-android-library", module = "utils")
     }
 
-    kapt(androidLibs.daggerCompiler)
+    kapt(androidLibs.dagger.compiler)
 }

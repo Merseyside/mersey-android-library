@@ -1,5 +1,7 @@
 package com.merseyside.adapters.utils
 
+import com.merseyside.adapters.extensions.Behaviour
+
 class UpdateRequest<Item>(val list: List<Item>) {
 
     constructor(item: Item): this(listOf(item))
@@ -28,6 +30,16 @@ class UpdateRequest<Item>(val list: List<Item>) {
 
         fun build(): UpdateRequest<Item> {
             return request
+        }
+    }
+
+    companion object {
+        internal fun <Item> fromBehaviour(items: List<Item>, behaviour: Behaviour): UpdateRequest<Item> {
+            behaviour as Behaviour.UPDATE
+            return Builder(items)
+                .isAddNew(behaviour.addNew)
+                .isDeleteOld(behaviour.removeOld)
+                .build()
         }
     }
 }

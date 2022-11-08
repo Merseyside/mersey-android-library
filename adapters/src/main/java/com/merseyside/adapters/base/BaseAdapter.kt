@@ -4,57 +4,93 @@ package com.merseyside.adapters.base
 
 import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
+import com.merseyside.adapters.config.ext.hasFeature
+import com.merseyside.adapters.config.AdapterConfig
+import com.merseyside.adapters.config.listManager
 import com.merseyside.adapters.callback.HasOnItemClickListener
 import com.merseyside.adapters.callback.OnItemClickListener
-import com.merseyside.adapters.feature.filter.FilterListChangeDelegate
+import com.merseyside.adapters.config.contract.OnBindItemListener
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.interfaces.base.IBaseAdapter
-import com.merseyside.adapters.listDelegates.ListChangeDelegate
+import com.merseyside.adapters.listManager.ModelListManager
 import com.merseyside.adapters.model.AdapterParentViewModel
-import com.merseyside.adapters.model.AdapterViewModel
+import com.merseyside.adapters.model.VM
+import com.merseyside.adapters.utils.AdapterWorkManager
 import com.merseyside.adapters.utils.InternalAdaptersApi
-import com.merseyside.adapters.utils.ItemCallback
-import com.merseyside.adapters.utils.getFilter
-import com.merseyside.merseyLib.kotlin.concurency.Locker
-import com.merseyside.merseyLib.kotlin.coroutines.CoroutineWorkManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import com.merseyside.merseyLib.kotlin.logger.ILogger
+import com.merseyside.utils.reflection.ReflectionUtils
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.sync.Mutex
 
+@Suppress("LeakingThis")
 abstract class BaseAdapter<Parent, Model>(
-    coroutineScope: CoroutineScope
+    open val adapterConfig: AdapterConfig<Parent, Model>,
 ) : RecyclerView.Adapter<TypedBindingHolder<Model>>(),
-    ItemCallback<AdapterViewModel<Parent>>,
-    HasOnItemClickListener<Parent>,
-    IBaseAdapter<Parent, Model>
-    where Model : AdapterParentViewModel<out Parent, Parent> {
+    HasOnItemClickListener<Parent>, IBaseAdapter<Parent, Model>, ILogger
+        where Model : VM<Parent> {
 
-    internal val workManager = CoroutineWorkManager<Any, Unit>(scope = coroutineScope)
+    override lateinit var workManager: AdapterWorkManager
 
+    var onBindItemListener: OnBindItemListener<Parent, Model>? = null
+
+    override val models: List<Model>
+        get() = delegate.modelList
+
+    override val delegate: ModelListManager<Parent, Model> by adapterConfig.listManager()
+
+    @InternalAdaptersApi
     override val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>
         get() = this
 
     protected var isRecyclable: Boolean = true
 
-    override var listener: OnItemClickListener<Parent>? = null
+    @InternalAdaptersApi
+    override var clickListeners: MutableList<OnItemClickListener<Parent>> = ArrayList()
 
     internal val bindItemList: MutableList<Model> = ArrayList()
     protected var recyclerView: RecyclerView? = null
 
-    override val modelProvider: (Parent) -> Model = ::createModel
+    override val provideModelByItem: suspend (Parent) -> Model = { item ->
+        createModel(item).also { model ->
+            onModelCreated(model)
+        }
+    }
 
-    internal abstract val defaultDelegate: ListChangeDelegate<Parent, Model>
-    internal abstract val filterDelegate: FilterListChangeDelegate<Parent, Model>
+    @Suppress("UNCHECKED_CAST")
+    override fun getModelClass(): Class<Model> {
+        return ReflectionUtils.getGenericParameterClass(
+            this.javaClass,
+            BaseAdapter::class.java,
+            1
+        ) as Class<Model>
+    }
 
-    @InternalAdaptersApi
-    abstract fun createModel(item: Parent): Model
+    init {
+        adapterConfig.initAdapterWithConfig(this)
+    }
+
+    internal abstract fun createModel(item: Parent): Model
+
+    override val callbackClick: (Parent) -> Unit = { item ->
+        clickListeners.forEach { listener -> listener.onItemClicked(item) }
+    }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         this.recyclerView = recyclerView
         super.onAttachedToRecyclerView(recyclerView)
     }
 
+    override fun getItemCount(): Int {
+        return delegate.getItemCount()
+    }
+
+    override fun onBindViewHolder(holder: TypedBindingHolder<Model>, position: Int) {
+        val model = getModelByPosition(position)
+        bindModel(holder, model, position)
+
+        bindItemList.add(model)
+    }
+
+    @Suppress("UNCHECKED_CAST")
     override fun onBindViewHolder(
         holder: TypedBindingHolder<Model>,
         position: Int,
@@ -62,7 +98,6 @@ abstract class BaseAdapter<Parent, Model>(
     ) {
         if (payloads.isNotEmpty()) {
             val payloadable = payloads.first() as List<AdapterParentViewModel.Payloadable>
-
             if (isPayloadsValid(payloadable)) {
                 onPayloadable(holder, payloadable)
             }
@@ -72,32 +107,29 @@ abstract class BaseAdapter<Parent, Model>(
     }
 
     @CallSuper
-    override fun onViewRecycled(holder: TypedBindingHolder<Model>) {
-        super.onViewRecycled(holder)
-        if (holder.absoluteAdapterPosition != RecyclerView.NO_POSITION &&
-            holder.absoluteAdapterPosition < itemCount) {
-
-            getModelByPosition(holder.absoluteAdapterPosition).apply {
-                bindItemList.remove(this)
-                listener?.let {
-                    removeOnItemClickListener(it)
-                }
-                onRecycled()
-            }
-        }
-    }
-
-    override fun <Result> doAsync(
-        provideResult: (Result) -> Unit,
-        work: suspend IBaseAdapter<Parent, Model>.() -> Result,
-    ): Job? {
-        return workManager.addAndExecute {
-            val result = work()
-            provideResult(result)
-        }
+    internal open fun bindModel(
+        holder: TypedBindingHolder<Model>,
+        model: Model,
+        position: Int
+    ) {
+        onBindItemListener?.onBindViewHolder(holder, model, position)
     }
 
     open fun removeListeners() {
-        listener = null
+        removeAllClickListeners()
     }
+
+    override fun hasFeature(key: String): Boolean {
+        return adapterConfig.hasFeature(key)
+    }
+
+    fun <Result> doAsync(
+        onComplete: (Result) -> Unit = {},
+        onError: ((e: Exception) -> Unit)? = null,
+        work: suspend () -> Result,
+    ): Job? {
+        return workManager.doAsync(onComplete, onError, work)
+    }
+
+    override val tag: String = "BaseAdapter"
 }

@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
+import com.merseyside.adapters.feature.filtering.Filtering
+import com.merseyside.adapters.feature.sorting.Sorting
 import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.archy.presentation.view.valueSwitcher.ValueSwitcher
 import com.merseyside.merseyLib.BR
@@ -22,7 +24,20 @@ import com.merseyside.utils.view.ext.addTextChangeListener
 
 class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel>() {
 
-    private val adapter = ColorsAdapter(lifecycleScope)
+    private val colorsFilter = ColorsFilter()
+    private val colorsComparator = ColorsComparator(ColorsComparator.ColorComparisonRule.ASC)
+
+    private val adapter = ColorsAdapter {
+        coroutineScope = lifecycleScope
+
+        Sorting {
+            comparator = colorsComparator
+        }
+
+        Filtering {
+            filter = colorsFilter
+        }
+    }
 
     override fun getBindingVariable() = BR.viewModel
     override fun getLayoutId() = R.layout.fragment_colors
@@ -53,17 +68,17 @@ class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel
             }
 
             if (length in 1..2) {
-                adapter.addFilter(filterName, newValue)
+                colorsFilter.addFilter(filterName, newValue)
                 true
             } else {
                 if (length.isZero()) {
-                    adapter.removeFilter(filterName)
+                    colorsFilter.removeFilter(filterName)
                     true
                 } else {
                     false
                 }
             }.also {
-                adapter.applyFiltersAsync()
+                colorsFilter.applyFiltersAsync()
             }
         } else false
     }
@@ -78,16 +93,20 @@ class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel
             bColor.addTextChangeListener(textChangeListener)
         }
 
-        requireBinding().sortSwitcher.setOnValueChangeListener(object :
-            ValueSwitcher.OnValueChangeListener {
-            override fun valueChanged(entryValue: String) {
-                adapter.setComparisonRule(ColorsComparator.ColorComparisonRule.valueOf(entryValue.uppercase()))
-            }
-        })
+        requireBinding().sortSwitcher.setOnValueChangeListener(
+            object : ValueSwitcher.OnValueChangeListener {
+                override fun valueChanged(entryValue: String) {
+                    colorsComparator.setCompareRule(
+                        ColorsComparator.ColorComparisonRule.valueOf(
+                            entryValue.uppercase()
+                        )
+                    )
+                }
+            })
+
 
         viewModel.getColorsFlow().asLiveData().observe(viewLifecycleOwner) {
             if (requireBinding().add.isChecked) {
-
                 adapter.addAsync(it)
             } else {
                 val updateRequest = UpdateRequest.Builder(it)

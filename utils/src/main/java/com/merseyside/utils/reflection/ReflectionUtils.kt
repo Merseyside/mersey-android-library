@@ -15,8 +15,7 @@ object ReflectionUtils {
     ): Class<*> {
         if (!genericClass.isAssignableFrom(actualClass.superclass!!)) {
             throw IllegalArgumentException(
-                "Class " + genericClass.name + " is not a superclass of "
-                        + actualClass.name + "."
+                "Class " + genericClass.name + " is not a superclass of " + actualClass.name + "."
             )
         }
 

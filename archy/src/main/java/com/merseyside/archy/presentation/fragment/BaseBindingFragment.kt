@@ -26,7 +26,7 @@ abstract class BaseBindingFragment<B: ViewDataBinding> : BaseFragment() {
         @LayoutRes layoutId: Int
     ): View? {
         binding = DataBindingUtil.inflate<B>(inflater, getLayoutId(), container, false).apply {
-            lifecycleOwner = this@BaseBindingFragment
+            lifecycleOwner = viewLifecycleOwner
         }
 
         return requireBinding().root

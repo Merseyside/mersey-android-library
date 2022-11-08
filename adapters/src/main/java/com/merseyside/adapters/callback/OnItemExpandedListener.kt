@@ -2,7 +2,7 @@ package com.merseyside.adapters.callback
 
 interface OnItemExpandedListener<Item> {
 
-    fun onExpandedStateChanged(item: Item, isExpanded: Boolean, isExpandedByUser: Boolean)
+    fun onExpanded(item: Item, isExpanded: Boolean, isExpandedByUser: Boolean)
 }
 
 interface HasOnItemExpandedListener<Item> {
@@ -17,6 +17,12 @@ interface HasOnItemExpandedListener<Item> {
     }
 
     fun notifyAllExpandedListeners(item: Item, isExpanded: Boolean, isExpandedByUser: Boolean) {
-        expandedListeners.forEach { it.onExpandedStateChanged(item, isExpanded, isExpandedByUser) }
+        expandedListeners.forEach { it.onExpanded(item, isExpanded, isExpandedByUser) }
+    }
+
+    fun notifyOnExpanded(item: Item, isExpanded: Boolean, isExpandedByUser: Boolean) {
+        expandedListeners.forEach { listener ->
+            listener.onExpanded(item, isExpanded, isExpandedByUser)
+        }
     }
 }

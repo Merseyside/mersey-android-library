@@ -6,6 +6,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.merseyside.merseyLib.kotlin.extensions.flatWithAnd
 import com.merseyside.merseyLib.kotlin.extensions.flatWithOr
+import com.merseyside.merseyLib.kotlin.logger.logMsg
 import com.merseyside.utils.view.ext.getActivity
 
 /**
@@ -62,6 +63,11 @@ object BU {
     @JvmStatic
     fun getTag(view: View, id: Int): Any? {
         return getViewById(view, id).tag
+    }
+
+    @JvmStatic
+    fun log(tag: String = "BindingUtils", msg: Any = "empty message") {
+        logMsg(tag, msg)
     }
 
     private fun getViewById(view: View, id: Int): View {

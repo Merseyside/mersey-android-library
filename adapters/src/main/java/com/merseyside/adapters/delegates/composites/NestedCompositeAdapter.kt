@@ -1,40 +1,30 @@
 package com.merseyside.adapters.delegates.composites
 
 import com.merseyside.adapters.base.BaseAdapter
-import com.merseyside.adapters.feature.filter.FilterNestedListChangeDelegate
+import com.merseyside.adapters.config.NestedAdapterConfig
+import com.merseyside.adapters.config.listManager
+import com.merseyside.adapters.delegates.SimpleDelegatesManager
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.interfaces.nested.INestedAdapter
-import com.merseyside.adapters.listDelegates.NestedListChangeDelegate
-import com.merseyside.adapters.listDelegates.interfaces.AdapterNestedListChangeDelegate
+import com.merseyside.adapters.interfaces.nested.OnInitNestedAdapterListener
+import com.merseyside.adapters.listManager.INestedModelListManager
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
-import com.merseyside.adapters.utils.getFilter
-import com.merseyside.adapters.utils.isFilterable
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 
 abstract class NestedCompositeAdapter<Parent, Model, Data, InnerAdapter>(
-    scope: CoroutineScope = CoroutineScope(Dispatchers.Main)
-) : SortedCompositeAdapter<Parent, Model>(scope = scope),
+    final override val adapterConfig: NestedAdapterConfig<Parent, Model, Data, InnerAdapter> = NestedAdapterConfig(),
+    delegatesManager: SimpleDelegatesManager<Parent, Model> = SimpleDelegatesManager()
+) : CompositeAdapter<Parent, Model>(adapterConfig, delegatesManager),
     INestedAdapter<Parent, Model, Data, InnerAdapter>
         where Model : NestedAdapterParentViewModel<out Parent, Parent, Data>,
               InnerAdapter : BaseAdapter<Data, out AdapterParentViewModel<out Data, Data>> {
 
     override var adapterList: MutableList<Pair<Model, InnerAdapter>> = ArrayList()
+    override var onInitAdapterListener: OnInitNestedAdapterListener<Data>? = null
 
-    override val defaultDelegate: NestedListChangeDelegate<Parent, Model, Data, InnerAdapter> by lazy {
-        NestedListChangeDelegate(this)
-    }
-
-    override val filterDelegate: FilterNestedListChangeDelegate<Parent, Model, Data, InnerAdapter> by lazy {
-        FilterNestedListChangeDelegate(defaultDelegate, getFilter())
-    }
-
-    override val delegate: AdapterNestedListChangeDelegate<Parent, Model, Data, InnerAdapter> by lazy {
-        if (isFilterable()) filterDelegate else defaultDelegate
-    }
+    @InternalAdaptersApi
+    override val delegate: INestedModelListManager<Parent, Model, Data, InnerAdapter> by adapterConfig.listManager()
 
     override fun onBindViewHolder(holder: TypedBindingHolder<Model>, position: Int) {
         super.onBindViewHolder(holder, position)
