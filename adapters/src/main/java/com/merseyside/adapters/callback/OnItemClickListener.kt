@@ -1,14 +1,29 @@
 package com.merseyside.adapters.callback
 
-interface OnItemClickListener<M> {
+import com.merseyside.adapters.utils.InternalAdaptersApi
 
-    fun onItemClicked(obj: M)
+interface OnItemClickListener<Item> {
+
+    fun onItemClicked(item: Item)
 }
 
-interface HasOnItemClickListener<M> {
-    var listener: OnItemClickListener<M>?
+interface HasOnItemClickListener<Item> {
+    var clickListeners: MutableList<OnItemClickListener<Item>>
 
-    fun setOnItemClickListener(listener: OnItemClickListener<M>?) {
-        this.listener = listener
+    fun setOnItemClickListener(listener: OnItemClickListener<Item>) {
+        clickListeners.add(listener)
+    }
+
+    fun removeOnItemClickListener(listener: OnItemClickListener<Item>) {
+        clickListeners.remove(listener)
+    }
+
+    @InternalAdaptersApi
+    fun notifyOnClick(item: Item) {
+        clickListeners.forEach { listener -> listener.onItemClicked(item) }
+    }
+
+    fun removeAllClickListeners() {
+        clickListeners.clear()
     }
 }

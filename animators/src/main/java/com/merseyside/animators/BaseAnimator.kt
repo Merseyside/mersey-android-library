@@ -150,19 +150,19 @@ abstract class BaseAnimator {
     private fun initInternalCallback() {
         if (internalCallback == null) {
             internalCallback = object: AnimatorListenerAdapter() {
-                override fun onAnimationRepeat(animation: Animator?) {
+                override fun onAnimationRepeat(animation: Animator) {
                     onRepeatCallback.invoke(animation, isReverse)
                 }
 
-                override fun onAnimationEnd(animation: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                     onEndCallback.invoke(animation, isReverse)
                 }
 
-                override fun onAnimationCancel(animation: Animator?) {
+                override fun onAnimationCancel(animation: Animator) {
                     onCancelCallback.invoke(animation, isReverse)
                 }
 
-                override fun onAnimationStart(animation: Animator?) {
+                override fun onAnimationStart(animation: Animator) {
                     onStartCallback.invoke(animation, isReverse)
                 }
 

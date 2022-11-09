@@ -28,33 +28,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:background="?attr/colorPrimaryDark">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/async"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/small_spacing"
-                    android:layout_weight="1"
-                    android:text="Async"
-                    android:textSize="@dimen/text_size" />
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/filter"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/small_spacing"
-                    android:layout_weight="1"
-                    android:checked="@={viewModel.isFilterObservableField()}"
-                    android:text="Filter"
-                    android:textSize="@dimen/text_size" />
-
-            </LinearLayout>
+            android:background="?attr/colorPrimaryDark"
+            android:layout_marginHorizontal="@dimen/small_spacing">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -65,7 +40,6 @@
                     android:id="@+id/add"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/small_spacing"
                     android:layout_weight="1"
                     android:checked="@={viewModel.isAddingObservableField()}"
                     android:text="Add"
@@ -75,10 +49,10 @@
                     android:id="@+id/update"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/small_spacing"
                     android:layout_weight="1"
                     android:checked="@={!viewModel.isAddingObservableField()}"
                     android:text="Update"
+                    android:layout_marginHorizontal="@dimen/small_spacing"
                     android:textSize="@dimen/text_size" />
             </LinearLayout>
 
@@ -92,7 +66,6 @@
                     android:id="@+id/update_add"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/small_spacing"
                     android:layout_weight="1"
                     android:text="Add new items"
                     android:textSize="@dimen/text_size" />
@@ -105,6 +78,33 @@
                     android:layout_weight="1"
                     android:text="Remove old items"
                     android:textSize="@dimen/text_size" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/filter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:checked="@={viewModel.isFilterObservableField()}"
+                    android:text="Filter"
+                    android:textSize="@dimen/text_size" />
+
+                <com.merseyside.archy.presentation.view.valueSwitcher.ValueSwitcher
+                    android:id="@+id/sort_switcher"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    app:switchEntries="@array/sort_entries"
+                    app:switchEntryValues="@array/sort_entry_values"
+                    app:switchTitle="Sort by"
+                    app:switchType="text"
+                    android:padding="@dimen/small_spacing"/>
 
             </LinearLayout>
 

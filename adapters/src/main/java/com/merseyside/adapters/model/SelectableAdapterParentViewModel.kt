@@ -1,93 +1,62 @@
 package com.merseyside.adapters.model
 
 import androidx.databinding.ObservableBoolean
-import androidx.databinding.ObservableField
-import com.merseyside.utils.ext.onChange
-import com.merseyside.utils.mainThreadIfNeeds
+import com.merseyside.merseyLib.kotlin.observable.ObservableField
+import com.merseyside.merseyLib.kotlin.observable.SingleObservableField
 
-abstract class SelectableAdapterParentViewModel<Item: Parent, Parent>(
+abstract class SelectableAdapterParentViewModel<Item : Parent, Parent>(
     item: Item,
-    private var isSelected: Boolean = IS_SELECTED_DEFAULT,
-    private var isSelectable: Boolean = IS_SELECTABLE_DEFAULT
-) : ComparableAdapterParentViewModel<Item, Parent>(item) {
+    isSelected: Boolean = IS_SELECTED_DEFAULT,
+    isSelectable: Boolean = IS_SELECTABLE_DEFAULT,
+    clickable: Boolean = true,
+    deletable: Boolean = true,
+    filterable: Boolean = true
+) : ComparableAdapterParentViewModel<Item, Parent>(
+    item, clickable, deletable, filterable
+) {
 
-    private var isSelectEnabled: Boolean = IS_SELECT_ENABLE_DEFAULT
+    private val mutSelectEvent = SingleObservableField<Item>()
+    internal val selectEvent: ObservableField<Item> = mutSelectEvent
 
-    val selectedObservable = ObservableField(isSelected).apply {
-        onChange { _, value, isInitial ->
-            if (!isInitial && value != isSelected) {
-                onClick()
-            }
-        }
-    }
-
+    val selectedObservable = ObservableBoolean(isSelected)
     val selectableObservable = ObservableBoolean()
-    val selectEnabledObservable = ObservableBoolean(isSelectEnabled)
+    val selectEnabledObservable = ObservableBoolean(isSelectable)
 
-    init {
-        setSelectable(isSelectable)
-        setSelected(isSelected)
-    }
+    var isSelected: Boolean = isSelected
+        set(value) {
+            if (field != value) {
+                field = value
 
-    fun setSelected(isSelected: Boolean, notifyItem: Boolean = true) {
-        mainThreadIfNeeds {
-            if (this.isSelected != isSelected) {
-                this.isSelected = isSelected
-
-                this.selectedObservable.set(isSelected)
-
-                if (notifyItem) {
-                    onSelectedChanged(isSelected)
-                }
+                selectedObservable.set(isSelected)
+                onSelectedChanged(isSelected)
             }
         }
-    }
 
-    fun setSelectable(isSelectable: Boolean, isNotifyItem: Boolean = false) {
-        mainThreadIfNeeds {
-            if (this.isSelectable != isSelectable) {
-                this.isSelectable = isSelectable
+    var isSelectable: Boolean = isSelectable
+        set(value) {
+            if (field != value) {
+                field = value
 
-                this.selectableObservable.set(isSelectable)
-
-                if (isNotifyItem) {
-                    onSelectableChanged(isSelectable)
-                }
+                selectableObservable.set(value)
+                onSelectableChanged(value)
             }
         }
-    }
 
-    fun setSelectEnabled(isSelectEnabled: Boolean, isNotifyItem: Boolean = false) {
-        mainThreadIfNeeds {
-            this.isSelectEnabled = isSelectEnabled
-
-            if (selectEnabledObservable.get() != isSelectEnabled) {
-                this.selectEnabledObservable.set(isSelectEnabled)
-            }
-
-            if (isNotifyItem) {
-                notifySelectEnabled(isSelectEnabled)
-            }
-        }
-    }
-
-    fun isSelected(): Boolean {
-        return isSelected
-    }
-
-    fun isSelectable(): Boolean {
-        return isSelectable
+    open fun onSelect() {
+        mutSelectEvent.value = item
     }
 
     /**
      * Notify item isSelectEnabled in adapter has changed.
      */
-    abstract fun notifySelectEnabled(isEnabled: Boolean)
+    open fun notifySelectEnabled(isEnabled: Boolean) {}
 
     /**
      * Notify item that select state has changed.
      */
-    abstract fun onSelectedChanged(isSelected: Boolean)
+    open fun onSelectedChanged(isSelected: Boolean) {
+        notifyUpdate()
+    }
 
     /**
      * Notify item that selectable state has changed.
@@ -97,6 +66,5 @@ abstract class SelectableAdapterParentViewModel<Item: Parent, Parent>(
     companion object {
         private const val IS_SELECTED_DEFAULT = false
         private const val IS_SELECTABLE_DEFAULT = true
-        private const val IS_SELECT_ENABLE_DEFAULT = true
     }
 }

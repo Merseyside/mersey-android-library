@@ -16,4 +16,9 @@
         <item name="validSuccessMessageColor">?attr/colorAccent</item>
         <item name="validErrorMessageColor">?attr/colorError</item>
     </style>
+    
+    <style name="Mersey.ValueSwitcher.Theme" parent="android:Widget">
+        <item name="switchButtons">arrows</item>
+        <item name="switchButtonColor">?attr/colorAccent</item>
+    </style>
 </resources>

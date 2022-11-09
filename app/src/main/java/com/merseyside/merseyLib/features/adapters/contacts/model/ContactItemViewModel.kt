@@ -7,12 +7,6 @@ class ContactItemViewModel(item: String): ComparableAdapterViewModel<String>(ite
         return item == other
     }
 
-    override fun notifyUpdate() {}
-
-    override fun areContentsTheSame(other: String): Boolean {
-        return item == other
-    }
-
     override fun compareTo(other: String): Int {
         return this.item.compareTo(other)
     }

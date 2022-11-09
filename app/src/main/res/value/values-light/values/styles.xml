@@ -26,6 +26,7 @@
         <item name="positive_text_color">@color/green</item>
         <item name="negative_text_color">@color/red</item>
 
+        <item name="valueSwitcherStyle">@style/Mersey.ValueSwitcher.Theme</item>
         <item name="some_text">Some text</item>
     </style>
 

@@ -11,24 +11,26 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import com.merseyside.utils.reflection.callMethodByName
 
-fun Drawable.setColor(@ColorInt color: Int) {
+fun Drawable.setColor(@ColorInt color: Int): Drawable {
     if (this is VectorDrawable || this is RippleDrawable) {
         colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)
-        return
+    } else {
+
+        when (this) {
+
+            is GradientDrawable -> {
+                setColor(color)
+            }
+            is ColorDrawable -> {
+                this.color = color
+            }
+            is ShapeDrawable -> {
+                paint.color = color
+            }
+        }
     }
 
-    when (this) {
-
-        is GradientDrawable -> {
-            setColor(color)
-        }
-        is ColorDrawable -> {
-            this.color = color
-        }
-        is ShapeDrawable -> {
-            paint.color = color
-        }
-    }
+    return this
 }
 
 fun Drawable.setColor(context: Context, @ColorRes color: Int) {

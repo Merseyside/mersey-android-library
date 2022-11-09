@@ -58,7 +58,7 @@ class TextToSpeechHelper private constructor(private var textToSpeech: TextToSpe
 
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 Voice(
-                    "en-us-x-sfg#male_1-local",
+                    "en-us-x-sfg#male_2-local",
                     Locale("en", "US"),
                     400,
                     200,

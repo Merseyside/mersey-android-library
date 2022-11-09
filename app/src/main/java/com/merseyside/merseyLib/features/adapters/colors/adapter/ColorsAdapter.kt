@@ -1,38 +1,34 @@
 package com.merseyside.merseyLib.features.adapters.colors.adapter
 
-import com.merseyside.adapters.base.SortedAdapter
-import com.merseyside.adapters.ext.onItemClicked
+import com.merseyside.adapters.extensions.onClick
+import com.merseyside.adapters.feature.filter.interfaces.Filterable
+import com.merseyside.adapters.single.SortedAdapter
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.features.adapters.colors.entity.HexColor
 import com.merseyside.merseyLib.features.adapters.colors.model.ColorItemViewModel
 import kotlinx.coroutines.CoroutineScope
 
-class ColorsAdapter(scope: CoroutineScope) : SortedAdapter<HexColor, ColorItemViewModel>(scope) {
+class ColorsAdapter(scope: CoroutineScope) : SortedAdapter<HexColor, ColorItemViewModel>(scope),
+    Filterable<HexColor, ColorItemViewModel> {
+
+    override val filter = ColorsFilter()
+
+    private val colorsComparator: ColorsComparator =
+        ColorsComparator(ColorsComparator.ColorComparisonRule.ASC)
 
     init {
-        onItemClicked {
-            remove(it)
+        comparator = colorsComparator
+        onClick {
+            removeAsync(it)
         }
+    }
+
+    fun setComparisonRule(rule: ColorsComparator.ColorComparisonRule) {
+        colorsComparator.setCompareRule(rule)
     }
 
     override fun getLayoutIdForPosition(position: Int) = R.layout.item_color
     override fun getBindingVariable() = BR.viewModel
-    override fun createItemViewModel(obj: HexColor) = ColorItemViewModel(obj)
-
-    override fun filter(obj: ColorItemViewModel, key: String, filterObj: Any): Boolean {
-        val query = filterObj as String
-        return when (key) {
-            R_COLOR_FILTER -> obj.item.getRHexColor().startsWith(query, ignoreCase = true)
-            G_COLOR_FILTER -> obj.item.getGHexColor().startsWith(query, ignoreCase = true)
-            B_COLOR_FILTER -> obj.item.getBHexColor().startsWith(query, ignoreCase = true)
-            else -> false
-        }
-    }
-
-    companion object {
-        const val R_COLOR_FILTER = "rcolor"
-        const val G_COLOR_FILTER = "gcolor"
-        const val B_COLOR_FILTER = "bcolor"
-    }
+    override fun createItemViewModel(item: HexColor) = ColorItemViewModel(item)
 }

@@ -1,8 +1,8 @@
 package com.merseyside.merseyLib.features.adapters.racers.adapter
 
-import com.merseyside.adapters.base.SortedAdapter
+import com.merseyside.adapters.single.SortedAdapter
 import com.merseyside.adapters.model.AdapterParentViewModel
-import com.merseyside.adapters.view.TypedBindingHolder
+import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.animators.template.SetTextFadeOutInAnimator
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
@@ -18,7 +18,7 @@ class RacersAdapter(scope: CoroutineScope) :
     SortedAdapter<Checkpoint, CheckpointItemViewModel>(scope) {
     override fun getLayoutIdForPosition(position: Int) = R.layout.item_checkpoint
     override fun getBindingVariable() = BR.viewModel
-    override fun createItemViewModel(obj: Checkpoint) = CheckpointItemViewModel(obj)
+    override fun createItemViewModel(item: Checkpoint) = CheckpointItemViewModel(item)
 
     override fun onPayloadable(
         holder: TypedBindingHolder<CheckpointItemViewModel>,

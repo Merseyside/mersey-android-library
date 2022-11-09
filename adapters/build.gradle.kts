@@ -50,13 +50,16 @@ kotlinConvention {
     )
 }
 
+val androidLibz = listOf(
+    androidLibs.appCompat,
+    androidLibs.material,
+    androidLibs.recyclerView,
+    androidLibs.coroutines,
+    androidLibs.lifecycleRuntime
+)
+
 dependencies {
-    listOf(
-        androidLibs.appCompat,
-        androidLibs.material,
-        androidLibs.recyclerView,
-        androidLibs.coroutines
-    ).forEach { lib -> implementation(lib) }
+    androidLibz.forEach { lib -> implementation(lib) }
 
     api(androidLibs.paging)
     api(common.bundles.mersey.time)

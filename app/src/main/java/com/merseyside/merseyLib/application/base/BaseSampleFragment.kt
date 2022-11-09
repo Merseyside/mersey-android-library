@@ -7,7 +7,7 @@ import com.merseyside.archy.presentation.fragment.BaseVMFragment
 import com.merseyside.archy.presentation.model.BaseViewModel
 import com.merseyside.archy.presentation.view.OnBackPressedListener
 import com.merseyside.merseyLib.application.SampleApplication
-import com.merseyside.merseyLib.kotlin.extensions.log
+import com.merseyside.merseyLib.kotlin.logger.log
 
 abstract class BaseSampleFragment<V: ViewDataBinding, M: BaseViewModel> : BaseVMFragment<V, M>(),
     OnBackPressedListener {

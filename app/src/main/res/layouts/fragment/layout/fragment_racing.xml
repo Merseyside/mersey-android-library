@@ -11,8 +11,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="@dimen/normal_spacing">
+        android:layout_height="match_parent">
 
         <com.merseyside.archy.presentation.view.merseyRecyclerView.FixedScrollRecyclerView
             android:id="@+id/racers_list"

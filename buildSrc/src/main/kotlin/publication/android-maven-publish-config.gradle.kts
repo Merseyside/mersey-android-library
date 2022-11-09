@@ -2,17 +2,8 @@
 import com.android.build.gradle.BaseExtension
 
 plugins {
-    //id("org.jetbrains.dokka")
     id("maven-publish-config")
 }
-
-//val dokkaHtml by tasks.getting(DokkaTask::class)
-//
-//val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
-//    dependsOn(dokkaHtml)
-//    archiveClassifier.set("javadoc")
-//    from(dokkaHtml.outputDirectory)
-//}
 
 afterEvaluate {
     val androidSourcesJar = tasks.create("androidSourcesJar", Jar::class) {
@@ -30,16 +21,4 @@ afterEvaluate {
         }
     }
 
-//    publishing.publications {
-//        create<MavenPublication>("release") {
-//            groupId = Metadata.groupId
-//            artifactId = project.name
-//            version = Metadata.version
-//            from(components["release"])
-//        }
-//    }
-
-//    repositories {
-//        mavenCentral()
-//    }
 }

@@ -90,7 +90,7 @@ class TouchManager(
         this.view = view
     }
 
-    fun addGestureListener(listener: SwipeGestureListener?) {
+    fun addGestureListener(listener: SwipeGestureListener) {
         this.swipeDetector = GestureDetector(view.context, listener)
     }
 

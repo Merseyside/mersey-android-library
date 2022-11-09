@@ -24,12 +24,12 @@ class NewsFragment: BaseBindingFragment<FragmentNewsBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         requireBinding().generate.onClick {
-            adapter.update(generateNews(Random().nextInt(10), Random().nextInt(5)))
+            adapter.updateAsync(generateNews(Random().nextInt(10), Random().nextInt(5)))
             //adapter.addAfter(someNews, generateNews(3))
         }
 
         requireBinding().recycler.adapter = adapter
-        adapter.add(generateNews())
+        adapter.addAsync(generateNews())
     }
 
     private fun generateNews(count: Int = 5, startFrom: Int = 1): List<News> {

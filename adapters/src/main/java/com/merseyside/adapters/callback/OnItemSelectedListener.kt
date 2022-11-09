@@ -1,24 +1,30 @@
 package com.merseyside.adapters.callback
 
-import com.merseyside.adapters.utils.SelectableAdapterListUtils
+import com.merseyside.adapters.interfaces.selectable.ISelectableAdapter
 
-interface OnItemSelectedListener<M> {
-    fun onSelected(item: M, isSelected: Boolean, isSelectedByUser: Boolean)
-    fun onSelectedRemoved(adapterList: SelectableAdapterListUtils<M, *>, items: List<M>)
+interface OnItemSelectedListener<Item> {
+    fun onSelected(item: Item, isSelected: Boolean, isSelectedByUser: Boolean)
+    fun onSelectedRemoved(adapterList: ISelectableAdapter<Item, *>, items: List<Item>)
 }
 
 interface OnSelectEnabledListener {
     fun onEnabled(isEnabled: Boolean)
 }
 
-interface HasOnItemSelectedListener<M> {
-    val selectedListeners: MutableList<OnItemSelectedListener<M>>
+interface HasOnItemSelectedListener<Item> {
+    val selectedListeners: MutableList<OnItemSelectedListener<Item>>
 
-    fun addOnItemSelectedListener(listener: OnItemSelectedListener<M>) {
+    fun addOnItemSelectedListener(listener: OnItemSelectedListener<Item>) {
         this.selectedListeners.add(listener)
     }
 
-    fun removeOnItemSelectedListener(listener: OnItemSelectedListener<M>) {
+    fun removeOnItemSelectedListener(listener: OnItemSelectedListener<Item>) {
         this.selectedListeners.remove(listener)
+    }
+
+    fun notifyAllSelectedListeners(item: Item, isSelected: Boolean, isSelectedByUser: Boolean) {
+        selectedListeners.forEach { listener ->
+            listener.onSelected(item, isSelected, isSelectedByUser)
+        }
     }
 }

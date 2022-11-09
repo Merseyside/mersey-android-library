@@ -5,12 +5,15 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
-import com.merseyside.adapters.base.UpdateRequest
+import com.merseyside.adapters.utils.UpdateRequest
+import com.merseyside.archy.presentation.view.valueSwitcher.ValueSwitcher
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.application.base.BaseSampleFragment
 import com.merseyside.merseyLib.databinding.FragmentColorsBinding
 import com.merseyside.merseyLib.features.adapters.colors.adapter.ColorsAdapter
+import com.merseyside.merseyLib.features.adapters.colors.adapter.ColorsComparator
+import com.merseyside.merseyLib.features.adapters.colors.adapter.ColorsFilter
 import com.merseyside.merseyLib.features.adapters.colors.di.ColorsModule
 import com.merseyside.merseyLib.features.adapters.colors.di.DaggerColorsComponent
 import com.merseyside.merseyLib.features.adapters.colors.model.ColorsViewModel
@@ -33,20 +36,19 @@ class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel
             .build().inject(this)
     }
 
-    private val textChangeListener = {
-            view: View,
-            newValue: String?,
-            _: String?,
-            length: Int,
-            _: Int,
-            _: Int,
-            _: Int ->
+    private val textChangeListener = { view: View,
+                                       newValue: String?,
+                                       _: String?,
+                                       length: Int,
+                                       _: Int,
+                                       _: Int,
+                                       _: Int ->
 
         if (newValue != null) {
             val filterName = when (view.id) {
-                requireBinding().rColor.id -> ColorsAdapter.R_COLOR_FILTER
-                requireBinding().gColor.id -> ColorsAdapter.G_COLOR_FILTER
-                requireBinding().bColor.id -> ColorsAdapter.B_COLOR_FILTER
+                requireBinding().rColor.id -> ColorsFilter.R_COLOR_FILTER
+                requireBinding().gColor.id -> ColorsFilter.G_COLOR_FILTER
+                requireBinding().bColor.id -> ColorsFilter.B_COLOR_FILTER
                 else -> throw IllegalArgumentException()
             }
 
@@ -61,11 +63,7 @@ class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel
                     false
                 }
             }.also {
-                if (requireBinding().async.isChecked) {
-                    adapter.applyFiltersAsync()
-                } else {
-                    adapter.applyFilters()
-                }
+                adapter.applyFiltersAsync()
             }
         } else false
     }
@@ -80,25 +78,28 @@ class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel
             bColor.addTextChangeListener(textChangeListener)
         }
 
+        requireBinding().sortSwitcher.setOnValueChangeListener(
+            object : ValueSwitcher.OnValueChangeListener {
+                override fun valueChanged(entryValue: String) {
+                    adapter.setComparisonRule(
+                        ColorsComparator.ColorComparisonRule.valueOf(
+                            entryValue.uppercase()
+                        )
+                    )
+                }
+            })
+
+
         viewModel.getColorsFlow().asLiveData().observe(viewLifecycleOwner) {
             if (requireBinding().add.isChecked) {
-
-                if (requireBinding().async.isChecked) {
-                    adapter.addAsync(it)
-                } else {
-                    adapter.add(it)
-                }
+                adapter.addAsync(it)
             } else {
                 val updateRequest = UpdateRequest.Builder(it)
                     .isAddNew(requireBinding().updateAdd.isChecked)
                     .isDeleteOld(requireBinding().updateRemove.isChecked)
                     .build()
 
-                if (requireBinding().async.isChecked) {
-                    adapter.updateAsync(updateRequest)
-                } else {
-                    adapter.update(updateRequest)
-                }
+                adapter.updateAsync(updateRequest)
             }
         }
     }
