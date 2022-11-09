@@ -11,12 +11,15 @@ import androidx.core.view.updateLayoutParams
 import com.merseyside.archy.R
 import com.merseyside.archy.databinding.ViewValidationInputBinding
 import com.merseyside.archy.presentation.view.validationInputView.ValidationState.*
+import com.merseyside.merseyLib.kotlin.extensions.isNotZero
 import com.merseyside.merseyLib.kotlin.logger.Logger
 import com.merseyside.utils.attributes.AttributeHelper
 import com.merseyside.utils.colorStateList.colorToSimpleStateList
 import com.merseyside.utils.delegate.*
 import com.merseyside.utils.textWatcher.ValidationTextWatcher
 import com.merseyside.utils.view.ext.requireResourceFromAttr
+import com.merseyside.utils.view.viewScope
+import kotlinx.coroutines.*
 
 open class ValidationInputView(
     context: Context,
@@ -44,7 +47,8 @@ open class ValidationInputView(
 
     private var onTextChangedListener: (String) -> Unit = {}
     var formatter: ((String) -> String)? = null
-    var validator: ((String) -> ValidationState)? = null
+    var validator: (suspend (String) -> ValidationState)? = null
+    private val debounce by attrs.int(defaultValue = defaultDebounce)
 
     private val inputWidth by attrs.dimensionPixelSizeOrNull()
     private val inputHeight by attrs.dimensionPixelSizeOrNull()
@@ -59,7 +63,6 @@ open class ValidationInputView(
     private var textSuccess by attrs.string(defaultValue = "")
     private var textError by attrs.string(defaultValue = "")
 
-
     protected open val strokeColor by attrs.color(
         defaultValue = requireResourceFromAttr(R.attr.colorOnSurface)
     )
@@ -71,7 +74,6 @@ open class ValidationInputView(
     protected open val errorStrokeColor by attrs.color(
         defaultValue = requireResourceFromAttr(R.attr.colorError)
     )
-
 
     protected open val hintColor by attrs.color(
         defaultValue = requireResourceFromAttr(R.attr.colorOnSurface)
@@ -114,8 +116,28 @@ open class ValidationInputView(
     var getErrorMsg: (text: String) -> String = { textError }
     var getSuccessMsg: (text: String) -> String = { textSuccess }
 
+    fun setErrorText(text: String) {
+        if (textError != text) {
+            textError = text
+
+            if (validationState == ERROR)
+                updateViewsWithState()
+        }
+    }
+
+    fun setSuccessText(text: String) {
+        if (textSuccess != text) {
+            textSuccess = text
+            if (validationState == OK)
+                updateViewsWithState()
+        }
+    }
 
     private var validationState = FILLING
+
+    init {
+        updateViewsWithState()
+    }
 
     init {
         orientation = VERTICAL
@@ -185,7 +207,6 @@ open class ValidationInputView(
             if (isTypingState()) FILLING
             else state
         } else state
-
 
         return if (validationState != newState) {
             validationState = newState
@@ -261,13 +282,33 @@ open class ValidationInputView(
         }
     }
 
+    private var validateDeferred: Deferred<ValidationState>? = null
+
     private fun validate(text: String) {
-        applyState(
-            validator?.invoke(text) ?: run {
-                Logger.logInfo("Validator not set")
-                FILLING
+        validator?.let {
+            validateDeferred?.cancel()
+            validateDeferred = viewScope.async {
+                if (debounce.isNotZero()) {
+                    delay(debounce.toLong())
+                }
+                it.invoke(text)
             }
-        )
+            viewScope.launch {
+                validateDeferred?.let { validateData(it) }
+            }
+
+        } ?: run {
+            Logger.logInfo("Validator not set")
+            applyState(FILLING)
+        }
+    }
+
+    private suspend fun validateData(deferred: Deferred<ValidationState>) {
+        try {
+            applyState(deferred.await())
+        } catch (e: CancellationException) {
+            Logger.log(e.message)
+        }
     }
 
     fun setOnTextChangedListener(listener: (String) -> Unit) {
@@ -276,6 +317,10 @@ open class ValidationInputView(
 
     fun isTypingState(): Boolean {
         return editText.isFocused
+    }
+
+    companion object {
+        private const val defaultDebounce = 300
     }
 }
 
