@@ -6,8 +6,8 @@ import android.view.View
 import androidx.lifecycle.asLiveData
 import com.merseyside.adapters.feature.expanding.Expanding
 import com.merseyside.adapters.feature.filtering.Filtering
-import com.merseyside.adapters.feature.filtering.ext.addAndApply
-import com.merseyside.adapters.feature.filtering.ext.removeAndApply
+import com.merseyside.adapters.feature.filtering.ext.addAndApplyAsync
+import com.merseyside.adapters.feature.filtering.ext.removeAndApplyAsync
 import com.merseyside.adapters.feature.selecting.group.SelectingGroup
 import com.merseyside.adapters.feature.sorting.Sorting
 import com.merseyside.adapters.feature.selecting.SelectableMode
@@ -57,9 +57,9 @@ class ContactFragment : BaseSampleFragment<FragmentContactsBinding, ContactViewM
 
         newValue?.let { value ->
             if (value.isNotEmpty()) {
-                contactsFilter.addAndApply(ContactsNestedAdapterFilter.QUERY_KEY, newValue)
+                contactsFilter.addAndApplyAsync(ContactsNestedAdapterFilter.QUERY_KEY, newValue)
             } else {
-                contactsFilter.removeAndApply(ContactsNestedAdapterFilter.QUERY_KEY)
+                contactsFilter.removeAndApplyAsync(ContactsNestedAdapterFilter.QUERY_KEY)
             }
         }
 

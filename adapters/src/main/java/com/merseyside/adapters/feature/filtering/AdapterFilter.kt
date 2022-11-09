@@ -48,14 +48,15 @@ abstract class AdapterFilter<Parent, Model : VM<Parent>> : HasWorkManager, ILogg
     /**
      * If you pass an object as filter be sure isEquals() implemented properly.
      */
-    open fun addFilter(key: String, filter: Any) {
+    open suspend fun addFilter(key: String, filter: Any) {
         val appliedFilter = filters[key]
         if (appliedFilter != filter) {
+            "add filter".log()
             notAppliedFilters[key] = filter
         }
     }
 
-    open fun removeFilter(key: String) {
+    open suspend fun removeFilter(key: String) {
         val appliedFilter = filters[key]
         if (isFiltered) {
             if (appliedFilter != null) {

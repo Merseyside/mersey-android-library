@@ -27,16 +27,28 @@ class FilterNestedModelListManager<Parent, Model, InnerData, InnerAdapter>(
         }
     }
 
-    private fun getInnerAdapterFilter(model: Model): AdapterFilter<InnerData, *>? {
-        val innerAdapter = provideInnerAdapter(model)
+    override suspend fun initNestedAdapterByModel(model: Model): InnerAdapter {
+        return super.initNestedAdapterByModel(model).also { adapter ->
+            if (adapterFilter is NestedAdapterFilter<Parent, Model>) {
+                adapter.adapterConfig.getAdapterFilter()?.let { innerAdapterFilter ->
+                    adapterFilter.initAdapterFilter(innerAdapterFilter)
+                }
+            }
+        }
+    }
+
+    private suspend fun getInnerAdapterFilter(model: Model): AdapterFilter<InnerData, *>? {
+        val innerAdapter = provideNestedAdapter(model)
         return innerAdapter.adapterConfig.getAdapterFilter()
     }
 
     override suspend fun updateModel(model: Model, item: Parent): Boolean {
         return super<INestedIModelListManager>.updateModel(model, item).also {
-            if (isFiltering) {
+            if (isFiltered) {
                 val filtered = adapterFilter.filter(model)
-                if (!filtered) removeModel(model)
+                if (!filtered) {
+                    removeModel(model)
+                }
             }
         }
     }

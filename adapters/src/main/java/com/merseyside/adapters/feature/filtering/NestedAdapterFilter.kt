@@ -7,9 +7,9 @@ import com.merseyside.merseyLib.kotlin.extensions.isNotZero
 abstract class NestedAdapterFilter<Parent, Model : NestedAdapterParentViewModel<out Parent, Parent, *>> :
     AdapterFilter<Parent, Model>() {
 
-    internal lateinit var getAdapterFilterByModel: (Model) -> AdapterFilter<*, *>?
+    internal lateinit var getAdapterFilterByModel: suspend (Model) -> AdapterFilter<*, *>?
 
-    final override fun addFilter(key: String, filter: Any) {
+    final override suspend fun addFilter(key: String, filter: Any) {
         super.addFilter(key, filter)
         val fullList = provideFullList()
         fullList.forEach { model ->
@@ -18,7 +18,7 @@ abstract class NestedAdapterFilter<Parent, Model : NestedAdapterParentViewModel<
         }
     }
 
-    final override fun removeFilter(key: String) {
+    final override suspend fun removeFilter(key: String) {
         super.removeFilter(key)
         val fullList = provideFullList()
         fullList.forEach { model ->
@@ -46,13 +46,11 @@ abstract class NestedAdapterFilter<Parent, Model : NestedAdapterParentViewModel<
     }
 
     internal suspend fun initAdapterFilter(adapterFilter: AdapterFilter<*, *>) {
-        with(adapterFilter) {
-            filters.forEach { (key, value) ->
-                addFilter(key, value)
-            }
-
-            applyFilters()
+        filters.forEach { (key, value) ->
+            adapterFilter.addFilter(key, value)
         }
+
+        adapterFilter.applyFilters()
     }
 
     override suspend fun cancelFiltering() {

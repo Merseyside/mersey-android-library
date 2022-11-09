@@ -5,14 +5,20 @@ import com.merseyside.adapters.interfaces.nested.NestedAdapterActions
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 
-interface INestedIModelListManager<Parent, Model, InnerData, InnerAdapter> : IModelListManager<Parent, Model>
+interface INestedIModelListManager<Parent, Model, InnerData, InnerAdapter> :
+    IModelListManager<Parent, Model>
         where Model : NestedAdapterParentViewModel<out Parent, Parent, InnerData>,
               InnerAdapter : BaseAdapter<InnerData, out AdapterParentViewModel<out InnerData, InnerData>> {
 
     override val adapterActions: NestedAdapterActions<Parent, Model, InnerData, InnerAdapter>
 
-    fun provideInnerAdapter(model: Model): InnerAdapter {
+    suspend fun provideNestedAdapter(model: Model): InnerAdapter {
         return adapterActions.getNestedAdapterByModel(model)
+            ?: initNestedAdapterByModel(model)
+    }
+
+    suspend fun initNestedAdapterByModel(model: Model): InnerAdapter {
+        return adapterActions.initNestedAdapterByModel(model)
     }
 
     override suspend fun remove(item: Parent): Model? {
@@ -28,7 +34,7 @@ interface INestedIModelListManager<Parent, Model, InnerData, InnerAdapter> : IMo
 
     override suspend fun updateModel(model: Model, item: Parent): Boolean {
         return super.updateModel(model, item).also {
-            val adapter = adapterActions.getNestedAdapterByModel(model)
+            val adapter = provideNestedAdapter(model)
             model.getNestedData()?.let { data ->
                 adapter.addOrUpdate(data)
             }
@@ -37,10 +43,10 @@ interface INestedIModelListManager<Parent, Model, InnerData, InnerAdapter> : IMo
 
     override suspend fun createModel(item: Parent): Model {
         return super.createModel(item).also { model ->
-            val adapter = provideInnerAdapter(model)
-            val innerDataList = model.getNestedData()
-
-            innerDataList?.let { data -> adapter.add(data) }
+            val adapter = provideNestedAdapter(model)
+            model.getNestedData()?.let { data ->
+                adapter.add(data)
+            }
         }
     }
 }

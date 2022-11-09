@@ -48,8 +48,12 @@ interface INestedAdapter<Parent, Model, InnerData, InnerAdapter> : IBaseAdapter<
 
     /* Models list actions */
 
-    override fun getNestedAdapterByModel(model: Model): InnerAdapter {
-        return getAdapterIfExists(model) ?: internalInitInnerAdapter(model).also { adapter ->
+    override fun getNestedAdapterByModel(model: Model): InnerAdapter? {
+        return getAdapterIfExists(model)
+    }
+
+    override fun initNestedAdapterByModel(model: Model): InnerAdapter {
+        return internalInitInnerAdapter(model).also { adapter ->
             putAdapter(model, adapter)
         }
     }

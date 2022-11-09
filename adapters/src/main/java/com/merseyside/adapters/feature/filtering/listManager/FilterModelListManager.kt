@@ -22,7 +22,7 @@ open class FilterModelListManager<Parent, Model : VM<Parent>>(
 
     protected var isFiltering: Boolean = false
 
-    private val isFiltered: Boolean
+    protected val isFiltered: Boolean
         get() = adapterFilter.isFiltered
 
     private val mutAllModelList: MutableList<Model> = ArrayList()
