@@ -1,8 +1,7 @@
-package com.merseyside.merseyLib.features.adapters.colors.view
+package com.merseyside.merseyLib.features.adapters.concat.di
 
 import com.merseyside.archy.presentation.di.qualifiers.FragmentScope
 import com.merseyside.merseyLib.application.di.AppComponent
-import com.merseyside.merseyLib.features.adapters.concat.di.ConcatModule
 import com.merseyside.merseyLib.features.adapters.concat.view.ConcatAdapterFragment
 import dagger.Component
 

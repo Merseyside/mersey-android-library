@@ -6,7 +6,9 @@ import android.annotation.SuppressLint
 import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.callback.HasOnItemClickListener
+import com.merseyside.adapters.config.AdapterConfig
 import com.merseyside.adapters.config.contract.HasWorkManager
+import com.merseyside.adapters.config.contract.OnBindItemListener
 import com.merseyside.adapters.feature.positioning.PositionFeature
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.listManager.IModelListManager
@@ -25,10 +27,14 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
     HasOnItemClickListener<Parent>, ModelListCallback<Model>, HasWorkManager
         where Model : VM<Parent> {
 
+    val adapterConfig: AdapterConfig<Parent, Model>
+    var onBindItemListener: OnBindItemListener<Parent, Model>?
+
     val models: List<Model>
 
     @InternalAdaptersApi
-    val delegate: IModelListManager<Parent, Model>
+    val listManager: IModelListManager<Parent, Model>
+        get() = adapterConfig.listManager
 
     @InternalAdaptersApi
     val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>
@@ -42,7 +48,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
     }
 
     suspend fun add(item: Parent): Model? {
-        return delegate.add(item)
+        return listManager.add(item)
     }
 
     fun addAsync(items: List<Parent>, onComplete: (Unit) -> Unit = {}) {
@@ -54,7 +60,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
      * @return Added models
      */
     suspend fun add(items: List<Parent>) {
-        delegate.add(items)
+        listManager.add(items)
     }
 
     fun addOrUpdateAsync(items: List<Parent>, onComplete: (Unit) -> Unit = {}) {
@@ -62,7 +68,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
     }
 
     suspend fun addOrUpdate(items: List<Parent>) {
-        if (delegate.getItemCount().isZero()) {
+        if (listManager.getItemCount().isZero()) {
             add(items)
         } else {
             update(items)
@@ -75,7 +81,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
 
     suspend fun update(updateRequest: UpdateRequest<Parent>): Boolean {
         return measureAndLogTime("updateTime") {
-            delegate.update(updateRequest)
+            listManager.update(updateRequest)
         }
     }
 
@@ -84,7 +90,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
     }
 
     suspend fun update(items: List<Parent>): Boolean {
-        return delegate.update(UpdateRequest(items))
+        return listManager.update(UpdateRequest(items))
     }
 
     @InternalAdaptersApi
@@ -105,7 +111,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
     }
 
     suspend fun remove(item: Parent): Model? {
-        return delegate.remove(item)
+        return listManager.remove(item)
     }
 
     fun removeAsync(items: List<Parent>, onComplete: (List<Model>) -> Unit = {}) {
@@ -113,7 +119,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
     }
 
     suspend fun remove(items: List<Parent>): List<Model> {
-        return delegate.remove(items)
+        return listManager.remove(items)
     }
 
     @CallSuper
@@ -174,7 +180,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
     }
 
     fun getModelByPosition(position: Int): Model {
-        return delegate.getModelByPosition(position)
+        return listManager.getModelByPosition(position)
     }
 
     fun getModelByItemAsync(item: Parent, onComplete: (Model?) -> Unit) {
@@ -183,7 +189,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
 
     @InternalAdaptersApi
     suspend fun getModelByItem(item: Parent): Model? {
-        return delegate.getModelByItem(item)
+        return listManager.getModelByItem(item)
     }
 
 
@@ -210,7 +216,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
     }
 
     suspend fun clear() {
-        delegate.clear()
+        listManager.clear()
     }
 
     /**
@@ -243,12 +249,12 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
     }
 
     suspend fun removeAll() {
-        delegate.clear()
+        listManager.clear()
         adapter.notifyDataSetChanged()
     }
 
     suspend fun getPositionOfModel(model: Model): Int {
-        return delegate.getPositionOfModel(model)
+        return listManager.getPositionOfModel(model)
     }
 
     /* Position */
@@ -258,7 +264,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
     }
 
     suspend fun add(position: Int, item: Parent) {
-        delegate.add(position, item)
+        listManager.add(position, item)
     }
 
     fun addAsync(position: Int, items: List<Parent>, onComplete: (Unit) -> Unit) {
@@ -266,7 +272,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
     }
 
     suspend fun add(position: Int, items: List<Parent>) {
-        delegate.add(position, items)
+        listManager.add(position, items)
     }
 
     suspend fun addBefore(beforeItem: Parent, item: Parent) {

@@ -14,7 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import com.merseyside.adapters.model.VM
 
 open class CompositeAdapter<Parent, ParentModel>(
-    adapterConfig: AdapterConfig<Parent, ParentModel> = AdapterConfig(),
+    adapterConfig: AdapterConfig<Parent, ParentModel>,
     delegatesManager: DelegatesManager<DA<Parent, ParentModel>, Parent, ParentModel> = DelegatesManager()
 ) : BaseAdapter<Parent, ParentModel>(adapterConfig)
         where ParentModel : VM<Parent> {

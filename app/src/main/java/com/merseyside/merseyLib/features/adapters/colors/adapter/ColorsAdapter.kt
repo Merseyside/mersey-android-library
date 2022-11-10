@@ -1,7 +1,7 @@
 package com.merseyside.merseyLib.features.adapters.colors.adapter
 
 import com.merseyside.adapters.config.AdapterConfig
-import com.merseyside.adapters.config.config
+import com.merseyside.adapters.config.init.initAdapter
 import com.merseyside.adapters.extensions.onClick
 import com.merseyside.adapters.single.SimpleAdapter
 import com.merseyside.merseyLib.BR
@@ -26,7 +26,7 @@ class ColorsAdapter(
 
     companion object {
         operator fun invoke(configure: AdapterConfig<HexColor, ColorItemViewModel>.() -> Unit): ColorsAdapter {
-            return ColorsAdapter(config(configure))
+            return initAdapter(::ColorsAdapter, configure)
         }
     }
 }

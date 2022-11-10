@@ -11,15 +11,20 @@ import androidx.core.view.updateLayoutParams
 import com.merseyside.archy.R
 import com.merseyside.archy.databinding.ViewValidationInputBinding
 import com.merseyside.archy.presentation.view.validationInputView.ValidationState.*
-import com.merseyside.merseyLib.kotlin.extensions.isNotZero
 import com.merseyside.merseyLib.kotlin.logger.Logger
+import com.merseyside.merseyLib.kotlin.utils.safeLet
+import com.merseyside.merseyLib.time.coroutines.delay
+import com.merseyside.merseyLib.time.units.Millis
+import com.merseyside.merseyLib.time.units.TimeUnit
 import com.merseyside.utils.attributes.AttributeHelper
 import com.merseyside.utils.colorStateList.colorToSimpleStateList
 import com.merseyside.utils.delegate.*
 import com.merseyside.utils.textWatcher.ValidationTextWatcher
 import com.merseyside.utils.view.ext.requireResourceFromAttr
 import com.merseyside.utils.view.viewScope
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 open class ValidationInputView(
     context: Context,
@@ -49,6 +54,8 @@ open class ValidationInputView(
     var formatter: ((String) -> String)? = null
     var validator: (suspend (String) -> ValidationState)? = null
     private val debounce by attrs.int(defaultValue = defaultDebounce)
+    private val timeDebounce: TimeUnit
+        get() = Millis(debounce)
 
     private val inputWidth by attrs.dimensionPixelSizeOrNull()
     private val inputHeight by attrs.dimensionPixelSizeOrNull()
@@ -282,30 +289,24 @@ open class ValidationInputView(
         }
     }
 
-    private var validateDeferred: Deferred<ValidationState>? = null
+    private var validationJob: Job? = null
 
     private fun validate(text: String) {
-        validator?.let {
-            validateDeferred?.cancel()
-            validateDeferred = viewScope.async {
-                if (debounce.isNotZero()) {
-                    delay(debounce.toLong())
-                }
-                it.invoke(text)
+        validationJob?.cancel()
+        safeLet(validator) {
+            validationJob = viewScope.launch {
+                delay(timeDebounce)
+                validateData(it(text))
             }
-            viewScope.launch {
-                validateDeferred?.let { validateData(it) }
-            }
-
         } ?: run {
             Logger.logInfo("Validator not set")
             applyState(FILLING)
         }
     }
 
-    private suspend fun validateData(deferred: Deferred<ValidationState>) {
+    private fun validateData(state: ValidationState) {
         try {
-            applyState(deferred.await())
+            applyState(state)
         } catch (e: CancellationException) {
             Logger.log(e.message)
         }

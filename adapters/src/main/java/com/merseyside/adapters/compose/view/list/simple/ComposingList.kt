@@ -55,7 +55,7 @@ open class ListConfig: HasOnItemClickListener<SCV> {
 
     override val clickListeners: MutableList<OnItemClickListener<SCV>> = ArrayList()
 
-    val adapterConfig: AdapterConfig<SCV, VM<SCV>> by lazy { AdapterConfig() }
+    var adapterConfig: AdapterConfig<SCV, VM<SCV>>.() -> Unit = {}
 
     var decorator: RecyclerView.ItemDecoration? = null
     var layoutManager: LayoutManager? = null

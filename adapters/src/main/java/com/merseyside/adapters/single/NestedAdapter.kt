@@ -2,17 +2,14 @@ package com.merseyside.adapters.single
 
 import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.config.NestedAdapterConfig
-import com.merseyside.adapters.config.listManager
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.interfaces.nested.INestedAdapter
 import com.merseyside.adapters.interfaces.nested.OnInitNestedAdapterListener
-import com.merseyside.adapters.listManager.INestedIModelListManager
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.NestedAdapterViewModel
-import com.merseyside.adapters.utils.InternalAdaptersApi
 
 abstract class NestedAdapter<Item, Model, Data, InnerAdapter>(
-    adapterConfig: NestedAdapterConfig<Item, Model, Data, InnerAdapter> = NestedAdapterConfig(),
+    final override val adapterConfig: NestedAdapterConfig<Item, Model, Data, InnerAdapter>
 ) : SimpleAdapter<Item, Model>(adapterConfig),
     INestedAdapter<Item, Model, Data, InnerAdapter>
         where Model : NestedAdapterViewModel<Item, Data>,
@@ -20,9 +17,6 @@ abstract class NestedAdapter<Item, Model, Data, InnerAdapter>(
 
     override var adapterList: MutableList<Pair<Model, InnerAdapter>> = ArrayList()
     override var onInitAdapterListener: OnInitNestedAdapterListener<Data>? = null
-
-    @InternalAdaptersApi
-    override val delegate: INestedIModelListManager<Item, Model, Data, InnerAdapter> by adapterConfig.listManager()
 
     override fun onBindViewHolder(holder: TypedBindingHolder<Model>, position: Int) {
         super.onBindViewHolder(holder, position)

@@ -6,12 +6,13 @@ import com.merseyside.adapters.compose.view.base.SCV
 import com.merseyside.adapters.compose.delegate.ViewDelegatesManager
 import com.merseyside.adapters.compose.model.ViewAdapterViewModel
 import com.merseyside.adapters.config.config
+import com.merseyside.adapters.config.init.initAdapter
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.VM
 
 open class ViewCompositeAdapter<Parent, Model>(
-    adapterConfig: AdapterConfig<Parent, Model> = AdapterConfig(),
+    adapterConfig: AdapterConfig<Parent, Model>,
     override val delegatesManager: ViewDelegatesManager<Parent, Model> = ViewDelegatesManager()
 ) : CompositeAdapter<Parent, Model>(adapterConfig, delegatesManager)
         where Parent : SCV,
@@ -37,7 +38,7 @@ open class ViewCompositeAdapter<Parent, Model>(
             configure: AdapterConfig<Parent, Model>.() -> Unit
         ): ViewCompositeAdapter<Parent, Model>
                 where Model : VM<Parent> {
-            return ViewCompositeAdapter(config(configure), delegatesManager)
+            return initAdapter(::ViewCompositeAdapter, delegatesManager, configure)
         }
     }
 }

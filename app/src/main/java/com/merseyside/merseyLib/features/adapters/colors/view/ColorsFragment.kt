@@ -61,6 +61,7 @@ class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel
                                        _: Int,
                                        _: Int ->
 
+
         if (newValue != null) {
             val filterName = when (view.id) {
                 requireBinding().rColor.id -> ColorsFilter.R_COLOR_FILTER

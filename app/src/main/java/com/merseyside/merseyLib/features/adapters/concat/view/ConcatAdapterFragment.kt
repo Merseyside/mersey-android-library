@@ -9,7 +9,7 @@ import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.application.base.BaseSampleFragment
 import com.merseyside.merseyLib.databinding.FragmentConcatAdapterBinding
-import com.merseyside.merseyLib.features.adapters.colors.view.DaggerConcatComponent
+import com.merseyside.merseyLib.features.adapters.concat.di.DaggerConcatComponent
 import com.merseyside.merseyLib.features.adapters.concat.adapter.AdsAdapter
 import com.merseyside.merseyLib.features.adapters.concat.adapter.NewsAdapter
 import com.merseyside.merseyLib.features.adapters.concat.di.ConcatModule
@@ -28,8 +28,8 @@ class ConcatAdapterFragment : BaseSampleFragment<FragmentConcatAdapterBinding, C
             .appComponent(appComponent)
             .concatModule(ConcatModule(this))
             .build().inject(this)
-
     }
+
     override fun getTitle(context: Context) = getString(R.string.concat_title)
     override fun getBindingVariable() = BR.viewModel
 

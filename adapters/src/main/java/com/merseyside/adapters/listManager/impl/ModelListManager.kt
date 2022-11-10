@@ -6,7 +6,7 @@ import com.merseyside.adapters.listManager.IModelListManager
 import com.merseyside.adapters.modelList.ModelList
 import com.merseyside.adapters.model.VM
 
-open class IModelListManager<Parent, Model>(
+open class ModelListManager<Parent, Model>(
     override val modelList: ModelList<Parent, Model>,
     override val adapterActions: AdapterActions<Parent, Model>
 ) : IModelListManager<Parent, Model>

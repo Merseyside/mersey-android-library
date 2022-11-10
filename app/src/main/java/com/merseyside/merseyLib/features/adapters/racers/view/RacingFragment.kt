@@ -3,7 +3,7 @@ package com.merseyside.merseyLib.features.adapters.racers.view
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import com.merseyside.adapters.config.config
+import com.merseyside.adapters.config.init.initAdapter
 import com.merseyside.adapters.feature.sorting.Sorting
 import com.merseyside.adapters.decorator.SimpleItemOffsetDecorator
 import com.merseyside.adapters.extensions.Behaviour
@@ -17,19 +17,17 @@ import com.merseyside.merseyLib.features.adapters.racers.adapter.RacersAdapter
 import com.merseyside.merseyLib.features.adapters.racers.adapter.RacersComparator
 import com.merseyside.merseyLib.features.adapters.racers.di.DaggerRacingComponent
 import com.merseyside.merseyLib.features.adapters.racers.di.RacingModule
-import com.merseyside.merseyLib.features.adapters.racers.entity.Checkpoint
-import com.merseyside.merseyLib.features.adapters.racers.model.CheckpointItemViewModel
 import com.merseyside.merseyLib.features.adapters.racers.model.RacingViewModel
 
 class RacingFragment : BaseSampleFragment<FragmentRacingBinding, RacingViewModel>() {
 
-    private val adapter = RacersAdapter(config<Checkpoint, CheckpointItemViewModel> {
+    private val adapter = initAdapter(::RacersAdapter) {
         Sorting {
             comparator = RacersComparator
         }
 
         Positioning()
-    })
+    }
 
     override fun hasTitleBackButton() = true
     override fun getBindingVariable() = BR.viewModel

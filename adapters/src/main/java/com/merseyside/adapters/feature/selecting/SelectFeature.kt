@@ -1,9 +1,9 @@
 package com.merseyside.adapters.feature.selecting
 
-import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.config.AdapterConfig
 import com.merseyside.adapters.config.feature.ConfigurableFeature
 import com.merseyside.adapters.extensions.onItemSelected
+import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.model.VM
 
 class SelectFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Config<Parent, Model>>()
@@ -20,7 +20,7 @@ class SelectFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Config<P
 
     override fun install(
         adapterConfig: AdapterConfig<Parent, Model>,
-        adapter: BaseAdapter<Parent, Model>
+        adapter: IBaseAdapter<Parent, Model>
     ) {
         super.install(adapterConfig, adapter)
 
@@ -75,6 +75,7 @@ class Config<Parent, Model>(
     }
 }
 
+@Suppress("UNCHECKED_CAST")
 object Selecting {
     context (AdapterConfig<Parent, Model>) operator fun <Parent,
             Model : VM<Parent>, TConfig : Config<Parent, Model>> invoke(

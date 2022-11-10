@@ -5,7 +5,7 @@ import com.merseyside.adapters.config.ext.getAdapterFilter
 import com.merseyside.adapters.feature.filtering.AdapterFilter
 import com.merseyside.adapters.feature.filtering.NestedAdapterFilter
 import com.merseyside.adapters.interfaces.nested.NestedAdapterActions
-import com.merseyside.adapters.listManager.INestedIModelListManager
+import com.merseyside.adapters.listManager.INestedModelListManager
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 import com.merseyside.adapters.modelList.ModelList
@@ -15,7 +15,7 @@ class FilterNestedModelListManager<Parent, Model, InnerData, InnerAdapter>(
     override val adapterActions: NestedAdapterActions<Parent, Model, InnerData, InnerAdapter>,
     adapterFilter: AdapterFilter<Parent, Model>,
 ) : FilterModelListManager<Parent, Model>(modelList, adapterActions, adapterFilter),
-    INestedIModelListManager<Parent, Model, InnerData, InnerAdapter>
+    INestedModelListManager<Parent, Model, InnerData, InnerAdapter>
         where Model : NestedAdapterParentViewModel<out Parent, Parent, InnerData>,
               InnerAdapter : BaseAdapter<InnerData, out AdapterParentViewModel<out InnerData, InnerData>> {
 
@@ -43,7 +43,7 @@ class FilterNestedModelListManager<Parent, Model, InnerData, InnerAdapter>(
     }
 
     override suspend fun updateModel(model: Model, item: Parent): Boolean {
-        return super<INestedIModelListManager>.updateModel(model, item).also {
+        return super<INestedModelListManager>.updateModel(model, item).also {
             if (isFiltered) {
                 val filtered = adapterFilter.filter(model)
                 if (!filtered) {

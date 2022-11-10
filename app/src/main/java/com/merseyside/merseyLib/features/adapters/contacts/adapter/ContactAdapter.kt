@@ -1,7 +1,7 @@
 package com.merseyside.merseyLib.features.adapters.contacts.adapter
 
 import com.merseyside.adapters.config.AdapterConfig
-import com.merseyside.adapters.config.config
+import com.merseyside.adapters.config.init.initAdapter
 import com.merseyside.adapters.feature.filtering.Filtering
 import com.merseyside.adapters.feature.selecting.SelectState
 import com.merseyside.adapters.feature.selecting.Selecting
@@ -12,7 +12,6 @@ import com.merseyside.adapters.single.SimpleAdapter
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.features.adapters.contacts.model.ContactItemViewModel
-import com.merseyside.merseyLib.kotlin.logger.log
 
 class ContactAdapter(
     config: AdapterConfig<String, ContactItemViewModel>
@@ -24,7 +23,7 @@ class ContactAdapter(
 
     companion object {
         operator fun invoke(): ContactAdapter {
-            return ContactAdapter(config<String, ContactItemViewModel> {
+            return initAdapter(::ContactAdapter) {
                 Filtering {
                     filter = ContactsFilter()
                 }
@@ -48,7 +47,7 @@ class ContactAdapter(
                         //item.log("onSelect", suffix = "$isSelected")
                     }
                 }
-            })
+            }
         }
     }
 

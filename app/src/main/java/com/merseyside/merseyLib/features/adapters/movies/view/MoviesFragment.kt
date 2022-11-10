@@ -6,6 +6,7 @@ import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.merseyside.adapters.compose.adapter.SimpleViewCompositeAdapter
 import com.merseyside.adapters.config.config
+import com.merseyside.adapters.config.init.initAdapter
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.application.base.BaseSampleFragment
@@ -36,8 +37,9 @@ class MoviesFragment : BaseSampleFragment<FragmentMoviesBinding, MoviesViewModel
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        movieAdapter = SimpleViewCompositeAdapter(config(lifecycleScope))
-            .also { adapter -> requireBinding().composite.adapter = adapter }
+        movieAdapter = initAdapter(::SimpleViewCompositeAdapter) {
+            coroutineScope = lifecycleScope
+        }.also { adapter -> requireBinding().composite.adapter = adapter }
 
         screenBuilder = MovieScreenAdapterComposer(requireContext(), movieAdapter, viewLifecycleOwner)
     }

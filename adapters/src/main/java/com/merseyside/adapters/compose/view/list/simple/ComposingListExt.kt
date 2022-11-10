@@ -5,5 +5,5 @@ import com.merseyside.adapters.config.AdapterConfig
 import com.merseyside.adapters.model.VM
 
 fun ListConfig.adapterConfig(configure: AdapterConfig<SCV, VM<SCV>>.() -> Unit) {
-    adapterConfig.apply(configure)
+    adapterConfig = configure
 }
