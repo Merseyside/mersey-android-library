@@ -18,7 +18,9 @@ class SelectState(
 
     private val selectableField: ObservableField<Boolean> = combineFields(
         globalSelectable, itemSelectable
-    ) { first, second -> first && second }
+    ) { first, second ->
+        first && second
+    }
 
     private var listener: OnSelectStateListener? = null
 

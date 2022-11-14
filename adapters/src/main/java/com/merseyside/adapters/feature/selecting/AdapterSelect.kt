@@ -2,10 +2,11 @@
 
 package com.merseyside.adapters.feature.selecting
 
-import com.merseyside.adapters.feature.selecting.callback.HasOnItemSelectedListener
-import com.merseyside.adapters.feature.selecting.callback.OnItemSelectedListener
 import com.merseyside.adapters.config.contract.HasWorkManager
 import com.merseyside.adapters.config.contract.OnBindItemListener
+import com.merseyside.adapters.feature.selecting.callback.HasOnItemSelectedListener
+import com.merseyside.adapters.feature.selecting.callback.OnItemSelectedListener
+import com.merseyside.adapters.feature.selecting.callback.OnSelectEnabledListener
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.VM
@@ -17,7 +18,6 @@ import org.jetbrains.annotations.Contract
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-
 class AdapterSelect<Parent, Model>(
     private val modelList: ModelList<Parent, Model>,
     private val variableId: Int,
@@ -27,6 +27,8 @@ class AdapterSelect<Parent, Model>(
 ) : HasOnItemSelectedListener<Parent>, OnBindItemListener<Parent, Model>,
     ModelListCallback<Model>, HasWorkManager, ILogger
         where Model : VM<Parent> {
+
+    var onSelectEnabledListener: OnSelectEnabledListener? = null
 
     internal var isGroupAdapter: Boolean = false
     internal var selectFirstOnAdd: Boolean = false
@@ -39,7 +41,7 @@ class AdapterSelect<Parent, Model>(
 
     private val selectedList: MutableList<SelectableItem> = ArrayList()
 
-    val size: Int
+    val selectedCount: Int
         get() = selectedList.size
 
     private val onSelectCallback: OnSelectCallback = object : OnSelectCallback {
@@ -85,6 +87,8 @@ class AdapterSelect<Parent, Model>(
                 ) {
                     selectFirstItemIfNeed()
                 }
+
+                onSelectEnabledListener?.onEnabled(value)
             }
         }
 
@@ -121,8 +125,7 @@ class AdapterSelect<Parent, Model>(
         model: Model,
         position: Int,
         payloads: List<AdapterParentViewModel.Payloadable>
-    ) {
-    }
+    ) {}
 
     override fun onMoved(fromPosition: Int, toPosition: Int) {}
 

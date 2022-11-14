@@ -12,7 +12,7 @@ class QueryFilterFeature<Parent, Model> :
     FilterProvider<Parent, Model>
         where Model : VM<Parent> {
 
-    override lateinit var adapterFilter: AdapterFilter<Parent, Model>
+    override lateinit var adapterFilter: QueryAdapterFilter<Parent, Model>
     override val config: QueryConfig<Parent, Model> = QueryConfig()
 
     override fun prepare(configure: QueryConfig<Parent, Model>.() -> Unit) {

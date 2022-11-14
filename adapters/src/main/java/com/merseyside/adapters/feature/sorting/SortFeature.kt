@@ -36,7 +36,7 @@ open class SortFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Confi
         super.install(adapterConfig, adapter)
 
         val modelClass: Class<Model> = try {
-            comparator.getModelClass().log() as Class<Model>
+            comparator.getModelClass() as Class<Model>
         } catch (e: IllegalStateException) {
             getModelClass()
         }

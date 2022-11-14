@@ -110,7 +110,6 @@ fun setImageWithCoil(
                 placeholder?.let { placeholder(getValidPlaceholder(it)) }
             }
         } catch (e: NullPointerException) {
-            e.printStackTrace()
             loadPlaceholder(placeholder) { builder() }
         }
     }

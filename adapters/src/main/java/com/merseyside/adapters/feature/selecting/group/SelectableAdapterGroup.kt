@@ -6,9 +6,7 @@ import com.merseyside.adapters.config.contract.HasWorkManager
 import com.merseyside.adapters.feature.selecting.AdapterSelect
 import com.merseyside.adapters.feature.selecting.SelectableMode
 import com.merseyside.adapters.utils.AdapterWorkManager
-import com.merseyside.merseyLib.kotlin.coroutines.CoroutineQueue
 import com.merseyside.merseyLib.kotlin.extensions.isNotZero
-import com.merseyside.merseyLib.kotlin.logger.log
 import com.merseyside.merseyLib.kotlin.logger.logSimpleTag
 
 class SelectableAdapterGroup<Item>(
@@ -73,7 +71,7 @@ class SelectableAdapterGroup<Item>(
 
     suspend fun remove(adapter: AdapterSelect<Item, *>) {
         adapters.remove(adapter)
-        if (adapter.size.isNotZero() &&
+        if (adapter.selectedCount.isNotZero() &&
             !isAllowToCancelSelection && selectableMode == SelectableMode.SINGLE
         ) {
             selectFirstItem()
@@ -110,12 +108,12 @@ class SelectableAdapterGroup<Item>(
     }
 
     private fun getAdaptersWithSelectedItems(): List<AdapterSelect<Item, *>> {
-        return adapters.filter { it.size.isNotZero() }
+        return adapters.filter { it.selectedCount.isNotZero() }
     }
 
     private fun selectMostAppropriateItem(adapter: AdapterSelect<Item, *>) {
         if (!isAllowToCancelSelection) {
-            if (adapter.size.isNotZero()) {
+            if (adapter.selectedCount.isNotZero()) {
                 adapter.selectFirstSelectableItem()
             } else {
                 selectFirstItem()

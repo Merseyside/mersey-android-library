@@ -12,7 +12,7 @@ class SelectFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Config<P
     override lateinit var config: Config<Parent, Model>
     override val featureKey: String = KEY
 
-    internal lateinit var adapterSelect: AdapterSelect<Parent, Model>
+    lateinit var adapterSelect: AdapterSelect<Parent, Model>
 
     override fun prepare(configure: Config<Parent, Model>.() -> Unit) {
         config = Config(configure)

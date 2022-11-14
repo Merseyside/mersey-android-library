@@ -3,8 +3,8 @@ plugins {
     with(catalogPlugins.plugins) {
         plugin(android.application)
         plugin(kotlin.android)
-        id(mersey.android.convention.id())
-        id(mersey.kotlin.convention.id())
+        id(mersey.android.extension.id())
+        id(mersey.kotlin.extension.id())
         plugin(kotlin.serialization)
         plugin(kotlin.kapt)
     }
@@ -73,7 +73,7 @@ android {
     }
 }
 
-kotlinConvention {
+kotlinExtension {
     setCompilerArgs(
         "-opt-in=kotlin.RequiresOptIn",
         "-Xcontext-receivers",
