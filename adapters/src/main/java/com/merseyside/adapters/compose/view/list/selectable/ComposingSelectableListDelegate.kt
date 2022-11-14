@@ -26,8 +26,6 @@ class ComposingSelectableListDelegate : BaseComposingListDelegate<ComposingSelec
 
             Selecting {
                 with(model.item) {
-                    variableId = listConfig.variableId
-
                     selectableMode = listConfig.selectableMode
                     isSelectEnabled = listConfig.isSelectEnabled
                     isAllowToCancelSelection = listConfig.isAllowToCancelSelection

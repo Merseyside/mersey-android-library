@@ -20,7 +20,6 @@ import kotlin.contracts.contract
 
 class AdapterSelect<Parent, Model>(
     private val modelList: ModelList<Parent, Model>,
-    private val variableId: Int,
     selectableMode: SelectableMode,
     isSelectEnabled: Boolean,
     private var isAllowToCancelSelection: Boolean
@@ -43,18 +42,6 @@ class AdapterSelect<Parent, Model>(
 
     val selectedCount: Int
         get() = selectedList.size
-
-    private val onSelectCallback: OnSelectCallback = object : OnSelectCallback {
-        override fun onSelect(item: SelectableItem) {
-            changeItemSelectedState(item)
-        }
-
-        override fun onSelect(item: SelectableItem, selected: Boolean) {
-            if (item.isSelected() != selected) {
-                onSelect(item)
-            }
-        }
-    }
 
     var selectableMode: SelectableMode = selectableMode
         set(value) {
@@ -101,7 +88,7 @@ class AdapterSelect<Parent, Model>(
         model: Model,
         position: Int
     ) {
-        holder.bind(variableId, onSelectCallback)
+        //holder.bind(variableId, onSelectCallback)
     }
 
 
@@ -113,7 +100,10 @@ class AdapterSelect<Parent, Model>(
     private fun initNewModels(models: List<Model>) {
         val selectableItems = models.filterIsInstance<SelectableItem>()
         selectableItems.forEach { item ->
-            item.selectState.globalSelectable.value = isSelectEnabled
+            with(item.selectState) {
+                selectEvent.observe { changeItemSelectedState(item, false) }
+                globalSelectable.value = isSelectEnabled
+            }
         }
     }
 

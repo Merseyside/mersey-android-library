@@ -41,7 +41,6 @@ class ContactAdapter(
                 }
 
                 Selecting {
-                    variableId = BR.selectCallback
                     selectableMode = SelectableMode.MULTIPLE
                     onSelect = { item, isSelected, isSelectedByUser ->
                         //item.log("onSelect", suffix = "$isSelected")

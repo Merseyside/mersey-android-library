@@ -50,7 +50,6 @@ class ComposingSelectableList(
 }
 
 class SelectableListConfig: ListConfig(), HasOnItemSelectedListener<SCV> {
-    var variableId: Int = 0
     var selectableMode: SelectableMode = SelectableMode.SINGLE
     var isSelectEnabled: Boolean = true
     var isAllowToCancelSelection: Boolean = false

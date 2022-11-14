@@ -41,9 +41,7 @@ class ContactFragment : BaseSampleFragment<FragmentContactsBinding, ContactViewM
             selectableMode = SelectableMode.SINGLE
         }
 
-        Expanding {
-            variableId = BR.expandCallback
-        }
+        Expanding()
     }
 
     private val textChangeListener = {

@@ -6,10 +6,6 @@
             name="model"
             type="com.merseyside.adapters.compose.view.checkBox.ComposingCheckBoxViewModel" />
 
-        <variable
-            name="selectCallback"
-            type="com.merseyside.adapters.feature.selecting.OnSelectCallback" />
-
         <import type="com.merseyside.utils.binding.BU"/>
 
     </data>
@@ -19,6 +15,6 @@
             android:layout_height="wrap_content"
             android:text="@{model.text}"
             android:checked="@{model.selectState.selectedObservable}"
-            android:onCheckedChanged="@{(_, bool) -> selectCallback.onSelect(model, bool)}"/>
+            android:onCheckedChanged="@{(_, bool) -> model.selectState.onSelect(bool)}"/>
 
 </layout>

@@ -26,7 +26,6 @@ class ExpandFeature<Parent, Model, InnerData, InnerAdapter> :
     ) {
         with(config) {
             adapterExpand = AdapterExpand(
-                variableId,
                 adapterConfig.modelList,
                 expandableMode,
                 isExpandedEnabled
@@ -47,25 +46,18 @@ class Config<Parent, Model>(
     configure: Config<Parent, Model>.() -> Unit
 ) where Model : VM<Parent> {
 
-    var variableId: Int = 0
     var expandableMode: ExpandableMode = ExpandableMode.MULTIPLE
     var isExpandedEnabled: Boolean = true
 
     init {
         apply(configure)
-        validate()
     }
-
-    private fun validate() {
-        if (variableId == 0) throw IllegalArgumentException("Please set binding id")
-    }
-
 }
 
 object Expanding {
     context (NestedAdapterConfig<Parent, Model, InnerData, InnerAdapter>) operator fun
             <Parent, Model, InnerData, InnerAdapter, TConfig> invoke(
-        config: TConfig.() -> Unit
+        config: TConfig.() -> Unit = {}
     ): ExpandFeature<Parent, Model, InnerData, InnerAdapter>
             where Model : NestedAdapterParentViewModel<out Parent, Parent, InnerData>,
                   InnerAdapter : BaseAdapter<InnerData, *>,

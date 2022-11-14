@@ -7,10 +7,6 @@
         <variable
             name="model"
             type="com.merseyside.merseyLib.features.adapters.contacts.model.ContactItemViewModel" />
-
-        <variable
-            name="selectCallback"
-            type="com.merseyside.adapters.feature.selecting.OnSelectCallback" />
     </data>
 
 
@@ -25,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@{model.item}"
-            android:onClick="@{view -> selectCallback.onSelect(model)}"
+            android:onClick="@{_ -> model.selectState.onSelect()}"
             backgroundColor="@{model.selectState.selectedObservable ? @color/red : @color/transparent}"/>
 
     </FrameLayout>

@@ -67,7 +67,6 @@ class MovieScreenAdapterComposer(
 
         ComposingSelectableList("selectable_list",
             configure = {
-                variableId = BR.selectCallback
                 selectableMode = SelectableMode.SINGLE
 
                 onItemSelected { item, isSelected, _ -> isSelected.log("selected")}

@@ -27,7 +27,6 @@ class SelectFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Config<P
         with(config) {
             adapterSelect = AdapterSelect(
                 adapterConfig.modelList,
-                variableId,
                 selectableMode,
                 isSelectEnabled,
                 isAllowToCancelSelection
@@ -47,7 +46,6 @@ class SelectFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Config<P
 class Config<Parent, Model>(
     configure: Config<Parent, Model>.() -> Unit
 ) where Model : VM<Parent> {
-    var variableId: Int = 0
     var selectableMode: SelectableMode = SelectableMode.SINGLE
     var isSelectEnabled: Boolean = true
     private var _isAllowToCancelSelection: Boolean? = null
@@ -67,11 +65,6 @@ class Config<Parent, Model>(
 
     init {
         apply(configure)
-        validate()
-    }
-
-    private fun validate() {
-        if (variableId == 0) throw IllegalArgumentException("Please set binding id")
     }
 }
 
