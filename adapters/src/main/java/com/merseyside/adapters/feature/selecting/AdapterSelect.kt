@@ -14,6 +14,7 @@ import com.merseyside.adapters.modelList.ModelList
 import com.merseyside.adapters.modelList.ModelListCallback
 import com.merseyside.adapters.utils.AdapterWorkManager
 import com.merseyside.merseyLib.kotlin.logger.ILogger
+import com.merseyside.merseyLib.kotlin.extensions.addOrSet
 import org.jetbrains.annotations.Contract
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -178,7 +179,7 @@ class AdapterSelect<Parent, Model>(
                 else selectFirstItemIfNeed()
             } else {
                 val lastSelectedItem = selected.last()
-                selectedList[0] = lastSelectedItem
+                selectedList.addOrSet(0, lastSelectedItem)
                 notifyItemSelected(lastSelectedItem, false)
 
                 //make another items not selected
