@@ -3,6 +3,7 @@ package com.merseyside.adapters.holder
 import android.content.Context
 import androidx.annotation.CallSuper
 import androidx.databinding.ViewDataBinding
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.utils.view.ext.getActivity
 
@@ -18,7 +19,7 @@ open class BaseBindingHolder(val binding: ViewDataBinding)
         get() = _model
 
     init {
-        binding.lifecycleOwner = itemView.getActivity()
+        binding.lifecycleOwner = itemView.findViewTreeLifecycleOwner()
     }
 
     @CallSuper
