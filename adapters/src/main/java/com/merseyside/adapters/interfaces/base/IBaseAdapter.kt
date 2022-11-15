@@ -43,6 +43,41 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
     val callbackClick: (Parent) -> Unit
 
     @CallSuper
+    override fun onInserted(models: List<Model>, position: Int, count: Int) {
+        if (count == 1) {
+            adapter.notifyItemInserted(position)
+        } else {
+            adapter.notifyItemRangeInserted(position, count)
+        }
+
+        notifyPositionsChanged(position)
+    }
+
+    @CallSuper
+    override fun onRemoved(models: List<Model>, position: Int, count: Int) {
+        if (count == 1) {
+            adapter.notifyItemRemoved(position)
+        } else {
+            adapter.notifyItemRangeRemoved(position, count)
+        }
+
+        notifyPositionsChanged(position)
+    }
+
+    override fun onChanged(
+        model: Model,
+        position: Int,
+        payloads: List<AdapterParentViewModel.Payloadable>
+    ) {
+        adapter.notifyItemChanged(position, payloads)
+    }
+
+    override fun onMoved(fromPosition: Int, toPosition: Int) {
+        adapter.notifyItemMoved(fromPosition, toPosition)
+        notifyPositionsChanged(toPosition, fromPosition)
+    }
+
+    @CallSuper
     fun addAsync(item: Parent, onComplete: (Model?) -> Unit = {}) {
         workManager.doAsync(onComplete) { add(item) }
     }
@@ -121,42 +156,6 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
     suspend fun remove(items: List<Parent>): List<Model> {
         return listManager.remove(items)
     }
-
-    @CallSuper
-    override fun onInserted(models: List<Model>, position: Int, count: Int) {
-        if (count == 1) {
-            adapter.notifyItemInserted(position)
-        } else {
-            adapter.notifyItemRangeInserted(position, count)
-        }
-
-        notifyPositionsChanged(position)
-    }
-
-    @CallSuper
-    override fun onRemoved(models: List<Model>, position: Int, count: Int) {
-        if (count == 1) {
-            adapter.notifyItemRemoved(position)
-        } else {
-            adapter.notifyItemRangeRemoved(position, count)
-        }
-
-        notifyPositionsChanged(position)
-    }
-
-    override fun onChanged(
-        model: Model,
-        position: Int,
-        payloads: List<AdapterParentViewModel.Payloadable>
-    ) {
-        adapter.notifyItemChanged(position, payloads)
-    }
-
-    override fun onMoved(fromPosition: Int, toPosition: Int) {
-        adapter.notifyItemMoved(fromPosition, toPosition)
-        notifyPositionsChanged(toPosition, fromPosition)
-    }
-
 
     fun notifyAdapterRemoved() {}
 

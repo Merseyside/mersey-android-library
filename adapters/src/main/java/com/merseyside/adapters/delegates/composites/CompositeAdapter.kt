@@ -1,17 +1,13 @@
 package com.merseyside.adapters.delegates.composites
 
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.config.AdapterConfig
-import com.merseyside.adapters.delegates.DelegateAdapter
 import com.merseyside.adapters.delegates.DelegatesManager
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.model.DA
-import com.merseyside.adapters.utils.InternalAdaptersApi
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import com.merseyside.adapters.model.VM
+import com.merseyside.adapters.utils.InternalAdaptersApi
 
 open class CompositeAdapter<Parent, ParentModel>(
     adapterConfig: AdapterConfig<Parent, ParentModel>,
@@ -47,6 +43,15 @@ open class CompositeAdapter<Parent, ParentModel>(
     ) {
         super.bindModel(holder, model, position)
         delegatesManager.onBindViewHolder(holder, model, position)
+    }
+
+    override fun onBindViewHolder(
+        holder: TypedBindingHolder<ParentModel>,
+        position: Int,
+        payloads: List<Any>
+    ) {
+        super.onBindViewHolder(holder, position, payloads)
+        delegatesManager.onModelUpdated(holder.model)
     }
 
     @InternalAdaptersApi

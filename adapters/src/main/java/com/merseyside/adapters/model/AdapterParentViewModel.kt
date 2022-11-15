@@ -4,9 +4,10 @@ import androidx.annotation.CallSuper
 import androidx.databinding.BaseObservable
 import androidx.databinding.ObservableBoolean
 import com.merseyside.adapters.feature.positioning.PositionHandler
+import com.merseyside.merseyLib.kotlin.contract.Identifiable
+import com.merseyside.merseyLib.kotlin.logger.log
 import com.merseyside.merseyLib.kotlin.observable.ObservableField
 import com.merseyside.merseyLib.kotlin.observable.SingleObservableField
-import com.merseyside.merseyLib.kotlin.contract.Identifiable
 
 @Suppress("UNCHECKED_CAST")
 abstract class AdapterParentViewModel<Item : Parent, Parent>(

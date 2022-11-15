@@ -142,6 +142,11 @@ open class DelegatesManager<Delegate, Parent, ParentModel>(
         onDelegateRemoveCallback = callback
     }
 
+    internal fun onModelUpdated(model: ParentModel) {
+        val delegate = getResponsibleDelegate(model)
+        delegate.onModelUpdated(model)
+    }
+
     private fun requireDelegate(
         block: () -> Delegate?
     ): Delegate {

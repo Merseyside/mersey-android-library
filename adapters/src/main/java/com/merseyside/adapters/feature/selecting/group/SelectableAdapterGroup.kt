@@ -25,8 +25,8 @@ class SelectableAdapterGroup<Item>(
 
                         if (adaptersWithSelectedItems.isNotEmpty()) {
                             adaptersWithSelectedItems
-                                .find { it.getSelectedItem().logSimpleTag("kek") != item }
-                                ?.clear()
+                                .find { it.getSelectedItem() != item }
+                                ?.clearAsync()
                         }
                     }
                 }
@@ -119,5 +119,14 @@ class SelectableAdapterGroup<Item>(
                 selectFirstItem()
             }
         }
+    }
+
+    internal fun clear() {
+        val adaptersWithSelectedItems = getAdaptersWithSelectedItems()
+        adaptersWithSelectedItems.forEach { adapter -> adapter.clear() }
+    }
+
+    fun clearAsync(onComplete: (Unit) -> Unit = {}) {
+        workManager.doAsync(onComplete) { clear() }
     }
 }

@@ -177,9 +177,8 @@ class AdapterSelect<Parent, Model>(
                 if (isAllowToCancelSelection) return
                 else selectFirstItemIfNeed()
             } else {
-                clear()
                 val lastSelectedItem = selected.last()
-                selectedList.add(lastSelectedItem)
+                selectedList[0] = lastSelectedItem
                 notifyItemSelected(lastSelectedItem, false)
 
                 //make another items not selected
@@ -310,7 +309,11 @@ class AdapterSelect<Parent, Model>(
         notifyOnSelected((item.asModel()).item, item.isSelected(), isSelectedByUser)
     }
 
-    fun clear() {
+    fun clearAsync(onComplete: (Unit) -> Unit = {}) {
+        workManager.doAsync(onComplete) { clear() }
+    }
+
+    internal fun clear() {
         selectedList.forEach { item ->
             updateItemWithState(item, false)
         }
