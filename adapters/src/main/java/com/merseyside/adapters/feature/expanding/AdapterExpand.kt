@@ -57,19 +57,6 @@ class AdapterExpand<Parent, Model>(
             }
         }
 
-//    private val onExpandCallback: OnExpandCallback = object : OnExpandCallback {
-//        override fun onExpand(item: ExpandableItem) {
-//            changeItemExpandedState(item)
-//        }
-//
-//        override fun onExpand(item: ExpandableItem, expanded: Boolean) {
-//            if (expanded != item.isExpanded()) {
-//                onExpand(item)
-//            }
-//        }
-//    }
-
-
     init {
         modelList.addModelListCallback(this)
     }

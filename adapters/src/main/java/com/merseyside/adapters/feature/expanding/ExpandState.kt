@@ -1,7 +1,5 @@
 package com.merseyside.adapters.feature.expanding
 
-import androidx.databinding.ObservableBoolean
-import com.merseyside.merseyLib.kotlin.logger.log
 import com.merseyside.merseyLib.kotlin.observable.MutableObservableField
 import com.merseyside.merseyLib.kotlin.observable.ObservableField
 import com.merseyside.merseyLib.kotlin.observable.SingleObservableEvent
@@ -15,8 +13,8 @@ class ExpandState(
     internal var globalExpandable = MutableObservableField(true)
     private val itemExpandable = MutableObservableField(expandable)
 
-    val expandedObservable = ObservableBoolean(expanded)
-    val expandableObservable = ObservableBoolean(expandable)
+    val expandedObservable = MutableObservableField(expanded)
+    val expandableObservable = MutableObservableField(expandable)
 
     internal val expandEvent = SingleObservableEvent()
 
@@ -42,7 +40,6 @@ class ExpandState(
 
     init {
         expandableField.observe { value ->
-            expandableObservable.set(value)
             listener?.onExpandable(value)
         }
     }

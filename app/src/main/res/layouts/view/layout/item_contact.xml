@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:text="@{model.item}"
             android:onClick="@{_ -> model.selectState.onSelect()}"
-            backgroundColor="@{model.selectState.selectedObservable ? @color/red : @color/transparent}"/>
+            backgroundColor="@{model.selectState.selectedObservable.value ? @color/red : @color/transparent}"/>
 
     </FrameLayout>
 

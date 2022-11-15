@@ -5,16 +5,13 @@
         <variable
             name="model"
             type="com.merseyside.adapters.compose.view.checkBox.ComposingCheckBoxViewModel" />
-
-        <import type="com.merseyside.utils.binding.BU"/>
-
     </data>
 
         <CheckBox
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@{model.text}"
-            android:checked="@{model.selectState.selectedObservable}"
+            android:checked="@{model.selectState.selectedObservable.value}"
             android:onCheckedChanged="@{(_, bool) -> model.selectState.onSelect(bool)}"/>
 
 </layout>
