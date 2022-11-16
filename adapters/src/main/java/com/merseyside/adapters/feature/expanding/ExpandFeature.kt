@@ -31,8 +31,6 @@ class ExpandFeature<Parent, Model, InnerData, InnerAdapter> :
                 isExpandedEnabled
             )
         }
-
-        adapterConfig.addOnBindItemListener(adapterExpand)
     }
 
     override val featureKey: String = KEY

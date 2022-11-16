@@ -33,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layoutManager="com.merseyside.utils.layout.LinearLayoutManager"
-            isVisibleOrGone="@{model.expandState.expandedObservable}"/>
+            isVisibleOrGone="@{model.expandState.expandedObservable.value}"/>
 
     </LinearLayout>
 

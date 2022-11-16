@@ -21,7 +21,7 @@ class AdapterExpand<Parent, Model>(
     private val modelList: ModelList<Parent, Model>,
     expandableMode: ExpandableMode = MULTIPLE,
     isExpandEnabled: Boolean
-) : HasOnItemExpandedListener<Parent>, ModelListCallback<Model>, OnBindItemListener<Parent, Model>,
+) : HasOnItemExpandedListener<Parent>, ModelListCallback<Model>,
     ILogger where Model : VM<Parent> {
 
     override val expandedListeners: MutableList<OnItemExpandedListener<Parent>> by lazy {
@@ -61,21 +61,15 @@ class AdapterExpand<Parent, Model>(
         modelList.addModelListCallback(this)
     }
 
-    override fun onBindViewHolder(holder: TypedBindingHolder<Model>, model: Model, position: Int) {
-        //holder.bind(variableId, onExpandCallback)
-    }
-
     override fun onInserted(models: List<Model>, position: Int, count: Int) {
         val items = models.filterIsInstance<ExpandableItem>()
-            .filter { it.isExpanded() }
-
         initNewItems(items)
     }
 
     private fun initNewItems(items: List<ExpandableItem>) {
-        //expandedList.addAll(items)
         items.forEach { item -> item.expandState.expandEvent.observe { changeItemExpandedState(item) } }
-        notifyItemsExpanded(items, false)
+        val expandedItems = items.filter { it.isExpanded() }
+        notifyItemsExpanded(expandedItems, false)
     }
 
     override fun onRemoved(models: List<Model>, position: Int, count: Int) {
