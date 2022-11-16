@@ -15,6 +15,7 @@ import com.merseyside.adapters.listManager.IModelListManager
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.VM
 import com.merseyside.adapters.modelList.ModelListCallback
+import com.merseyside.adapters.utils.AdapterWorkManager
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.merseyLib.kotlin.extensions.isZero
@@ -26,6 +27,8 @@ import kotlin.math.min
 interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
     HasOnItemClickListener<Parent>, ModelListCallback<Model>, HasWorkManager
         where Model : VM<Parent> {
+
+    override var workManager: AdapterWorkManager
 
     val adapterConfig: AdapterConfig<Parent, Model>
     var onBindItemListener: OnBindItemListener<Parent, Model>?

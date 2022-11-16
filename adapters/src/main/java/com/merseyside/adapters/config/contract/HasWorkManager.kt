@@ -5,7 +5,5 @@ import com.merseyside.adapters.utils.AdapterWorkManager
 
 interface HasWorkManager {
 
-    var workManager: AdapterWorkManager
-
-
+    val workManager: AdapterWorkManager
 }

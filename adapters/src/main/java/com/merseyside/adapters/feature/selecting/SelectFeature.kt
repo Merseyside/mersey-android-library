@@ -29,10 +29,10 @@ class SelectFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Config<P
                 adapterConfig.modelList,
                 selectableMode,
                 isSelectEnabled,
-                isAllowToCancelSelection
+                isAllowToCancelSelection,
+                adapterConfig.workManager
             )
 
-            adapterSelect.workManager = adapterConfig.workManager
             adapterSelect.onItemSelected(onSelect)
         }
 

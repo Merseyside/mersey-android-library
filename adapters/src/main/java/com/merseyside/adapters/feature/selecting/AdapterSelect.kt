@@ -23,7 +23,8 @@ class AdapterSelect<Parent, Model>(
     private val modelList: ModelList<Parent, Model>,
     selectableMode: SelectableMode,
     isSelectEnabled: Boolean,
-    private var isAllowToCancelSelection: Boolean
+    private var isAllowToCancelSelection: Boolean,
+    override val workManager: AdapterWorkManager
 ) : HasOnItemSelectedListener<Parent>, OnBindItemListener<Parent, Model>,
     ModelListCallback<Model>, HasWorkManager, ILogger
         where Model : VM<Parent> {
@@ -36,8 +37,6 @@ class AdapterSelect<Parent, Model>(
     override val selectedListeners: MutableList<OnItemSelectedListener<Parent>> by lazy {
         ArrayList()
     }
-
-    override lateinit var workManager: AdapterWorkManager
 
     private val selectedList: MutableList<SelectableItem> = ArrayList()
 

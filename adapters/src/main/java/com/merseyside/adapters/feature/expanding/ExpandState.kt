@@ -14,7 +14,6 @@ class ExpandState(
     private val itemExpandable = MutableObservableField(expandable)
 
     val expandedObservable = MutableObservableField(expanded)
-    val expandableObservable = MutableObservableField(expandable)
 
     internal val expandEvent = SingleObservableEvent()
 
@@ -29,7 +28,7 @@ class ExpandState(
             if (field != value) {
                 field = value
 
-                expandedObservable.set(value)
+                expandedObservable.value = value
                 listener?.onExpanded(value)
             }
         }
