@@ -13,8 +13,8 @@ import com.merseyside.adapters.model.VM
 import com.merseyside.adapters.modelList.ModelList
 import com.merseyside.adapters.modelList.ModelListCallback
 import com.merseyside.adapters.utils.AdapterWorkManager
-import com.merseyside.merseyLib.kotlin.logger.ILogger
 import com.merseyside.merseyLib.kotlin.extensions.addOrSet
+import com.merseyside.merseyLib.kotlin.logger.ILogger
 import org.jetbrains.annotations.Contract
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -156,18 +156,19 @@ class AdapterSelect<Parent, Model>(
         isSelectedByUser: Boolean = false
     ): Boolean {
         return if (item.isSelected() xor newState) {
-
             item.selectState.selected = newState
-            if (newState) {
-                selectedList.add(item)
-            } else {
-                selectedList.remove(item)
-            }
-
+            updateSelectedListWithItem(item)
             notifyItemSelected(item, isSelectedByUser)
-
             true
         } else false
+    }
+
+    private fun updateSelectedListWithItem(item: SelectableItem): Boolean {
+        return if (item.isSelected()) {
+            selectedList.add(item)
+        } else {
+            selectedList.remove(item)
+        }
     }
 
     private fun addSelectedItems(list: List<SelectableItem>) {
@@ -314,10 +315,11 @@ class AdapterSelect<Parent, Model>(
     }
 
     internal fun clear() {
-        selectedList.forEach { item ->
+        val itemsToRemove = ArrayList(selectedList)
+
+        itemsToRemove.forEach { item ->
             updateItemWithState(item, false)
         }
-        selectedList.clear()
     }
 
     override val tag: String = "AdapterSelect"
