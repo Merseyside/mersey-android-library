@@ -21,7 +21,7 @@ open class CompositeAdapter<Parent, ParentModel>(
     init {
         delegatesManager.setOnDelegateRemoveCallback { delegate ->
             val removeList = models.filter { delegate.isResponsibleFor(it.item) }
-            removeAsync(removeList.map { it.item })
+            remove(removeList.map { it.item })
         }
     }
 

@@ -30,6 +30,7 @@ abstract class NestedViewDelegateAdapter<View, Style, Model, InnerParent, InnerM
         delegateManager: ViewDelegatesManager<InnerParent, InnerModel>,
     ): InnerAdapter
 
+    @Suppress("UNCHECKED_CAST")
     override fun initNestedAdapter(
         model: Model,
     ): InnerAdapter {

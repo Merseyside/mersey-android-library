@@ -5,15 +5,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.delegates.DelegatesManager
 import com.merseyside.adapters.holder.TypedBindingHolder
+import com.merseyside.adapters.interfaces.ext.addOrUpdateAsync
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
+import com.merseyside.adapters.model.VM
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.merseyLib.kotlin.extensions.remove
 
 interface INestedDelegateAdapter<Item : Parent, Parent, Model, Data, InnerAdapter>
     : IDelegateAdapter<Item, Parent, Model>
         where Model : NestedAdapterParentViewModel<Item, Parent, out Data>,
-              InnerAdapter : BaseAdapter<Data, out AdapterParentViewModel<out Data, Data>> {
+              InnerAdapter : BaseAdapter<Data, out VM<Data>> {
 
     var delegatesManagerProvider: () -> DelegatesManager<*, *, *>
 

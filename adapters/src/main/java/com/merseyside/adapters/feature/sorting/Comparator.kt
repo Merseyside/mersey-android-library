@@ -13,12 +13,6 @@ abstract class Comparator<Parent, Model : VM<Parent>>(
 
     abstract fun compare(model1: Model, model2: Model): Int
 
-    fun updateAsync(onComplete: (Unit) -> Unit = {}) {
-        workManager.doAsync(onComplete) {
-            update()
-        }
-    }
-
     suspend fun update() {
         callback.onUpdate(animation)
     }

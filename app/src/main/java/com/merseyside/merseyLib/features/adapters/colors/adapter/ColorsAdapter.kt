@@ -3,6 +3,7 @@ package com.merseyside.merseyLib.features.adapters.colors.adapter
 import com.merseyside.adapters.config.AdapterConfig
 import com.merseyside.adapters.config.init.initAdapter
 import com.merseyside.adapters.extensions.onClick
+import com.merseyside.adapters.interfaces.ext.removeAsync
 import com.merseyside.adapters.single.SimpleAdapter
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R

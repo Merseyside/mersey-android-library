@@ -11,6 +11,7 @@ import com.merseyside.merseyLib.databinding.ItemGroupContactBinding
 import com.merseyside.merseyLib.features.adapters.contacts.entity.ContactGroup
 import com.merseyside.merseyLib.features.adapters.contacts.model.ContactGroupItemViewModel
 import com.merseyside.adapters.config.init.initAdapter
+import com.merseyside.adapters.interfaces.ext.removeAsync
 
 class ContactNestedAdapter(config: ContactNestedAdapterConfig) : NestedAdapter<ContactGroup, ContactGroupItemViewModel,
         String, ContactAdapter>(config) {

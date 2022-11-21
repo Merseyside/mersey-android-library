@@ -10,11 +10,13 @@ import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.merseyLib.kotlin.extensions.move
 import com.merseyside.merseyLib.kotlin.logger.ILogger
 import com.merseyside.adapters.model.VM
+import com.merseyside.adapters.utils.AdapterWorkManager
 
 open class FilterModelListManager<Parent, Model : VM<Parent>>(
     override val modelList: ModelList<Parent, Model>,
     override val adapterActions: AdapterActions<Parent, Model>,
-    val adapterFilter: AdapterFilter<Parent, Model>
+    val adapterFilter: AdapterFilter<Parent, Model>,
+    override val workManager: AdapterWorkManager
 ): IModelListManager<Parent, Model>, ILogger {
 
     override lateinit var updateLogic: UpdateLogic<Parent, Model>
@@ -26,7 +28,7 @@ open class FilterModelListManager<Parent, Model : VM<Parent>>(
         get() = adapterFilter.isFiltered
 
     private val mutAllModelList: MutableList<Model> = ArrayList()
-    protected val allModelList: List<Model> = mutAllModelList
+    private val allModelList: List<Model> = mutAllModelList
 
     private val filteredList: List<Model>
         get() = modelList
@@ -41,12 +43,6 @@ open class FilterModelListManager<Parent, Model : VM<Parent>>(
             setFilterCallback(object : AdapterFilter.FilterCallback<Model> {
                 override suspend fun onFiltered(models: List<Model>) {
                     filterUpdate { update(models) }
-                }
-
-                override suspend fun onFilterStateChanged(isFiltered: Boolean) {
-                    if (!isFiltered) {
-                        filterUpdate { update(allModelList) }
-                    }
                 }
             })
         }

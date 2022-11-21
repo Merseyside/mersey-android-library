@@ -2,7 +2,7 @@
 
 package com.merseyside.adapters.feature.selecting
 
-import com.merseyside.adapters.config.contract.HasWorkManager
+import com.merseyside.adapters.config.contract.HasAdapterWorkManager
 import com.merseyside.adapters.config.contract.OnBindItemListener
 import com.merseyside.adapters.feature.selecting.callback.HasOnItemSelectedListener
 import com.merseyside.adapters.feature.selecting.callback.OnItemSelectedListener
@@ -26,7 +26,7 @@ class AdapterSelect<Parent, Model>(
     private var isAllowToCancelSelection: Boolean,
     override val workManager: AdapterWorkManager
 ) : HasOnItemSelectedListener<Parent>, OnBindItemListener<Parent, Model>,
-    ModelListCallback<Model>, HasWorkManager, ILogger
+    ModelListCallback<Model>, HasAdapterWorkManager, ILogger
         where Model : VM<Parent> {
 
     var onSelectEnabledListener: OnSelectEnabledListener? = null
@@ -308,10 +308,6 @@ class AdapterSelect<Parent, Model>(
 
     private fun notifyItemSelected(item: SelectableItem, isSelectedByUser: Boolean) {
         notifyOnSelected((item.asModel()).item, item.isSelected(), isSelectedByUser)
-    }
-
-    fun clearAsync(onComplete: (Unit) -> Unit = {}) {
-        workManager.doAsync(onComplete) { clear() }
     }
 
     internal fun clear() {

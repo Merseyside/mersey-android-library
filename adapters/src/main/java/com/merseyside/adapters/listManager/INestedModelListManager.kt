@@ -1,6 +1,7 @@
 package com.merseyside.adapters.listManager
 
 import com.merseyside.adapters.base.BaseAdapter
+import com.merseyside.adapters.interfaces.ext.addOrUpdateAsync
 import com.merseyside.adapters.interfaces.nested.NestedAdapterActions
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
@@ -36,7 +37,9 @@ interface INestedModelListManager<Parent, Model, InnerData, InnerAdapter> :
         return super.updateModel(model, item).also {
             val adapter = provideNestedAdapter(model)
             model.getNestedData()?.let { data ->
-                adapter.addOrUpdate(data)
+                workManager.subTaskWith(adapter) {
+                    addOrUpdateAsync(data)
+                }
             }
         }
     }
@@ -45,7 +48,9 @@ interface INestedModelListManager<Parent, Model, InnerData, InnerAdapter> :
         return super.createModel(item).also { model ->
             val adapter = provideNestedAdapter(model)
             model.getNestedData()?.let { data ->
-                adapter.add(data)
+                workManager.subTaskWith(adapter) {
+                    add(data)
+                }
             }
         }
     }

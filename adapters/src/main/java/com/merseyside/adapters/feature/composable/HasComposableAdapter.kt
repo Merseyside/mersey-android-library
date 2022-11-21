@@ -6,6 +6,7 @@ import com.merseyside.adapters.compose.dsl.context.ComposeContext
 import com.merseyside.adapters.compose.model.ViewAdapterViewModel
 import com.merseyside.adapters.compose.style.ComposingStyle
 import com.merseyside.adapters.compose.view.base.SCV
+import com.merseyside.adapters.interfaces.ext.addOrUpdateAsync
 import com.merseyside.adapters.utils.runWithDefault
 
 interface HasComposableAdapter<Model>

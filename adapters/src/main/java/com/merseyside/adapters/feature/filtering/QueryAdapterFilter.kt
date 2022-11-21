@@ -8,10 +8,6 @@ abstract class QueryAdapterFilter<Parent, Model : VM<Parent>> :
 
     abstract fun filter(model: Model, query: String): Boolean
 
-    fun setQueryAsync(query: String?, onComplete: (Boolean) -> Unit = {}) {
-        workManager.doAsync(onComplete) { setQuery(query) }
-    }
-
     suspend fun setQuery(query: String?): Boolean {
         if (query.isNotNullAndEmpty()) {
             addFilter(QUERY_KEY, query)

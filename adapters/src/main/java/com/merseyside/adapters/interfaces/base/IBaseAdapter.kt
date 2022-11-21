@@ -7,7 +7,7 @@ import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.callback.HasOnItemClickListener
 import com.merseyside.adapters.config.AdapterConfig
-import com.merseyside.adapters.config.contract.HasWorkManager
+import com.merseyside.adapters.config.contract.HasAdapterWorkManager
 import com.merseyside.adapters.config.contract.OnBindItemListener
 import com.merseyside.adapters.feature.positioning.PositionFeature
 import com.merseyside.adapters.holder.TypedBindingHolder
@@ -25,7 +25,7 @@ import kotlin.math.min
 
 @SuppressLint("NotifyDataSetChanged")
 interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
-    HasOnItemClickListener<Parent>, ModelListCallback<Model>, HasWorkManager
+    HasOnItemClickListener<Parent>, ModelListCallback<Model>, HasAdapterWorkManager
         where Model : VM<Parent> {
 
     override var workManager: AdapterWorkManager
@@ -80,17 +80,8 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
         notifyPositionsChanged(toPosition, fromPosition)
     }
 
-    @CallSuper
-    fun addAsync(item: Parent, onComplete: (Model?) -> Unit = {}) {
-        workManager.doAsync(onComplete) { add(item) }
-    }
-
     suspend fun add(item: Parent): Model? {
         return listManager.add(item)
-    }
-
-    fun addAsync(items: List<Parent>, onComplete: (Unit) -> Unit = {}) {
-        workManager.doAsync(onComplete) { add(items) }
     }
 
     /**
@@ -101,10 +92,6 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
         listManager.add(items)
     }
 
-    fun addOrUpdateAsync(items: List<Parent>, onComplete: (Unit) -> Unit = {}) {
-        workManager.doAsync(onComplete) { addOrUpdate(items) }
-    }
-
     suspend fun addOrUpdate(items: List<Parent>) {
         if (listManager.getItemCount().isZero()) {
             add(items)
@@ -113,18 +100,10 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
         }
     }
 
-    fun updateAsync(updateRequest: UpdateRequest<Parent>, provideResult: (Boolean) -> Unit = {}) {
-        workManager.doAsync(provideResult) { update(updateRequest) }
-    }
-
     suspend fun update(updateRequest: UpdateRequest<Parent>): Boolean {
         return measureAndLogTime("updateTime") {
             listManager.update(updateRequest)
         }
-    }
-
-    fun updateAsync(items: List<Parent>, onComplete: (Boolean) -> Unit = {}) {
-        workManager.doAsync(onComplete) { update(items) }
     }
 
     suspend fun update(items: List<Parent>): Boolean {
@@ -143,18 +122,13 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
      * @return position of removed item
      */
 
-    @CallSuper
-    fun removeAsync(item: Parent, onComplete: (Model?) -> Unit = {}) {
-        workManager.doAsync(onComplete) { remove(item) }
-    }
+
 
     suspend fun remove(item: Parent): Model? {
         return listManager.remove(item)
     }
 
-    fun removeAsync(items: List<Parent>, onComplete: (List<Model>) -> Unit = {}) {
-        workManager.doAsync(onComplete) { remove(items) }
-    }
+
 
     suspend fun remove(items: List<Parent>): List<Model> {
         return listManager.remove(items)
@@ -170,8 +144,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
     fun onPayloadable(
         holder: TypedBindingHolder<Model>,
         payloads: List<AdapterParentViewModel.Payloadable>
-    ) {
-    }
+    ) {}
 
     fun getItemCount(): Int
 
@@ -185,15 +158,9 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
         return listManager.getModelByPosition(position)
     }
 
-    fun getModelByItemAsync(item: Parent, onComplete: (Model?) -> Unit) {
-        workManager.doAsync(onComplete) { getModelByItem(item) }
-    }
-
-    @InternalAdaptersApi
     suspend fun getModelByItem(item: Parent): Model? {
         return listManager.getModelByItem(item)
     }
-
 
     suspend fun getPositionOfItem(item: Parent): Int {
         val model = getModelByItem(item)
@@ -212,10 +179,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
         }
     }
 
-    @CallSuper
-    fun clearAsync(onComplete: (Unit) -> Unit = {}) {
-        workManager.doAsync(onComplete) { clear() }
-    }
+
 
     suspend fun clear() {
         listManager.clear()
@@ -261,17 +225,13 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
 
     /* Position */
 
-    fun addAsync(position: Int, item: Parent, onComplete: (Unit) -> Unit) {
-        workManager.doAsync(onComplete) { add(position, item) }
-    }
+
 
     suspend fun add(position: Int, item: Parent) {
         listManager.add(position, item)
     }
 
-    fun addAsync(position: Int, items: List<Parent>, onComplete: (Unit) -> Unit) {
-        workManager.doAsync(onComplete) { add(position, items) }
-    }
+
 
     suspend fun add(position: Int, items: List<Parent>) {
         listManager.add(position, items)

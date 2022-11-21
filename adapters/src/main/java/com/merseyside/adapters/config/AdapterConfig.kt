@@ -17,6 +17,7 @@ import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.interfaces.nested.INestedAdapter
 import com.merseyside.adapters.listManager.IModelListManager
 import com.merseyside.adapters.listManager.INestedModelListManager
+import com.merseyside.adapters.listManager.impl.ModelListManager
 import com.merseyside.adapters.listManager.impl.NestedModelModelListManager
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 import com.merseyside.adapters.model.VM
@@ -24,7 +25,7 @@ import com.merseyside.adapters.modelList.ModelList
 import com.merseyside.adapters.modelList.ModelListCallback
 import com.merseyside.adapters.modelList.SimpleModelList
 import com.merseyside.adapters.utils.AdapterWorkManager
-import com.merseyside.merseyLib.kotlin.coroutines.CoroutineQueue
+import com.merseyside.merseyLib.kotlin.coroutines.queue.CoroutineQueue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
@@ -122,12 +123,14 @@ open class AdapterConfig<Parent, Model> internal constructor(
                 FilterModelListManager(
                     modelList = initModelList(adapter),
                     adapterActions = adapter,
-                    adapterFilter = filterFeature.adapterFilter
+                    adapterFilter = filterFeature.adapterFilter,
+                    workManager = workManager
                 )
             } else {
-                com.merseyside.adapters.listManager.impl.ModelListManager(
+                ModelListManager(
                     modelList = initModelList(adapter),
-                    adapterActions = adapter
+                    adapterActions = adapter,
+                    workManager = workManager
                 )
             }.also { initWithUpdateLogic(it) }
         }
@@ -166,12 +169,14 @@ class NestedAdapterConfig<Parent, Model, Data, InnerAdapter> internal constructo
                 FilterNestedModelListManager(
                     modelList = initModelList(adapter),
                     adapterActions = adapter,
-                    adapterFilter = filterFeature.adapterFilter
+                    adapterFilter = filterFeature.adapterFilter,
+                    workManager = workManager
                 )
             } else {
                 NestedModelModelListManager(
                     initModelList(adapter),
-                    adapter
+                    adapter,
+                    workManager = workManager
                 )
             }.also { initWithUpdateLogic(it) }
         }

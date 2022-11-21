@@ -1,17 +1,15 @@
 package com.merseyside.adapters.feature.filtering
 
-import com.merseyside.adapters.config.contract.HasWorkManager
+import com.merseyside.adapters.config.contract.HasAdapterWorkManager
 import com.merseyside.adapters.feature.filtering.listManager.Filters
-import com.merseyside.adapters.utils.runWithDefault
-import com.merseyside.merseyLib.kotlin.coroutines.CoroutineQueue
-import com.merseyside.merseyLib.kotlin.logger.ILogger
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.withContext
 import com.merseyside.adapters.model.VM
 import com.merseyside.adapters.utils.AdapterWorkManager
+import com.merseyside.adapters.utils.runWithDefault
+import com.merseyside.merseyLib.kotlin.logger.ILogger
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-abstract class AdapterFilter<Parent, Model : VM<Parent>> : HasWorkManager, ILogger {
+abstract class AdapterFilter<Parent, Model : VM<Parent>> : HasAdapterWorkManager, ILogger {
 
     private var filterCallback: FilterCallback<Model>? = null
 
@@ -19,12 +17,7 @@ abstract class AdapterFilter<Parent, Model : VM<Parent>> : HasWorkManager, ILogg
     internal var notAppliedFilters: Filters = mutableMapOf()
 
     var isFiltered = false
-        private set(value) {
-            if (value != field) {
-                field = value
-                workManager.doAsync { filterCallback?.onFilterStateChanged(value) }
-            }
-        }
+        internal set
 
     val itemsCount: Int
         get() = provideFilteredList().size
@@ -51,7 +44,6 @@ abstract class AdapterFilter<Parent, Model : VM<Parent>> : HasWorkManager, ILogg
     open suspend fun addFilter(key: String, filter: Any) {
         val appliedFilter = filters[key]
         if (appliedFilter != filter) {
-            "add filter".log()
             notAppliedFilters[key] = filter
         }
     }
@@ -72,13 +64,10 @@ abstract class AdapterFilter<Parent, Model : VM<Parent>> : HasWorkManager, ILogg
         notAppliedFilters.clear()
     }
 
-    fun getAllModels(): List<Model> {
-        return provideFullList()
-    }
-
-    open suspend fun applyFilters(): Boolean = withContext(Dispatchers.Main) {
+    suspend fun applyFilters(): Boolean = withContext(Dispatchers.Main) {
 
         isFiltered = if (isFiltered && areFiltersEmpty()) {
+            postResult(getAllModels())
             cancelFiltering()
             false
         } else if (notAppliedFilters.isEmpty()) {
@@ -94,6 +83,10 @@ abstract class AdapterFilter<Parent, Model : VM<Parent>> : HasWorkManager, ILogg
         true
     }
 
+    fun getAllModels(): List<Model> {
+        return provideFullList()
+    }
+
     private suspend fun filterModels(): List<Model> = runWithDefault {
         val canFilterCurrentItems = filters.isNotEmpty() &&
                 !notAppliedFilters.keys.any { filters.containsKey(it) }
@@ -107,21 +100,6 @@ abstract class AdapterFilter<Parent, Model : VM<Parent>> : HasWorkManager, ILogg
     }
 
     internal open suspend fun cancelFiltering() {}
-
-    /**
-     * @return true if filters applied, false otherwise.
-     */
-    open fun applyFiltersAsync(onComplete: (Boolean) -> Unit = {}) {
-        workManager.doAsync(
-            onComplete,
-            onError = {
-                putAppliedFilters()
-                isFiltered = true
-                onComplete(false)
-            }
-        ) { applyFilters() }
-
-    }
 
     internal fun areFiltersEmpty(): Boolean {
         return filters.isEmpty() && notAppliedFilters.isEmpty()
@@ -155,7 +133,7 @@ abstract class AdapterFilter<Parent, Model : VM<Parent>> : HasWorkManager, ILogg
         }
     }
 
-    private fun putAppliedFilters() {
+    internal fun putAppliedFilters() {
         filters.putAll(notAppliedFilters)
         notAppliedFilters.clear()
     }
@@ -167,9 +145,6 @@ abstract class AdapterFilter<Parent, Model : VM<Parent>> : HasWorkManager, ILogg
 
     internal fun setFilterCallback(callback: FilterCallback<Model>) {
         this.filterCallback = callback
-        if (isFiltered) {
-            workManager.doAsync { callback.onFilterStateChanged(true) }
-        }
     }
 
     private fun isFilterAlreadyExists(key: String): Boolean {
@@ -183,8 +158,6 @@ abstract class AdapterFilter<Parent, Model : VM<Parent>> : HasWorkManager, ILogg
 
     interface FilterCallback<Model> {
         suspend fun onFiltered(models: List<Model>)
-
-        suspend fun onFilterStateChanged(isFiltered: Boolean)
     }
 
     override val tag = "AdapterFilter"

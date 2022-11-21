@@ -18,7 +18,7 @@ open class DelegatesManager<Delegate, Parent, ParentModel>(
     Delegate : DelegateAdapter<out Parent, Parent, ParentModel> {
 
     protected val delegates = SparseArray<Delegate>()
-    private lateinit var onDelegateRemoveCallback: (DelegateAdapter<out Parent, Parent, *>) -> Unit
+    private lateinit var onDelegateRemoveCallback: suspend (DelegateAdapter<out Parent, Parent, *>) -> Unit
 
     protected val count: Int
         get() = delegates.size()
@@ -34,10 +34,12 @@ open class DelegatesManager<Delegate, Parent, ParentModel>(
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun addDelegateList(delegates: List<DelegateAdapter<out Parent, Parent, out ParentModel>>) {
         addDelegateListInternal(delegates as List<Delegate>)
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun addDelegates(vararg delegates: DelegateAdapter<out Parent, Parent, out ParentModel>) {
         addDelegateList(delegates.toList() as List<Delegate>)
     }
@@ -103,7 +105,7 @@ open class DelegatesManager<Delegate, Parent, ParentModel>(
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun removeResponsibleDelegate(clazz: Class<out Parent>): Boolean {
+    suspend fun removeResponsibleDelegate(clazz: Class<out Parent>): Boolean {
         val delegate = getResponsibleDelegate(clazz)
         return delegate?.let {
             onDelegateRemoveCallback(delegate)
@@ -113,7 +115,7 @@ open class DelegatesManager<Delegate, Parent, ParentModel>(
         } ?: false
     }
 
-    fun removeResponsibleDelegate(item: Parent): Boolean {
+    suspend fun removeResponsibleDelegate(item: Parent): Boolean {
         return removeResponsibleDelegate(item!!::class.java)
     }
 
@@ -138,7 +140,7 @@ open class DelegatesManager<Delegate, Parent, ParentModel>(
          return delegate.createViewModel(item)
     }
 
-    internal fun setOnDelegateRemoveCallback(callback: (DelegateAdapter<out Parent, Parent, *>) -> Unit) {
+    internal fun setOnDelegateRemoveCallback(callback: suspend (DelegateAdapter<out Parent, Parent, *>) -> Unit) {
         onDelegateRemoveCallback = callback
     }
 

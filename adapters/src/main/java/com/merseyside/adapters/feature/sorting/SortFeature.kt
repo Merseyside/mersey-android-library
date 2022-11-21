@@ -12,7 +12,6 @@ import com.merseyside.adapters.config.update.UpdateLogic
 import com.merseyside.adapters.extensions.recalculatePositions
 import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.model.VM
-import com.merseyside.merseyLib.kotlin.logger.log
 
 open class SortFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Config<Parent, Model>>(),
     ModelListProvider<Parent, Model>, UpdateLogicProvider<Parent, Model>

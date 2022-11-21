@@ -3,7 +3,7 @@ package com.merseyside.adapters.config.contract
 import com.merseyside.adapters.utils.AdapterWorkManager
 
 
-interface HasWorkManager {
+interface HasAdapterWorkManager {
 
     val workManager: AdapterWorkManager
 }

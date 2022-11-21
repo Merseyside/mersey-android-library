@@ -7,8 +7,11 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import com.merseyside.adapters.feature.filtering.Filtering
 import com.merseyside.adapters.feature.filtering.ext.addFilterAsync
+import com.merseyside.adapters.feature.filtering.ext.applyFiltersAsync
 import com.merseyside.adapters.feature.filtering.ext.removeFilterAsync
 import com.merseyside.adapters.feature.sorting.Sorting
+import com.merseyside.adapters.interfaces.ext.addAsync
+import com.merseyside.adapters.interfaces.ext.updateAsync
 import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.archy.presentation.view.valueSwitcher.ValueSwitcher
 import com.merseyside.merseyLib.BR
