@@ -25,8 +25,7 @@ class AdapterSelect<Parent, Model>(
     isSelectEnabled: Boolean,
     private var isAllowToCancelSelection: Boolean,
     override val workManager: AdapterWorkManager
-) : HasOnItemSelectedListener<Parent>, OnBindItemListener<Parent, Model>,
-    ModelListCallback<Model>, HasAdapterWorkManager, ILogger
+) : HasOnItemSelectedListener<Parent>, ModelListCallback<Model>, HasAdapterWorkManager, ILogger
         where Model : VM<Parent> {
 
     var onSelectEnabledListener: OnSelectEnabledListener? = null
@@ -82,15 +81,6 @@ class AdapterSelect<Parent, Model>(
     init {
         modelList.addModelListCallback(this)
     }
-
-    override fun onBindViewHolder(
-        holder: TypedBindingHolder<Model>,
-        model: Model,
-        position: Int
-    ) {
-        //holder.bind(variableId, onSelectCallback)
-    }
-
 
     override fun onInserted(models: List<Model>, position: Int, count: Int) {
         initNewModels(models)
@@ -221,10 +211,10 @@ class AdapterSelect<Parent, Model>(
                     SelectableMode.MULTIPLE -> {
                         if (isSelected()) {
                             if (isAllowToCancelSelection) {
-                                updateItemWithState(item)
+                                updateItemWithState(item, isSelectedByUser)
                             } else false
                         } else {
-                            updateItemWithState(item)
+                            updateItemWithState(item, isSelectedByUser)
                         }
                     }
                 }

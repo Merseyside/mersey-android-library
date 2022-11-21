@@ -35,8 +35,6 @@ class SelectFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Config<P
 
             adapterSelect.onItemSelected(onSelect)
         }
-
-        adapterConfig.addOnBindItemListener(adapterSelect)
     }
 
     companion object {
