@@ -67,9 +67,13 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
 
     protected abstract fun performInjection(bundle: Bundle?, vararg params: Any)
 
+    /**
+     * First of all perform injection, because when state restores, it calls viewModels which
+     * requires all dependencies and state
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         performInjection(savedInstanceState)
+        super.onCreate(savedInstanceState)
     }
 
     @CallSuper
