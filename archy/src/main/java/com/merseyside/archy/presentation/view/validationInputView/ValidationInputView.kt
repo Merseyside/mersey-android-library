@@ -11,6 +11,7 @@ import androidx.core.view.updateLayoutParams
 import com.merseyside.archy.R
 import com.merseyside.archy.databinding.ViewValidationInputBinding
 import com.merseyside.archy.presentation.view.validationInputView.ValidationState.*
+import com.merseyside.merseyLib.kotlin.logger.ILogger
 import com.merseyside.merseyLib.kotlin.logger.Logger
 import com.merseyside.merseyLib.kotlin.utils.safeLet
 import com.merseyside.merseyLib.time.coroutines.delay
@@ -30,7 +31,7 @@ open class ValidationInputView(
     context: Context,
     attributeSet: AttributeSet,
     defStyleAttr: Int
-) : LinearLayout(context, attributeSet, defStyleAttr) {
+) : LinearLayout(context, attributeSet, defStyleAttr), ILogger {
 
     constructor(context: Context, attributeSet: AttributeSet)
             : this(context, attributeSet, R.attr.validationInputViewStyle)
@@ -123,6 +124,8 @@ open class ValidationInputView(
     var getErrorMsg: (text: String) -> String = { textError }
     var getSuccessMsg: (text: String) -> String = { textSuccess }
 
+    private var everFocused: Boolean = false
+
     fun setErrorText(text: String) {
         if (textError != text) {
             textError = text
@@ -141,10 +144,6 @@ open class ValidationInputView(
     }
 
     private var validationState = FILLING
-
-    init {
-        updateViewsWithState()
-    }
 
     init {
         orientation = VERTICAL
@@ -199,6 +198,7 @@ open class ValidationInputView(
     private fun setFocusListener() {
         editText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
+                everFocused = true
                 if (validationState != OK) {
                     if (!applyState(validationState)) updateViewsWithState()
                 }
@@ -211,7 +211,7 @@ open class ValidationInputView(
     private fun applyState(state: ValidationState): Boolean {
         val newState = if (forceState) state
         else if (state == ERROR) {
-            if (isTypingState()) FILLING
+            if (isTypingState() || !everFocused) FILLING
             else state
         } else state
 
@@ -316,13 +316,15 @@ open class ValidationInputView(
         onTextChangedListener = listener
     }
 
-    fun isTypingState(): Boolean {
+    private fun isTypingState(): Boolean {
         return editText.isFocused
     }
 
     companion object {
         private const val defaultDebounce = 300
     }
+
+    override val tag: String = "ValidationInputView"
 }
 
 enum class ValidationState { FILLING, OK, ERROR }
