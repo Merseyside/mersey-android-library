@@ -211,10 +211,10 @@ class AdapterSelect<Parent, Model>(
                     SelectableMode.MULTIPLE -> {
                         if (isSelected()) {
                             if (isAllowToCancelSelection) {
-                                updateItemWithState(item, isSelectedByUser)
+                                updateItemWithState(item, isSelectedByUser = isSelectedByUser)
                             } else false
                         } else {
-                            updateItemWithState(item, isSelectedByUser)
+                            updateItemWithState(item, isSelectedByUser = isSelectedByUser)
                         }
                     }
                 }
