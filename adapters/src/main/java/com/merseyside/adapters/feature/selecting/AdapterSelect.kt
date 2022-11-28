@@ -91,7 +91,7 @@ class AdapterSelect<Parent, Model>(
         val selectableItems = models.filterIsInstance<SelectableItem>()
         selectableItems.forEach { item ->
             with(item.selectState) {
-                selectEvent.observe { changeItemSelectedState(item, false) }
+                selectEvent.observe { changeItemSelectedState(item, true) }
                 globalSelectable.value = isSelectEnabled
             }
         }

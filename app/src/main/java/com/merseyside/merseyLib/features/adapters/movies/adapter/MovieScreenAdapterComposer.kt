@@ -23,12 +23,13 @@ import com.merseyside.adapters.extensions.onClick
 import com.merseyside.adapters.extensions.onItemSelected
 import com.merseyside.adapters.feature.selecting.SelectableMode
 import com.merseyside.adapters.feature.sorting.Sorting
-import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.features.adapters.movies.adapter.comparator.TextComparator
+import com.merseyside.merseyLib.kotlin.coroutines.flow.BufferFlow
 import com.merseyside.merseyLib.kotlin.extensions.launchDelayed
 import com.merseyside.merseyLib.kotlin.logger.ILogger
 import com.merseyside.merseyLib.time.units.Seconds
+import kotlinx.coroutines.launch
 import com.merseyside.merseyLib.features.adapters.movies.adapter.views.MarginComposingList as List
 import kotlin.collections.List as ArrayList
 
@@ -37,6 +38,12 @@ class MovieScreenAdapterComposer(
     override val adapter: SimpleViewCompositeAdapter,
     viewLifecycleOwner: LifecycleOwner,
 ) : SimpleAdapterComposer(viewLifecycleOwner), ILogger {
+
+    private val clickBuffer = BufferFlow<Unit>(
+        adapter.adapterConfig.coroutineScope,
+        capacity = 3,
+        timeoutMs = Seconds(3).millis
+    )
 
     private var dataLiveData: LiveData<String>? = null
 
@@ -47,6 +54,14 @@ class MovieScreenAdapterComposer(
             ComposingSelectableListDelegate(),
             ComposingListDelegate()
         )
+
+    init {
+        adapter.adapterConfig.coroutineScope.launch {
+            clickBuffer.collect {
+                it.log("clicks collected")
+            }
+        }
+    }
 
     override suspend fun composeScreen() = compose {
         Text("shrinked",
@@ -69,7 +84,7 @@ class MovieScreenAdapterComposer(
             configure = {
                 selectableMode = SelectableMode.SINGLE
 
-                onItemSelected { item, isSelected, _ -> isSelected.log("selected")}
+                onItemSelected { item, isSelected, _ -> isSelected.log("selected") }
             }
         ) {
             CheckBox("kek",
@@ -84,6 +99,7 @@ class MovieScreenAdapterComposer(
             Text("imposter",
                 style = { textColor = R.color.green }) {
                 text = "I'm an imposter in selectable list"
+                onClick { clickBuffer.emit(Unit) }
             }
 
             CheckBox("kek1",
@@ -101,7 +117,9 @@ class MovieScreenAdapterComposer(
                 List("inner_list2") {
                     List("inner_list3") {
                         List("inner_list4",
-                            style = { margins = ComposingStyle.Margins(R.dimen.very_small_spacing) },
+                            style = {
+                                margins = ComposingStyle.Margins(R.dimen.very_small_spacing)
+                            },
                             configure = {
                                 adapterConfig {
                                     Sorting {
