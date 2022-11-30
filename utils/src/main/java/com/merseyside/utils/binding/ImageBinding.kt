@@ -12,6 +12,7 @@ import androidx.databinding.BindingAdapter
 import coil.load
 import coil.request.ImageRequest
 import coil.transform.RoundedCornersTransformation
+import com.merseyside.merseyLib.kotlin.logger.log
 import com.merseyside.merseyLib.kotlin.utils.firstNotNull
 import com.merseyside.merseyLib.kotlin.utils.safeLet
 import com.merseyside.utils.coil.CircleCropStroke
@@ -110,6 +111,7 @@ fun setImageWithCoil(
                 placeholder?.let { placeholder(getValidPlaceholder(it)) }
             }
         } catch (e: NullPointerException) {
+            log("Set placeholder")
             loadPlaceholder(placeholder) { builder() }
         }
     }
