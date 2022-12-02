@@ -118,7 +118,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         setRequestCode(requestCode)
         this.fragmentResult = FragmentResult(resultCode, requestCode, bundle)
     }
-    
+
     protected open fun inflateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -142,7 +142,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         notifyToolbarChanged()
     }
 
-    protected fun notifyToolbarChanged() {
+    protected open fun notifyToolbarChanged() {
         baseActivity.setFragmentToolbar(getToolbar(), isBarVisible())
     }
 
@@ -180,25 +180,25 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
     }
 
     override fun showMsg(msg: String, view: View?, actionMsg: String?, onClick: () -> Unit) {
-       snackbarManager?.apply {
-           showSnackbar(
-               view = view,
-               message = msg,
-               actionMsg = actionMsg,
-               onClick = onClick
-           )
-       }
+        snackbarManager?.apply {
+            showSnackbar(
+                view = view,
+                message = msg,
+                actionMsg = actionMsg,
+                onClick = onClick
+            )
+        }
     }
 
     override fun showErrorMsg(msg: String, view: View?, actionMsg: String?, onClick: () -> Unit) {
-       snackbarManager?.apply {
-           showErrorSnackbar(
-               view = view,
-               message = msg,
-               actionMsg = actionMsg,
-               onClick = onClick
-           )
-       }
+        snackbarManager?.apply {
+            showErrorSnackbar(
+                view = view,
+                message = msg,
+                actionMsg = actionMsg,
+                onClick = onClick
+            )
+        }
     }
 
     override fun dismissMsg() {
@@ -239,7 +239,8 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         onPositiveClick: () -> Unit,
         onNegativeClick: () -> Unit,
         isSingleAction: Boolean?,
-        isCancelable: Boolean?) {
+        isCancelable: Boolean?
+    ) {
         baseActivity.showAlertDialog(
             title,
             message,
@@ -260,7 +261,8 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         onPositiveClick: () -> Unit,
         onNegativeClick: () -> Unit,
         isSingleAction: Boolean?,
-        isCancelable: Boolean?) {
+        isCancelable: Boolean?
+    ) {
         baseActivity.showAlertDialog(
             titleRes,
             messageRes,
