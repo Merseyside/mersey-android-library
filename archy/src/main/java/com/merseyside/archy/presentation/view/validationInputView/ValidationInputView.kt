@@ -71,6 +71,8 @@ open class ValidationInputView(
     private var textSuccess by attrs.string(defaultValue = "")
     private var textError by attrs.string(defaultValue = "")
 
+    private val needFillingStateOnInit by attrs.bool(false)
+
     protected open val strokeColor by attrs.color(
         defaultValue = requireResourceFromAttr(R.attr.colorOnSurface)
     )
@@ -110,7 +112,6 @@ open class ValidationInputView(
     protected open val defaultIcon by attrs.drawableOrNull(resName = "icon")
     protected open val successIcon by attrs.drawableOrNull()
     protected open val errorIcon by attrs.drawableOrNull()
-
 
     var text: String
         get() = editText.text.toString()
@@ -155,6 +156,8 @@ open class ValidationInputView(
         setWithAttrs()
         setTextWatcher()
         setFocusListener()
+
+        if (needFillingStateOnInit) updateViewsWithState()
     }
 
     private fun setLayout() {

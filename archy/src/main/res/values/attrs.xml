@@ -92,6 +92,7 @@
     </declare-styleable>
 
     <declare-styleable name="ValidationInputView">
+        <attr name="validNeedFillingStateOnInit" format="boolean" />
         <attr name="validInputWidth" format="dimension" />
         <attr name="validInputHeight" format="dimension" />
         <attr name="validForceState" format="boolean" />
