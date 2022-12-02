@@ -31,11 +31,7 @@ open class ComposingTextDelegate<View : ComposingText<Style>, Style : ComposingT
                 )
             }
             safeLet(style.textSize) { textSize ->
-                setTextSizePx(
-                    context.resources.getDimensionPixelSize(
-                        textSize
-                    )
-                )
+                setTextSizePx(context.resources.getDimensionPixelSize(textSize))
             }
             safeLet(style.gravity) { gravity -> setGravity(gravity) }
             safeLet(style.maxLines) { maxLines -> setMaxLines(maxLines) }

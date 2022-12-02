@@ -63,7 +63,7 @@ fun <Parent, Model : VM<Parent>> BaseAdapter<Parent, Model>.getModelByItemAsync(
 fun <Parent, Model : VM<Parent>> BaseAdapter<Parent, Model>.clearAsync(
     onComplete: (Unit) -> Unit = {}
 ) {
-    workManager.doAsync(onComplete) { clear() }
+    workManager.doAsync(onComplete, work = ::clear)
 }
 
 

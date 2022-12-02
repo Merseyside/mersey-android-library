@@ -14,11 +14,11 @@ open class ScreenComposeContext<View: SCV> {
     private val mutViews: MutableList<View> = ArrayList()
     val views: List<View> = mutViews
 
-    open fun add(view: View) {
+    internal open fun add(view: View) {
         mutViews.add(view)
     }
 
-    open fun add(views: List<View>) {
+    internal open fun add(views: List<View>) {
         mutViews.addAll(views)
     }
 }

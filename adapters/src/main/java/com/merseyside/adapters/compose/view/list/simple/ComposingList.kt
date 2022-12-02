@@ -2,16 +2,17 @@ package com.merseyside.adapters.compose.view.list.simple
 
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
+import androidx.recyclerview.widget.RecyclerView.Orientation
 import com.merseyside.adapters.callback.HasOnItemClickListener
 import com.merseyside.adapters.callback.OnItemClickListener
 import com.merseyside.adapters.compose.delegate.ViewDelegateAdapter
+import com.merseyside.adapters.compose.dsl.context.ComposeContext
+import com.merseyside.adapters.compose.dsl.context.ListComposeContext
+import com.merseyside.adapters.compose.dsl.context.list
+import com.merseyside.adapters.compose.style.ComposingStyle
 import com.merseyside.adapters.compose.view.base.SCV
 import com.merseyside.adapters.compose.view.base.StyleableComposingView
-import com.merseyside.adapters.compose.dsl.context.ListComposeContext
-import com.merseyside.adapters.compose.dsl.context.ComposeContext
-import com.merseyside.adapters.compose.dsl.context.list
 import com.merseyside.adapters.compose.view.base.addView
-import com.merseyside.adapters.compose.style.ComposingStyle
 import com.merseyside.adapters.config.AdapterConfig
 import com.merseyside.adapters.model.VM
 
@@ -63,6 +64,9 @@ open class ListConfig: HasOnItemClickListener<SCV> {
 }
 
 open class ComposingListStyle : ComposingStyle() {
+
+    @Orientation
+    val orientation: Int = RecyclerView.VERTICAL
 
     companion object {
         operator fun invoke(init: ComposingListStyle.() -> Unit): ComposingListStyle {

@@ -3,7 +3,6 @@ package com.merseyside.adapters.compose.style
 import androidx.annotation.CallSuper
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
-import com.merseyside.adapters.compose.view.base.ComposingView
 import com.merseyside.merseyLib.kotlin.logger.ILogger
 import com.merseyside.utils.getClassName
 
@@ -15,7 +14,6 @@ abstract class ComposingStyle : ILogger {
 
     @ColorRes var backgroundColor: Int? = null
 
-    open var onClick: (ComposingView) -> Unit = {}
     var clickable: Boolean = true
 
     class Margins(
@@ -60,5 +58,10 @@ abstract class ComposingStyle : ILogger {
 
     final override fun toString(): String {
         return getStringBuilder().toString()
+    }
+
+    companion object {
+        const val MATCH_PARENT = -1
+        const val WRAP_CONTENT = -2
     }
 }
