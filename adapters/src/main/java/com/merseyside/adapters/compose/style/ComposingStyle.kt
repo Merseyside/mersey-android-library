@@ -11,6 +11,7 @@ abstract class ComposingStyle : ILogger {
     var height: Int? = null
 
     var margins: Margins? = null
+    var paddings: Paddings? = null
 
     @ColorRes var backgroundColor: Int? = null
 
@@ -34,6 +35,31 @@ abstract class ComposingStyle : ILogger {
             val builder = StringBuilder()
             builder.apply {
                 appendLine("*** Margins ***")
+                //append("top: ").appendLine(t)
+            }
+
+            return builder.toString()
+        }
+    }
+
+    class Paddings(
+        @DimenRes val top: Int,
+        @DimenRes val bottom: Int,
+        @DimenRes val start: Int,
+        @DimenRes val end: Int
+    ) {
+        constructor(@DimenRes padding: Int): this(
+            padding, padding, padding, padding
+        )
+
+        constructor(@DimenRes horizontal: Int, @DimenRes vertical: Int): this(
+            vertical, vertical, horizontal, horizontal
+        )
+
+        override fun toString(): String {
+            val builder = StringBuilder()
+            builder.apply {
+                appendLine("*** Paddings ***")
                 //append("top: ").appendLine(t)
             }
 

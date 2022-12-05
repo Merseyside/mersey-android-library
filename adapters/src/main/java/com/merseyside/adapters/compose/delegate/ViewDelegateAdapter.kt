@@ -13,6 +13,7 @@ import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.merseyLib.kotlin.utils.safeLet
+import com.merseyside.utils.view.ext.padding
 import com.merseyside.utils.view.ext.setMarginsRes
 
 abstract class ViewDelegateAdapter<View : StyleableComposingView<Style>, Style : ComposingStyle, Model>
@@ -34,6 +35,12 @@ abstract class ViewDelegateAdapter<View : StyleableComposingView<Style>, Style :
 
             safeLet(backgroundColor) { color ->
                 view.setBackgroundColor(ContextCompat.getColor(context, color))
+            }
+
+            safeLet(paddings) { paddings ->
+                with(paddings) {
+                    view.padding(start, top, end, bottom)
+                }
             }
         }
     }
