@@ -27,7 +27,7 @@ abstract class ComposingStyle : ILogger {
         )
 
         constructor(@DimenRes horizontal: Int, @DimenRes vertical: Int): this(
-            horizontal, vertical, horizontal, vertical
+            vertical, vertical, horizontal, horizontal
         )
 
         override fun toString(): String {
