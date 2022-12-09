@@ -3,23 +3,25 @@ package com.merseyside.adapters.utils
 import androidx.collection.ArraySet
 import com.merseyside.adapters.config.contract.HasAdapterWorkManager
 import com.merseyside.merseyLib.kotlin.coroutines.queue.CoroutineQueue
+import com.merseyside.merseyLib.kotlin.coroutines.queue.ext.executeAsync
+import com.merseyside.merseyLib.kotlin.coroutines.utils.CompositeJob
 import com.merseyside.merseyLib.kotlin.logger.Logger
 import kotlinx.coroutines.Job
-import com.merseyside.merseyLib.kotlin.coroutines.queue.ext.executeIfIdleAsync
 
 class AdapterWorkManager(
-    val coroutineQueue: CoroutineQueue<Any, Unit>,
+    private val coroutineQueue: CoroutineQueue<Any, Unit>,
     private val errorHandler: (Exception) -> Unit
 ) {
 
-    private val subWorkManagers = ArraySet<AdapterWorkManager>()
+    private val subManagers = ArraySet<AdapterWorkManager>()
+    private val subCompositeJob: CompositeJob = CompositeJob()
 
     fun <Result, T: HasAdapterWorkManager> subTaskWith(
         adapter: T,
         block: suspend T.() -> Result
     ) {
         val subWorkManager = adapter.workManager
-        subWorkManagers.add(subWorkManager)
+        subManagers.add(subWorkManager)
         subWorkManager.add { block(adapter) }
     }
 
@@ -29,11 +31,11 @@ class AdapterWorkManager(
         work: suspend () -> Result,
     ): Job? {
         add(onComplete, onError, work)
-        return coroutineQueue.executeIfIdleAsync()
+        return coroutineQueue.executeAsync()
     }
 
-    private suspend fun executeIfIdle() {
-        return coroutineQueue.executeIfIdle()
+    private fun executeAsync(): Job? {
+        return coroutineQueue.executeAsync()
     }
 
     fun <Result> add(
@@ -44,10 +46,13 @@ class AdapterWorkManager(
         coroutineQueue.add {
             try {
                 val result = work()
-                if (subWorkManagers.isNotEmpty()) {
-                    subWorkManagers.forEach { manager ->
-                        manager.executeIfIdle()
+                if (subManagers.isNotEmpty()) {
+                    subManagers.forEach { manager ->
+                        val job = manager.executeAsync()
+                        if (job != null) subCompositeJob.add(job)
                     }
+
+                    subCompositeJob.joinAll()
                 }
                 onComplete(result)
             } catch(e: Exception) {

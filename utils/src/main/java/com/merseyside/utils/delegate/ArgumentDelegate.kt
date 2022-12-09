@@ -58,6 +58,17 @@ abstract class ArgumentHelper(internal val requireExistence: Boolean) {
             ?: throw NullPointerException("Can not put value because arguments are null!")
     }
 
+    inline fun <reified T> get(
+        key: String,
+        defaultValue: T
+    ): T {
+        return (arguments?.get(key) as? T) ?: defaultValue
+    }
+
+    inline fun <reified T> getOrNull(key: String): T? {
+        return arguments?.get(key) as? T
+    }
+
     fun contains(key: String): Boolean {
         return arguments?.containsKey(key) ?: false
     }
@@ -67,6 +78,12 @@ class FragmentArgumentHelper(
     internal val fragment: Fragment,
     requireExistence: Boolean = false
 ) : ArgumentHelper(requireExistence) {
+
+    init {
+        if (fragment.arguments == null) {
+            fragment.arguments = Bundle()
+        }
+    }
 
     override val arguments: Bundle?
         get() = fragment.arguments
