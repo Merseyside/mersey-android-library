@@ -24,25 +24,27 @@ operator fun <B : ViewDataBinding> Binding<B>.getValue(view: ViewGroup, property
 
 fun <B: ViewDataBinding> ViewGroup.viewBinding(
     @LayoutRes layoutRes: Int,
-    attachToParent: Boolean = true
-): Binding<B> = LazyBindingImpl(layoutRes, this, attachToParent)
+    attachToParent: Boolean = true,
+    onBind: B.() -> Unit = {}
+): Binding<B> = LazyBindingImpl(layoutRes, this, attachToParent, onBind)
 
 fun <B: ViewDataBinding> ViewGroup.dataBinding(
     @LayoutRes layoutRes: Int,
     variableId: Int,
     data: Any,
-    attachToParent: Boolean = true
-): Binding<B> = LazyDataBindingImpl(layoutRes, this, attachToParent, variableId, data)
+    attachToParent: Boolean = true,
+    onBind: B.() -> Unit = {}
+): Binding<B> = LazyDataBindingImpl(layoutRes, this, attachToParent, variableId, data, onBind)
 
 
 private open class LazyBindingImpl<B: ViewDataBinding>(
     @LayoutRes private val layoutRes: Int,
     private val view: ViewGroup,
-    private val attachToParent: Boolean
+    private val attachToParent: Boolean,
+    private val onBind: B.() -> Unit
 ): Binding<B> {
 
     private var _value: B? = null
-
     override val value: B
         get() {
             return _value!!
@@ -54,7 +56,10 @@ private open class LazyBindingImpl<B: ViewDataBinding>(
 
     protected fun initBinding(): B {
         if (_value == null) {
-            return view.getBinding<B>(layoutRes, attachToParent).also { _value = it }
+            return view.getBinding<B>(layoutRes, attachToParent).also {
+                _value = it
+                onBind(it)
+            }
         } else {
             throw IllegalStateException("Binding already initialized")
         }
@@ -66,8 +71,9 @@ private class LazyDataBindingImpl<B: ViewDataBinding>(
     view: ViewGroup,
     attachToParent: Boolean,
     private val variableId: Int,
-    private val data: Any
-): LazyBindingImpl<B>(layoutRes, view, attachToParent) {
+    private val data: Any,
+    private val onBind: B.() -> Unit
+): LazyBindingImpl<B>(layoutRes, view, attachToParent, onBind) {
 
     init {
         initDataBinding()

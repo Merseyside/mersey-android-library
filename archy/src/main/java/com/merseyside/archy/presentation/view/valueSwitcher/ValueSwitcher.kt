@@ -25,7 +25,7 @@ class ValueSwitcher(context: Context, attributeSet: AttributeSet?, defStyleAttr:
         R.styleable.ValueSwitcher,
         getClassName(),
         defStyleAttr,
-        R.style.Mersey_ValueSwitcher_Theme,
+        R.style.Widget_Mersey_ValueSwitcher,
         styleableNamePrefix = "switch"
     )
 

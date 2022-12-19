@@ -20,7 +20,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 class AdapterSelect<Parent, Model>(
-    private val modelList: ModelList<Parent, Model>,
+    internal val modelList: ModelList<Parent, Model>,
     selectableMode: SelectableMode,
     isSelectEnabled: Boolean,
     private var isAllowToCancelSelection: Boolean,
@@ -121,7 +121,7 @@ class AdapterSelect<Parent, Model>(
         }
     }
 
-    suspend fun selectItem(item: Parent) {
+    fun selectItem(item: Parent) {
         val selectable = modelList.getModelByItem(item).requireSelectable()
         changeItemSelectedState(selectable)
     }

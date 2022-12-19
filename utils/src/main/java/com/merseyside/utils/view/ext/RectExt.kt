@@ -4,6 +4,10 @@ import android.graphics.Point
 import android.graphics.Rect
 import android.graphics.RectF
 
+fun Rect.set(leftTop: Point = Point(left, top), rightBottom: Point = Point(right, bottom)) {
+    set(leftTop.x, leftTop.y, rightBottom.x, rightBottom.y)
+}
+
 fun Rect(leftTop: Point, rightBottom: Point): Rect {
     return Rect(leftTop.x, leftTop.y, rightBottom.x, rightBottom.y)
 }

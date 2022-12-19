@@ -15,16 +15,21 @@ open class SimpleItemOffsetDecorator(
 ) : RecyclerView.ItemDecoration() {
 
     constructor(
+        verticalOffset: Int = 0,
+        horizontalOffset: Int = 0
+    ): this(verticalOffset, horizontalOffset, horizontalOffset, verticalOffset)
+
+    constructor(
         context: Context,
-        @DimenRes top: Int = R.dimen.decorator_zero_size,
-        @DimenRes left: Int = R.dimen.decorator_zero_size,
-        @DimenRes right: Int = R.dimen.decorator_zero_size,
-        @DimenRes bottom: Int = R.dimen.decorator_zero_size
+        @DimenRes topRes: Int = R.dimen.decorator_zero_size,
+        @DimenRes leftRes: Int = R.dimen.decorator_zero_size,
+        @DimenRes rightRes: Int = R.dimen.decorator_zero_size,
+        @DimenRes bottomRes: Int = R.dimen.decorator_zero_size
     ) : this(
-        context.resources.getDimension(top).toInt(),
-        context.resources.getDimension(left).toInt(),
-        context.resources.getDimension(right).toInt(),
-        context.resources.getDimension(bottom).toInt()
+        context.resources.getDimension(topRes).toInt(),
+        context.resources.getDimension(leftRes).toInt(),
+        context.resources.getDimension(rightRes).toInt(),
+        context.resources.getDimension(bottomRes).toInt()
     )
 
     constructor(
@@ -32,22 +37,22 @@ open class SimpleItemOffsetDecorator(
         resourcesOffsets: ResourcesOffsets
     ): this(
         context = context,
-        top = resourcesOffsets.top,
-        left = resourcesOffsets.left,
-        right = resourcesOffsets.right,
-        bottom = resourcesOffsets.bottom
+        topRes = resourcesOffsets.top,
+        leftRes = resourcesOffsets.left,
+        rightRes = resourcesOffsets.right,
+        bottomRes = resourcesOffsets.bottom
     )
 
     constructor(
         context: Context,
-        @DimenRes verticalOffset: Int = R.dimen.decorator_zero_size,
-        @DimenRes horizontalOffset: Int = R.dimen.decorator_zero_size
-    ) : this(context, verticalOffset, horizontalOffset, horizontalOffset, verticalOffset)
+        @DimenRes verticalOffsetRes: Int = R.dimen.decorator_zero_size,
+        @DimenRes horizontalOffsetRes: Int = R.dimen.decorator_zero_size
+    ) : this(context, verticalOffsetRes, horizontalOffsetRes, horizontalOffsetRes, verticalOffsetRes)
 
     constructor(
         context: Context,
-        @DimenRes offset: Int = R.dimen.decorator_zero_size
-    ) : this(context, offset, offset)
+        @DimenRes offsetRes: Int = R.dimen.decorator_zero_size
+    ) : this(context, offsetRes, offsetRes)
 
     override fun getItemOffsets(
         outRect: Rect,

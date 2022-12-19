@@ -65,6 +65,10 @@ abstract class ModelList<Parent, Model : VM<Parent>> : List<Model>, ILogger {
         return getModels().indexOf(model)
     }
 
+    fun getItems(): List<Parent> {
+        return getModels().map { it.item }
+    }
+
     abstract fun getModelByItem(item: Parent): Model?
 
     override val tag: String = "ModelList"

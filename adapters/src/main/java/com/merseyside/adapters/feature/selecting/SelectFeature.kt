@@ -71,7 +71,7 @@ class Config<Parent, Model>(
 object Selecting {
     context (AdapterConfig<Parent, Model>) operator fun <Parent,
             Model : VM<Parent>, TConfig : Config<Parent, Model>> invoke(
-        config: TConfig.() -> Unit
+        config: TConfig.() -> Unit = {}
     ): SelectFeature<Parent, Model> {
         return SelectFeature<Parent, Model>().also { feature ->
             feature as ConfigurableFeature<Parent, Model, TConfig>

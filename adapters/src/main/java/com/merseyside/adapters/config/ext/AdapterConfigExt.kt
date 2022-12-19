@@ -31,6 +31,6 @@ fun <Parent, Model : VM<Parent>> AdapterConfig<Parent, Model>.getAdapterComparat
     return featureList.filterIsInstance<SortFeature<Parent, Model>>().firstOrNull()?.comparator
 }
 
-fun <Parent> AdapterConfig<Parent, *>.getAdapterSelect(): AdapterSelect<Parent, *>? {
-    return featureList.filterIsInstance<SelectFeature<Parent, *>>().firstOrNull()?.adapterSelect
+fun <Parent, Model : VM<Parent>> AdapterConfig<Parent, Model>.getAdapterSelect(): AdapterSelect<Parent, Model>? {
+    return featureList.filterIsInstance<SelectFeature<Parent, Model>>().firstOrNull()?.adapterSelect
 }

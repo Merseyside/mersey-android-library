@@ -28,6 +28,14 @@
         <item name="positive_text_color">@color/cyan</item>
         <item name="negative_text_color">@color/pink</item>
 
+        <item name="valueSwitcherStyle">@style/Widget.Mersey.ValueSwitcher</item>
+
+        <item name="dayViewStyle">@style/Widget.Mersey.CalendarItemView.Circle</item>
+        <item name="monthDayViewStyle">@style/Widget.Mersey.MonthDayView.Circle</item>
+
+        <item name="timeRangeViewStyle">@style/Widget.Mersey.TimeRangeView</item>
+        <item name="monthViewStyle">@style/Widget.Mersey.MonthView</item>
+
         <item name="some_text">Some text</item>
     </style>
 

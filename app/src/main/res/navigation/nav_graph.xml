@@ -43,6 +43,10 @@
         <action
             android:id="@+id/action_mainFragment_to_moviesFragment"
             app:destination="@id/moviesFragment" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_calendarFragment"
+            app:destination="@id/calendarFragment" />
     </fragment>
 
     <fragment
@@ -99,6 +103,13 @@
         android:name="com.merseyside.merseyLib.features.adapters.movies.view.MoviesFragment"
         android:label="movies_fragment"
         tools:layout="@layout/fragment_movies"
+        app:navGraph="@navigation/nav_graph" />
+
+    <fragment
+        android:id="@+id/calendarFragment"
+        android:name="com.merseyside.merseyLib.features.calendar.view.CalendarFragment"
+        android:label="calendar_fragment"
+        tools:layout="@layout/fragment_calendar"
         app:navGraph="@navigation/nav_graph" />
 
 </navigation>

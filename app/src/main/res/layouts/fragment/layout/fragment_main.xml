@@ -59,6 +59,12 @@
             android:layout_height="wrap_content"
             android:text="Movies"/>
 
+        <Button
+            android:id="@+id/calendar_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Calendar"/>
+
     </LinearLayout>
 
 </layout>

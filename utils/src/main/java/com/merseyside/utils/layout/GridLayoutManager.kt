@@ -11,7 +11,7 @@ open class GridLayoutManager: GridLayoutManager {
         context: Context,
         spanCount: Int,
         orientation: Int,
-        reverseLayout: Boolean
+        reverseLayout: Boolean = false
     ): super(context, spanCount, orientation, reverseLayout)
     constructor(
         context: Context,

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingHorizontal="@dimen/normal_spacing">
+
+        <com.merseyside.archy.presentation.view.calendar.timeUnitView.weekView.WeekView
+            android:id="@+id/week_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/very_large_spacing"
+            android:visibility="gone"/>
+
+        <com.merseyside.archy.presentation.view.calendar.timeUnitView.monthView.MonthView
+            android:id="@+id/month_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</layout>

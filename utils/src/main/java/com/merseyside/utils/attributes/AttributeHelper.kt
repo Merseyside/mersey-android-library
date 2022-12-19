@@ -1,6 +1,7 @@
 package com.merseyside.utils.attributes
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.annotation.AttrRes
@@ -8,6 +9,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.StyleRes
 import androidx.annotation.StyleableRes
 import androidx.core.content.res.getColorOrThrow
+import androidx.core.content.res.getColorStateListOrThrow
 import com.merseyside.merseyLib.kotlin.logger.Logger
 import com.merseyside.utils.ext.capitalize
 import java.lang.reflect.Field
@@ -121,6 +123,26 @@ class AttributeHelper(
             ta.getColor(id, NO_VALUE)
         }
     }
+
+
+    fun getColorStateList(name: String, defValue: ColorStateList): ColorStateList {
+        return requireDefValueIfEmpty(name, defValue) { id ->
+            ta.getColorStateList(id)
+        }
+    }
+
+    fun getColorStateList(name: String): ColorStateList {
+        return ta.getColorStateListOrThrow(getIdentifier(name))
+    }
+
+    fun getColorStateListOrNull(name: String): ColorStateList? {
+        return try {
+            getColorStateList(name)
+        } catch (e: IllegalArgumentException) {
+            null
+        }
+    }
+
 
     fun getDrawable(name: String, defValue: Drawable): Drawable {
         return getDrawableOrNull(name) ?: defValue

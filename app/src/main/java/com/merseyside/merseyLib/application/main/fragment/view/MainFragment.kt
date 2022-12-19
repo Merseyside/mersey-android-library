@@ -39,6 +39,7 @@ class MainFragment : BaseSampleFragment<FragmentMainBinding, MainViewModel>() {
             contactsButton.onClick { navigate(R.id.action_mainFragment_to_contactsFragment) }
             delegatesButton.onClick { navigate(R.id.action_mainFragment_to_delegatesFragment) }
             moviesButton.onClick { navigate(R.id.action_mainFragment_to_moviesFragment) }
+            calendarButton.onClick { navigate(R.id.action_mainFragment_to_calendarFragment) }
         }
     }
 }

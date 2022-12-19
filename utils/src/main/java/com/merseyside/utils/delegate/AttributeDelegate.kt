@@ -1,5 +1,6 @@
 package com.merseyside.utils.delegate
 
+import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import com.merseyside.utils.attributes.AttributeHelper
@@ -13,6 +14,8 @@ import kotlin.reflect.KProperty
  * AttributeSet recycled in View's constructor. That's why we can use it only in init block.
  * And that's why first using of delegated property not inside of init block without explicit setting of resName is impossible.
  */
+
+/* Boolean */
 
 fun AttributeHelper.bool(
     defaultValue: Boolean = false,
@@ -32,6 +35,8 @@ fun AttributeHelper.bool(
         this.value = value
     }
 }
+
+/* String */
 
 fun AttributeHelper.string(
     defaultValue: String = NO_VALUE_STRING,
@@ -70,6 +75,8 @@ fun AttributeHelper.stringOrNull(
     }
 }
 
+/* Int */
+
 fun AttributeHelper.int(
     defaultValue: Int = NO_VALUE,
     resName: String? = null
@@ -106,6 +113,8 @@ fun AttributeHelper.intOrNull(
         this.value = value
     }
 }
+
+/* Float */
 
 fun AttributeHelper.float(
     defaultValue: Float = NO_VALUE_FLOAT,
@@ -144,6 +153,8 @@ fun AttributeHelper.floatOrNull(
     }
 }
 
+/* Resources */
+
 fun AttributeHelper.resource(
     defaultValue: Int = NO_VALUE,
     resName: String? = null
@@ -180,6 +191,8 @@ fun AttributeHelper.resourceOrNull(
         this.value = value
     }
 }
+
+/* Dimension */
 
 fun AttributeHelper.dimension(
     defaultValue: Float = NO_VALUE_FLOAT,
@@ -255,6 +268,8 @@ fun AttributeHelper.dimensionPixelSizeOrNull(
     }
 }
 
+/* Color */
+
 fun AttributeHelper.color(
     @ColorInt defaultValue: Int = NO_VALUE,
     resName: String? = null
@@ -314,6 +329,65 @@ fun AttributeHelper.colorOrNull(
     }
 }
 
+/* ColorStateList */
+fun AttributeHelper.colorStateList(
+    defaultValue: ColorStateList,
+    resName: String? = null
+): ReadWriteProperty<Any, ColorStateList> = object : ReadWriteProperty<Any, ColorStateList> {
+    var value: ColorStateList? = null
+
+    init {
+        if (resName != null) value = getColorStateList(resName, defaultValue)
+    }
+
+    override fun getValue(thisRef: Any, property: KProperty<*>): ColorStateList {
+        return value ?: getColorStateList(property.name, defaultValue)
+            .also { value = it }
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: ColorStateList) {
+        this.value = value
+    }
+}
+
+fun AttributeHelper.colorStateList(
+    resName: String? = null
+): ReadWriteProperty<Any, ColorStateList> = object : ReadWriteProperty<Any, ColorStateList> {
+    var value: ColorStateList? = null
+
+    init {
+        if (resName != null) value = getColorStateList(resName)
+    }
+
+    override fun getValue(thisRef: Any, property: KProperty<*>): ColorStateList {
+        return value ?: getColorStateList(property.name).also { value = it }
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: ColorStateList) {
+        this.value = value
+    }
+}
+
+fun AttributeHelper.colorStateListOrNull(
+    resName: String? = null
+): ReadWriteProperty<Any, ColorStateList?> = object : ReadWriteProperty<Any, ColorStateList?> {
+    var value: ColorStateList? = null
+
+    init {
+        if (resName != null) value = getColorStateListOrNull(resName)
+    }
+
+    override fun getValue(thisRef: Any, property: KProperty<*>): ColorStateList? {
+        return value ?: getColorStateListOrNull(property.name)?.also { value = it }
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: ColorStateList?) {
+        this.value = value
+    }
+}
+
+/* Drawable */
+
 fun AttributeHelper.drawable(
     defaultValue: Drawable,
     resName: String? = null
@@ -351,6 +425,8 @@ fun AttributeHelper.drawableOrNull(
     }
 }
 
+/* Text array */
+
 fun AttributeHelper.textArray(
     resName: String? = null
 ): ReadWriteProperty<Any, List<String>> = object : ReadWriteProperty<Any, List<String>> {
@@ -386,6 +462,8 @@ fun AttributeHelper.textArrayOrNull(
         this.value = value
     }
 }
+
+/* Enum */
 
 fun <T> AttributeHelper.enum(
     defaultValue: T? = null,
