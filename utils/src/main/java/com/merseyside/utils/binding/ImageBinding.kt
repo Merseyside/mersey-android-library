@@ -68,6 +68,7 @@ fun ImageView.loadVectorDrawable(@DrawableRes resId: Int?) {
     "placeholder",
     "crossfade",
     "roundedCorners",
+    "roundedTopCorners",
     "radiusCorners",
     "cropCircle",
     "cropStrokeColor",
@@ -84,6 +85,7 @@ fun setImageWithCoil(
     placeholder: Any?,
     isCrossfade: Boolean = false,
     isRoundedCorners: Boolean = false,
+    isRoundedTopCorners: Boolean = false,
     radiusCorners: Float = 0f,
     isCropCircle: Boolean = false,
     @ColorInt cropStrokeColor: Int? = null,
@@ -94,6 +96,7 @@ fun setImageWithCoil(
     val builder = build(
         isCrossfade,
         isRoundedCorners,
+        isRoundedTopCorners,
         radiusCorners,
         isCropCircle,
         cropStrokeWidth,
@@ -129,6 +132,7 @@ private fun ImageView.loadPlaceholder(
 private fun build(
     crossfade: Boolean,
     roundedCorners: Boolean,
+    isRoundedTopCorners: Boolean,
     radiusCorners: Float,
     cropCircle: Boolean,
     strokeWidth: Float?,
@@ -145,12 +149,19 @@ private fun build(
             transformations(CircleCropTransformation(stroke, cropImageSize, cropBackgroundColor))
         } else if (roundedCorners) {
             transformations(RoundedCornersTransformation(radius = radiusCorners))
+        } else if (isRoundedTopCorners) {
+            transformations(
+                RoundedCornersTransformation(
+                    topLeft = radiusCorners,
+                    topRight = radiusCorners
+                )
+            )
         }
     }
 }
 
 private fun getValidPlaceholder(placeholder: Any): Drawable {
-    return when(placeholder) {
+    return when (placeholder) {
         is Drawable -> placeholder
         is Int -> ColorDrawable(placeholder)
         else -> throw IllegalArgumentException("Only drawable and color placeholders supported!")
