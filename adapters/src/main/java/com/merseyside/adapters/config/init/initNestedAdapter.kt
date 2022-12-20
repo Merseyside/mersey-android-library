@@ -10,7 +10,7 @@ inline fun <reified Adapter : INestedAdapter<Parent, Model, InnerData, InnerAdap
         Model : NestedAdapterParentViewModel<out Parent, Parent, InnerData>,
         InnerData, InnerAdapter : BaseAdapter<InnerData, *>,
         Config : NestedAdapterConfig<Parent, Model, InnerData, InnerAdapter>>
-        initAdapter(
+        initNestedAdapter(
     crossinline constructor: (Config) -> Adapter,
     noinline configure: NestedAdapterConfig<Parent, Model, InnerData, InnerAdapter>.() -> Unit = {}
 ): Adapter {
@@ -25,7 +25,7 @@ inline fun <reified Adapter : INestedAdapter<Parent, Model, InnerData, InnerAdap
         InnerData, InnerAdapter : BaseAdapter<InnerData, *>,
         Config : NestedAdapterConfig<Parent, Model, InnerData, InnerAdapter>,
         reified T1>
-        initAdapter(
+        initNestedAdapter(
     crossinline constructor: (Config, T1) -> Adapter,
     argT1: T1,
     noinline configure: NestedAdapterConfig<Parent, Model, InnerData, InnerAdapter>.() -> Unit = {}
@@ -41,7 +41,7 @@ inline fun <reified Adapter : INestedAdapter<Parent, Model, InnerData, InnerAdap
         InnerData, InnerAdapter : BaseAdapter<InnerData, *>,
         Config : NestedAdapterConfig<Parent, Model, InnerData, InnerAdapter>,
         reified T1, reified T2>
-        initAdapter(
+        initNestedAdapter(
     crossinline constructor: (Config, T1, T2) -> Adapter,
     argT1: T1, argT2: T2,
     noinline configure: NestedAdapterConfig<Parent, Model, InnerData, InnerAdapter>.() -> Unit = {}
@@ -57,7 +57,7 @@ inline fun <reified Adapter : INestedAdapter<Parent, Model, InnerData, InnerAdap
         InnerData, InnerAdapter : BaseAdapter<InnerData, *>,
         Config : NestedAdapterConfig<Parent, Model, InnerData, InnerAdapter>,
         reified T1, reified T2, reified T3>
-        initAdapter(
+        initNestedAdapter(
     crossinline constructor: (Config, T1, T2, T3) -> Adapter,
     argT1: T1, argT2: T2, argT3: T3,
     noinline configure: NestedAdapterConfig<Parent, Model, InnerData, InnerAdapter>.() -> Unit = {}
@@ -73,7 +73,7 @@ inline fun <reified Adapter : INestedAdapter<Parent, Model, InnerData, InnerAdap
         InnerData, InnerAdapter : BaseAdapter<InnerData, *>,
         Config : NestedAdapterConfig<Parent, Model, InnerData, InnerAdapter>,
         reified T1, reified T2, reified T3, reified T4>
-        initAdapter(
+        initNestedAdapter(
     crossinline constructor: (Config, T1, T2, T3, T4) -> Adapter,
     argT1: T1, argT2: T2, argT3: T3, argT4: T4,
     noinline configure: NestedAdapterConfig<Parent, Model, InnerData, InnerAdapter>.() -> Unit = {}
@@ -89,7 +89,7 @@ inline fun <reified Adapter : INestedAdapter<Parent, Model, InnerData, InnerAdap
         InnerData, InnerAdapter : BaseAdapter<InnerData, *>,
         Config : NestedAdapterConfig<Parent, Model, InnerData, InnerAdapter>,
         reified T1, reified T2, reified T3, reified T4, reified T5>
-        initAdapter(
+        initNestedAdapter(
     crossinline constructor: (Config, T1, T2, T3, T4, T5) -> Adapter,
     argT1: T1, argT2: T2, argT3: T3, argT4: T4, argT5: T5,
     noinline configure: NestedAdapterConfig<Parent, Model, InnerData, InnerAdapter>.() -> Unit = {}
@@ -105,7 +105,7 @@ inline fun <reified Adapter : INestedAdapter<Parent, Model, InnerData, InnerAdap
         InnerData, InnerAdapter : BaseAdapter<InnerData, *>,
         Config : NestedAdapterConfig<Parent, Model, InnerData, InnerAdapter>,
         reified T1, reified T2, reified T3, reified T4, reified T5, reified T6>
-        initAdapter(
+        initNestedAdapter(
     crossinline constructor: (Config, T1, T2, T3, T4, T5, T6) -> Adapter,
     argT1: T1, argT2: T2, argT3: T3, argT4: T4, argT5: T5, argT6: T6,
     noinline configure: NestedAdapterConfig<Parent, Model, InnerData, InnerAdapter>.() -> Unit = {}
