@@ -1,10 +1,9 @@
 package com.merseyside.merseyLib.features.adapters.colors.producer
 
-import android.graphics.Color
 import com.merseyside.merseyLib.features.adapters.colors.entity.HexColor
+import com.merseyside.utils.randomColor
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import java.util.*
 
 class ColorProducer {
 
@@ -13,10 +12,7 @@ class ColorProducer {
 
     suspend fun generateRandomColors(count: Int = 10) {
         val colors = (0 until count).map {
-
-            val rnd = Random()
-            val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
-            HexColor(color)
+            HexColor(randomColor())
         }
 
         colorsFlow.emit(colors)

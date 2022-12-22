@@ -1,19 +1,26 @@
 package com.merseyside.adapters.compose.style
 
+import android.content.Context
 import androidx.annotation.CallSuper
+import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
+import androidx.core.content.ContextCompat
 import com.merseyside.merseyLib.kotlin.logger.ILogger
 import com.merseyside.utils.getClassName
 
-abstract class ComposingStyle : ILogger {
+abstract class ComposingStyle(val context: Context) : ILogger {
     var width: Int? = null
     var height: Int? = null
 
     var margins: Margins? = null
     var paddings: Paddings? = null
 
-    @ColorRes var backgroundColor: Int? = null
+    @ColorInt var backgroundColor: Int? = null
+
+    fun setBackgroundColor(@ColorRes color: Int) {
+        backgroundColor = ContextCompat.getColor(context, color)
+    }
 
     var clickable: Boolean = true
 

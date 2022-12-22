@@ -51,7 +51,7 @@ open class CompositeAdapter<Parent, ParentModel>(
         payloads: List<Any>
     ) {
         super.onBindViewHolder(holder, position, payloads)
-        delegatesManager.onModelUpdated(holder.model)
+        delegatesManager.onBindViewHolder(holder, position, payloads)
     }
 
     @InternalAdaptersApi

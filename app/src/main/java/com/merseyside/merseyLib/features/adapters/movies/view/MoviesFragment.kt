@@ -41,6 +41,8 @@ class MoviesFragment : BaseSampleFragment<FragmentMoviesBinding, MoviesViewModel
             coroutineScope = lifecycleScope
         }.also { adapter -> requireBinding().composite.adapter = adapter }
 
-        screenBuilder = MovieScreenAdapterComposer(requireContext(), movieAdapter, viewLifecycleOwner)
+        viewLifecycleOwner
+
+        screenBuilder = MovieScreenAdapterComposer(this, movieAdapter)
     }
 }

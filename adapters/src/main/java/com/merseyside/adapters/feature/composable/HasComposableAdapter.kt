@@ -1,28 +1,36 @@
 package com.merseyside.adapters.feature.composable
 
+import android.content.Context
+import androidx.lifecycle.LifecycleOwner
 import com.merseyside.adapters.compose.adapter.ViewCompositeAdapter
 import com.merseyside.adapters.compose.delegate.ViewDelegateAdapter
 import com.merseyside.adapters.compose.dsl.context.ComposeContext
+import com.merseyside.adapters.compose.dsl.context.compose
 import com.merseyside.adapters.compose.model.ViewAdapterViewModel
 import com.merseyside.adapters.compose.style.ComposingStyle
 import com.merseyside.adapters.compose.view.base.SCV
+import com.merseyside.adapters.compose.viewProvider.ViewComposeContext
 import com.merseyside.adapters.interfaces.ext.addOrUpdateAsync
-import com.merseyside.adapters.utils.runWithDefault
 
-interface HasComposableAdapter<Model>
-        where Model : ViewAdapterViewModel {
+interface HasComposableAdapter {
 
-    val adapter: ViewCompositeAdapter<SCV, Model>
-    val delegates: List<ViewDelegateAdapter<out SCV, out ComposingStyle, out Model>>
+    val adapter: ViewCompositeAdapter<SCV, ViewAdapterViewModel>
+    val delegates: List<ViewDelegateAdapter<out SCV, out ComposingStyle, out ViewAdapterViewModel>>
 
-    suspend fun composeScreen(): ComposeContext
+    val context: Context
+    val viewLifecycleOwner: LifecycleOwner
 
-    suspend fun composeInternal() = runWithDefault {
+    suspend fun composeScreen(): ComposeContext.() -> Unit
+
+    suspend fun composeInternal() {
         if (adapter.delegatesManager.isEmpty()) {
             adapter.delegatesManager.addDelegateList(delegates)
         }
 
-        val screenContext = composeScreen()
+        val screenContext = compose(context, viewLifecycleOwner, composeScreen()).apply {
+            relativeAdapter = adapter
+        }
+
         showViews(screenContext.views)
     }
 
@@ -34,12 +42,12 @@ interface HasComposableAdapter<Model>
         adapter.workManager.doAsync(onComplete) { invalidate() }
     }
 
+    @Suppress("UNCHECKED_CAST")
+    fun <View : SCV> findViewById(id: String): View? {
+        return adapter.findViewById(id)
+    }
+
     suspend fun invalidate() {
         composeInternal()
     }
-}
-
-interface HasSimpleComposableAdapter : HasComposableAdapter<ViewAdapterViewModel> {
-
-    override val adapter: ViewCompositeAdapter<SCV, ViewAdapterViewModel>
 }

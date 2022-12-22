@@ -12,5 +12,4 @@ interface IDelegateAdapter<Item : Parent, Parent, Model> : HasOnItemClickListene
 
     fun getBindingVariable(): Int
 
-    fun onModelUpdated(model: Model) {}
 }

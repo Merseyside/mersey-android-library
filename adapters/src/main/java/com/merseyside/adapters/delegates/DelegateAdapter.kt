@@ -64,13 +64,20 @@ abstract class DelegateAdapter<Item : Parent, Parent, Model> :
 
     @OptIn(InternalAdaptersApi::class)
     open fun onModelCreated(model: Model) {
-        model.clickEvent.observe(onClick)
+        model.clickEvent.observe(observer = onClick)
     }
 
     @CallSuper
     open fun onBindViewHolder(holder: TypedBindingHolder<Model>, model: Model, position: Int) {
         holder.bind(getBindingVariable(), model)
     }
+
+    open fun onBindViewHolder(
+        holder: TypedBindingHolder<Model>,
+        model: Model,
+        position: Int,
+        payloads: List<Any>
+    ) {}
 
     open fun getBindingHolder(binding: ViewDataBinding) = TypedBindingHolder<Model>(binding)
 
