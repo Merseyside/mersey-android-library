@@ -1,9 +1,8 @@
 package com.merseyside.adapters.config.update
 
-import com.merseyside.adapters.utils.UpdateRequest
-import com.merseyside.adapters.utils.runWithDefault
-import com.merseyside.merseyLib.kotlin.extensions.subtractBy
 import com.merseyside.adapters.model.VM
+import com.merseyside.adapters.utils.UpdateRequest
+import com.merseyside.merseyLib.kotlin.extensions.subtractBy
 
 interface UpdateLogic<Parent, Model : VM<Parent>> {
 
@@ -16,8 +15,8 @@ interface UpdateLogic<Parent, Model : VM<Parent>> {
     suspend fun findOutdatedModels(
         newItems: List<Parent>,
         models: List<Model>,
-    ): List<Model> = runWithDefault {
-        models.subtractBy(newItems) { oldModel, newItem ->
+    ): List<Model>  {
+        return models.subtractBy(newItems) { oldModel, newItem ->
             oldModel.isDeletable && oldModel.areItemsTheSame(newItem)
         }.toList()
     }

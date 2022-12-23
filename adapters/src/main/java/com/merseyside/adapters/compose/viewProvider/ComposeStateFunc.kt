@@ -2,7 +2,6 @@ package com.merseyside.adapters.compose.viewProvider
 
 import androidx.lifecycle.asLiveData
 import com.merseyside.adapters.compose.dsl.context.ComposeContext
-import com.merseyside.adapters.compose.view.base.SCV
 import com.merseyside.merseyLib.kotlin.utils.safeLet
 import kotlinx.coroutines.flow.StateFlow
 import kotlin.properties.ReadWriteProperty
@@ -45,7 +44,7 @@ import kotlin.reflect.KProperty
 //    }
 
 @Suppress("UNCHECKED_CAST")
-fun <T> StateFlow<T>.asComposeState(context: ComposeContext): ReadWriteProperty<ComposeContext?, T> =
+fun <T> StateFlow<T>.asComposeState(context: ComposeContext): ComposeStateDelegate<T> =
     // try too find an answer why thisRes is null when call from method
     object : ComposeStateDelegate<T>(context) {
 
@@ -101,7 +100,7 @@ abstract class ComposeStateDelegate<T>(val context: ComposeContext) :
 fun <T> composeState(
     context: ComposeContext,
     initValue: () -> T
-): ReadWriteProperty<ComposeContext?, T> =
+): ComposeStateDelegate<T> =
     object : ComposeStateDelegate<T>(context) {
         override fun createComposeState(propertyName: String): MutableComposeState<T> {
             return MutableComposeState(propertyName, initValue())
