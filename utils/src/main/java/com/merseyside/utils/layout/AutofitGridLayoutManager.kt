@@ -2,7 +2,6 @@ package com.merseyside.utils.layout
 
 import android.content.Context
 import android.util.TypedValue
-import androidx.annotation.NonNull
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -10,7 +9,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 
-class GridAutofitLayoutManager : GridLayoutManager {
+class AutofitGridLayoutManager : GridLayoutManager {
     private var columnWidth = 0
     private var isColumnWidthChanged = true
     private var lastWidth = 0

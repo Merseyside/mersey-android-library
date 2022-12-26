@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.min
 
-class LinearAutofitLayoutManager : WrapContentLinearLayoutManager, SizeProviderLayoutManager {
+class AutofitLinearLayoutManager : WrapContentLinearLayoutManager, SizeProviderLayoutManager {
 
     override var itemWidth: Int = 0
     override var itemHeight: Int = 0
@@ -26,9 +26,9 @@ class LinearAutofitLayoutManager : WrapContentLinearLayoutManager, SizeProviderL
 
     constructor(
         context: Context,
-        desiredItemSize: Int = 0,
         orientation: Int = HORIZONTAL,
         reverseLayout: Boolean = false,
+        desiredItemSize: Int = 0,
         maxSize: Int = Int.MAX_VALUE
     ) : super(context, desiredItemSize, orientation, reverseLayout) {
         this.maxSize = maxSize
