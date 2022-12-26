@@ -12,6 +12,7 @@ import androidx.databinding.BindingAdapter
 import coil.load
 import coil.request.ImageRequest
 import coil.transform.RoundedCornersTransformation
+import com.merseyside.merseyLib.kotlin.extensions.isNotZero
 import com.merseyside.merseyLib.kotlin.utils.firstNotNull
 import com.merseyside.merseyLib.kotlin.utils.safeLet
 import com.merseyside.utils.coil.CircleCropStroke
@@ -67,8 +68,11 @@ fun ImageView.loadVectorDrawable(@DrawableRes resId: Int?) {
     "placeholder",
     "crossfade",
     "roundedCorners",
-    "roundedTopCorners",
     "radiusCorners",
+    "bottomLeftRadius",
+    "bottomRightRadius",
+    "topLeftRadius",
+    "topRightRadius",
     "cropCircle",
     "cropStrokeColor",
     "cropStrokeWidth",
@@ -84,8 +88,11 @@ fun setImageWithCoil(
     placeholder: Any?,
     isCrossfade: Boolean = false,
     isRoundedCorners: Boolean = false,
-    isRoundedTopCorners: Boolean = false,
     radiusCorners: Float = 0f,
+    bottomLeftRadius: Float = 0f,
+    bottomRightRadius: Float = 0f,
+    topLeftRadius: Float = 0f,
+    topRightRadius: Float = 0f,
     isCropCircle: Boolean = false,
     @ColorInt cropStrokeColor: Int? = null,
     cropStrokeWidth: Float? = null,
@@ -95,8 +102,11 @@ fun setImageWithCoil(
     val builder = build(
         isCrossfade,
         isRoundedCorners,
-        isRoundedTopCorners,
         radiusCorners,
+        bottomLeftRadius,
+        bottomRightRadius,
+        topLeftRadius,
+        topRightRadius,
         isCropCircle,
         cropStrokeWidth,
         cropStrokeColor,
@@ -130,8 +140,11 @@ private fun ImageView.loadPlaceholder(
 private fun build(
     crossfade: Boolean,
     roundedCorners: Boolean,
-    isRoundedTopCorners: Boolean,
     radiusCorners: Float,
+    bottomLeftRadius: Float,
+    bottomRightRadius: Float,
+    topLeftRadius: Float,
+    topRightRadius: Float,
     cropCircle: Boolean,
     strokeWidth: Float?,
     @ColorInt strokeColor: Int?,
@@ -147,11 +160,15 @@ private fun build(
             transformations(CircleCropTransformation(stroke, cropImageSize, cropBackgroundColor))
         } else if (roundedCorners) {
             transformations(RoundedCornersTransformation(radius = radiusCorners))
-        } else if (isRoundedTopCorners) {
+        } else if (bottomLeftRadius.isNotZero() ||
+            bottomRightRadius.isNotZero() || topLeftRadius.isNotZero() || topRightRadius.isNotZero()
+        ) {
             transformations(
                 RoundedCornersTransformation(
-                    topLeft = radiusCorners,
-                    topRight = radiusCorners
+                    bottomLeft = bottomLeftRadius,
+                    bottomRight = bottomRightRadius,
+                    topLeft = topLeftRadius,
+                    topRight = topRightRadius
                 )
             )
         }
