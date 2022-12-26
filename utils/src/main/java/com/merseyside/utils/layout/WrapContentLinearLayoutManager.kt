@@ -27,17 +27,14 @@ open class WrapContentLinearLayoutManager : LinearLayoutManager {
         desiredItemSize: Int,
         orientation: Int,
         reverseLayout: Boolean
-    ) : super(
-        context, orientation, reverseLayout
-    ) {
+    ) : super(context, orientation, reverseLayout) {
         this.desiredItemSize = desiredItemSize
     }
 
     override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
         try {
             super.onLayoutChildren(recycler, state)
-        } catch (ignored: IndexOutOfBoundsException) {
-        }
+        } catch (ignored: IndexOutOfBoundsException) { }
     }
 
     override fun onMeasure(
