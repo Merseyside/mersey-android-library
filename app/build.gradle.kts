@@ -91,7 +91,9 @@ val androidLibz = listOf(
     androidLibs.appCompat,
     androidLibs.material,
     androidLibs.cardView,
-    androidLibs.dagger
+    androidLibs.dagger,
+    androidLibs.coil,
+    androidLibs.coil.svg
 )
 
 val modulez = listOf(

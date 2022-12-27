@@ -30,7 +30,7 @@ class AutofitLinearLayoutManager : WrapContentLinearLayoutManager, SizeProviderL
         reverseLayout: Boolean = false,
         desiredItemSize: Int = 0,
         maxSize: Int = Int.MAX_VALUE
-    ) : super(context, desiredItemSize, orientation, reverseLayout) {
+    ) : super(context, orientation, reverseLayout, desiredItemSize) {
         this.maxSize = maxSize
     }
 
