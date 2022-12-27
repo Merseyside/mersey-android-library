@@ -19,6 +19,7 @@ import com.merseyside.merseyLib.kotlin.utils.safeLet
 import com.merseyside.utils.coil.CircleCropStroke
 import com.merseyside.utils.coil.CircleCropTransformation
 import com.merseyside.utils.ext.getDrawableResourceIdByName
+import java.nio.ByteBuffer
 
 @BindingAdapter("srcCompat")
 fun setDrawableSrcCompat(view: ImageView, drawable: Drawable?) {
@@ -66,6 +67,7 @@ fun ImageView.loadVectorDrawable(@DrawableRes resId: Int?) {
     "drawable",
     "imageUrl",
     "imageUri",
+    "rawSvg",
     "placeholder",
     "crossfade",
     "roundedCorners",
@@ -86,6 +88,7 @@ fun setImageWithCoil(
     drawable: Drawable?,
     imageUrl: String?,
     imageUri: Uri?,
+    rawSvg: String?,
     placeholder: Any?,
     isCrossfade: Boolean = false,
     isRoundedCorners: Boolean = false,
@@ -117,7 +120,8 @@ fun setImageWithCoil(
 
     with(imageView) {
         try {
-            val data = firstNotNull(drawable, imageUrl, imageUri)
+            val data = if (rawSvg != null) ByteBuffer.wrap(rawSvg.toByteArray())
+            else firstNotNull(drawable, imageUrl, imageUri)
             load(data) {
                 //listener { request, result -> result.log("CoilResult") }
                 builder()
