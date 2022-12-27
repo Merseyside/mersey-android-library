@@ -1,11 +1,11 @@
 package com.merseyside.merseyLib.features.adapters.movies.adapter.views
 
-import com.merseyside.adapters.compose.dsl.context.ListComposeContext
 import com.merseyside.adapters.compose.dsl.context.ComposeContext
 import com.merseyside.adapters.compose.view.list.simple.ComposingList
 import com.merseyside.adapters.compose.style.ComposingStyle
 import com.merseyside.adapters.compose.view.list.simple.ComposingListStyle
 import com.merseyside.adapters.compose.view.list.simple.ListConfig
+import com.merseyside.adapters.compose.viewProvider.ViewProviderContext
 import com.merseyside.merseyLib.R
 
 object MarginComposingList {
@@ -19,8 +19,8 @@ object MarginComposingList {
         id: String,
         style: ComposingListStyle.() -> Unit = {},
         configure: ListConfig.() -> Unit = {},
-        contextInit: ListComposeContext.() -> Unit
+        buildViews: ComposeContext.() -> Unit
     ): ComposingList {
-        return ComposingList(id, configure, initWithDefaults(style), contextInit)
+        return ComposingList(id, configure, initWithDefaults(style), buildViews)
     }
 }

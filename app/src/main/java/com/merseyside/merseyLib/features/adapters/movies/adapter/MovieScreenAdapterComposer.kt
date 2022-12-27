@@ -1,13 +1,11 @@
 package com.merseyside.merseyLib.features.adapters.movies.adapter
 
-import android.content.Context
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.merseyside.adapters.compose.SimpleAdapterComposer
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.*
+import com.merseyside.adapters.compose.FragmentAdapterComposer
 import com.merseyside.adapters.compose.adapter.SimpleViewCompositeAdapter
 import com.merseyside.adapters.compose.delegate.ViewDelegateAdapter
-import com.merseyside.adapters.compose.dsl.context.compose
+import com.merseyside.adapters.compose.dsl.context.ComposeContext
 import com.merseyside.adapters.compose.model.ViewAdapterViewModel
 import com.merseyside.adapters.compose.style.ComposingStyle
 import com.merseyside.adapters.compose.view.base.SCV
@@ -19,33 +17,27 @@ import com.merseyside.adapters.compose.view.list.simple.ComposingListDelegate
 import com.merseyside.adapters.compose.view.list.simple.adapterConfig
 import com.merseyside.adapters.compose.view.text.ComposingTextDelegate
 import com.merseyside.adapters.compose.view.text.Text
+import com.merseyside.adapters.compose.viewProvider.asComposeState
+import com.merseyside.adapters.compose.viewProvider.composeState
 import com.merseyside.adapters.extensions.onClick
 import com.merseyside.adapters.extensions.onItemSelected
 import com.merseyside.adapters.feature.selecting.SelectableMode
 import com.merseyside.adapters.feature.sorting.Sorting
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.features.adapters.movies.adapter.comparator.TextComparator
-import com.merseyside.merseyLib.kotlin.coroutines.flow.BufferFlow
-import com.merseyside.merseyLib.kotlin.extensions.launchDelayed
 import com.merseyside.merseyLib.kotlin.logger.ILogger
-import com.merseyside.merseyLib.time.units.Seconds
-import kotlinx.coroutines.launch
+import com.merseyside.merseyLib.time.coroutines.delay
+import com.merseyside.merseyLib.time.units.Millis
+import com.merseyside.utils.randomColor
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.isActive
 import com.merseyside.merseyLib.features.adapters.movies.adapter.views.MarginComposingList as List
 import kotlin.collections.List as ArrayList
 
 class MovieScreenAdapterComposer(
-    private val context: Context,
+    fragment: Fragment,
     override val adapter: SimpleViewCompositeAdapter,
-    viewLifecycleOwner: LifecycleOwner,
-) : SimpleAdapterComposer(viewLifecycleOwner), ILogger {
-
-    private val clickBuffer = BufferFlow<Unit>(
-        adapter.adapterConfig.coroutineScope,
-        capacity = 3,
-        timeoutMs = Seconds(3).millis
-    )
-
-    private var dataLiveData: LiveData<String>? = null
+) : FragmentAdapterComposer(fragment), ILogger {
 
     override val delegates: ArrayList<ViewDelegateAdapter<out SCV, out ComposingStyle, out ViewAdapterViewModel>> =
         listOf(
@@ -56,40 +48,38 @@ class MovieScreenAdapterComposer(
         )
 
     init {
-        adapter.adapterConfig.coroutineScope.launch {
-            clickBuffer.collect {
-                it.log("clicks collected")
+        fragment.lifecycleScope.launchWhenStarted {
+            while(isActive) {
+                delay(Millis(400))
+                stateFlow.value = randomColor()
             }
         }
     }
 
-    override suspend fun composeScreen() = compose {
-        Text("shrinked",
+    private val stateFlow = MutableStateFlow(R.color.red)
+
+    override suspend fun composeScreen(): ComposeContext.() -> Unit = {
+
+        val color2: Int by stateFlow.asComposeState(this)
+
+        Text("disco",
             style = {
-                width = 150
-                height = 400
-                textColor = R.color.red
+                setTextSize(R.dimen.large_text_size)
+                textColor = color2
             })
         {
-            text = "shrinked width text"
-        }
-
-        if (dataLiveData?.value != null) {
-            Text("data") {
-                text = "Text from data source ${dataLiveData?.value}"
-            }
+            text = "Disco time"
         }
 
         ComposingSelectableList("selectable_list",
             configure = {
                 selectableMode = SelectableMode.SINGLE
-
                 onItemSelected { item, isSelected, _ -> isSelected.log("selected") }
             }
         ) {
             CheckBox("kek",
                 style = {
-                    textColor = R.color.red
+                    setTextColor(R.color.red)
                 }) {
                 onClick { "clicked".log() }
                 text = "lol"
@@ -97,21 +87,20 @@ class MovieScreenAdapterComposer(
             }
 
             Text("imposter",
-                style = { textColor = R.color.green }) {
+                style = { setTextColor(R.color.green) }) {
                 text = "I'm an imposter in selectable list"
-                onClick { clickBuffer.emit(Unit) }
             }
 
             CheckBox("kek1",
                 style = {
-                    textColor = R.color.red
+                    setTextColor(R.color.red)
                 }) {
                 onClick { "clicked".log() }
                 text = "lol"
                 //checked = true
             }
         }
-
+//
         List("list") {
             List("inner_list1") {
                 List("inner_list2") {
@@ -133,82 +122,84 @@ class MovieScreenAdapterComposer(
                             }) {
 
                             Text("text4_3",
-                                style = { textColor = R.color.green }) {
-                                text = "text item 4_3"
+                                style = { setTextColor(R.color.green) }) {
+                                text = "some text"
                             }
 
                             Text("text4_2",
-                                style = { textColor = R.color.blue_primary }) {
-                                text = "text item 4_2 ${dataLiveData?.value ?: ""}"
+                                style = { setTextColor(R.color.blue_primary) }) {
+                                text = "text item 4_2"
                             }
                         }
 
                         Text("text3_1",
-                            style = { textColor = R.color.green }) {
+                            style = { setTextColor(R.color.green) }) {
                             text = "text item 3_1"
                         }
 
                         Text("text3_2",
-                            style = { textColor = R.color.blue_primary }) {
-                            text = "text item 3_2 ${dataLiveData?.value ?: ""}"
+                            style = { setTextColor(R.color.blue_primary) }) {
+                            text = "text item 3_2"
                         }
                     }
 //
                     Text("text2_1",
-                        style = { textColor = R.color.green }) {
+                        style = { setTextColor(R.color.green) }) {
                         text = "text item 2_1"
                     }
 
                     Text("text2_2",
-                        style = { textColor = R.color.blue_primary }) {
-                        text = "text item 2_2 ${dataLiveData?.value ?: ""}"
+                        style = { setTextColor(R.color.blue_primary) }) {
+                        text = "text item 2_2"
                     }
                 }
 //
                 Text("text1_1",
-                    style = { textColor = R.color.green }) {
+                    style = { setTextColor(R.color.green) }) {
                     text = "text item 1_1"
                 }
 
                 Text("text1_2",
-                    style = { textColor = R.color.blue_primary }) {
+                    style = { setTextColor(R.color.blue_primary) }) {
                     onClick { "click".log() }
-                    text =
-                        if (dataLiveData?.value == null) "text item 1_2" else "updated text item 1_2"
+                    text = "text item 1_2"
                 }
             }
 
+            val color1: Int by stateFlow.asComposeState(this)
+            var someState: Int by composeState(this) { 0 }
 
             Text("text1",
-                style = { textColor = R.color.green }) {
-                text = "text item 1"
+                style = {
+                    textColor = color1
+                    setTextSize(R.dimen.large_text_size)
+                }) {
+                text = "Click me!"
+                onClick { someState++ }
+            }
+
+            Text("text1_clicks",
+                style = {
+                    setTextColor(R.color.white)
+                    setTextSize(R.dimen.text_size)
+                }) {
+                text = "Clicks count: $someState"
             }
         }
-
+//
         Text("large",
-            style = { textSize = R.dimen.large_text_size }) {
+            style = { setTextSize(R.dimen.large_text_size) }) {
             text = "large text size"
         }
 
         Text("default",
-            style = { backgroundColor = R.color.green }) {
-            text = "dafault text with background"
+            style = { setBackgroundColor(R.color.green) }) {
+            text = "default text with background"
         }
-    }
-
-
-    fun addTextDataSource(ld: LiveData<String>) {
-        dataLiveData = ld
-        addDataSource(ld)
     }
 
     init {
         invalidateAsync()
-
-        adapter.adapterConfig.coroutineScope.launchDelayed(Seconds(2).millis) {
-            val mld = MutableLiveData("some data")
-            addTextDataSource(mld)
-        }
     }
 
     override val tag = "MovieScreen"

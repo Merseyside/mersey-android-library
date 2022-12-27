@@ -10,6 +10,8 @@ import com.merseyside.adapters.compose.delegate.NestedViewDelegateAdapter
 import com.merseyside.adapters.compose.view.base.SCV
 import com.merseyside.adapters.compose.view.list.simple.ComposingList
 import com.merseyside.adapters.compose.view.list.simple.ComposingListStyle
+import com.merseyside.adapters.compose.view.viewGroup.ComposingViewGroup
+import com.merseyside.adapters.compose.view.viewGroup.ComposingViewGroupDelegate
 import com.merseyside.adapters.extensions.onClick
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 import com.merseyside.adapters.model.VM
@@ -17,7 +19,7 @@ import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.merseyLib.kotlin.utils.safeLet
 
 abstract class BaseComposingListDelegate<View, Model, InnerParent, InnerModel, InnerAdapter>
-    : NestedViewDelegateAdapter<View, ComposingListStyle, Model, InnerParent, InnerModel, InnerAdapter>()
+    : ComposingViewGroupDelegate<View, ComposingListStyle, Model, InnerParent, InnerModel, InnerAdapter>()
         where View : ComposingList,
               Model : NestedAdapterParentViewModel<View, SCV, out InnerParent>,
               InnerParent: SCV,

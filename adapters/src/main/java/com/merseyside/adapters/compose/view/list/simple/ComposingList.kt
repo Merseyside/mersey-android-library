@@ -1,27 +1,28 @@
 package com.merseyside.adapters.compose.view.list.simple
 
+import android.content.Context
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import androidx.recyclerview.widget.RecyclerView.Orientation
 import com.merseyside.adapters.callback.HasOnItemClickListener
 import com.merseyside.adapters.callback.OnItemClickListener
 import com.merseyside.adapters.compose.delegate.ViewDelegateAdapter
-import com.merseyside.adapters.compose.dsl.context.ComposeContext
-import com.merseyside.adapters.compose.dsl.context.ListComposeContext
-import com.merseyside.adapters.compose.dsl.context.list
-import com.merseyside.adapters.compose.style.ComposingStyle
+import com.merseyside.adapters.compose.dsl.context.*
 import com.merseyside.adapters.compose.view.base.SCV
 import com.merseyside.adapters.compose.view.base.StyleableComposingView
-import com.merseyside.adapters.compose.view.base.addView
+import com.merseyside.adapters.compose.view.viewGroup.ComposingViewGroup
+import com.merseyside.adapters.compose.view.viewGroup.ComposingViewGroupStyle
+import com.merseyside.adapters.compose.viewProvider.ViewProviderContext
+import com.merseyside.adapters.compose.viewProvider.addView
 import com.merseyside.adapters.config.AdapterConfig
 import com.merseyside.adapters.model.VM
 
 open class ComposingList(
     id: String,
     val configure: ListConfig.() -> Unit,
-    override val composingStyle: ComposingListStyle,
-    open val viewList: List<SCV> = emptyList()
-) : StyleableComposingView<ComposingListStyle>(id) {
+    composingStyle: ComposingListStyle,
+    listComposeContext: ListComposeContext
+) : ComposingViewGroup<ComposingListStyle>(id, composingStyle, listComposeContext) {
 
     open val listConfig: ListConfig by lazy { ListConfig().apply(configure) }
 
@@ -29,24 +30,16 @@ open class ComposingList(
         return ComposingListDelegate()
     }
 
-    override fun getStringBuilder(): StringBuilder {
-        return super.getStringBuilder().apply {
-            appendLine()
-            append("viewList: ").appendLine("$viewList")
-        }
-    }
-
     companion object {
         context(ComposeContext) operator fun invoke(
             id: String,
             configure: ListConfig.() -> Unit = {},
             style: ComposingListStyle.() -> Unit = {},
-            contextInit: ListComposeContext.() -> Unit
+            buildViews: ComposeContext.() -> Unit
         ): ComposingList {
-            val listContext = list(contextInit)
-            val views = listContext.views
+            val listContext = listContext(id, buildViews)
 
-            return ComposingList(id, configure, ComposingListStyle(style), views)
+            return ComposingList(id, configure, ComposingListStyle(context, style), listContext)
                 .addView()
         }
     }
@@ -63,14 +56,14 @@ open class ListConfig: HasOnItemClickListener<SCV> {
 
 }
 
-open class ComposingListStyle : ComposingStyle() {
+open class ComposingListStyle(context: Context) : ComposingViewGroupStyle(context) {
 
     @Orientation
     val orientation: Int = RecyclerView.VERTICAL
 
     companion object {
-        operator fun invoke(init: ComposingListStyle.() -> Unit): ComposingListStyle {
-            return ComposingListStyle().apply(init)
+        operator fun invoke(context: Context, init: ComposingListStyle.() -> Unit): ComposingListStyle {
+            return ComposingListStyle(context).apply(init)
         }
     }
 

@@ -219,13 +219,13 @@ fun View.setCoords(
     point: Point,
     baseline: Int = ViewBaseline.UNSPECIFIED
 ) {
-    this.x = when(ViewBaseline.getHorizontalBaseline(baseline)) {
+    this.x = when (ViewBaseline.getHorizontalBaseline(baseline)) {
         ViewBaseline.HORIZONTAL_CENTER -> x - width / 2F
         ViewBaseline.HORIZONTAL_END -> x - width.toFloat()
         else -> point.x.toFloat()
     }
 
-    this.y = when(ViewBaseline.getVerticalBaseline(baseline)) {
+    this.y = when (ViewBaseline.getVerticalBaseline(baseline)) {
         ViewBaseline.VERTICAL_CENTER -> y - height / 2F
         ViewBaseline.VERTICAL_BOTTOM -> y - height.toFloat()
         else -> point.y.toFloat()
@@ -246,7 +246,7 @@ fun View.getRightBottomPoint(): Point =
     Point(x.toInt() + width, y.toInt() + height)
 
 fun View.isInViewBounds(event: MotionEvent): Boolean {
-    val rect = android.graphics.Rect()
+    val rect = Rect()
     getDrawingRect(rect)
 
     val location = getLocationOnScreen()
@@ -264,10 +264,7 @@ fun View.getLocationOnScreen(): Point {
 
 fun View.isSizeChanged(
     size: Point
-): Boolean {
-    return layoutParams.width != size.x ||
-            layoutParams.height != size.y
-}
+) = layoutParams.width != size.x || layoutParams.height != size.y
 
 fun View.setMarginsRes(
     @DimenRes left: Int? = null,
@@ -296,7 +293,12 @@ fun ViewGroup.LayoutParams.setMarginsRes(
     )
 }
 
-fun ViewGroup.LayoutParams.setMargins(left: Int? = null, top: Int? = null, right: Int? = null, bottom: Int? = null) {
+fun ViewGroup.LayoutParams.setMargins(
+    left: Int? = null,
+    top: Int? = null,
+    right: Int? = null,
+    bottom: Int? = null
+) {
     val params = (this as? ViewGroup.MarginLayoutParams)
     params?.setMargins(
         left ?: params.leftMargin,

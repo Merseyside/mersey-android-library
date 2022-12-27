@@ -113,7 +113,7 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
     @InternalAdaptersApi
     @CallSuper
     suspend fun onModelCreated(model: Model) {
-        model.clickEvent.observe(callbackClick)
+        model.clickEvent.observe(observer = callbackClick)
     }
 
     /**
@@ -121,9 +121,6 @@ interface IBaseAdapter<Parent, Model> : AdapterActions<Parent, Model>,
      * Calls onItemRemoved callback method on success.
      * @return position of removed item
      */
-
-
-
     suspend fun remove(item: Parent): Model? {
         return listManager.remove(item)
     }

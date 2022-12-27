@@ -5,6 +5,7 @@ import androidx.annotation.CallSuper
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.ViewDataBinding
+import com.merseyside.adapters.compose.dsl.context.ComposeContext
 import com.merseyside.adapters.delegates.DelegateAdapter
 import com.merseyside.adapters.compose.view.base.StyleableComposingView
 import com.merseyside.adapters.compose.view.base.SCV
@@ -34,7 +35,7 @@ abstract class ViewDelegateAdapter<View : StyleableComposingView<Style>, Style :
             }
 
             safeLet(backgroundColor) { color ->
-                view.setBackgroundColor(ContextCompat.getColor(context, color))
+                view.setBackgroundColor(color)
             }
 
             safeLet(paddings) { paddings ->
@@ -53,6 +54,16 @@ abstract class ViewDelegateAdapter<View : StyleableComposingView<Style>, Style :
 
     override fun onBindViewHolder(holder: TypedBindingHolder<Model>, model: Model, position: Int) {
         super.onBindViewHolder(holder, model, position)
+        applyStyle(holder.context, holder.binding, model.item.composingStyle)
+    }
+
+    override fun onBindViewHolder(
+        holder: TypedBindingHolder<Model>,
+        model: Model,
+        position: Int,
+        payloads: List<Any>
+    ) {
+        super.onBindViewHolder(holder, model, position, payloads)
         applyStyle(holder.context, holder.binding, model.item.composingStyle)
     }
 }

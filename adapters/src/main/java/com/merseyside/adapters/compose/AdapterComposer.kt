@@ -1,21 +1,15 @@
 package com.merseyside.adapters.compose
 
+import android.content.Context
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import com.merseyside.adapters.compose.model.ViewAdapterViewModel
 import com.merseyside.adapters.feature.composable.HasComposableAdapter
-import com.merseyside.adapters.feature.composable.HasSimpleComposableAdapter
 
-abstract class AdapterComposer<Model>(
-    val viewLifecleOwner: LifecycleOwner
-): HasComposableAdapter<Model>
-    where Model : ViewAdapterViewModel {
+abstract class FragmentAdapterComposer(val fragment: Fragment): HasComposableAdapter {
 
-    protected fun addDataSource(ld: LiveData<*>) {
-        ld.observe(viewLifecleOwner) { invalidateAsync() }
-    }
+    override val context: Context
+        get() = fragment.requireContext()
+
+    override val viewLifecycleOwner: LifecycleOwner
+        get() = fragment.viewLifecycleOwner
 }
-
-abstract class SimpleAdapterComposer(
-    viewLifecycleOwner: LifecycleOwner
-): AdapterComposer<ViewAdapterViewModel>(viewLifecycleOwner), HasSimpleComposableAdapter

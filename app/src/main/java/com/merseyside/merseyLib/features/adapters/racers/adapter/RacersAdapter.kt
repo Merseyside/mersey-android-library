@@ -62,24 +62,8 @@ class RacersAdapter(config: AdapterConfig<Checkpoint, CheckpointItemViewModel>) 
     }
 
     companion object {
-
         operator fun invoke(configure: AdapterConfig<Checkpoint, CheckpointItemViewModel>.() -> Unit): RacersAdapter {
             return RacersAdapter(config(configure))
         }
-//        fun getConfig() = config<Checkpoint, CheckpointItemViewModel> {
-//            install(RacersSortFeature()) {
-//                comparator = object: Comparator<Checkpoint, CheckpointItemViewModel>() {
-//                    override fun compare(
-//                        model1: CheckpointItemViewModel,
-//                        model2: CheckpointItemViewModel
-//                    ): Int {
-//                        return model1.item.gap.compareTo(model2.item.gap)
-//                    }
-//
-//                }
-//            }
-//
-//            install(PositionFeature())
-//        }
     }
 }

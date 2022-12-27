@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.core.util.isEmpty
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.interfaces.delegate.INestedDelegateAdapter
+import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.merseyLib.kotlin.extensions.isNotZero
 import com.merseyside.utils.ext.containsKey
 import com.merseyside.utils.ext.filterValues
@@ -15,7 +16,7 @@ import com.merseyside.adapters.model.VM
 open class DelegatesManager<Delegate, Parent, ParentModel>(
     delegates: List<DelegateAdapter<out Parent, Parent, out ParentModel>> = emptyList()
 ) where ParentModel : VM<Parent>,
-    Delegate : DelegateAdapter<out Parent, Parent, ParentModel> {
+        Delegate : DelegateAdapter<out Parent, Parent, ParentModel> {
 
     protected val delegates = SparseArray<Delegate>()
     private lateinit var onDelegateRemoveCallback: suspend (DelegateAdapter<out Parent, Parent, *>) -> Unit
@@ -58,8 +59,21 @@ open class DelegatesManager<Delegate, Parent, ParentModel>(
         return getDelegateByViewType(viewType).createViewHolder(parent, viewType)
     }
 
-    internal fun onBindViewHolder(holder: TypedBindingHolder<ParentModel>, model: ParentModel, position: Int) {
+    internal fun onBindViewHolder(
+        holder: TypedBindingHolder<ParentModel>,
+        model: ParentModel,
+        position: Int
+    ) {
         requireDelegate { getResponsibleDelegate(model) }.onBindViewHolder(holder, model, position)
+    }
+
+    internal fun onBindViewHolder(
+        holder: TypedBindingHolder<ParentModel>,
+        position: Int,
+        payloads: List<Any>
+    ) {
+        val model = holder.model
+        requireDelegate { getResponsibleDelegate(model) }.onBindViewHolder(holder, model, position, payloads)
     }
 
     fun getViewTypeByItem(model: ParentModel): Int {
@@ -137,16 +151,11 @@ open class DelegatesManager<Delegate, Parent, ParentModel>(
                 it.second.isResponsibleFor(item)
             }
         }
-         return delegate.createViewModel(item)
+        return delegate.createViewModel(item)
     }
 
     internal fun setOnDelegateRemoveCallback(callback: suspend (DelegateAdapter<out Parent, Parent, *>) -> Unit) {
         onDelegateRemoveCallback = callback
-    }
-
-    internal fun onModelUpdated(model: ParentModel) {
-        val delegate = getResponsibleDelegate(model)
-        delegate.onModelUpdated(model)
     }
 
     private fun requireDelegate(
@@ -158,5 +167,6 @@ open class DelegatesManager<Delegate, Parent, ParentModel>(
     }
 }
 
-class SimpleDelegatesManager<Parent, ParentModel>: DelegatesManager<DelegateAdapter<out Parent, Parent, ParentModel>, Parent, ParentModel>()
-    where ParentModel : VM<Parent>
+class SimpleDelegatesManager<Parent, ParentModel> :
+    DelegatesManager<DelegateAdapter<out Parent, Parent, ParentModel>, Parent, ParentModel>()
+        where ParentModel : VM<Parent>

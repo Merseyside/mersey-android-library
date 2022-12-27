@@ -31,10 +31,7 @@ abstract class NestedViewDelegateAdapter<View, Style, Model, InnerParent, InnerM
     ): InnerAdapter
 
     @Suppress("UNCHECKED_CAST")
-    override fun initNestedAdapter(
-        model: Model,
-    ): InnerAdapter {
-
+    override fun initNestedAdapter(model: Model): InnerAdapter {
         val innerDelegateManager = delegatesManagerProvider() as ViewDelegatesManager<InnerParent, InnerModel>
         return createCompositeAdapter(model, innerDelegateManager)
     }
@@ -43,5 +40,16 @@ abstract class NestedViewDelegateAdapter<View, Style, Model, InnerParent, InnerM
     override fun onBindViewHolder(holder: TypedBindingHolder<Model>, model: Model, position: Int) {
         super.onBindViewHolder(holder, model, position)
         bindNestedAdapter(holder, model, position)
+    }
+
+    @InternalAdaptersApi
+    override fun onBindViewHolder(
+        holder: TypedBindingHolder<Model>,
+        model: Model,
+        position: Int,
+        payloads: List<Any>
+    ) {
+        super.onBindViewHolder(holder, model, position, payloads)
+        onModelUpdated(model)
     }
 }
