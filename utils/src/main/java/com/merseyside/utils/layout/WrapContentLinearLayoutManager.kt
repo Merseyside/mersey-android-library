@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.merseyLib.kotlin.extensions.isNotZero
+import com.merseyside.merseyLib.kotlin.logger.Logger
 import com.merseyside.merseyLib.kotlin.logger.log
 import kotlin.math.min
 
@@ -43,8 +44,6 @@ open class WrapContentLinearLayoutManager : LinearLayoutManager {
         val widthSize = View.MeasureSpec.getSize(widthSpec)
         val heightSize = View.MeasureSpec.getSize(heightSpec)
 
-
-
         var calculatedWidth = 0
         var calculatedHeight = 0
 
@@ -77,7 +76,6 @@ open class WrapContentLinearLayoutManager : LinearLayoutManager {
             }
         }
 
-        calculatedWidth.log("kek", "width calculated")
         measuredWidth = when (widthMode) {
             View.MeasureSpec.EXACTLY -> {
                 if (calculatedWidth.isNotZero() && orientation == HORIZONTAL) {
@@ -108,9 +106,6 @@ open class WrapContentLinearLayoutManager : LinearLayoutManager {
             else -> 0
         }
 
-        measuredWidth.log("kek","width")
-        measuredHeight.log("kek","height")
-
         setMeasuredDimension(measuredWidth, measuredHeight)
     }
 
@@ -124,10 +119,10 @@ open class WrapContentLinearLayoutManager : LinearLayoutManager {
         heightSpec: Int,
         measuredDimension: IntArray
     ) {
-        val view: View = recycler.getViewForPosition(position).log("kek", "view")
+        val view: View = recycler.getViewForPosition(position)
         val p = view.layoutParams
         val childWidthSpec: Int = ViewGroup.getChildMeasureSpec(
-            widthSpec,paddingLeft + paddingRight, p.width.log("kek", "view width")
+            widthSpec,paddingLeft + paddingRight, p.width
         )
         val childHeightSpec: Int = ViewGroup.getChildMeasureSpec(
             heightSpec, paddingTop + paddingBottom, p.height

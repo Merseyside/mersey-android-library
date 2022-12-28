@@ -14,13 +14,13 @@ import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.model.VM
 
 open class SortFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Config<Parent, Model>>(),
-    ModelListProvider<Parent, Model>, UpdateLogicProvider<Parent, Model>
+    ModelListProvider<Parent, Model>, UpdateLogicProvider<Parent, Model>, ComparatorProvider<Parent, Model>
         where Model : VM<Parent> {
 
     override val config: Config<Parent, Model> = Config()
     override lateinit var modelList: SortedModelList<Parent, Model>
 
-    lateinit var comparator: Comparator<Parent, Model>
+    override lateinit var comparator: Comparator<Parent, Model>
 
     override fun prepare(configure: Config<Parent, Model>.() -> Unit) {
         config.apply(configure)

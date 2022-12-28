@@ -6,13 +6,14 @@ import com.merseyside.adapters.extensions.onItemSelected
 import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.model.VM
 
-class SelectFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Config<Parent, Model>>()
+class SelectFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Config<Parent, Model>>(),
+    SelectProvider<Parent, Model>
         where Model : VM<Parent> {
 
     override lateinit var config: Config<Parent, Model>
     override val featureKey: String = KEY
 
-    lateinit var adapterSelect: AdapterSelect<Parent, Model>
+    override lateinit var adapterSelect: AdapterSelect<Parent, Model>
 
     override fun prepare(configure: Config<Parent, Model>.() -> Unit) {
         config = Config(configure)
