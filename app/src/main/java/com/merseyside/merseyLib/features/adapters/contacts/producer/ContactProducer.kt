@@ -1,7 +1,7 @@
 package com.merseyside.merseyLib.features.adapters.contacts.producer
 
 import com.merseyside.merseyLib.features.adapters.contacts.entity.ContactGroup
-import com.merseyside.merseyLib.kotlin.utils.generateRandomString
+import com.merseyside.merseyLib.kotlin.utils.randomString
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 
@@ -12,7 +12,7 @@ class ContactProducer {
 
     suspend fun generateRandomContacts(count: Int = 50) {
         val contacts = (0 until count).map {
-            generateRandomString(6)
+            randomString(6)
         }
 
         val contactGroups = contacts.groupBy { it.first() }

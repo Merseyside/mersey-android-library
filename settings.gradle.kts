@@ -18,7 +18,6 @@ dependencyResolutionManagement {
 
         val common by creating {
             from("$group:catalog-version-common:$catalogVersions")
-            version("mersey-kotlin-ext", "1.2.6")
         }
 
         val catalogPlugins by creating {

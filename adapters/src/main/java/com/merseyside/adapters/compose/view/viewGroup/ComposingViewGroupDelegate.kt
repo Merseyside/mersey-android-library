@@ -20,7 +20,6 @@ abstract class ComposingViewGroupDelegate<View, Style, Model, InnerParent, Inner
     @Suppress("UNCHECKED_CAST")
     override fun initNestedAdapter(model: Model): InnerAdapter {
         return super.initNestedAdapter(model).also { adapter ->
-            adapter.logSimpleTag("kek")
             model.item.viewGroupComposeContext.relativeAdapter =
                 adapter as ViewCompositeAdapter<SCV, VM<SCV>>
         }
