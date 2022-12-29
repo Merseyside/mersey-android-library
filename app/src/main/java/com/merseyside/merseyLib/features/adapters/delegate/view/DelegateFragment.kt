@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.View
 import com.merseyside.adapters.extensions.onClick
 import com.merseyside.adapters.feature.sorting.Sorting
+import com.merseyside.adapters.interfaces.ext.addAsync
+import com.merseyside.adapters.interfaces.ext.updateAsync
 import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R

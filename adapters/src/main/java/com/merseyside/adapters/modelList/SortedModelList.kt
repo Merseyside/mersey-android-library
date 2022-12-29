@@ -17,7 +17,7 @@ class SortedModelList<Parent, Model : VM<Parent>>(
     init {
         val callback = object : SortedList.Callback<Model>() {
             override fun onInserted(position: Int, count: Int) {
-                val models = getModels().subList(position, position + count - 1)
+                val models = getModels().subList(position, position + count)
                 onInserted(models, position, count)
             }
 
@@ -26,7 +26,7 @@ class SortedModelList<Parent, Model : VM<Parent>>(
             }
 
             override fun onMoved(fromPosition: Int, toPosition: Int) {
-                onMoved(fromPosition, toPosition)
+                this@SortedModelList.onMoved(fromPosition, toPosition)
             }
 
             override fun onChanged(position: Int, count: Int) {}
@@ -100,8 +100,10 @@ class SortedModelList<Parent, Model : VM<Parent>>(
         payloads: List<AdapterParentViewModel.Payloadable>
     ) {
         val position = getPositionOfModel(model)
-        sortedList.recalculatePositionOfItemAt(position)
-        onChanged(model, getPositionOfModel(model), payloads)
+        if (position != -1) {
+            sortedList.recalculatePositionOfItemAt(position)
+            onChanged(model, getPositionOfModel(model), payloads)
+        }
     }
 
     override fun clear() {

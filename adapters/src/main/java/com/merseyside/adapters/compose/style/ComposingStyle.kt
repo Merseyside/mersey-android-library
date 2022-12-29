@@ -1,21 +1,27 @@
 package com.merseyside.adapters.compose.style
 
+import android.content.Context
 import androidx.annotation.CallSuper
+import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
-import com.merseyside.adapters.compose.view.base.ComposingView
+import androidx.core.content.ContextCompat
 import com.merseyside.merseyLib.kotlin.logger.ILogger
 import com.merseyside.utils.getClassName
 
-abstract class ComposingStyle : ILogger {
+abstract class ComposingStyle(val context: Context) : ILogger {
     var width: Int? = null
     var height: Int? = null
 
     var margins: Margins? = null
+    var paddings: Paddings? = null
 
-    @ColorRes var backgroundColor: Int? = null
+    @ColorInt var backgroundColor: Int? = null
 
-    open var onClick: (ComposingView) -> Unit = {}
+    fun setBackgroundColor(@ColorRes color: Int) {
+        backgroundColor = ContextCompat.getColor(context, color)
+    }
+
     var clickable: Boolean = true
 
     class Margins(
@@ -29,13 +35,38 @@ abstract class ComposingStyle : ILogger {
         )
 
         constructor(@DimenRes horizontal: Int, @DimenRes vertical: Int): this(
-            horizontal, vertical, horizontal, vertical
+            vertical, vertical, horizontal, horizontal
         )
 
         override fun toString(): String {
             val builder = StringBuilder()
             builder.apply {
                 appendLine("*** Margins ***")
+                //append("top: ").appendLine(t)
+            }
+
+            return builder.toString()
+        }
+    }
+
+    class Paddings(
+        @DimenRes val top: Int,
+        @DimenRes val bottom: Int,
+        @DimenRes val start: Int,
+        @DimenRes val end: Int
+    ) {
+        constructor(@DimenRes padding: Int): this(
+            padding, padding, padding, padding
+        )
+
+        constructor(@DimenRes horizontal: Int, @DimenRes vertical: Int): this(
+            vertical, vertical, horizontal, horizontal
+        )
+
+        override fun toString(): String {
+            val builder = StringBuilder()
+            builder.apply {
+                appendLine("*** Paddings ***")
                 //append("top: ").appendLine(t)
             }
 
@@ -60,5 +91,10 @@ abstract class ComposingStyle : ILogger {
 
     final override fun toString(): String {
         return getStringBuilder().toString()
+    }
+
+    companion object {
+        const val MATCH_PARENT = -1
+        const val WRAP_CONTENT = -2
     }
 }

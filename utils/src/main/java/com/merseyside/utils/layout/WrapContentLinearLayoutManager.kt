@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.merseyLib.kotlin.extensions.isNotZero
+import com.merseyside.merseyLib.kotlin.logger.Logger
+import com.merseyside.merseyLib.kotlin.logger.log
 import kotlin.math.min
 
 open class WrapContentLinearLayoutManager : LinearLayoutManager {
@@ -24,20 +26,11 @@ open class WrapContentLinearLayoutManager : LinearLayoutManager {
 
     constructor(
         context: Context,
-        desiredItemSize: Int,
         orientation: Int,
-        reverseLayout: Boolean
-    ) : super(
-        context, orientation, reverseLayout
-    ) {
+        reverseLayout: Boolean,
+        desiredItemSize: Int
+    ) : super(context, orientation, reverseLayout) {
         this.desiredItemSize = desiredItemSize
-    }
-
-    override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
-        try {
-            super.onLayoutChildren(recycler, state)
-        } catch (ignored: IndexOutOfBoundsException) {
-        }
     }
 
     override fun onMeasure(
@@ -58,23 +51,23 @@ open class WrapContentLinearLayoutManager : LinearLayoutManager {
 
         val intArray = IntArray(2)
 
-        for (i in 0 until itemCount) {
+        for (index in 0 until itemCount) {
             desiredSize += desiredItemSize
             try {
                 measureScrapChild(
-                    recycler, i,
-                    View.MeasureSpec.makeMeasureSpec(i, View.MeasureSpec.UNSPECIFIED),
-                    View.MeasureSpec.makeMeasureSpec(i, View.MeasureSpec.UNSPECIFIED),
+                    recycler, position = index,
+                    View.MeasureSpec.makeMeasureSpec(index, View.MeasureSpec.UNSPECIFIED),
+                    View.MeasureSpec.makeMeasureSpec(index, View.MeasureSpec.UNSPECIFIED),
                     intArray
                 )
                 if (orientation == HORIZONTAL) {
                     calculatedWidth += intArray[0]
-                    if (i == 0) {
+                    if (index == 0) {
                         calculatedHeight = intArray[1]
                     }
                 } else {
                     calculatedHeight += intArray[1]
-                    if (i == 0) {
+                    if (index == 0) {
                         calculatedWidth = intArray[0]
                     }
                 }
@@ -116,9 +109,7 @@ open class WrapContentLinearLayoutManager : LinearLayoutManager {
         setMeasuredDimension(measuredWidth, measuredHeight)
     }
 
-    override fun isAutoMeasureEnabled(): Boolean {
-        return false
-    }
+    override fun isAutoMeasureEnabled() = false
 
     @Throws(IndexOutOfBoundsException::class)
     private fun measureScrapChild(
@@ -131,12 +122,10 @@ open class WrapContentLinearLayoutManager : LinearLayoutManager {
         val view: View = recycler.getViewForPosition(position)
         val p = view.layoutParams
         val childWidthSpec: Int = ViewGroup.getChildMeasureSpec(
-            widthSpec,
-            paddingLeft + paddingRight, p.width
+            widthSpec,paddingLeft + paddingRight, p.width
         )
         val childHeightSpec: Int = ViewGroup.getChildMeasureSpec(
-            heightSpec,
-            paddingTop + paddingBottom, p.height
+            heightSpec, paddingTop + paddingBottom, p.height
         )
         view.measure(childWidthSpec, childHeightSpec)
         measuredDimension[0] = view.measuredWidth

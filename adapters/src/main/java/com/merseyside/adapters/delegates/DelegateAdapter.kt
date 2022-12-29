@@ -6,10 +6,7 @@ import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import com.merseyside.adapters.callback.HasOnItemClickListener
 import com.merseyside.adapters.callback.OnItemClickListener
-import com.merseyside.adapters.compose.style.Styleable
-import com.merseyside.adapters.compose.style.StyleableItem
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.interfaces.delegate.IDelegateAdapter
 import com.merseyside.adapters.model.AdapterParentViewModel
@@ -64,13 +61,20 @@ abstract class DelegateAdapter<Item : Parent, Parent, Model> :
 
     @OptIn(InternalAdaptersApi::class)
     open fun onModelCreated(model: Model) {
-        model.clickEvent.observe(onClick)
+        model.clickEvent.observe(observer = onClick)
     }
 
     @CallSuper
     open fun onBindViewHolder(holder: TypedBindingHolder<Model>, model: Model, position: Int) {
         holder.bind(getBindingVariable(), model)
     }
+
+    open fun onBindViewHolder(
+        holder: TypedBindingHolder<Model>,
+        model: Model,
+        position: Int,
+        payloads: List<Any>
+    ) {}
 
     open fun getBindingHolder(binding: ViewDataBinding) = TypedBindingHolder<Model>(binding)
 

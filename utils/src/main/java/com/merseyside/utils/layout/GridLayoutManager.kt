@@ -1,15 +1,29 @@
 package com.merseyside.utils.layout
 
 import android.content.Context
+import android.util.AttributeSet
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class GridLayoutManager constructor(
-    context: Context,
-    count: Int,
-    orientation: Int,
-    reverseLayout: Boolean
-) : GridLayoutManager(context, count, orientation, reverseLayout) {
+open class GridLayoutManager: GridLayoutManager {
+
+    constructor(
+        context: Context,
+        spanCount: Int,
+        orientation: Int,
+        reverseLayout: Boolean
+    ): super(context, spanCount, orientation, reverseLayout)
+    constructor(
+        context: Context,
+        attrs: AttributeSet?,
+        defStyleAttr: Int,
+        defStyleRes: Int
+    ) : super(context, attrs, defStyleAttr, defStyleRes)
+
+    constructor(
+        context: Context,
+        spanCount: Int
+    ) : super(context, spanCount)
 
     override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
         try {
@@ -17,7 +31,5 @@ class GridLayoutManager constructor(
         } catch (ignored: IndexOutOfBoundsException) {}
     }
 
-    override fun supportsPredictiveItemAnimations(): Boolean {
-        return false
-    }
+    override fun supportsPredictiveItemAnimations() = false
 }

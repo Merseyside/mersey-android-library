@@ -6,11 +6,12 @@ import android.view.View
 import androidx.lifecycle.asLiveData
 import com.merseyside.adapters.feature.expanding.Expanding
 import com.merseyside.adapters.feature.filtering.Filtering
-import com.merseyside.adapters.feature.filtering.ext.addAndApply
-import com.merseyside.adapters.feature.filtering.ext.removeAndApply
+import com.merseyside.adapters.feature.filtering.ext.addAndApplyAsync
+import com.merseyside.adapters.feature.filtering.ext.removeAndApplyAsync
 import com.merseyside.adapters.feature.selecting.group.SelectingGroup
 import com.merseyside.adapters.feature.sorting.Sorting
 import com.merseyside.adapters.feature.selecting.SelectableMode
+import com.merseyside.adapters.interfaces.ext.addOrUpdateAsync
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.application.base.BaseSampleFragment
@@ -23,6 +24,7 @@ import com.merseyside.merseyLib.features.adapters.contacts.di.DaggerContactsComp
 import com.merseyside.merseyLib.features.adapters.contacts.model.ContactViewModel
 import com.merseyside.utils.view.ext.addTextChangeListener
 import com.merseyside.utils.view.ext.onClick
+import com.merseyside.adapters.interfaces.ext.addOrUpdateAsync
 
 class ContactFragment : BaseSampleFragment<FragmentContactsBinding, ContactViewModel>() {
 
@@ -41,9 +43,7 @@ class ContactFragment : BaseSampleFragment<FragmentContactsBinding, ContactViewM
             selectableMode = SelectableMode.SINGLE
         }
 
-        Expanding {
-            variableId = BR.expandCallback
-        }
+        Expanding()
     }
 
     private val textChangeListener = {
@@ -57,9 +57,9 @@ class ContactFragment : BaseSampleFragment<FragmentContactsBinding, ContactViewM
 
         newValue?.let { value ->
             if (value.isNotEmpty()) {
-                contactsFilter.addAndApply(ContactsNestedAdapterFilter.QUERY_KEY, newValue)
+                contactsFilter.addAndApplyAsync(ContactsNestedAdapterFilter.QUERY_KEY, newValue)
             } else {
-                contactsFilter.removeAndApply(ContactsNestedAdapterFilter.QUERY_KEY)
+                contactsFilter.removeAndApplyAsync(ContactsNestedAdapterFilter.QUERY_KEY)
             }
         }
 

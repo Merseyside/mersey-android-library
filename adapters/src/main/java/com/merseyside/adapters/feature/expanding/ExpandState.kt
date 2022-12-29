@@ -1,9 +1,8 @@
 package com.merseyside.adapters.feature.expanding
 
-import androidx.databinding.ObservableBoolean
-import com.merseyside.merseyLib.kotlin.logger.log
 import com.merseyside.merseyLib.kotlin.observable.MutableObservableField
 import com.merseyside.merseyLib.kotlin.observable.ObservableField
+import com.merseyside.merseyLib.kotlin.observable.SingleObservableEvent
 import com.merseyside.merseyLib.kotlin.observable.combineFields
 
 class ExpandState(
@@ -14,8 +13,9 @@ class ExpandState(
     internal var globalExpandable = MutableObservableField(true)
     private val itemExpandable = MutableObservableField(expandable)
 
-    val expandedObservable = ObservableBoolean(expanded)
-    val expandableObservable = ObservableBoolean(expandable)
+    val expandedObservable = MutableObservableField(expanded)
+
+    internal val expandEvent = SingleObservableEvent()
 
     val expandableField: ObservableField<Boolean> = combineFields(
         globalExpandable, itemExpandable
@@ -23,12 +23,12 @@ class ExpandState(
 
     private var listener: OnExpandStateListener? = null
 
-    var expdaned: Boolean = expanded
+    var expanded: Boolean = expanded
         internal set(value) {
             if (field != value) {
                 field = value
 
-                expandedObservable.set(value)
+                expandedObservable.value = value
                 listener?.onExpanded(value)
             }
         }
@@ -39,13 +39,20 @@ class ExpandState(
 
     init {
         expandableField.observe { value ->
-            expandableObservable.set(value)
             listener?.onExpandable(value)
         }
     }
 
     fun setOnExpandStateListener(listener: OnExpandStateListener) {
         this.listener = listener
+    }
+
+    fun onExpand() {
+        expandEvent.call()
+    }
+
+    fun onExpand(state: Boolean) {
+        if (expanded != state) onExpand()
     }
 
     interface OnExpandStateListener {

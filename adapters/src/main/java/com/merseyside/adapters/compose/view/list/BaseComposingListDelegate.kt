@@ -1,24 +1,25 @@
 package com.merseyside.adapters.compose.view.list
 
+import android.content.Context
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.BR
 import com.merseyside.adapters.R
 import com.merseyside.adapters.compose.adapter.ViewCompositeAdapter
-import com.merseyside.adapters.databinding.ViewComposingListBinding
-import com.merseyside.adapters.delegates.DelegatesManager
-import com.merseyside.adapters.extensions.onClick
-import com.merseyside.adapters.compose.view.base.SCV
 import com.merseyside.adapters.compose.delegate.NestedViewDelegateAdapter
+import com.merseyside.adapters.compose.view.base.SCV
 import com.merseyside.adapters.compose.view.list.simple.ComposingList
 import com.merseyside.adapters.compose.view.list.simple.ComposingListStyle
+import com.merseyside.adapters.compose.view.viewGroup.ComposingViewGroup
+import com.merseyside.adapters.compose.view.viewGroup.ComposingViewGroupDelegate
+import com.merseyside.adapters.extensions.onClick
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 import com.merseyside.adapters.model.VM
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.merseyLib.kotlin.utils.safeLet
 
 abstract class BaseComposingListDelegate<View, Model, InnerParent, InnerModel, InnerAdapter>
-    : NestedViewDelegateAdapter<View, ComposingListStyle, Model, InnerParent, InnerModel, InnerAdapter>()
+    : ComposingViewGroupDelegate<View, ComposingListStyle, Model, InnerParent, InnerModel, InnerAdapter>()
         where View : ComposingList,
               Model : NestedAdapterParentViewModel<View, SCV, out InnerParent>,
               InnerParent: SCV,
@@ -34,6 +35,16 @@ abstract class BaseComposingListDelegate<View, Model, InnerParent, InnerModel, I
                 safeLet(decorator) { recyclerView.addItemDecoration(it) }
             }
         }
+    }
+
+    override fun applyStyle(
+        context: Context,
+        viewDataBinding: ViewDataBinding,
+        style: ComposingListStyle
+    ) {
+        super.applyStyle(context, viewDataBinding, style)
+        val recyclerView = viewDataBinding.root as RecyclerView
+
     }
 
     override fun getBindingVariable() = BR.model

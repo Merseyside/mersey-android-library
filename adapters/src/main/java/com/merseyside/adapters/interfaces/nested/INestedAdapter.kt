@@ -5,6 +5,8 @@ package com.merseyside.adapters.interfaces.nested
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.adapters.base.BaseAdapter
+import com.merseyside.adapters.config.AdapterConfig
+import com.merseyside.adapters.config.NestedAdapterConfig
 import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.listManager.INestedModelListManager
 import com.merseyside.adapters.model.AdapterParentViewModel
@@ -17,9 +19,12 @@ interface INestedAdapter<Parent, Model, InnerData, InnerAdapter> : IBaseAdapter<
         where Model : NestedAdapterParentViewModel<out Parent, Parent, InnerData>,
               InnerAdapter : BaseAdapter<InnerData, out AdapterParentViewModel<out InnerData, InnerData>> {
 
+    override val adapterConfig: NestedAdapterConfig<Parent, Model, InnerData, InnerAdapter>
+
     var adapterList: MutableList<Pair<Model, InnerAdapter>>
 
-    override val delegate: INestedModelListManager<Parent, Model, InnerData, InnerAdapter>
+    override val listManager: INestedModelListManager<Parent, Model, InnerData, InnerAdapter>
+        get() = adapterConfig.listManager
 
     fun initNestedAdapter(model: Model): InnerAdapter
     fun getNestedView(binding: ViewDataBinding): RecyclerView?
@@ -31,7 +36,7 @@ interface INestedAdapter<Parent, Model, InnerData, InnerAdapter> : IBaseAdapter<
     }
 
     @OptIn(InternalAdaptersApi::class)
-    suspend fun getAdapterByItem(item: Parent): InnerAdapter? {
+    suspend fun getNestedAdapterByItem(item: Parent): InnerAdapter? {
         val model = getModelByItem(item)
         return model?.let {
             getAdapterIfExists(it)
@@ -48,8 +53,12 @@ interface INestedAdapter<Parent, Model, InnerData, InnerAdapter> : IBaseAdapter<
 
     /* Models list actions */
 
-    override fun getNestedAdapterByModel(model: Model): InnerAdapter {
-        return getAdapterIfExists(model) ?: internalInitInnerAdapter(model).also { adapter ->
+    override fun getNestedAdapterByModel(model: Model): InnerAdapter? {
+        return getAdapterIfExists(model)
+    }
+
+    override fun initNestedAdapterByModel(model: Model): InnerAdapter {
+        return internalInitInnerAdapter(model).also { adapter ->
             putAdapter(model, adapter)
         }
     }

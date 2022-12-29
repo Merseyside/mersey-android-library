@@ -1,6 +1,5 @@
 package com.merseyside.adapters.feature.sorting
 
-import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.config.AdapterConfig
 import com.merseyside.adapters.config.contract.ModelListProvider
 import com.merseyside.adapters.modelList.SortedModelList
@@ -11,17 +10,17 @@ import com.merseyside.adapters.config.update.sorted.SortedUpdate
 import com.merseyside.adapters.config.update.UpdateActions
 import com.merseyside.adapters.config.update.UpdateLogic
 import com.merseyside.adapters.extensions.recalculatePositions
+import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.model.VM
-import com.merseyside.merseyLib.kotlin.logger.log
 
 open class SortFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Config<Parent, Model>>(),
-    ModelListProvider<Parent, Model>, UpdateLogicProvider<Parent, Model>
+    ModelListProvider<Parent, Model>, UpdateLogicProvider<Parent, Model>, ComparatorProvider<Parent, Model>
         where Model : VM<Parent> {
 
     override val config: Config<Parent, Model> = Config()
     override lateinit var modelList: SortedModelList<Parent, Model>
 
-    lateinit var comparator: Comparator<Parent, Model>
+    override lateinit var comparator: Comparator<Parent, Model>
 
     override fun prepare(configure: Config<Parent, Model>.() -> Unit) {
         config.apply(configure)
@@ -31,12 +30,12 @@ open class SortFeature<Parent, Model> : ConfigurableFeature<Parent, Model, Confi
     @Suppress("UNCHECKED_CAST")
     override fun install(
         adapterConfig: AdapterConfig<Parent, Model>,
-        adapter: BaseAdapter<Parent, Model>
+        adapter: IBaseAdapter<Parent, Model>
     ) {
         super.install(adapterConfig, adapter)
 
         val modelClass: Class<Model> = try {
-            comparator.getModelClass().log() as Class<Model>
+            comparator.getModelClass() as Class<Model>
         } catch (e: IllegalStateException) {
             getModelClass()
         }
@@ -72,6 +71,7 @@ class Config<Parent, Model>
     lateinit var comparator: Comparator<Parent, Model>
 }
 
+@Suppress("UNCHECKED_CAST")
 object Sorting {
     context (AdapterConfig<Parent, Model>) operator fun <Parent,
             Model : VM<Parent>, TConfig : Config<Parent, Model>> invoke(

@@ -1,19 +1,25 @@
 package com.merseyside.adapters.listManager
 
 import com.merseyside.adapters.base.BaseAdapter
+import com.merseyside.adapters.interfaces.ext.addOrUpdateAsync
 import com.merseyside.adapters.interfaces.nested.NestedAdapterActions
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 
 interface INestedModelListManager<Parent, Model, InnerData, InnerAdapter> :
-    ModelListManager<Parent, Model>
+    IModelListManager<Parent, Model>
         where Model : NestedAdapterParentViewModel<out Parent, Parent, InnerData>,
               InnerAdapter : BaseAdapter<InnerData, out AdapterParentViewModel<out InnerData, InnerData>> {
 
     override val adapterActions: NestedAdapterActions<Parent, Model, InnerData, InnerAdapter>
 
-    fun provideInnerAdapter(model: Model): InnerAdapter {
+    suspend fun provideNestedAdapter(model: Model): InnerAdapter {
         return adapterActions.getNestedAdapterByModel(model)
+            ?: initNestedAdapterByModel(model)
+    }
+
+    suspend fun initNestedAdapterByModel(model: Model): InnerAdapter {
+        return adapterActions.initNestedAdapterByModel(model)
     }
 
     override suspend fun remove(item: Parent): Model? {
@@ -27,12 +33,25 @@ interface INestedModelListManager<Parent, Model, InnerData, InnerAdapter> :
         return true
     }
 
+    override suspend fun updateModel(model: Model, item: Parent): Boolean {
+        return super.updateModel(model, item).also {
+            val adapter = provideNestedAdapter(model)
+            model.getNestedData()?.let { data ->
+                workManager.subTaskWith(adapter) {
+                    addOrUpdateAsync(data)
+                }
+            }
+        }
+    }
+
     override suspend fun createModel(item: Parent): Model {
         return super.createModel(item).also { model ->
-            val adapter = provideInnerAdapter(model)
-            val innerDataList = model.getNestedData()
-
-            innerDataList?.let { data -> adapter.add(data) }
+            val adapter = provideNestedAdapter(model)
+            model.getNestedData()?.let { data ->
+                workManager.subTaskWith(adapter) {
+                    add(data)
+                }
+            }
         }
     }
 }

@@ -5,6 +5,7 @@ import androidx.annotation.CallSuper
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.ViewDataBinding
+import com.merseyside.adapters.compose.dsl.context.ComposeContext
 import com.merseyside.adapters.delegates.DelegateAdapter
 import com.merseyside.adapters.compose.view.base.StyleableComposingView
 import com.merseyside.adapters.compose.view.base.SCV
@@ -13,6 +14,7 @@ import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.merseyLib.kotlin.utils.safeLet
+import com.merseyside.utils.view.ext.padding
 import com.merseyside.utils.view.ext.setMarginsRes
 
 abstract class ViewDelegateAdapter<View : StyleableComposingView<Style>, Style : ComposingStyle, Model>
@@ -33,7 +35,13 @@ abstract class ViewDelegateAdapter<View : StyleableComposingView<Style>, Style :
             }
 
             safeLet(backgroundColor) { color ->
-                view.setBackgroundColor(ContextCompat.getColor(context, color))
+                view.setBackgroundColor(color)
+            }
+
+            safeLet(paddings) { paddings ->
+                with(paddings) {
+                    view.padding(start, top, end, bottom)
+                }
             }
         }
     }
@@ -46,6 +54,16 @@ abstract class ViewDelegateAdapter<View : StyleableComposingView<Style>, Style :
 
     override fun onBindViewHolder(holder: TypedBindingHolder<Model>, model: Model, position: Int) {
         super.onBindViewHolder(holder, model, position)
+        applyStyle(holder.context, holder.binding, model.item.composingStyle)
+    }
+
+    override fun onBindViewHolder(
+        holder: TypedBindingHolder<Model>,
+        model: Model,
+        position: Int,
+        payloads: List<Any>
+    ) {
+        super.onBindViewHolder(holder, model, position, payloads)
         applyStyle(holder.context, holder.binding, model.item.composingStyle)
     }
 }

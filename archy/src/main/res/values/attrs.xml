@@ -92,6 +92,7 @@
     </declare-styleable>
 
     <declare-styleable name="ValidationInputView">
+        <attr name="validNeedFillingStateOnInit" format="boolean" />
         <attr name="validInputWidth" format="dimension" />
         <attr name="validInputHeight" format="dimension" />
         <attr name="validForceState" format="boolean" />
@@ -101,6 +102,7 @@
         <attr name="validTextError" format="string" />
         <attr name="validTextDefault" format="string" />
         <attr name="validMaxLength" format="integer" />
+        <attr name="validDebounce" format="integer" />
         <attr name="validCursorVisibility" format="boolean" />
         <!-- взял с системных атрибутов -->
         <attr name="validInputType">

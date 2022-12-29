@@ -10,7 +10,9 @@ interface NestedAdapterActions<Parent, Model, InnerData, InnerAdapter>
         where Model : NestedAdapterParentViewModel<out Parent, Parent, InnerData>,
               InnerAdapter : BaseAdapter<InnerData, out AdapterParentViewModel<out InnerData, InnerData>> {
 
-    fun getNestedAdapterByModel(model: Model): InnerAdapter
+    fun getNestedAdapterByModel(model: Model): InnerAdapter?
+
+    fun initNestedAdapterByModel(model: Model): InnerAdapter
 
     fun removeNestedAdapterByModel(model: Model): Boolean
 }

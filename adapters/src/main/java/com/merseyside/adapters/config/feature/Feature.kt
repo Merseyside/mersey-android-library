@@ -12,7 +12,7 @@ abstract class Feature<Parent, Model : VM<Parent>> {
     @CallSuper
     open fun install(
         adapterConfig: AdapterConfig<Parent, Model>,
-        adapter: BaseAdapter<Parent, Model>
+        adapter: IBaseAdapter<Parent, Model>
     ) {
         isInstalled = true
     }

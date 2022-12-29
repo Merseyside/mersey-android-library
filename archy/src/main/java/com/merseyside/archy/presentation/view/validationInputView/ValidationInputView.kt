@@ -11,18 +11,27 @@ import androidx.core.view.updateLayoutParams
 import com.merseyside.archy.R
 import com.merseyside.archy.databinding.ViewValidationInputBinding
 import com.merseyside.archy.presentation.view.validationInputView.ValidationState.*
+import com.merseyside.merseyLib.kotlin.logger.ILogger
 import com.merseyside.merseyLib.kotlin.logger.Logger
+import com.merseyside.merseyLib.kotlin.utils.safeLet
+import com.merseyside.merseyLib.time.coroutines.delay
+import com.merseyside.merseyLib.time.units.Millis
+import com.merseyside.merseyLib.time.units.TimeUnit
 import com.merseyside.utils.attributes.AttributeHelper
 import com.merseyside.utils.colorStateList.colorToSimpleStateList
 import com.merseyside.utils.delegate.*
 import com.merseyside.utils.textWatcher.ValidationTextWatcher
 import com.merseyside.utils.view.ext.requireResourceFromAttr
+import com.merseyside.utils.view.viewScope
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 open class ValidationInputView(
     context: Context,
     attributeSet: AttributeSet,
     defStyleAttr: Int
-) : LinearLayout(context, attributeSet, defStyleAttr) {
+) : LinearLayout(context, attributeSet, defStyleAttr), ILogger {
 
     constructor(context: Context, attributeSet: AttributeSet)
             : this(context, attributeSet, R.attr.validationInputViewStyle)
@@ -44,7 +53,10 @@ open class ValidationInputView(
 
     private var onTextChangedListener: (String) -> Unit = {}
     var formatter: ((String) -> String)? = null
-    var validator: ((String) -> ValidationState)? = null
+    var validator: (suspend (String) -> ValidationState)? = null
+    private val debounce by attrs.int(defaultValue = defaultDebounce)
+    private val timeDebounce: TimeUnit
+        get() = Millis(debounce)
 
     private val inputWidth by attrs.dimensionPixelSizeOrNull()
     private val inputHeight by attrs.dimensionPixelSizeOrNull()
@@ -59,6 +71,7 @@ open class ValidationInputView(
     private var textSuccess by attrs.string(defaultValue = "")
     private var textError by attrs.string(defaultValue = "")
 
+    private val needFillingStateOnInit by attrs.bool(false)
 
     protected open val strokeColor by attrs.color(
         defaultValue = requireResourceFromAttr(R.attr.colorOnSurface)
@@ -71,7 +84,6 @@ open class ValidationInputView(
     protected open val errorStrokeColor by attrs.color(
         defaultValue = requireResourceFromAttr(R.attr.colorError)
     )
-
 
     protected open val hintColor by attrs.color(
         defaultValue = requireResourceFromAttr(R.attr.colorOnSurface)
@@ -101,7 +113,6 @@ open class ValidationInputView(
     protected open val successIcon by attrs.drawableOrNull()
     protected open val errorIcon by attrs.drawableOrNull()
 
-
     var text: String
         get() = editText.text.toString()
         set(value) {
@@ -114,6 +125,24 @@ open class ValidationInputView(
     var getErrorMsg: (text: String) -> String = { textError }
     var getSuccessMsg: (text: String) -> String = { textSuccess }
 
+    private var everFocused: Boolean = false
+
+    fun setErrorText(text: String) {
+        if (textError != text) {
+            textError = text
+
+            if (validationState == ERROR)
+                updateViewsWithState()
+        }
+    }
+
+    fun setSuccessText(text: String) {
+        if (textSuccess != text) {
+            textSuccess = text
+            if (validationState == OK)
+                updateViewsWithState()
+        }
+    }
 
     private var validationState = FILLING
 
@@ -127,6 +156,8 @@ open class ValidationInputView(
         setWithAttrs()
         setTextWatcher()
         setFocusListener()
+
+        if (needFillingStateOnInit) updateViewsWithState()
     }
 
     private fun setLayout() {
@@ -170,6 +201,7 @@ open class ValidationInputView(
     private fun setFocusListener() {
         editText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
+                everFocused = true
                 if (validationState != OK) {
                     if (!applyState(validationState)) updateViewsWithState()
                 }
@@ -182,10 +214,9 @@ open class ValidationInputView(
     private fun applyState(state: ValidationState): Boolean {
         val newState = if (forceState) state
         else if (state == ERROR) {
-            if (isTypingState()) FILLING
+            if (isTypingState() || !everFocused) FILLING
             else state
         } else state
-
 
         return if (validationState != newState) {
             validationState = newState
@@ -261,22 +292,42 @@ open class ValidationInputView(
         }
     }
 
+    private var validationJob: Job? = null
+
     private fun validate(text: String) {
-        applyState(
-            validator?.invoke(text) ?: run {
-                Logger.logInfo("Validator not set")
-                FILLING
+        validationJob?.cancel()
+        safeLet(validator) {
+            validationJob = viewScope.launch {
+                delay(timeDebounce)
+                validateData(it(text))
             }
-        )
+        } ?: run {
+            Logger.logInfo("Validator not set")
+            applyState(FILLING)
+        }
+    }
+
+    private fun validateData(state: ValidationState) {
+        try {
+            applyState(state)
+        } catch (e: CancellationException) {
+            Logger.log(e.message)
+        }
     }
 
     fun setOnTextChangedListener(listener: (String) -> Unit) {
         onTextChangedListener = listener
     }
 
-    fun isTypingState(): Boolean {
+    private fun isTypingState(): Boolean {
         return editText.isFocused
     }
+
+    companion object {
+        private const val defaultDebounce = 300
+    }
+
+    override val tag: String = "ValidationInputView"
 }
 
 enum class ValidationState { FILLING, OK, ERROR }

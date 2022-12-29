@@ -9,25 +9,48 @@ import com.merseyside.adapters.listManager.INestedModelListManager
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 import com.merseyside.adapters.modelList.ModelList
+import com.merseyside.adapters.utils.AdapterWorkManager
 
-class FilterINestedModelListManager<Parent, Model, InnerData, InnerAdapter>(
+class FilterNestedModelListManager<Parent, Model, InnerData, InnerAdapter>(
     modelList: ModelList<Parent, Model>,
     override val adapterActions: NestedAdapterActions<Parent, Model, InnerData, InnerAdapter>,
     adapterFilter: AdapterFilter<Parent, Model>,
-) : FilterListManager<Parent, Model>(modelList, adapterActions, adapterFilter),
+    workManager: AdapterWorkManager
+) : FilterModelListManager<Parent, Model>(modelList, adapterActions, adapterFilter, workManager),
     INestedModelListManager<Parent, Model, InnerData, InnerAdapter>
         where Model : NestedAdapterParentViewModel<out Parent, Parent, InnerData>,
               InnerAdapter : BaseAdapter<InnerData, out AdapterParentViewModel<out InnerData, InnerData>> {
-
-    private fun getInnerAdapterFilter(model: Model): AdapterFilter<InnerData, *>? {
-        val innerAdapter = provideInnerAdapter(model)
-        return innerAdapter.adapterConfig.getAdapterFilter()
-    }
 
     init {
         if (adapterFilter is NestedAdapterFilter<Parent, Model>) {
             adapterFilter.getAdapterFilterByModel = { model ->
                 getInnerAdapterFilter(model)
+            }
+        }
+    }
+
+    override suspend fun initNestedAdapterByModel(model: Model): InnerAdapter {
+        return super.initNestedAdapterByModel(model).also { adapter ->
+            if (adapterFilter is NestedAdapterFilter<Parent, Model>) {
+                adapter.adapterConfig.getAdapterFilter()?.let { innerAdapterFilter ->
+                    adapterFilter.initAdapterFilter(innerAdapterFilter)
+                }
+            }
+        }
+    }
+
+    private suspend fun getInnerAdapterFilter(model: Model): AdapterFilter<InnerData, *>? {
+        val innerAdapter = provideNestedAdapter(model)
+        return innerAdapter.adapterConfig.getAdapterFilter()
+    }
+
+    override suspend fun updateModel(model: Model, item: Parent): Boolean {
+        return super<INestedModelListManager>.updateModel(model, item).also {
+            if (isFiltered) {
+                val filtered = adapterFilter.filter(model)
+                if (!filtered) {
+                    removeModel(model)
+                }
             }
         }
     }

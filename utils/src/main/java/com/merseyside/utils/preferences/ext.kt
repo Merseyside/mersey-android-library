@@ -90,7 +90,7 @@ fun PreferenceManager.bool(
     }
 
 fun PreferenceManager.timeUnit(
-    defaultValue: TimeUnit = TimeUnit.getEmpty(),
+    defaultValue: TimeUnit = TimeUnit.empty(),
     key: (KProperty<*>) -> String = KProperty<*>::name
 ): ReadWriteProperty<Any, TimeUnit> =
     object : ReadWriteProperty<Any, TimeUnit> {

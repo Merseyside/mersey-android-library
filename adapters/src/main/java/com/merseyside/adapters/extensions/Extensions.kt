@@ -5,6 +5,7 @@ import com.merseyside.adapters.callback.*
 import com.merseyside.adapters.feature.selecting.AdapterSelect
 import com.merseyside.adapters.feature.selecting.callback.HasOnItemSelectedListener
 import com.merseyside.adapters.feature.selecting.callback.OnItemSelectedListener
+import com.merseyside.adapters.interfaces.ext.removeAsync
 
 suspend inline fun <Item> BaseAdapter<Item, *>.findPosition(predicate: (item: Item) -> Boolean): Int {
     return getAll().find { predicate(it) }?.run {
@@ -27,7 +28,7 @@ inline fun <Item> BaseAdapter<Item, *>.findAll(predicate: (Item) -> Boolean): Li
     return list
 }
 
-inline fun <Item> BaseAdapter<Item, *>.removeIf(predicate: (Item) -> Boolean): List<Item> {
+inline fun <Item> BaseAdapter<Item, *>.removeIfAsync(predicate: (Item) -> Boolean): List<Item> {
     val itemsToRemove = findAll(predicate)
     removeAsync(itemsToRemove)
     return itemsToRemove

@@ -2,10 +2,10 @@ package com.merseyside.adapters.config.update.sorted
 
 import com.merseyside.adapters.config.update.UpdateActions
 import com.merseyside.adapters.config.update.UpdateLogic
+import com.merseyside.adapters.model.VM
 import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.adapters.utils.runWithDefault
 import com.merseyside.merseyLib.kotlin.extensions.subtractBy
-import com.merseyside.adapters.model.VM
 
 class SortedUpdate<Parent, Model : VM<Parent>>(
     override var updateActions: UpdateActions<Parent, Model>
@@ -20,7 +20,6 @@ class SortedUpdate<Parent, Model : VM<Parent>>(
         updateRequest: UpdateRequest<Parent>,
         models: List<Model>
     ): UpdateTransaction<Parent, Model> = runWithDefault {
-
         val updateTransaction = UpdateTransaction<Parent, Model>()
         with(updateTransaction) {
             if (updateRequest.isDeleteOld) {
@@ -29,6 +28,7 @@ class SortedUpdate<Parent, Model : VM<Parent>>(
 
             val addList = ArrayList<Parent>()
             val updateList = ArrayList<Pair<Model, Parent>>()
+
             updateRequest.list.forEach { newItem ->
                 val model = getModelByItem(newItem, models)
                 if (model == null) {
@@ -47,7 +47,7 @@ class SortedUpdate<Parent, Model : VM<Parent>>(
         updateTransaction
     }
 
-    suspend fun applyUpdateTransaction(
+    private suspend fun applyUpdateTransaction(
         updateTransaction: UpdateTransaction<Parent, Model>
     ): Boolean {
         with(updateTransaction) {

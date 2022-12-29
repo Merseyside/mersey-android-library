@@ -25,7 +25,7 @@ fun setValidationTextChanged(
 }
 
 @BindingAdapter("validValidator")
-fun setValidator(view: ValidationInputView, validator: (String) -> Boolean) {
+fun setValidator(view: ValidationInputView, validator: suspend (String) -> Boolean) {
     view.validator = { text ->
         if (validator(text)) ValidationState.OK
         else ValidationState.ERROR

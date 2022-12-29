@@ -3,6 +3,8 @@ package com.merseyside.merseyLib.features.adapters.news.view
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import com.merseyside.adapters.interfaces.ext.addAsync
+import com.merseyside.adapters.interfaces.ext.updateAsync
 import com.merseyside.archy.presentation.fragment.BaseBindingFragment
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.databinding.FragmentNewsBinding

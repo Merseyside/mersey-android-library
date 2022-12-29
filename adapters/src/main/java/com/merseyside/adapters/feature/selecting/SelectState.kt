@@ -1,7 +1,7 @@
 package com.merseyside.adapters.feature.selecting
 
-import androidx.databinding.ObservableBoolean
 import com.merseyside.merseyLib.kotlin.observable.MutableObservableField
+import com.merseyside.merseyLib.kotlin.observable.SingleObservableEvent
 import com.merseyside.merseyLib.kotlin.observable.ObservableField
 import com.merseyside.merseyLib.kotlin.observable.combineFields
 
@@ -13,12 +13,14 @@ class SelectState(
     internal var globalSelectable = MutableObservableField(true)
     private val itemSelectable = MutableObservableField(selectable)
 
-    val selectedObservable = ObservableBoolean(selected)
-    val selectableObservable = ObservableBoolean(selectable)
+    internal val selectEvent = SingleObservableEvent()
 
-    private val selectableField: ObservableField<Boolean> = combineFields(
+    val selectedObservable = MutableObservableField(selected)
+    val selectableObservable: ObservableField<Boolean> = combineFields(
         globalSelectable, itemSelectable
-    ) { first, second -> first && second }
+    ) { first, second ->
+        first && second
+    }
 
     private var listener: OnSelectStateListener? = null
 
@@ -27,20 +29,27 @@ class SelectState(
             if (field != value) {
                 field = value
 
-                selectedObservable.set(value)
+                selectedObservable.value = value
                 listener?.onSelected(value)
             }
         }
 
     var selectable: Boolean
-        get() = selectableField.value!!
+        get() = selectableObservable.value!!
         internal set(value) { itemSelectable.value = value }
 
     init {
-        selectableField.observe { value ->
-            selectableObservable.set(value)
+        selectableObservable.observe { value ->
             listener?.onSelectable(value)
         }
+    }
+
+    fun onSelect() {
+        selectEvent.call()
+    }
+
+    fun onSelect(state: Boolean) {
+        if (selected != state) onSelect()
     }
 
     fun setOnSelectStateListener(listener: OnSelectStateListener) {

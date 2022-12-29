@@ -34,6 +34,14 @@ abstract class ArgumentProperty<T, V>(
             throw IllegalArgumentException("Non nullable value with key $key required!")
         else block(key, helper.requireArgs)
     }
+
+    inline fun <R> ifContains(
+        key: String,
+        block: (key: String, args: Bundle) -> R
+    ): R? {
+        return if (helper.arguments != null && helper.contains(key)) block(key, helper.requireArgs)
+        else null
+    }
 }
 
 abstract class ArgumentHelper(internal val requireExistence: Boolean) {
@@ -50,6 +58,17 @@ abstract class ArgumentHelper(internal val requireExistence: Boolean) {
             ?: throw NullPointerException("Can not put value because arguments are null!")
     }
 
+    inline fun <reified T> get(
+        key: String,
+        defaultValue: T
+    ): T {
+        return (arguments?.get(key) as? T) ?: defaultValue
+    }
+
+    inline fun <reified T> getOrNull(key: String): T? {
+        return arguments?.get(key) as? T
+    }
+
     fun contains(key: String): Boolean {
         return arguments?.containsKey(key) ?: false
     }
@@ -59,6 +78,12 @@ class FragmentArgumentHelper(
     internal val fragment: Fragment,
     requireExistence: Boolean = false
 ) : ArgumentHelper(requireExistence) {
+
+    init {
+        if (fragment.arguments == null) {
+            fragment.arguments = Bundle()
+        }
+    }
 
     override val arguments: Bundle?
         get() = fragment.arguments
@@ -105,7 +130,7 @@ fun ArgumentHelper.stringOrNull(
 ): ArgumentProperty<Any, String?> =
     object : ArgumentProperty<Any, String?>(this, key) {
         override fun getValue(thisRef: Any, property: KProperty<*>): String? {
-            return arguments?.getString(key(property))
+            return ifContains(key(property)) { key, args -> args.getString(key) }
         }
     }
 
@@ -145,7 +170,7 @@ fun ArgumentHelper.intOrNull(
 ): ArgumentProperty<Any, Int?> =
     object : ArgumentProperty<Any, Int?>(this, key) {
         override fun getValue(thisRef: Any, property: KProperty<*>): Int? {
-            return arguments?.getInt(key(property))
+            return ifContains(key(property)) { key, args -> args.getInt(key) }
         }
     }
 
@@ -175,7 +200,7 @@ fun ArgumentHelper.floatOrNull(
 ): ArgumentProperty<Any, Float?> =
     object : ArgumentProperty<Any, Float?>(this, key) {
         override fun getValue(thisRef: Any, property: KProperty<*>): Float? {
-            return arguments?.getFloat(key(property))
+            return ifContains(key(property)) { key, args -> args.getFloat(key) }
         }
     }
 
@@ -205,7 +230,7 @@ fun ArgumentHelper.doubleOrNull(
 ): ArgumentProperty<Any, Double?> =
     object : ArgumentProperty<Any, Double?>(this, key) {
         override fun getValue(thisRef: Any, property: KProperty<*>): Double? {
-            return arguments?.getDouble(key(property))
+            return ifContains(key(property)) { key, args -> args.getDouble(key) }
         }
     }
 
@@ -226,7 +251,7 @@ fun ArgumentHelper.long(
 ): ArgumentProperty<Any, Long> =
     object : ArgumentProperty<Any, Long>(this, key) {
         override fun getValue(thisRef: Any, property: KProperty<*>): Long {
-            return arguments?.getLong(key(property)) ?: defaultValue
+            return arguments?.getLong(key(property), defaultValue) ?: defaultValue
         }
     }
 
@@ -235,7 +260,7 @@ fun ArgumentHelper.longOrNull(
 ): ArgumentProperty<Any, Long?> =
     object : ArgumentProperty<Any, Long?>(this, key) {
         override fun getValue(thisRef: Any, property: KProperty<*>): Long? {
-            return arguments?.getLong(key(property))
+            return ifContains(key(property)) { key, args -> args.getLong(key) }
         }
     }
 
@@ -268,7 +293,7 @@ inline fun <reified T> ArgumentHelper.deserializableOrNull(
     noinline key: (KProperty<*>) -> String = KProperty<*>::name
 ): ArgumentProperty<Any, T?> = object : ArgumentProperty<Any, T?>(this, key) {
     override fun getValue(thisRef: Any, property: KProperty<*>): T? {
-        return arguments?.getSerialize(key(property))
+        return ifContains(key(property)) { key, args -> args.getSerialize(key) }
     }
 }
 
@@ -301,7 +326,7 @@ inline fun <reified T> ArgumentHelper.deserializableOrNull(
     noinline key: (KProperty<*>) -> String = KProperty<*>::name
 ): ArgumentProperty<Any, T?> = object : ArgumentProperty<Any, T?>(this, key) {
     override fun getValue(thisRef: Any, property: KProperty<*>): T? {
-        return arguments?.getSerialize(key(property), deserializationStrategy)
+        return ifContains(key(property)) { key, args -> args.getSerialize(key, deserializationStrategy) }
     }
 }
 

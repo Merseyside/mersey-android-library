@@ -22,20 +22,9 @@ open class ComposingTextDelegate<View : ComposingText<Style>, Style : ComposingT
         super.applyStyle(context, viewDataBinding, style)
         val text = viewDataBinding.root as TextView
         with(text) {
-            safeLet(style.textColor) { color ->
-                setTextColor(
-                    ContextCompat.getColor(
-                        context,
-                        color
-                    )
-                )
-            }
+            safeLet(style.textColor) { color -> setTextColor(color) }
             safeLet(style.textSize) { textSize ->
-                setTextSizePx(
-                    context.resources.getDimensionPixelSize(
-                        textSize
-                    )
-                )
+                setTextSizePx(textSize)
             }
             safeLet(style.gravity) { gravity -> setGravity(gravity) }
             safeLet(style.maxLines) { maxLines -> setMaxLines(maxLines) }

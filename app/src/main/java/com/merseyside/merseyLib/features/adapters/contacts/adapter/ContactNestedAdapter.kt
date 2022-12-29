@@ -10,7 +10,8 @@ import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.databinding.ItemGroupContactBinding
 import com.merseyside.merseyLib.features.adapters.contacts.entity.ContactGroup
 import com.merseyside.merseyLib.features.adapters.contacts.model.ContactGroupItemViewModel
-import com.merseyside.adapters.config.config
+import com.merseyside.adapters.config.init.initNestedAdapter
+import com.merseyside.adapters.interfaces.ext.removeAsync
 
 class ContactNestedAdapter(config: ContactNestedAdapterConfig) : NestedAdapter<ContactGroup, ContactGroupItemViewModel,
         String, ContactAdapter>(config) {
@@ -37,7 +38,7 @@ class ContactNestedAdapter(config: ContactNestedAdapterConfig) : NestedAdapter<C
         operator fun invoke(
             configure: ContactNestedAdapterConfig.() -> Unit
         ): ContactNestedAdapter {
-            return ContactNestedAdapter(config(configure))
+            return initNestedAdapter(::ContactNestedAdapter, configure)
         }
     }
 }

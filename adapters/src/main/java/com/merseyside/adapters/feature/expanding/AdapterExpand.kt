@@ -18,11 +18,10 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 class AdapterExpand<Parent, Model>(
-    private val variableId: Int,
     private val modelList: ModelList<Parent, Model>,
     expandableMode: ExpandableMode = MULTIPLE,
     isExpandEnabled: Boolean
-) : HasOnItemExpandedListener<Parent>, ModelListCallback<Model>, OnBindItemListener<Parent, Model>,
+) : HasOnItemExpandedListener<Parent>, ModelListCallback<Model>,
     ILogger where Model : VM<Parent> {
 
     override val expandedListeners: MutableList<OnItemExpandedListener<Parent>> by lazy {
@@ -58,33 +57,19 @@ class AdapterExpand<Parent, Model>(
             }
         }
 
-    private val onExpandCallback: OnExpandCallback = object : OnExpandCallback {
-        override fun onExpand(item: ExpandableItem) {
-            changeItemExpandedState(item)
-        }
-
-        override fun onExpand(item: ExpandableItem, expanded: Boolean) {
-            if (expanded != item.isExpanded()) {
-                onExpand(item)
-            }
-        }
-    }
-
-
     init {
         modelList.addModelListCallback(this)
     }
 
-    override fun onBindViewHolder(holder: TypedBindingHolder<Model>, model: Model, position: Int) {
-        holder.bind(variableId, onExpandCallback)
+    override fun onInserted(models: List<Model>, position: Int, count: Int) {
+        val items = models.filterIsInstance<ExpandableItem>()
+        initNewItems(items)
     }
 
-    override fun onInserted(models: List<Model>, position: Int, count: Int) {
-        val newExpandedItems = models.filterIsInstance<ExpandableItem>()
-            .filter { it.isExpanded() }
-
-        expandedList.addAll(newExpandedItems)
-        notifyItemsExpanded(newExpandedItems, false)
+    private fun initNewItems(items: List<ExpandableItem>) {
+        items.forEach { item -> item.expandState.expandEvent.observe { changeItemExpandedState(item) } }
+        val expandedItems = items.filter { it.isExpanded() }
+        notifyItemsExpanded(expandedItems, false)
     }
 
     override fun onRemoved(models: List<Model>, position: Int, count: Int) {
@@ -129,7 +114,7 @@ class AdapterExpand<Parent, Model>(
         isExpandedByUser: Boolean = false
     ): Boolean {
         return if (item.isExpanded() xor newState) {
-            item.expandState.expdaned = newState
+            item.expandState.expanded = newState
             if (newState) {
                 expandedList.add(item)
             } else {

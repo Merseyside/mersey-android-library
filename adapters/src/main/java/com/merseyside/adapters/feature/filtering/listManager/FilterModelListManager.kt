@@ -3,32 +3,34 @@ package com.merseyside.adapters.feature.filtering.listManager
 import com.merseyside.adapters.config.update.UpdateLogic
 import com.merseyside.adapters.feature.filtering.AdapterFilter
 import com.merseyside.adapters.interfaces.base.AdapterActions
-import com.merseyside.adapters.listManager.ModelListManager
+import com.merseyside.adapters.listManager.IModelListManager
 import com.merseyside.adapters.modelList.ModelList
 import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.merseyLib.kotlin.extensions.move
 import com.merseyside.merseyLib.kotlin.logger.ILogger
 import com.merseyside.adapters.model.VM
+import com.merseyside.adapters.utils.AdapterWorkManager
 
-open class FilterListManager<Parent, Model : VM<Parent>>(
+open class FilterModelListManager<Parent, Model : VM<Parent>>(
     override val modelList: ModelList<Parent, Model>,
     override val adapterActions: AdapterActions<Parent, Model>,
-    val adapterFilter: AdapterFilter<Parent, Model>
-): ModelListManager<Parent, Model>, ILogger {
+    val adapterFilter: AdapterFilter<Parent, Model>,
+    override val workManager: AdapterWorkManager
+): IModelListManager<Parent, Model>, ILogger {
 
     override lateinit var updateLogic: UpdateLogic<Parent, Model>
     override val hashMap: MutableMap<Any, Model> = mutableMapOf()
 
-    private var isFiltering: Boolean = false
+    protected var isFiltering: Boolean = false
 
     protected val isFiltered: Boolean
         get() = adapterFilter.isFiltered
 
-    protected val mutAllModelList: MutableList<Model> = ArrayList()
-    protected val allModelList: List<Model> = mutAllModelList
+    private val mutAllModelList: MutableList<Model> = ArrayList()
+    private val allModelList: List<Model> = mutAllModelList
 
-    protected val filteredList: List<Model>
+    private val filteredList: List<Model>
         get() = modelList
 
     init {
@@ -41,12 +43,6 @@ open class FilterListManager<Parent, Model : VM<Parent>>(
             setFilterCallback(object : AdapterFilter.FilterCallback<Model> {
                 override suspend fun onFiltered(models: List<Model>) {
                     filterUpdate { update(models) }
-                }
-
-                override suspend fun onFilterStateChanged(isFiltered: Boolean) {
-                    if (!isFiltered) {
-                        filterUpdate { update(allModelList) }
-                    }
                 }
             })
         }
@@ -102,13 +98,13 @@ open class FilterListManager<Parent, Model : VM<Parent>>(
     }
 
     override suspend fun updateModel(model: Model, item: Parent): Boolean {
-        super.updateModel(model, item)
-        if (isFiltered) {
-            val filtered = adapterFilter.filter(model)
-            if (!filtered) removeModel(model)
-        }
+        return super.updateModel(model, item).also {
 
-        return true
+            if (isFiltered) {
+                val filtered = adapterFilter.filter(model)
+                if (!filtered) removeModel(model)
+            }
+        }
     }
 
     protected fun areListsEquals() = filteredList.size == allModelList.size

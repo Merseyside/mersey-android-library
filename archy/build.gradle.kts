@@ -4,8 +4,8 @@ plugins {
         plugin(android.library)
         plugin(kotlin.android)
         plugin(kotlin.serialization)
-        id(mersey.android.convention.id())
-        id(mersey.kotlin.convention.id())
+        id(mersey.android.extension.id())
+        id(mersey.kotlin.extension.id())
         plugin(kotlin.kapt)
     }
     `android-maven-publish-config`
@@ -49,7 +49,7 @@ android {
     }
 }
 
-kotlinConvention {
+kotlinExtension {
     setCompilerArgs(
         "-opt-in=kotlin.RequiresOptIn",
         "-Xcontext-receivers"

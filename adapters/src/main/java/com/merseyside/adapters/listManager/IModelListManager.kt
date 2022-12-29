@@ -1,6 +1,7 @@
 package com.merseyside.adapters.listManager
 
 import androidx.annotation.CallSuper
+import com.merseyside.adapters.config.contract.HasAdapterWorkManager
 import com.merseyside.adapters.config.update.UpdateActions
 import com.merseyside.adapters.config.update.UpdateLogic
 import com.merseyside.adapters.interfaces.base.AdapterActions
@@ -11,8 +12,9 @@ import com.merseyside.adapters.utils.InternalAdaptersApi
 import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.adapters.utils.runWithDefault
 import com.merseyside.merseyLib.kotlin.contract.Identifiable
+import com.merseyside.merseyLib.kotlin.logger.log
 
-interface ModelListManager<Parent, Model>: UpdateActions<Parent, Model>
+interface IModelListManager<Parent, Model>: UpdateActions<Parent, Model>, HasAdapterWorkManager
     where Model : VM<Parent> {
 
     val adapterActions: AdapterActions<Parent, Model>

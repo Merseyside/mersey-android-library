@@ -6,7 +6,12 @@ import android.view.View
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import com.merseyside.adapters.feature.filtering.Filtering
+import com.merseyside.adapters.feature.filtering.ext.addFilterAsync
+import com.merseyside.adapters.feature.filtering.ext.applyFiltersAsync
+import com.merseyside.adapters.feature.filtering.ext.removeFilterAsync
 import com.merseyside.adapters.feature.sorting.Sorting
+import com.merseyside.adapters.interfaces.ext.addAsync
+import com.merseyside.adapters.interfaces.ext.updateAsync
 import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.archy.presentation.view.valueSwitcher.ValueSwitcher
 import com.merseyside.merseyLib.BR
@@ -59,6 +64,7 @@ class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel
                                        _: Int,
                                        _: Int ->
 
+
         if (newValue != null) {
             val filterName = when (view.id) {
                 requireBinding().rColor.id -> ColorsFilter.R_COLOR_FILTER
@@ -68,11 +74,11 @@ class ColorsFragment : BaseSampleFragment<FragmentColorsBinding, ColorsViewModel
             }
 
             if (length in 1..2) {
-                colorsFilter.addFilter(filterName, newValue)
+                colorsFilter.addFilterAsync(filterName, newValue)
                 true
             } else {
                 if (length.isZero()) {
-                    colorsFilter.removeFilter(filterName)
+                    colorsFilter.removeFilterAsync(filterName)
                     true
                 } else {
                     false

@@ -4,15 +4,13 @@ package com.merseyside.adapters.base
 
 import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
-import com.merseyside.adapters.config.ext.hasFeature
-import com.merseyside.adapters.config.AdapterConfig
-import com.merseyside.adapters.config.listManager
 import com.merseyside.adapters.callback.HasOnItemClickListener
 import com.merseyside.adapters.callback.OnItemClickListener
+import com.merseyside.adapters.config.AdapterConfig
 import com.merseyside.adapters.config.contract.OnBindItemListener
+import com.merseyside.adapters.config.ext.hasFeature
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.interfaces.base.IBaseAdapter
-import com.merseyside.adapters.listManager.ModelListManager
 import com.merseyside.adapters.model.AdapterParentViewModel
 import com.merseyside.adapters.model.VM
 import com.merseyside.adapters.utils.AdapterWorkManager
@@ -21,21 +19,18 @@ import com.merseyside.merseyLib.kotlin.logger.ILogger
 import com.merseyside.utils.reflection.ReflectionUtils
 import kotlinx.coroutines.Job
 
-@Suppress("LeakingThis")
 abstract class BaseAdapter<Parent, Model>(
-    open val adapterConfig: AdapterConfig<Parent, Model>,
+    override val adapterConfig: AdapterConfig<Parent, Model>,
 ) : RecyclerView.Adapter<TypedBindingHolder<Model>>(),
     HasOnItemClickListener<Parent>, IBaseAdapter<Parent, Model>, ILogger
         where Model : VM<Parent> {
 
+    override val models: List<Model>
+        get() = listManager.modelList
+
     override lateinit var workManager: AdapterWorkManager
 
-    var onBindItemListener: OnBindItemListener<Parent, Model>? = null
-
-    override val models: List<Model>
-        get() = delegate.modelList
-
-    override val delegate: ModelListManager<Parent, Model> by adapterConfig.listManager()
+    override var onBindItemListener: OnBindItemListener<Parent, Model>? = null
 
     @InternalAdaptersApi
     override val adapter: RecyclerView.Adapter<TypedBindingHolder<Model>>
@@ -64,10 +59,6 @@ abstract class BaseAdapter<Parent, Model>(
         ) as Class<Model>
     }
 
-    init {
-        adapterConfig.initAdapterWithConfig(this)
-    }
-
     internal abstract fun createModel(item: Parent): Model
 
     override val callbackClick: (Parent) -> Unit = { item ->
@@ -80,7 +71,7 @@ abstract class BaseAdapter<Parent, Model>(
     }
 
     override fun getItemCount(): Int {
-        return delegate.getItemCount()
+        return listManager.getItemCount()
     }
 
     override fun onBindViewHolder(holder: TypedBindingHolder<Model>, position: Int) {

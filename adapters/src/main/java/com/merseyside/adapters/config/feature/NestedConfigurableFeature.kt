@@ -3,6 +3,7 @@ package com.merseyside.adapters.config.feature
 import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.config.AdapterConfig
 import com.merseyside.adapters.config.NestedAdapterConfig
+import com.merseyside.adapters.interfaces.base.IBaseAdapter
 import com.merseyside.adapters.interfaces.nested.INestedAdapter
 import com.merseyside.adapters.model.NestedAdapterParentViewModel
 
@@ -11,9 +12,10 @@ abstract class NestedConfigurableFeature<Parent, Model, Data, InnerAdapter, Conf
     where Model : NestedAdapterParentViewModel<out Parent, Parent, Data>,
           InnerAdapter : BaseAdapter<Data, *> {
 
+    @Suppress("UNCHECKED_CAST")
     final override fun install(
         adapterConfig: AdapterConfig<Parent, Model>,
-        adapter: BaseAdapter<Parent, Model>
+        adapter: IBaseAdapter<Parent, Model>
     ) {
         super.install(adapterConfig, adapter)
         install(

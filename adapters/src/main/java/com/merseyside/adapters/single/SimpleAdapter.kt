@@ -10,12 +10,9 @@ import com.merseyside.adapters.base.BaseAdapter
 import com.merseyside.adapters.config.AdapterConfig
 import com.merseyside.adapters.holder.TypedBindingHolder
 import com.merseyside.adapters.model.AdapterViewModel
-import com.merseyside.adapters.utils.InternalAdaptersApi
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 
 abstract class SimpleAdapter<Item, Model>(
-    adapterConfig: AdapterConfig<Item, Model> = AdapterConfig()
+    adapterConfig: AdapterConfig<Item, Model>
 ): BaseAdapter<Item, Model>(adapterConfig)
     where Model : AdapterViewModel<Item> {
     protected abstract fun getLayoutIdForPosition(position: Int): Int

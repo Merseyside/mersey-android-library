@@ -4,5 +4,5 @@ interface ExpandableItem {
 
     val expandState: ExpandState
 
-    fun isExpanded(): Boolean = expandState.expdaned
+    fun isExpanded(): Boolean = expandState.expanded
 }

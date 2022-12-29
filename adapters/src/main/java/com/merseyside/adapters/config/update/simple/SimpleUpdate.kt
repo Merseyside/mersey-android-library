@@ -2,8 +2,8 @@ package com.merseyside.adapters.config.update.simple
 
 import com.merseyside.adapters.config.update.UpdateActions
 import com.merseyside.adapters.config.update.UpdateLogic
-import com.merseyside.adapters.utils.UpdateRequest
 import com.merseyside.adapters.model.VM
+import com.merseyside.adapters.utils.UpdateRequest
 
 class SimpleUpdate<Parent, Model : VM<Parent>>(
     override var updateActions: UpdateActions<Parent, Model>
@@ -22,12 +22,11 @@ class SimpleUpdate<Parent, Model : VM<Parent>>(
             list.forEachIndexed { newPosition, item ->
                 val oldModel = models.find { it.areItemsTheSame(item) }
                 if (oldModel == null) {
-                    isUpdated = true
                     updateActions.add(newPosition, listOf(item))
                 } else {
                     val oldPosition = getPositionOfItem(item, models)
                     updateActions.move(oldModel, oldPosition, newPosition)
-                    if (updateActions.updateModel(oldModel, item)) isUpdated = true
+                    isUpdated = updateActions.updateModel(oldModel, item) || isUpdated
                 }
             }
 

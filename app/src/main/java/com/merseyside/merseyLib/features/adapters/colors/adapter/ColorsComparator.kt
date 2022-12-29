@@ -2,6 +2,7 @@ package com.merseyside.merseyLib.features.adapters.colors.adapter
 
 import android.graphics.Color
 import com.merseyside.adapters.feature.sorting.Comparator
+import com.merseyside.adapters.feature.sorting.ext.updateAsync
 import com.merseyside.merseyLib.features.adapters.colors.entity.HexColor
 import com.merseyside.merseyLib.features.adapters.colors.model.ColorItemViewModel
 

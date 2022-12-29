@@ -21,4 +21,10 @@ open class ComposingTextViewModel<Item : ComposingText<*>>(
         return item.text
     }
 
+    fun setText(value: String) {
+        if (value != item.text) {
+            item.text = value
+        }
+    }
+
 }

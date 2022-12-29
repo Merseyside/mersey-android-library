@@ -6,6 +6,7 @@ import com.merseyside.adapters.compose.model.ViewAdapterViewModel
 import com.merseyside.adapters.compose.view.base.SCV
 import com.merseyside.adapters.compose.view.list.BaseComposingListDelegate
 import com.merseyside.adapters.compose.view.list.simple.ComposingListViewModel
+import com.merseyside.adapters.compose.view.list.simple.adapterConfig
 import com.merseyside.adapters.feature.selecting.Selecting
 import com.merseyside.adapters.holder.TypedBindingHolder
 
@@ -21,10 +22,10 @@ class ComposingSelectableListDelegate : BaseComposingListDelegate<ComposingSelec
         delegateManager: ViewDelegatesManager<SCV, ViewAdapterViewModel>
     ): ViewCompositeAdapter<SCV, ViewAdapterViewModel> {
         return ViewCompositeAdapter(delegateManager) {
+            apply(model.item.listConfig.adapterConfig)
+
             Selecting {
                 with(model.item) {
-                    variableId = listConfig.variableId
-
                     selectableMode = listConfig.selectableMode
                     isSelectEnabled = listConfig.isSelectEnabled
                     isAllowToCancelSelection = listConfig.isAllowToCancelSelection
