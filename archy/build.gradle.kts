@@ -75,7 +75,6 @@ val androidBundles = listOf(
 
 val modulez = listOf(
     projects.utils,
-    projects.adapters,
     projects.animators
 )
 

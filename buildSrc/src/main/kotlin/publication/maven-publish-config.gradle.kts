@@ -12,7 +12,7 @@ publishing {
             val projectGitUrl = "https://github.com/Merseyside/mersey-android-library"
             pom {
                 name.set("Mersey android library")
-                description.set("Contains adapters, animators, architecture features and some utils")
+                description.set("Contains animators, architecture features and some utils")
                 url.set(projectGitUrl)
 
                 licenses {
