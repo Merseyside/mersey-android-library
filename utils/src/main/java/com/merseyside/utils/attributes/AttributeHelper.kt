@@ -266,7 +266,8 @@ class AttributeHelper(
                 }
             } while (index != -1)
 
-            throw ClassNotFoundException("Can not find R class with passed $packageName package name")
+            throw ClassNotFoundException("Can not find R class with passed $packageName package name." +
+                    "May happen if gradle.properties contains android.nonTransitiveRClass=true.")
         }
     }
 

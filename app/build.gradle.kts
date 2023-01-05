@@ -99,7 +99,6 @@ val androidLibz = listOf(
 val modulez = listOf(
     projects.utils,
     projects.archy,
-    projects.adapters,
     projects.animators
 )
 
