@@ -16,39 +16,6 @@
         <item name="validSuccessMessageColor">?attr/colorAccent</item>
         <item name="validErrorMessageColor">?attr/colorError</item>
     </style>
-
-    <style name="Widget.Mersey.CalendarItemView" parent="android:Widget">
-        <item name="dayTextSize">14sp</item>
-        <item name="dayTextColor">@drawable/day_view_text_default_selector</item>
-        <item name="dayBackgroundColor">@drawable/day_view_background_default_selector</item>
-
-        <item name="dayWeekendTextColor">@drawable/weekend_day_view_text_default_selector</item>
-
-        <item name="dayCornerRadius">0dp</item>
-        <item name="dayContentPadding">16dp</item>
-    </style>
-
-    <style name="Widget.Mersey.CalendarItemView.Circle" parent="Widget.Mersey.CalendarItemView">
-        <item name="dayCropCircle">true</item>
-    </style>
-
-    <style name="Widget.Mersey.MonthDayView" parent="Widget.Mersey.CalendarItemView">
-        <item name="monthPrevDayBackgroundColor">@drawable/prev_month_day_view_background_default_selector</item>
-        <item name="monthPrevDayTextColor">@drawable/prev_month_day_view_text_default_selector</item>
-    </style>
-
-    <style name="Widget.Mersey.MonthDayView.Circle" parent="Widget.Mersey.MonthDayView">
-        <item name="dayCropCircle">true</item>
-    </style>
-
-    <style name="Widget.Mersey.TimeRangeView" parent="android:Widget">
-        <item name="dayHorizontalSpacing">4dp</item>
-        <item name="dayVerticalSpacing">0dp</item>
-    </style>
-
-    <style name="Widget.Mersey.MonthView" parent="Widget.Mersey.TimeRangeView">
-        <item name="monthShowOutMonthDays">true</item>
-    </style>
     
     <style name="Widget.Mersey.ValueSwitcher" parent="android:Widget">
         <item name="switchButtons">arrows</item>

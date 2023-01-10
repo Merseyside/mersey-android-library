@@ -7,12 +7,6 @@
         <attr name="validationInputViewStyle" format="reference" />
         <attr name="textProgressBarStyle" format="reference" />
         <attr name="roundTextViewStyle" format="reference" />
-
-        <attr name="dayViewStyle" format="reference" />
-        <attr name="monthDayViewStyle" format="reference" />
-
-        <attr name="timeRangeViewStyle" format="reference" />
-        <attr name="monthViewStyle" format="reference" />
     </declare-styleable>
 
     <attr name="validationInputLayoutStyle" format="reference" />
@@ -165,44 +159,6 @@
 
         <attr name="switchTextColor" format="color" />
         <attr name="switchButtonColor" format="color" />
-    </declare-styleable>
-
-<!-- Calendar -->
-
-    <declare-styleable name="DayView">
-        <attr name="day" format="integer" />
-
-        <attr name="dayTextSize" format="dimension" />
-        <attr name="dayTextColor" format="color" />
-        <attr name="dayBackgroundColor" format="color" />
-
-        <attr name="dayIsWeekend" format="boolean" />
-        <attr name="dayWeekendTextColor" format="color" />
-        <attr name="dayWeekendBackgroundColor" format="color" />
-
-        <attr name="dayCornerRadius" format="dimension" />
-        <attr name="dayContentPadding" format="dimension" />
-
-        <attr name="dayCropCircle" format="boolean" />
-    </declare-styleable>
-
-    <declare-styleable name="SimpleDayView" parent="DayView" />
-
-    <declare-styleable name="MonthDayView" parent="SimpleDayView">
-        <attr name="monthIsOutMonthDay" format="boolean"/>
-        <attr name="monthPrevDayTextColor" format="color" />
-        <attr name="monthPrevDayBackgroundColor" format="color" />
-    </declare-styleable>
-
-    <declare-styleable name="TimeRangeView">
-        <attr name="dayHorizontalSpacing" format="dimension" />
-        <attr name="dayVerticalSpacing" format="dimension" />
-    </declare-styleable>
-
-    <declare-styleable name="WeekView" parent="TimeRangeView"/>
-
-    <declare-styleable name="MonthView" parent="TimeRangeView">
-        <attr name="monthShowOutMonthDays" format="boolean" />
     </declare-styleable>
 
 </resources>

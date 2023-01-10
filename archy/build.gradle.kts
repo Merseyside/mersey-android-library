@@ -46,7 +46,7 @@ android {
     sourceSets.getByName("main") {
         res.srcDir(basePath)
         res.srcDir("$basePath/layouts/valueSwitcher")
-        res.srcDir("$basePath/layouts/calendar")
+        res.srcDir("$basePath/layouts/view")
     }
 }
 
