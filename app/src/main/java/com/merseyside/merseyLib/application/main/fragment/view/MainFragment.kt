@@ -31,14 +31,7 @@ class MainFragment : BaseSampleFragment<FragmentMainBinding, MainViewModel>() {
         super.onViewCreated(view, savedInstanceState)
 
         requireBinding().run {
-            newsButton.onClick { navigate(R.id.action_mainFragment_to_newsFragment) }
-            colorsButton.onClick { navigate(R.id.action_mainFragment_to_colorsFragment) }
-            racingButton.onClick { navigate(R.id.action_mainFragment_to_racingFragment) }
             locationButton.onClick { navigate(R.id.action_mainFragment_to_locationFragment) }
-            concatButton.onClick { navigate(R.id.action_mainFragment_to_concatFragment) }
-            contactsButton.onClick { navigate(R.id.action_mainFragment_to_contactsFragment) }
-            delegatesButton.onClick { navigate(R.id.action_mainFragment_to_delegatesFragment) }
-            moviesButton.onClick { navigate(R.id.action_mainFragment_to_moviesFragment) }
             calendarButton.onClick { navigate(R.id.action_mainFragment_to_calendarFragment) }
         }
     }

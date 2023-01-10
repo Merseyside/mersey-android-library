@@ -7,7 +7,7 @@ import com.merseyside.merseyLib.application.di.DaggerAppComponent
 
 class SampleApplication : BaseApplication() {
 
-    lateinit var appComponent : AppComponent
+    lateinit var appComponent: AppComponent
         private set
 
     override fun onCreate() {
@@ -24,7 +24,7 @@ class SampleApplication : BaseApplication() {
     companion object {
         private lateinit var instance: SampleApplication
 
-        fun getInstance() : SampleApplication {
+        fun getInstance(): SampleApplication {
             return instance
         }
     }

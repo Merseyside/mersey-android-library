@@ -13,96 +13,20 @@
         app:navGraph="@navigation/nav_graph">
 
         <action
-            android:id="@+id/action_mainFragment_to_newsFragment"
-            app:destination="@id/newsFragment" />
-
-        <action
-            android:id="@+id/action_mainFragment_to_colorsFragment"
-            app:destination="@id/colorsFragment" />
-
-        <action
-            android:id="@+id/action_mainFragment_to_racingFragment"
-            app:destination="@id/racingFragment" />
-
-        <action
             android:id="@+id/action_mainFragment_to_locationFragment"
             app:destination="@id/locationFragment" />
 
         <action
-            android:id="@+id/action_mainFragment_to_concatFragment"
-            app:destination="@id/concatFragment" />
-
-        <action
-            android:id="@+id/action_mainFragment_to_contactsFragment"
-            app:destination="@id/contactsFragment" />
-
-        <action
-            android:id="@+id/action_mainFragment_to_delegatesFragment"
-            app:destination="@id/delegatesFragment" />
-
-        <action
-            android:id="@+id/action_mainFragment_to_moviesFragment"
-            app:destination="@id/moviesFragment" />
-
-        <action
             android:id="@+id/action_mainFragment_to_calendarFragment"
             app:destination="@id/calendarFragment" />
+
     </fragment>
-
-    <fragment
-        android:id="@+id/colorsFragment"
-        android:name="com.merseyside.merseyLib.features.adapters.colors.view.ColorsFragment"
-        android:label="colors_fragment"
-        tools:layout="@layout/fragment_colors"
-        app:navGraph="@navigation/nav_graph" />
-
-    <fragment
-        android:id="@+id/racingFragment"
-        android:name="com.merseyside.merseyLib.features.adapters.racers.view.RacingFragment"
-        android:label="racing_fragment"
-        tools:layout="@layout/fragment_racing"
-        app:navGraph="@navigation/nav_graph" />
 
     <fragment
         android:id="@+id/locationFragment"
         android:name="com.merseyside.merseyLib.features.location.view.LocationFragment"
         android:label="location_fragment"
         tools:layout="@layout/fragment_location"
-        app:navGraph="@navigation/nav_graph" />
-
-    <fragment
-        android:id="@+id/concatFragment"
-        android:name="com.merseyside.merseyLib.features.adapters.concat.view.ConcatAdapterFragment"
-        android:label="concat_fragment"
-        tools:layout="@layout/fragment_concat_adapter"
-        app:navGraph="@navigation/nav_graph" />
-
-    <fragment
-        android:id="@+id/contactsFragment"
-        android:name="com.merseyside.merseyLib.features.adapters.contacts.view.ContactFragment"
-        android:label="contacts_fragment"
-        tools:layout="@layout/fragment_contacts"
-        app:navGraph="@navigation/nav_graph" />
-
-    <fragment
-        android:id="@+id/delegatesFragment"
-        android:name="com.merseyside.merseyLib.features.adapters.delegate.view.DelegateFragment"
-        android:label="delegates_fragment"
-        tools:layout="@layout/fragment_delegate"
-        app:navGraph="@navigation/nav_graph" />
-
-    <fragment
-        android:id="@+id/newsFragment"
-        android:name="com.merseyside.merseyLib.features.adapters.news.view.NewsFragment"
-        android:label="news_fragment"
-        tools:layout="@layout/fragment_news"
-        app:navGraph="@navigation/nav_graph" />
-
-    <fragment
-        android:id="@+id/moviesFragment"
-        android:name="com.merseyside.merseyLib.features.adapters.movies.view.MoviesFragment"
-        android:label="movies_fragment"
-        tools:layout="@layout/fragment_movies"
         app:navGraph="@navigation/nav_graph" />
 
     <fragment
