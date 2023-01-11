@@ -9,13 +9,15 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.RelativeLayout
 import androidx.annotation.IdRes
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.archy.R
 import com.merseyside.archy.databinding.ViewFloatingListBinding
+import com.merseyside.archy.presentation.view.HORIZONTAL
+import com.merseyside.archy.presentation.view.VERTICAL
 import com.merseyside.utils.delegate.getValue
 import com.merseyside.utils.delegate.viewBinding
+import com.merseyside.utils.layout.GridLayoutManager
+import com.merseyside.utils.layout.LinearLayoutManager
 
 /**
  * This class have to be extended from RelativeLayout
@@ -53,12 +55,12 @@ class FloatingListView(context: Context, attrsSet: AttributeSet? = null) :
             layoutManager = when (orientation) {
                 Orientation.VERTICAL -> LinearLayoutManager(
                     context,
-                    LinearLayoutManager.VERTICAL,
+                    VERTICAL,
                     false
                 )
                 Orientation.HORIZONTAL -> LinearLayoutManager(
                     context,
-                    LinearLayoutManager.HORIZONTAL,
+                    HORIZONTAL,
                     false
                 )
                 Orientation.GRID -> GridLayoutManager(context, 2)
