@@ -10,9 +10,10 @@ fun getSquaredViewSizes(widthMeasureSpec: Int, heightMeasureSpec: Int): Pair<Int
         val heightSize = View.MeasureSpec.getSize(heightMeasureSpec)
 
         return if (widthSize == heightSize) widthSize to heightSize
-        else if (isSizeAvailable(heightMode, heightSize, widthSize)) {
-            widthSize to getAvailableSize(heightMode, heightSize, widthSize)
-        } else getAvailableSize(widthMode, widthSize, heightSize) to heightSize
+        else if (isSizeAvailable(widthMode, widthSize, heightSize)) heightSize to heightSize
+        else if (isSizeAvailable(heightMode, heightSize, widthSize)) widthSize to widthSize
+        else throw IllegalArgumentException("View can not be squared!")
+
     } else throw IllegalArgumentException("View can not be squared!")
 }
 

@@ -58,6 +58,7 @@ class FloatingListView(context: Context, attrsSet: AttributeSet? = null) :
                     VERTICAL,
                     false
                 )
+
                 Orientation.HORIZONTAL -> LinearLayoutManager(
                     context,
                     HORIZONTAL,

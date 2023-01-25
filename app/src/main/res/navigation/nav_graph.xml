@@ -16,10 +16,6 @@
             android:id="@+id/action_mainFragment_to_locationFragment"
             app:destination="@id/locationFragment" />
 
-        <action
-            android:id="@+id/action_mainFragment_to_calendarFragment"
-            app:destination="@id/calendarFragment" />
-
     </fragment>
 
     <fragment
@@ -27,13 +23,6 @@
         android:name="com.merseyside.merseyLib.features.location.view.LocationFragment"
         android:label="location_fragment"
         tools:layout="@layout/fragment_location"
-        app:navGraph="@navigation/nav_graph" />
-
-    <fragment
-        android:id="@+id/calendarFragment"
-        android:name="com.merseyside.merseyLib.features.calendar.view.CalendarFragment"
-        android:label="calendar_fragment"
-        tools:layout="@layout/fragment_calendar"
         app:navGraph="@navigation/nav_graph" />
 
 </navigation>

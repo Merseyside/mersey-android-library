@@ -27,6 +27,19 @@ fun RecyclerView.Recycler.measureScrapChild(
 }
 
 context(RecyclerView.LayoutManager)
+fun RecyclerView.Recycler.measureDesiredScrapChild(
+    position: Int,
+    measuredDimension: IntArray
+) {
+    measureScrapChild(
+        position = position,
+        View.MeasureSpec.makeMeasureSpec(ANY_SIZE, View.MeasureSpec.UNSPECIFIED),
+        View.MeasureSpec.makeMeasureSpec(ANY_SIZE, View.MeasureSpec.UNSPECIFIED),
+        measuredDimension
+    )
+}
+
+context(RecyclerView.LayoutManager)
 fun RecyclerView.Recycler.calculateAllChildrenSize(
     widthSpec: Int,
     heightSpec: Int,
@@ -41,8 +54,8 @@ fun RecyclerView.Recycler.calculateAllChildrenSize(
             childDesiredSizes
         )
 
-        totalSizes[0] = totalSizes[0] + childDesiredSizes[0]
-        totalSizes[1] = totalSizes[1] + childDesiredSizes[1]
+        totalSizes[0]+= childDesiredSizes[0]
+        totalSizes[1]+= childDesiredSizes[1]
     }
 }
 
