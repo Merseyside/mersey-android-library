@@ -32,7 +32,6 @@ class MainFragment : BaseSampleFragment<FragmentMainBinding, MainViewModel>() {
 
         requireBinding().run {
             locationButton.onClick { navigate(R.id.action_mainFragment_to_locationFragment) }
-            calendarButton.onClick { navigate(R.id.action_mainFragment_to_calendarFragment) }
         }
     }
 }

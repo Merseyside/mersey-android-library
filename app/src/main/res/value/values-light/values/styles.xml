@@ -27,7 +27,6 @@
         <item name="negative_text_color">@color/red</item>
 
         <item name="valueSwitcherStyle">@style/Widget.Mersey.ValueSwitcher</item>
-        <item name="dayViewStyle">@style/Widget.Mersey.CalendarItemView</item>
 
         <item name="some_text">Some text</item>
     </style>
