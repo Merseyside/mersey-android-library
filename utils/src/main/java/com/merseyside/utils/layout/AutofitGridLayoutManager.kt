@@ -36,19 +36,28 @@ class AutofitGridLayoutManager : GridLayoutManager {
         spanCount: Int
     ) : super(context, spanCount)
 
-    override fun onMeasure(
-        recycler: RecyclerView.Recycler,
-        state: RecyclerView.State,
-        widthSpec: Int,
-        heightSpec: Int
-    ) {
-        val widthMode = MeasureSpec.getMode(widthSpec)
-        val heightMode = MeasureSpec.getMode(heightSpec)
-        val widthSize = MeasureSpec.getSize(widthSpec)
-        val heightSize = MeasureSpec.getSize(heightSpec)
-
+//    override fun onMeasure(
+//        recycler: RecyclerView.Recycler,
+//        state: RecyclerView.State,
+//        widthSpec: Int,
+//        heightSpec: Int
+//    ) {
+//        "in onMeasure".log()
+//        val widthMode = MeasureSpec.getMode(widthSpec)
+//        val heightMode = MeasureSpec.getMode(heightSpec)
+//        val widthSize = MeasureSpec.getSize(widthSpec)
+//        val heightSize = MeasureSpec.getSize(heightSpec)
+//
 //        logMeasureSpec(widthSpec, "width")
 //        logMeasureSpec(heightSpec, "height")
+//
+//
+//
+//        super.onMeasure(recycler, state, widthSpec, heightSpec)
+//    }
+
+    override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
+        super.onLayoutChildren(recycler, state)
 
         val itemsCount = state.itemCount
         if (itemsCount != 0) {
@@ -61,20 +70,18 @@ class AutofitGridLayoutManager : GridLayoutManager {
             if (orientation == VERTICAL) {
 
                 if (heightMode == MeasureSpec.EXACTLY || heightMode == MeasureSpec.AT_MOST) {
-                    val maxItemSize = ceilInt(heightSize / itemsInRow.toFloat())
+                    val maxItemSize = ceilInt(height / itemsInRow.toFloat())
                     if (desiredSizes[1] > maxItemSize) childMeasuredHeight = maxItemSize
                 }
 
             } else {
                 if (widthMode == MeasureSpec.EXACTLY || widthMode == MeasureSpec.AT_MOST) {
-                    val maxItemSize = ceilInt(widthSize / itemsInRow.toFloat())
+                    val maxItemSize = ceilInt(width / itemsInRow.toFloat())
                     if (desiredSizes[0] > maxItemSize) childMeasuredWidth = maxItemSize
                 }
 
             }
         }
-
-        super.onMeasure(recycler, state, widthSpec, heightSpec)
     }
 
     override fun checkLayoutParams(lp: RecyclerView.LayoutParams): Boolean {
