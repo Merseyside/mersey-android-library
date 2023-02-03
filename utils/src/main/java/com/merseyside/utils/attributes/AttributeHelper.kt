@@ -237,7 +237,7 @@ class AttributeHelper(
         val value = if (id == null) {
             defValue
         } else if (block != null) {
-            block(id)
+            block(id) ?: defValue
         } else defValue
 
         return if (value == null || value == NO_VALUE ||

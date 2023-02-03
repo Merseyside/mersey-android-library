@@ -2,6 +2,7 @@ package com.merseyside.utils
 
 import android.os.Handler
 import android.os.Looper
+import com.merseyside.merseyLib.kotlin.utils.safeLet
 import com.merseyside.merseyLib.time.units.TimeUnit
 import com.merseyside.utils.ext.toHandlerCanceller
 
@@ -35,9 +36,12 @@ fun delayedMainThread(delay: TimeUnit, onMain: () -> Unit): CancellableHandler {
 }
 
 fun delayedThread(delay: TimeUnit, runnable: Runnable): CancellableHandler {
-    val handler = Handler()
-    handler.postDelayed(runnable, delay.millis)
-    return handler.toHandlerCanceller(runnable)
+    val looper = Looper.myLooper()
+    return safeLet(looper) {
+        val handler = Handler(it)
+        handler.postDelayed(runnable, delay.millis)
+        handler.toHandlerCanceller(runnable)
+    } ?: throw IllegalArgumentException("Looper is null!")
 }
 
 fun delayedThread(delay: TimeUnit, onThread: () -> Unit): CancellableHandler {

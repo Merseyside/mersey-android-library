@@ -18,6 +18,10 @@ abstract class AttributeHelperDelegate<T>(
 ) : ReadWriteProperty<Any, T> {
 
     var value: T? = null
+    set(value) {
+        if (value != null) onChange(field, value)
+        field = value
+    }
 
     abstract fun provideValue(name: String): T
 
@@ -26,7 +30,6 @@ abstract class AttributeHelperDelegate<T>(
     }
 
     final override fun setValue(thisRef: Any, property: KProperty<*>, newValue: T) {
-        onChange(value, newValue)
         value = newValue
     }
 

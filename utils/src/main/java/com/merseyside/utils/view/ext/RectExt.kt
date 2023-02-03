@@ -1,10 +1,23 @@
 package com.merseyside.utils.view.ext
 
-import android.graphics.Point
-import android.graphics.Rect
-import android.graphics.RectF
+import android.graphics.*
+import com.merseyside.merseyLib.kotlin.logger.Logger
+import com.merseyside.utils.Quad
+import com.merseyside.utils.ext.toFloat
+import com.merseyside.utils.view.canvas.Background
+import com.merseyside.utils.view.canvas.CircleCorners
+import com.merseyside.utils.view.canvas.HorizontalAlign
+import com.merseyside.utils.view.canvas.VerticalAlign
 
-fun Rect.set(leftTop: Point = Point(left, top), rightBottom: Point = Point(right, bottom)) {
+fun Rect.toQuad(): Quad<Int, Int, Int, Int> {
+    return Quad(left, top, right, bottom)
+}
+
+fun Rect.set(point: Point) {
+    set(point.x, point.y, point.x, point.y)
+}
+
+fun Rect.set(leftTop: Point, rightBottom: Point) {
     set(leftTop.x, leftTop.y, rightBottom.x, rightBottom.y)
 }
 
@@ -59,4 +72,87 @@ fun Rect.getIntersectedRect(
         intersectedRect
     } else null
 }
+
+context(Canvas)
+fun Rect.drawTextCenter(paint: Paint, text: String) {
+    val cHeight = height()
+    val cWidth = width()
+    paint.textAlign = Paint.Align.LEFT
+    val bounds = Rect().apply {
+        paint.getTextBounds(text, 0, text.length, this)
+    }
+    val x = left + cWidth / 2f - bounds.width() / 2f - bounds.left
+    val y = top + cHeight / 2f + bounds.height() / 2f - bounds.bottom
+    drawText(text, x, y, paint)
+}
+
+context(Canvas)
+fun Rect.drawTextOnBaseline(
+    text: String,
+    horizontalAlign: HorizontalAlign = HorizontalAlign.LEFT,
+    verticalAlign: VerticalAlign = VerticalAlign.TOP,
+    paint: Paint,
+    background: Background? = null
+) {
+
+    val savedAlign = paint.textAlign
+    paint.textAlign = Paint.Align.LEFT
+
+    val (rectLeft, rectTop, rectRight, rectBottom) = toQuad().toFloat()
+
+    val textBounds = Rect().apply {
+        paint.getTextBounds(text, 0, text.length, this)
+    }
+
+    val textWidth = paint.getTextWidth(text)
+    val textHeight = paint.getTextHeight(text)
+
+    val textXCoord = when (horizontalAlign) {
+        HorizontalAlign.LEFT -> rectLeft
+        HorizontalAlign.CENTER -> rectLeft + (width() / 2F) - textBounds.width() / 2F - textBounds.left
+        HorizontalAlign.RIGHT -> rectRight
+    }
+
+    val textYCoord = when (verticalAlign) {
+        VerticalAlign.TOP -> rectTop + textHeight
+        VerticalAlign.CENTER -> rectTop + (height() / 2F) + textBounds.height() / 2F - textBounds.bottom
+        VerticalAlign.BOTTOM -> rectBottom
+    }
+
+    background?.let { background ->
+        val rect = RectF(
+            textXCoord - textWidth - background.margins.left,
+            textYCoord - textHeight - background.margins.top,
+            textXCoord + background.margins.right,
+            textYCoord + background.margins.bottom
+        )
+
+        background.cornerRadius?.let { radius ->
+            val newRadius = if (radius is CircleCorners) {
+                radius.getCornerRadius(rect)
+            } else {
+                radius
+            }
+            drawRoundRect(
+                rect,
+                newRadius.xRadius.toFloat(),
+                newRadius.yRadius.toFloat(),
+                background.paint
+            )
+        } ?: drawRect(rect, background.paint)
+    }
+
+    drawText(text, textXCoord, textYCoord/* - textGap */, paint)
+    paint.textAlign = savedAlign
+}
+
+fun Rect.logRect(tag: String = Logger.TAG, prefix: String? = ""): Rect {
+    return this.also { Logger.log(tag, "$prefix left = $left top = $top\nright = $right bottom = $bottom") }
+}
+
+fun RectF.logRect(tag: String = Logger.TAG, prefix: String? = ""): RectF {
+    return this.also { Logger.log(tag, "$prefix left = $left top = $top\nright = $right bottom = $bottom") }
+}
+
+
 

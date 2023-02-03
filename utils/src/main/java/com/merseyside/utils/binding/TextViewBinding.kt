@@ -10,7 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
-import com.merseyside.utils.view.ext.addTextChangeListener
+import com.merseyside.utils.ext.addTextChangeListener
 import com.merseyside.utils.view.ext.getColorFromAttr
 import com.merseyside.utils.view.ext.setTextWithCursor
 
