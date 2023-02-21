@@ -2,10 +2,9 @@ package com.merseyside.utils.layout
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.View.MeasureSpec
+import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.utils.math.ceilInt
-import com.merseyside.utils.view.measure.measureDesiredScrapChild
 
 /**
  * Uses when we need to make all items visible inside recycler view without scrolling by
@@ -36,28 +35,10 @@ class AutofitGridLayoutManager : GridLayoutManager {
         spanCount: Int
     ) : super(context, spanCount)
 
-//    override fun onMeasure(
-//        recycler: RecyclerView.Recycler,
-//        state: RecyclerView.State,
-//        widthSpec: Int,
-//        heightSpec: Int
-//    ) {
-//        "in onMeasure".log()
-//        val widthMode = MeasureSpec.getMode(widthSpec)
-//        val heightMode = MeasureSpec.getMode(heightSpec)
-//        val widthSize = MeasureSpec.getSize(widthSpec)
-//        val heightSize = MeasureSpec.getSize(heightSpec)
-//
-//        logMeasureSpec(widthSpec, "width")
-//        logMeasureSpec(heightSpec, "height")
-//
-//
-//
-//        super.onMeasure(recycler, state, widthSpec, heightSpec)
-//    }
-
     override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
-        super.onLayoutChildren(recycler, state)
+
+        val heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(height, heightMode)
+        //logMeasureSpec(heightMeasureSpec, "height")
 
         val itemsCount = state.itemCount
         if (itemsCount != 0) {
@@ -65,23 +46,26 @@ class AutofitGridLayoutManager : GridLayoutManager {
             val itemsInRow = itemsCount / spanCount
 
             val desiredSizes = IntArray(2)
-            recycler.measureDesiredScrapChild(0, desiredSizes) // ask child for desired sizes
+            //recycler.measureDesiredScrapChild(0, desiredSizes) // ask child for desired sizes
 
             if (orientation == VERTICAL) {
 
-                if (heightMode == MeasureSpec.EXACTLY || heightMode == MeasureSpec.AT_MOST) {
+                if (heightMode == View.MeasureSpec.EXACTLY || heightMode == View.MeasureSpec.AT_MOST) {
                     val maxItemSize = ceilInt(height / itemsInRow.toFloat())
-                    if (desiredSizes[1] > maxItemSize) childMeasuredHeight = maxItemSize
+
+                    childMeasuredHeight = maxItemSize
                 }
 
             } else {
-                if (widthMode == MeasureSpec.EXACTLY || widthMode == MeasureSpec.AT_MOST) {
+                if (widthMode == View.MeasureSpec.EXACTLY || widthMode == View.MeasureSpec.AT_MOST) {
                     val maxItemSize = ceilInt(width / itemsInRow.toFloat())
                     if (desiredSizes[0] > maxItemSize) childMeasuredWidth = maxItemSize
                 }
 
             }
         }
+
+        super.onLayoutChildren(recycler, state)
     }
 
     override fun checkLayoutParams(lp: RecyclerView.LayoutParams): Boolean {

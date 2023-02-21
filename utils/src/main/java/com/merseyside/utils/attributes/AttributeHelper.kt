@@ -14,6 +14,7 @@ import com.merseyside.merseyLib.kotlin.logger.Logger
 import com.merseyside.utils.ext.capitalize
 import java.lang.reflect.Field
 
+@Deprecated("Bad performance")
 class AttributeHelper(
     val context: Context,
     attributeSet: AttributeSet?,

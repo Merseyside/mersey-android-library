@@ -8,6 +8,8 @@ import com.merseyside.utils.view.canvas.Background
 import com.merseyside.utils.view.canvas.CircleCorners
 import com.merseyside.utils.view.canvas.HorizontalAlign
 import com.merseyside.utils.view.canvas.VerticalAlign
+import kotlin.math.max
+import kotlin.math.min
 
 fun Rect.toQuad(): Quad<Int, Int, Int, Int> {
     return Quad(left, top, right, bottom)
@@ -145,6 +147,42 @@ fun Rect.drawTextOnBaseline(
     drawText(text, textXCoord, textYCoord/* - textGap */, paint)
     paint.textAlign = savedAlign
 }
+
+fun Rect.getCenterPoint(): Point {
+    return Point(centerX(), centerY())
+}
+
+fun Rect.isSquare(): Boolean {
+    return width() == height()
+}
+
+/**
+ * Insets rect to square. It means rectangle size will be equals to the smallest side's size
+ */
+fun Rect.insetToSquare() {
+    if (!isSquare()) {
+        val minSide = min(width(), height())
+
+        val centerPoint = getCenterPoint()
+        set(centerPoint)
+        expand(minSide / 2, minSide / 2)
+    }
+}
+
+/**
+ * Expands rect to square. It means rectangle size will be equals to the largest side's size
+ */
+fun Rect.expandToSquare() {
+    if (!isSquare()) {
+        val maxSide = max(width(), height())
+
+        val centerPoint = getCenterPoint()
+        set(centerPoint)
+        expand(maxSide / 2, maxSide / 2)
+    }
+}
+
+
 
 fun Rect.logRect(tag: String = Logger.TAG, prefix: String? = ""): Rect {
     return this.also { Logger.log(tag, "$prefix left = $left top = $top\nright = $right bottom = $bottom") }

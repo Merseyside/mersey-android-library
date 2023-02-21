@@ -15,7 +15,7 @@ import androidx.annotation.AttrRes
 import com.merseyside.utils.view.ext.CallbackUnregistrar
 import com.merseyside.utils.view.ext.TextChangeListenerUnregistrar
 import com.merseyside.utils.view.ext.getColorFromAttr
-import com.merseyside.utils.view.ext.setTextWithCursor
+import com.merseyside.utils.ext.setTextWithCursor
 
 fun TextView.setTextSilently(text: String, textWatcher: TextWatcher) {
     removeTextChangedListener(textWatcher)

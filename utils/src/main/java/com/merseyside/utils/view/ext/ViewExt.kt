@@ -9,7 +9,6 @@ import android.text.TextWatcher
 import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
-import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
@@ -53,19 +52,6 @@ fun View.getStringFromAttr(
     resolveRefs: Boolean = true
 ): String {
     return this.getActivity().getStringFromAttr(attrColor, typedValue, resolveRefs)
-}
-
-fun EditText.setTextWithCursor(text: String?) {
-    if (this.text.toString() != text) {
-        text?.let {
-            setText(it)
-            setSelection(it.length)
-        }
-    }
-}
-
-fun EditText.setTextWithCursor(text: CharSequence?) {
-    setTextWithCursor(text.toString())
 }
 
 fun View.getActivity(): AppCompatActivity {
@@ -120,6 +106,13 @@ fun View.isFullyVisible(): Boolean {
     val drawingSize = getAdjustedSize()
 
     return visibleSize.x == drawingSize.x && visibleSize.y == drawingSize.y
+}
+
+/**
+ * @return simple Rect(0, 0, width, height)
+ */
+fun View.getRect(): Rect {
+    return Rect(0, 0, width, height)
 }
 
 fun View.getVisibleSize(): Point {
