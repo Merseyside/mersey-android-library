@@ -21,6 +21,7 @@ import com.merseyside.archy.presentation.view.OrientationHandler
 import com.merseyside.archy.presentation.view.localeViews.ILocaleManager
 import com.merseyside.archy.utils.SnackbarManager
 import com.merseyside.merseyLib.kotlin.logger.Logger
+import com.merseyside.merseyLib.kotlin.utils.safeLet
 import com.merseyside.utils.LocaleManager
 import com.merseyside.utils.ext.getLocalizedContext
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
@@ -144,32 +145,13 @@ abstract class BaseActivity : AppCompatActivity(),
         }
     }
 
-    override fun onBackPressed() {
-        val fragment = getCurrentFragment()
-
-        if (fragment != null && fragment is OnBackPressedListener) {
-            if (fragment.onBackPressed()) {
-                super.onBackPressed()
-            }
-        } else {
-            super.onBackPressed()
-        }
-
-        onGoBack()
-    }
-
-    override fun goBack() {
-        super.onBackPressed()
-        onGoBack()
-    }
-
-    private fun onGoBack() {
-//        if (getCurrentFragment()?.getToolbar() != null) {
-//            setFragmentToolbar(null)
-//        }
-    }
-
     override fun handleError(throwable: Throwable): Boolean = false
+
+    override fun onSupportNavigateUp(): Boolean {
+        return safeLet(navController) { nav ->
+            nav.navigateUp()
+        } ?: super.onSupportNavigateUp()
+    }
 
     @IdRes
     abstract fun getFragmentContainer(): Int?

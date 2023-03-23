@@ -5,7 +5,9 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.lifecycleScope
+import com.merseyside.archy.presentation.interfaces.setOnBackPressedCallback
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.application.base.BaseSampleFragment
@@ -13,13 +15,11 @@ import com.merseyside.merseyLib.databinding.FragmentLocationBinding
 import com.merseyside.merseyLib.features.location.di.DaggerLocationComponent
 import com.merseyside.merseyLib.features.location.di.LocationModule
 import com.merseyside.merseyLib.features.location.model.LocationViewModel
-import com.merseyside.merseyLib.time.units.Seconds
-import com.merseyside.utils.BuildConfig
+import com.merseyside.merseyLib.kotlin.utils.safeLet
 import com.merseyside.utils.view.ext.onClick
 import com.merseyside.utils.isPermissionsGranted
 import com.merseyside.utils.requestPermissions
 import com.merseyside.utils.location.LocationManager
-import com.merseyside.utils.view.ext.onClickDebounce
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,9 +30,15 @@ class LocationFragment : BaseSampleFragment<FragmentLocationBinding, LocationVie
     lateinit var locationManager: LocationManager
 
     private var job: Job? = null
+        set(value) {
+            field = value
+            backPressedCallback.isEnabled = value != null
+        }
 
     override fun hasTitleBackButton() = true
     override fun getLayoutId() = R.layout.fragment_location
+
+    private lateinit var backPressedCallback: OnBackPressedCallback
 
     override fun performInjection(bundle: Bundle?, vararg params: Any) {
         DaggerLocationComponent.builder()
@@ -45,28 +51,46 @@ class LocationFragment : BaseSampleFragment<FragmentLocationBinding, LocationVie
     override fun getTitle(context: Context) = getString(R.string.location_title)
     override fun getBindingVariable() = BR.viewModel
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        backPressedCallback = setOnBackPressedCallback(enabled = false) {
+            safeLet(job) {
+                stopCollectingCoords()
+            }
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireBinding().button.onClick {
             if (job == null) {
-                requireBinding().button.text = getString(R.string.stop_getting_location)
-                job = lifecycleScope.launch {
-                    val flow = locationManager.getLocationFlow()
-                    flow.collect {
-                        Toast.makeText(
-                            context,
-                            "lat = ${it.latitude} lon = ${it.longitude}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
+                startCollectingCoors()
             } else {
-                requireBinding().button.text = getString(R.string.start_getting_location)
-                job?.let {
-                    it.cancel()
-                    job = null
-                }
+                stopCollectingCoords()
             }
+        }
+    }
+
+    private fun startCollectingCoors() {
+        requireBinding().button.text = getString(R.string.stop_getting_location)
+        job = lifecycleScope.launch {
+            val flow = locationManager.getLocationFlow()
+            flow.collect {
+                Toast.makeText(
+                    context,
+                    "lat = ${it.latitude} lon = ${it.longitude}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    private fun stopCollectingCoords() {
+        requireBinding().button.text = getString(R.string.start_getting_location)
+        job?.let {
+            it.cancel()
+            job = null
         }
     }
 

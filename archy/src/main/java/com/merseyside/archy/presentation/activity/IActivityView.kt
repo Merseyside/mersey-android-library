@@ -13,8 +13,6 @@ interface IActivityView : IView {
 
     fun registerKeyboardListener(listener: OnKeyboardStateListener): Unregistrar
 
-    fun goBack()
-
     fun getLanguage(): String?
 
     fun setFragmentToolbar(toolbar: Toolbar?, isVisible: Boolean)

@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
@@ -39,6 +41,8 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         private set
 
     final override var orientation: Orientation? = null
+
+    private var fragmentOnBackPressedCallback: OnBackPressedCallback? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -115,6 +119,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         resultCode: Int,
         bundle: Bundle? = null
     ) {
+        requireActivity()
         setRequestCode(requestCode)
         this.fragmentResult = FragmentResult(resultCode, requestCode, bundle)
     }
@@ -318,10 +323,6 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
 
     override fun getRootView(): View? {
         return view
-    }
-
-    open fun goBack() {
-        baseActivity.goBack()
     }
 
     open fun onFragmentResult(resultCode: Int, requestCode: Int, bundle: Bundle? = null) {}
