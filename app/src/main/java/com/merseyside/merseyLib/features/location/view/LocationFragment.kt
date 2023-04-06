@@ -35,7 +35,6 @@ class LocationFragment : BaseSampleFragment<FragmentLocationBinding, LocationVie
             backPressedCallback.isEnabled = value != null
         }
 
-    override fun hasTitleBackButton() = true
     override fun getLayoutId() = R.layout.fragment_location
 
     private lateinit var backPressedCallback: OnBackPressedCallback
