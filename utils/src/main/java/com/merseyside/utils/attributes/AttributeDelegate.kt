@@ -1,12 +1,12 @@
-package com.merseyside.utils.attributes1
+package com.merseyside.utils.attributes
 
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import androidx.annotation.StyleableRes
-import com.merseyside.utils.attributes1.AttributeHelper.Companion.NO_VALUE
-import com.merseyside.utils.attributes1.AttributeHelper.Companion.NO_VALUE_FLOAT
-import com.merseyside.utils.attributes1.AttributeHelper.Companion.NO_VALUE_STRING
+import com.merseyside.utils.attributes.AttributeHelper.Companion.NO_VALUE
+import com.merseyside.utils.attributes.AttributeHelper.Companion.NO_VALUE_FLOAT
+import com.merseyside.utils.attributes.AttributeHelper.Companion.NO_VALUE_STRING
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 

@@ -10,9 +10,9 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import com.merseyside.archy.R
 import com.merseyside.merseyLib.kotlin.extensions.isZero
-import com.merseyside.utils.attributes1.AttributeHelper
-import com.merseyside.utils.attributes1.color
-import com.merseyside.utils.attributes1.dimension
+import com.merseyside.utils.attributes.AttributeHelper
+import com.merseyside.utils.attributes.color
+import com.merseyside.utils.attributes.dimension
 import kotlin.math.min
 
 class RoundTextView(

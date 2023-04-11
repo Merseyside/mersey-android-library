@@ -17,7 +17,7 @@ import com.merseyside.merseyLib.kotlin.utils.safeLet
 import com.merseyside.merseyLib.time.coroutines.delay
 import com.merseyside.merseyLib.time.units.Millis
 import com.merseyside.merseyLib.time.units.TimeUnit
-import com.merseyside.utils.attributes1.AttributeHelper
+import com.merseyside.utils.attributes.AttributeHelper
 import com.merseyside.utils.colorStateList.colorToSimpleStateList
 import com.merseyside.utils.delegate.*
 import com.merseyside.utils.textWatcher.ValidationTextWatcher
@@ -26,12 +26,12 @@ import com.merseyside.utils.view.viewScope
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import com.merseyside.utils.attributes1.bool
-import com.merseyside.utils.attributes1.color
-import com.merseyside.utils.attributes1.dimensionPixelSizeOrNull
-import com.merseyside.utils.attributes1.drawableOrNull
-import com.merseyside.utils.attributes1.int
-import com.merseyside.utils.attributes1.string
+import com.merseyside.utils.attributes.bool
+import com.merseyside.utils.attributes.color
+import com.merseyside.utils.attributes.dimensionPixelSizeOrNull
+import com.merseyside.utils.attributes.drawableOrNull
+import com.merseyside.utils.attributes.int
+import com.merseyside.utils.attributes.string
 import com.google.android.material.R as MaterialStyle
 
 open class ValidationInputView(

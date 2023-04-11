@@ -10,9 +10,14 @@ import androidx.databinding.ViewStubProxy
 import com.merseyside.archy.R
 import com.merseyside.archy.databinding.ValueSwitcherViewBinding
 import com.merseyside.utils.attributes.AttributeHelper
-import com.merseyside.utils.delegate.*
+import com.merseyside.utils.attributes.color
+import com.merseyside.utils.attributes.colorOrNull
+import com.merseyside.utils.attributes.enum
+import com.merseyside.utils.attributes.string
+import com.merseyside.utils.attributes.textArray
+import com.merseyside.utils.delegate.getValue
+import com.merseyside.utils.delegate.viewBinding
 import com.merseyside.utils.ext.setImageColor
-import com.merseyside.utils.getClassName
 import com.merseyside.utils.view.ext.onClick
 
 
@@ -23,23 +28,20 @@ class ValueSwitcher(context: Context, attributeSet: AttributeSet?, defStyleAttr:
         context,
         attributeSet,
         R.styleable.ValueSwitcher,
-        getClassName(),
-        defStyleAttr,
-        R.style.Widget_Mersey_ValueSwitcher,
-        styleableNamePrefix = "switch"
+        defStyleAttr
     )
 
     private val binding: ValueSwitcherViewBinding by viewBinding(R.layout.value_switcher_view)
     private lateinit var valueView: View
 
-    private val title: String by attrs.string()
-    private val entryValues: List<String> by attrs.textArray()
-    private val entries: List<String> by attrs.textArray()
-    private val type: Type by attrs.enum { id -> Type.fromId(id) }
-    private val buttons: Buttons by attrs.enum { id -> Buttons.fromId(id) }
+    private val title: String by attrs.string(R.styleable.ValueSwitcher_switchTitle)
+    private val entryValues: List<String> by attrs.textArray(R.styleable.ValueSwitcher_switchEntryValues)
+    private val entries: List<String> by attrs.textArray(R.styleable.ValueSwitcher_switchEntries)
+    private val type: Type by attrs.enum(R.styleable.ValueSwitcher_switchType) { id -> Type.fromId(id) }
+    private val buttons: Buttons by attrs.enum(R.styleable.ValueSwitcher_switchButtons) { id -> Buttons.fromId(id) }
 
-    private val textColor: Int? by attrs.colorOrNull()
-    private val buttonColor: Int by attrs.color()
+    private val textColor: Int? by attrs.colorOrNull(R.styleable.ValueSwitcher_switchTextColor)
+    private val buttonColor: Int by attrs.color(R.styleable.ValueSwitcher_switchButtonColor)
 
     private var entryValueIndex = 0
 
