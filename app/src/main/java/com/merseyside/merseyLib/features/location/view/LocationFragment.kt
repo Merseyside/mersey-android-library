@@ -7,7 +7,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.lifecycleScope
-import com.merseyside.archy.presentation.interfaces.setOnBackPressedCallback
 import com.merseyside.merseyLib.R
 import com.merseyside.merseyLib.BR
 import com.merseyside.merseyLib.application.base.BaseSampleFragment
@@ -16,6 +15,7 @@ import com.merseyside.merseyLib.features.location.di.DaggerLocationComponent
 import com.merseyside.merseyLib.features.location.di.LocationModule
 import com.merseyside.merseyLib.features.location.model.LocationViewModel
 import com.merseyside.merseyLib.kotlin.utils.safeLet
+import com.merseyside.utils.fragment.onBackPressedDispatcher.setOnBackPressedCallback
 import com.merseyside.utils.view.ext.onClick
 import com.merseyside.utils.isPermissionsGranted
 import com.merseyside.utils.requestPermissions

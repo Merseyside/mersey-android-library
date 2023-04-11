@@ -19,7 +19,9 @@ android {
         minSdk = Application.minSdk
     }
 
-    buildFeatures.dataBinding = true
+    buildFeatures {
+        dataBinding = true
+    }
 
     lint {
         lintConfig = rootProject.file(".lint/config.xml")

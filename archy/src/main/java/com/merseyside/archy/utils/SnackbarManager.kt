@@ -9,6 +9,7 @@ import androidx.core.content.res.ResourcesCompat
 import com.google.android.material.snackbar.Snackbar
 import com.merseyside.archy.R
 import com.merseyside.utils.ext.getColorFromAttr
+import com.google.android.material.R as MaterialStyle
 
 open class SnackbarManager(private val activity: Activity) {
 
@@ -93,13 +94,13 @@ open class SnackbarManager(private val activity: Activity) {
 
         snackbarView.setBackgroundColor(backgroundColor)
 
-        val snackTextView = snackbarView.findViewById<TextView>(R.id.snackbar_text)
+        val snackTextView = snackbarView.findViewById<TextView>(MaterialStyle.id.snackbar_text)
         snackTextView.setTextColor(textColor)
 
         val font = ResourcesCompat.getFont(activity, R.font.roboto)
-        var tv = snackbar!!.view.findViewById<TextView>(R.id.snackbar_text)
+        var tv = snackbar!!.view.findViewById<TextView>(MaterialStyle.id.snackbar_text)
         tv.typeface = font
-        tv = snackbar!!.view.findViewById(R.id.snackbar_action)
+        tv = snackbar!!.view.findViewById(MaterialStyle.id.snackbar_action)
         tv.typeface = font
 
         setCallback(callback)
@@ -120,31 +121,31 @@ open class SnackbarManager(private val activity: Activity) {
 
     @ColorInt
     open fun getMsgBackgroundColor(): Int {
-        return activity.getColorFromAttr(R.attr.colorPrimary)
+        return activity.getColorFromAttr(MaterialStyle.attr.colorPrimary)
     }
 
     @ColorInt
     open fun getErrorMsgBackgroundColor(): Int {
-        return activity.getColorFromAttr(R.attr.colorError)
+        return activity.getColorFromAttr(MaterialStyle.attr.colorError)
     }
 
     @ColorInt
     open fun getMsgTextColor(): Int {
-        return activity.getColorFromAttr(R.attr.colorOnPrimary)
+        return activity.getColorFromAttr(MaterialStyle.attr.colorOnPrimary)
     }
 
     @ColorInt
     open fun getErrorMsgTextColor(): Int {
-        return activity.getColorFromAttr(R.attr.colorOnError)
+        return activity.getColorFromAttr(MaterialStyle.attr.colorOnError)
     }
 
     @ColorInt
     open fun getActionMsgTextColor(): Int {
-        return activity.getColorFromAttr(R.attr.colorOnPrimary)
+        return activity.getColorFromAttr(MaterialStyle.attr.colorOnPrimary)
     }
 
     @ColorInt
     open fun getActionErrorMsgTextColor(): Int {
-        return activity.getColorFromAttr(R.attr.colorOnError)
+        return activity.getColorFromAttr(MaterialStyle.attr.colorOnError)
     }
 }

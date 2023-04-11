@@ -17,10 +17,11 @@ android {
 
     defaultConfig {
         minSdk = Application.minSdk
-        targetSdk = Application.targetSdk
     }
 
-    buildFeatures.dataBinding = true
+    buildFeatures {
+        dataBinding = true
+    }
 
     lint {
         lintConfig = rootProject.file(".lint/config.xml")
