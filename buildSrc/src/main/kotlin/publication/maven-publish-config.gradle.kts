@@ -1,7 +1,6 @@
 import java.util.*
 
 plugins {
-    id("javadoc-stub-convention")
     `maven-publish`
     signing
 }
