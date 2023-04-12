@@ -13,8 +13,10 @@ plugins {
 }
 
 allprojects {
-    group = "io.github.merseyside"
-    version = "2.0.6"
+    plugins.withId("org.gradle.maven-publish") {
+        group = "io.github.merseyside"
+        version = androidLibs.versions.mersey.android
+    }
 }
 
 tasks.register("clean", Delete::class).configure {
