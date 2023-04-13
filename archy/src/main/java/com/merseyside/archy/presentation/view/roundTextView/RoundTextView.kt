@@ -11,9 +11,8 @@ import androidx.core.content.ContextCompat
 import com.merseyside.archy.R
 import com.merseyside.merseyLib.kotlin.extensions.isZero
 import com.merseyside.utils.attributes.AttributeHelper
-import com.merseyside.utils.delegate.color
-import com.merseyside.utils.delegate.dimension
-import com.merseyside.utils.getClassName
+import com.merseyside.utils.attributes.color
+import com.merseyside.utils.attributes.dimension
 import kotlin.math.min
 
 class RoundTextView(
@@ -26,15 +25,29 @@ class RoundTextView(
         context,
         attributeSet,
         R.styleable.RoundTextView,
-        getClassName(),
         defStyleAttr,
-        styleableNamePrefix = "round"
     )
 
-    var cornerRadius by attrs.dimension(0f)
-    var strokeWidth by attrs.dimension(0f)
-    var fillColor by attrs.color(ContextCompat.getColor(context, android.R.color.transparent))
-    var strokeColor by attrs.color(ContextCompat.getColor(context, android.R.color.transparent))
+    var cornerRadius by attrs.dimension(
+        defaultValue = 0f,
+        resId = R.styleable.RoundTextView_roundCornerRadius
+    )
+    var strokeWidth by attrs.dimension(
+        defaultValue = 0f,
+        resId = R.styleable.RoundTextView_roundStrokeWidth
+    )
+    var fillColor by attrs.color(
+        defaultValue = ContextCompat.getColor(
+            context,
+            android.R.color.transparent
+        ), resId = R.styleable.RoundTextView_roundFillColor
+    )
+    var strokeColor by attrs.color(
+        defaultValue = ContextCompat.getColor(
+            context,
+            android.R.color.transparent
+        ), resId = R.styleable.RoundTextView_roundStrokeColor
+    )
 
     constructor(
         context: Context,

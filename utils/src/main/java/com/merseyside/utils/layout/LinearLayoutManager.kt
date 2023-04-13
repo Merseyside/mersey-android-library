@@ -17,7 +17,7 @@ open class LinearLayoutManager : LinearLayoutManager {
     constructor(
         context: Context,
         orientation: Int,
-        reverseLayout: Boolean
+        reverseLayout: Boolean = false
     ) : super(context, orientation, reverseLayout)
 
     constructor(context: Context) : this(context, null, 0, 0)

@@ -12,52 +12,10 @@
         android:layout_height="match_parent">
 
         <Button
-            android:id="@+id/news_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="News" />
-
-        <Button
-            android:id="@+id/colors_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Colors" />
-
-        <Button
-            android:id="@+id/racing_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Racing" />
-
-        <Button
             android:id="@+id/location_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Location" />
-
-        <Button
-            android:id="@+id/concat_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Concat" />
-
-        <Button
-            android:id="@+id/contacts_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Contacts" />
-
-        <Button
-            android:id="@+id/delegates_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Delegates" />
-
-        <Button
-            android:id="@+id/movies_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Movies"/>
 
     </LinearLayout>
 

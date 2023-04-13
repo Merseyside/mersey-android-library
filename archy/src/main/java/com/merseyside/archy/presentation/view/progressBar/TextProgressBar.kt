@@ -1,5 +1,6 @@
 package com.merseyside.archy.presentation.view.progressBar
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.util.AttributeSet
@@ -8,17 +9,18 @@ import android.widget.LinearLayout
 import com.merseyside.archy.R
 import com.merseyside.archy.databinding.ViewProgressBarBinding
 import com.merseyside.utils.attributes.AttributeHelper
-import com.merseyside.utils.delegate.color
+import com.merseyside.utils.attributes.color
+import com.merseyside.utils.attributes.stringOrNull
 import com.merseyside.utils.delegate.getValue
-import com.merseyside.utils.delegate.stringOrNull
 import com.merseyside.utils.delegate.viewBinding
-import com.merseyside.utils.getClassName
 import com.merseyside.utils.view.ext.getResourceFromAttr
+import com.google.android.material.R as MaterialStyle
 
+@SuppressLint("ResourceAsColor")
 class TextProgressBar(context: Context, attributeSet: AttributeSet, defStyleAttr: Int) :
     LinearLayout(context, attributeSet) {
 
-    constructor(context: Context, attributeSet: AttributeSet): this(
+    constructor(context: Context, attributeSet: AttributeSet) : this(
         context,
         attributeSet,
         R.attr.textProgressBarStyle
@@ -29,19 +31,23 @@ class TextProgressBar(context: Context, attributeSet: AttributeSet, defStyleAttr
         context,
         attributeSet,
         R.styleable.TextProgressBar,
-        getClassName(),
         defStyleAttr,
-        styleableNamePrefix = "progress"
     )
 
-    private var textValue: String? by attrs.stringOrNull(resName = "text")
+    private var textValue: String? by attrs.stringOrNull(resId = R.styleable.TextProgressBar_progressText)
     private var bgColor: Int by attrs.color(
-        getResourceFromAttr(R.attr.colorSurface) ?: 0,
-        resName = "backgroundColor"
+        resId = R.styleable.TextProgressBar_progressBackgroundColor,
+        defaultValue = getResourceFromAttr(MaterialStyle.attr.colorOnSurface) ?: 0,
     )
 
-    private var textColor: Int by attrs.color(R.color.default_progress_text_color)
-    private var progressColor: Int by attrs.color(R.color.default_progress_color)
+    private var textColor: Int by attrs.color(
+        resId = R.styleable.TextProgressBar_progressTextColor,
+        R.color.default_progress_text_color
+    )
+    private var progressColor: Int by attrs.color(
+        resId = R.styleable.TextProgressBar_progressColor,
+        R.color.default_progress_color
+    )
 
     init {
         doLayout()

@@ -15,6 +15,7 @@
         <action
             android:id="@+id/action_mainFragment_to_locationFragment"
             app:destination="@id/locationFragment" />
+
     </fragment>
 
     <fragment

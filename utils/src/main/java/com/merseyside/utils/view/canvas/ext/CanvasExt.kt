@@ -1,11 +1,12 @@
 package com.merseyside.utils.view.canvas.ext
 
 import android.graphics.*
-import com.merseyside.merseyLib.kotlin.logger.Logger
+import android.view.View
 import com.merseyside.utils.view.canvas.Background
 import com.merseyside.utils.view.canvas.CircleCorners
 import com.merseyside.utils.view.canvas.HorizontalAlign
 import com.merseyside.utils.view.canvas.VerticalAlign
+import com.merseyside.utils.view.ext.insetNewRect
 
 fun Canvas.drawLine(startX: Float, startY: Float, stopX: Float, stopY: Float, paint: Paint) {
     drawLine(startX, startY, stopX, stopY, paint)
@@ -47,9 +48,9 @@ fun Canvas.drawTextOnBaseline(
     val xBase = xBaseline.toFloat()
     val yBase = yBaseline.toFloat()
 
+    val textWidth = paint.measureText(text)
     val textHeight = paint.textSize
         .also { if (it == 0F) throw IllegalArgumentException("Text size not set!") }
-    val textWidth = paint.measureText(text)
 
     val textWidthHalf = textWidth / 2
     val textHeightHalf = textHeight / 2
@@ -112,8 +113,20 @@ fun Canvas.drawTextCenter(rect: Rect, paint: Paint, text: String) {
     drawText(text, x, y, paint)
 }
 
-fun Rect.logRect(tag: String = Logger.TAG, prefix: String? = ""): Rect {
-    return this.also { Logger.log(tag, "$prefix left = $left top = $top\nright = $right bottom = $bottom") }
+context(View)
+fun Canvas.drawRoundRectPreventClip(rect: RectF, rx: Float, ry: Float, paint: Paint) {
+    if (paint.style != Paint.Style.FILL) {
+
+        if (left == 0 || top == 0) {
+            val halfStrokeWidth = paint.strokeWidth / 2
+            val insetRect = rect.insetNewRect(halfStrokeWidth, halfStrokeWidth)
+            drawRoundRect(insetRect, rx, ry, paint)
+
+            return
+        }
+    }
+
+    drawRoundRect(rect, rx, ry, paint)
 }
 
 private const val textGap = 5.5f

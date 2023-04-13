@@ -68,6 +68,7 @@ abstract class BaseDialog : DialogFragment(), IView, OrientationHandler, ILocale
         return object : Dialog(requireContext(), getStyle()) {
 
             init {
+                requireActivity()
                 val title = getTitle(context)
 
                 if (title.isNullOrEmpty()) requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -75,12 +76,6 @@ abstract class BaseDialog : DialogFragment(), IView, OrientationHandler, ILocale
 
                 setCanceledOnTouchOutside(getCancelable())
                 setView(this)
-            }
-
-            override fun onBackPressed() {
-                if (this@BaseDialog.onBackPressed()) {
-                    super.onBackPressed()
-                }
             }
         }
     }

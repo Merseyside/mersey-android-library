@@ -1,6 +1,7 @@
 package com.merseyside.utils.view.ext
 
 import android.graphics.Point
+import android.graphics.Rect
 import kotlin.math.abs
 
 operator fun Point.plus(point: Point): Point {
@@ -37,4 +38,13 @@ fun Point(value: Number): Point {
 
 fun Point.inverse(): Point {
     return this * -1
+}
+
+fun Point.toRect(): Rect {
+    return Rect().apply {
+        left = x
+        top = y
+        right = x
+        bottom = y
+    }
 }

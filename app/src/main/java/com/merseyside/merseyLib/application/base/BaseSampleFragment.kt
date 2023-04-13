@@ -1,48 +1,21 @@
 package com.merseyside.merseyLib.application.base
 
-import android.view.MenuItem
-import androidx.annotation.CallSuper
+import android.os.Bundle
+import android.view.View
 import androidx.databinding.ViewDataBinding
 import com.merseyside.archy.presentation.fragment.BaseVMFragment
 import com.merseyside.archy.presentation.model.BaseViewModel
-import com.merseyside.archy.presentation.view.OnBackPressedListener
 import com.merseyside.merseyLib.application.SampleApplication
-import com.merseyside.merseyLib.kotlin.logger.log
+import com.merseyside.utils.navigation.setupWithNavController
 
-abstract class BaseSampleFragment<V: ViewDataBinding, M: BaseViewModel> : BaseVMFragment<V, M>(),
-    OnBackPressedListener {
+abstract class BaseSampleFragment<V: ViewDataBinding, M: BaseViewModel> : BaseVMFragment<V, M>() {
 
     protected val appComponent = SampleApplication.getInstance().appComponent
 
-    abstract fun hasTitleBackButton(): Boolean
-
-    override fun onStart() {
-        super.onStart()
-        setTitleBackButtonEnabled()
-    }
-
-    private fun setTitleBackButtonEnabled() {
-        if (getActionBar() != null) {
-            getActionBar()!!.setDisplayHomeAsUpEnabled(hasTitleBackButton())
-
-            if (hasTitleBackButton()) {
-                setHasOptionsMenu(true)
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        getToolbar()?.let {
+            setupWithNavController(it)
         }
-    }
-
-    @CallSuper
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-
-        if (id == android.R.id.home) {
-            goBack()
-        }
-
-        return super.onOptionsItemSelected(item)
-    }
-
-    override fun onBackPressed(): Boolean {
-        return true
     }
 }

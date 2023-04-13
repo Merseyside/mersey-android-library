@@ -7,10 +7,15 @@ import android.text.TextWatcher
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.URLSpan
+import android.util.TypedValue
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
-import com.merseyside.utils.view.ext.setTextWithCursor
+import androidx.annotation.AttrRes
+import com.merseyside.utils.view.ext.CallbackUnregistrar
+import com.merseyside.utils.view.ext.TextChangeListenerUnregistrar
+import com.merseyside.utils.view.ext.getColorFromAttr
+import com.merseyside.utils.ext.setTextWithCursor
 
 fun TextView.setTextSilently(text: String, textWatcher: TextWatcher) {
     removeTextChangedListener(textWatcher)
@@ -56,4 +61,56 @@ fun TextView.handleUrlClicks(onClicked: ((String) -> Unit)? = null) {
     }
     //make sure movement method is set
     movementMethod = LinkMovementMethod.getInstance()
+}
+
+fun TextView.addTextChangeListener(
+    callback: (
+        view: TextView,
+        newValue: String?,
+        oldValue: String?,
+        length: Int,
+        start: Int,
+        before: Int,
+        count: Int
+    ) -> Boolean // return true if new value is valid and should be saved
+): CallbackUnregistrar {
+    val textWatcher = object : TextWatcher {
+        private var oldValue: String? = null
+
+        override fun afterTextChanged(s: Editable?) {}
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            val newValue = s?.toString()
+
+            if (oldValue != newValue) {
+                if (callback(
+                        this@addTextChangeListener,
+                        newValue,
+                        oldValue,
+                        newValue?.length ?: 0,
+                        start,
+                        before,
+                        count
+                    )
+                ) {
+                    oldValue = newValue
+                }
+            }
+        }
+    }
+    this.addTextChangedListener(textWatcher)
+    return TextChangeListenerUnregistrar(this, textWatcher)
+}
+
+fun TextView.setTextColorAttr(
+    @AttrRes attrColor: Int,
+    typedValue: TypedValue = TypedValue(),
+    resolveRefs: Boolean = true
+) {
+    setTextColor(getColorFromAttr(attrColor, typedValue, resolveRefs))
+}
+
+fun TextView.setTextSizePx(value: Number) {
+    setTextSize(TypedValue.COMPLEX_UNIT_PX, value.toFloat())
 }

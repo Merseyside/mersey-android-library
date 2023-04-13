@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Mersey.ValidationInputView.InputLayout.Theme" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox"/>
+    <style name="Widget.Mersey.ValidationInputView.InputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox"/>
 
-    <style name="Widget.Mersey.ValidationInputView.Theme" parent="android:Widget">
+    <style name="Widget.Mersey.ValidationInputView" parent="android:Widget">
         <item name="validStrokeColor">?attr/colorPrimary</item>
         <item name="validSuccessStrokeColor">?attr/colorAccent</item>
         <item name="validErrorStrokeColor">?attr/colorError</item>
@@ -17,7 +17,7 @@
         <item name="validErrorMessageColor">?attr/colorError</item>
     </style>
     
-    <style name="Mersey.ValueSwitcher.Theme" parent="android:Widget">
+    <style name="Widget.Mersey.ValueSwitcher" parent="android:Widget">
         <item name="switchButtons">arrows</item>
         <item name="switchButtonColor">?attr/colorAccent</item>
     </style>

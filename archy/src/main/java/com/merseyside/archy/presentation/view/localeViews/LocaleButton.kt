@@ -16,7 +16,7 @@ class LocaleButton(
 ) : AppCompatButton(context, attributeSet, defStyle), ILocaleTextView {
 
     constructor(context: Context,
-                attributeSet: AttributeSet): this(context, attributeSet, R.attr.buttonStyle)
+                attributeSet: AttributeSet): this(context, attributeSet, androidx.appcompat.R.attr.buttonStyle)
 
     @StringRes
     override var textId: Int? = null

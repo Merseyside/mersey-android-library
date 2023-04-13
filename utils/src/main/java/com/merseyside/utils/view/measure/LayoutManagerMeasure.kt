@@ -6,13 +6,15 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.max
 
 context(RecyclerView.LayoutManager)
-fun RecyclerView.Recycler.measureScrapChild(
+fun RecyclerView.Recycler.measureScrapChild1(
     position: Int,
     widthSpec: Int,
     heightSpec: Int,
     measuredDimension: IntArray
 ) {
     val view: View = getViewForPosition(position)
+    view.forceLayout() // ask view again and do not get cached measurements
+
     val p = view.layoutParams
     val childWidthSpec: Int = ViewGroup.getChildMeasureSpec(
         widthSpec, paddingLeft + paddingRight, p.width
@@ -24,6 +26,42 @@ fun RecyclerView.Recycler.measureScrapChild(
     measuredDimension[0] = view.measuredWidth
     measuredDimension[1] = view.measuredHeight
     recycleView(view)
+}
+
+context(RecyclerView.LayoutManager)
+fun RecyclerView.Recycler.measureScrapChild(
+    position: Int,
+    widthSpec: Int,
+    heightSpec: Int,
+    measuredDimension: IntArray
+) {
+    val view: View = getViewForPosition(position)
+    view.forceLayout() // ask view again and do not get cached measurements
+
+//    val p = view.layoutParams
+//    val childWidthSpec: Int = MeasureSpec.makeMeasureSpec(
+//        widthSpec, paddingLeft + paddingRight, p.width
+//    )
+//    val childHeightSpec: Int = ViewGroup.getChildMeasureSpec(
+//        heightSpec, paddingTop + paddingBottom, p.height
+//    )
+    view.measure(widthSpec, heightSpec)
+    measuredDimension[0] = view.measuredWidth
+    measuredDimension[1] = view.measuredHeight
+    recycleView(view)
+}
+
+context(RecyclerView.LayoutManager)
+fun RecyclerView.Recycler.measureDesiredScrapChild(
+    position: Int,
+    measuredDimension: IntArray
+) {
+    measureScrapChild1(
+        position = position,
+        View.MeasureSpec.makeMeasureSpec(ANY_SIZE, View.MeasureSpec.UNSPECIFIED),
+        View.MeasureSpec.makeMeasureSpec(ANY_SIZE, View.MeasureSpec.UNSPECIFIED),
+        measuredDimension
+    )
 }
 
 context(RecyclerView.LayoutManager)
@@ -41,8 +79,8 @@ fun RecyclerView.Recycler.calculateAllChildrenSize(
             childDesiredSizes
         )
 
-        totalSizes[0] = totalSizes[0] + childDesiredSizes[0]
-        totalSizes[1] = totalSizes[1] + childDesiredSizes[1]
+        totalSizes[0]+= childDesiredSizes[0]
+        totalSizes[1]+= childDesiredSizes[1]
     }
 }
 
@@ -84,5 +122,5 @@ fun RecyclerView.Recycler.calculateMaxDesiredChildrenSizes(totalSize: IntArray) 
     )
 }
 
-private const val ANY_SIZE = 0 // doesn't matter what ize we pass
+private const val ANY_SIZE = 0 // doesn't matter what size we pass
 

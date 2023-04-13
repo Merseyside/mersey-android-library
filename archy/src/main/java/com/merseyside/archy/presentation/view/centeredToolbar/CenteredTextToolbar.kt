@@ -7,8 +7,6 @@ import android.view.Gravity
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.widget.TextViewCompat
-import com.merseyside.archy.R
-import java.lang.Exception
 
 class CenteredTextToolbar(context: Context, attributeSet: AttributeSet) :
     Toolbar(context, attributeSet) {
@@ -31,7 +29,7 @@ class CenteredTextToolbar(context: Context, attributeSet: AttributeSet) :
                     ellipsize = TextUtils.TruncateAt.END
                     gravity = Gravity.CENTER
 
-                    val textStyle = R.style.TextAppearance_AppCompat_Widget_ActionBar_Title
+                    val textStyle = androidx.appcompat.R.style.TextAppearance_AppCompat_Widget_ActionBar_Title
                     TextViewCompat.setTextAppearance(it, textStyle)
                     val params = LayoutParams(
                         LayoutParams.WRAP_CONTENT,

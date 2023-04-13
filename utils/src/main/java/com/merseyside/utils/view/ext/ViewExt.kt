@@ -2,24 +2,23 @@ package com.merseyside.utils.view.ext
 
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.res.ColorStateList
 import android.graphics.Point
 import android.graphics.Rect
-import android.text.Editable
 import android.text.TextWatcher
 import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.DimenRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.updateLayoutParams
-import com.merseyside.utils.ext.getColorFromAttr
-import com.merseyside.utils.ext.getResourceFromAttr
-import com.merseyside.utils.ext.getStringFromAttr
+import com.merseyside.merseyLib.kotlin.utils.safeLet
+import com.merseyside.merseyLib.time.units.TimeUnit
+import com.merseyside.utils.delayedThread
+import com.merseyside.utils.ext.*
 import com.merseyside.utils.view.ViewBaseline
 
 fun View.getResourceFromAttr(
@@ -55,19 +54,6 @@ fun View.getStringFromAttr(
     return this.getActivity().getStringFromAttr(attrColor, typedValue, resolveRefs)
 }
 
-fun EditText.setTextWithCursor(text: String?) {
-    if (this.text.toString() != text) {
-        text?.let {
-            setText(it)
-            setSelection(it.length)
-        }
-    }
-}
-
-fun EditText.setTextWithCursor(text: CharSequence?) {
-    setTextWithCursor(text.toString())
-}
-
 fun View.getActivity(): AppCompatActivity {
     var context: Context = context
     while (context is ContextWrapper) {
@@ -97,67 +83,22 @@ internal class TextChangeListenerUnregistrar(
     }
 }
 
-fun TextView.addTextChangeListener(
-    callback: (
-        view: TextView,
-        newValue: String?,
-        oldValue: String?,
-        length: Int,
-        start: Int,
-        before: Int,
-        count: Int
-    ) -> Boolean // return true if new value is valid and should be saved
-): CallbackUnregistrar {
-    val textWatcher = object : TextWatcher {
-        private var oldValue: String? = null
-
-        override fun afterTextChanged(s: Editable?) {}
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            val newValue = s?.toString()
-
-            if (oldValue != newValue) {
-                if (callback(
-                        this@addTextChangeListener,
-                        newValue,
-                        oldValue,
-                        newValue?.length ?: 0,
-                        start,
-                        before,
-                        count
-                    )
-                ) {
-                    oldValue = newValue
-                }
-            }
-        }
-    }
-    this.addTextChangedListener(textWatcher)
-    return TextChangeListenerUnregistrar(this, textWatcher)
-}
-
-fun TextView.setTextColorAttr(
-    @AttrRes attrColor: Int,
-    typedValue: TypedValue = TypedValue(),
-    resolveRefs: Boolean = true
-) {
-    setTextColor(getColorFromAttr(attrColor, typedValue, resolveRefs))
-}
-
-fun TextView.setTextSizePx(value: Number) {
-    setTextSize(TypedValue.COMPLEX_UNIT_PX, value.toFloat())
-}
-
 fun View.onClick(onClick: (View) -> Unit): View.OnClickListener {
-    val listener = View.OnClickListener { onClick(it) }
+    val listener = View.OnClickListener { view -> onClick(view) }
     setOnClickListener(listener)
 
     return listener
 }
 
-fun View.onClickSimple(onClick: () -> Unit): View.OnClickListener {
-    return onClick { onClick() }
+fun View.onClickDebounce(debounce: TimeUnit, onClick: (View) -> Unit): View.OnClickListener {
+
+    return onClick { view ->
+        setOnClickListener(null)
+        onClick(view)
+        delayedThread(debounce) {
+            onClickDebounce(debounce, onClick)
+        }
+    }
 }
 
 fun View.isFullyVisible(): Boolean {
@@ -165,6 +106,13 @@ fun View.isFullyVisible(): Boolean {
     val drawingSize = getAdjustedSize()
 
     return visibleSize.x == drawingSize.x && visibleSize.y == drawingSize.y
+}
+
+/**
+ * @return simple Rect(0, 0, width, height)
+ */
+fun View.getRect(): Rect {
+    return Rect(0, 0, width, height)
 }
 
 fun View.getVisibleSize(): Point {
@@ -277,33 +225,17 @@ fun View.setMarginsRes(
     }
 }
 
-fun ViewGroup.LayoutParams.setMarginsRes(
-    context: Context,
-    @DimenRes left: Int? = null,
-    @DimenRes top: Int? = null,
-    @DimenRes right: Int? = null,
-    @DimenRes bottom: Int? = null
-) {
-    val resources = context.resources
-    setMargins(
-        left?.let { resources.getDimensionPixelSize(left) },
-        top?.let { resources.getDimensionPixelSize(top) },
-        right?.let { resources.getDimensionPixelSize(right) },
-        bottom?.let { resources.getDimensionPixelSize(bottom) },
-    )
+fun View.getCurrentDrawableState(matchStates: IntArray): Int? {
+    return matchStates.find { state ->
+        drawableState.find { it == state } != null
+    }
 }
 
-fun ViewGroup.LayoutParams.setMargins(
-    left: Int? = null,
-    top: Int? = null,
-    right: Int? = null,
-    bottom: Int? = null
-) {
-    val params = (this as? ViewGroup.MarginLayoutParams)
-    params?.setMargins(
-        left ?: params.leftMargin,
-        top ?: params.topMargin,
-        right ?: params.rightMargin,
-        bottom ?: params.bottomMargin
-    )
+@ColorInt
+fun View.getColorByCurrentState(colorStateList: ColorStateList, matchStates: IntArray): Int {
+    val currentState = getCurrentDrawableState(matchStates)
+
+    return safeLet(currentState) {
+        colorStateList.getColorForState(it)
+    } ?: colorStateList.defaultColor
 }

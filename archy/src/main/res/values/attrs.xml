@@ -16,6 +16,7 @@
         <attr name="progressFillColor" format="color" />
         <attr name="progressTextColor" format="color" />
         <attr name="progressColor" format="color" />
+        <attr name="progressBackgroundColor" format="color" />
     </declare-styleable>
 
     <declare-styleable name="LocaleTextView">
@@ -160,4 +161,5 @@
         <attr name="switchTextColor" format="color" />
         <attr name="switchButtonColor" format="color" />
     </declare-styleable>
+
 </resources>

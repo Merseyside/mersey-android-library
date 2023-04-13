@@ -26,6 +26,13 @@ import com.merseyside.utils.view.viewScope
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import com.merseyside.utils.attributes.bool
+import com.merseyside.utils.attributes.color
+import com.merseyside.utils.attributes.dimensionPixelSizeOrNull
+import com.merseyside.utils.attributes.drawableOrNull
+import com.merseyside.utils.attributes.int
+import com.merseyside.utils.attributes.string
+import com.google.android.material.R as MaterialStyle
 
 open class ValidationInputView(
     context: Context,
@@ -41,9 +48,7 @@ open class ValidationInputView(
         context,
         attributeSet,
         R.styleable.ValidationInputView,
-        "ValidationInputView",
-        defStyleAttr,
-        styleableNamePrefix = "valid"
+        defStyleAttr
     )
 
     protected val inputLayout = binding.inputLayout
@@ -54,64 +59,84 @@ open class ValidationInputView(
     private var onTextChangedListener: (String) -> Unit = {}
     var formatter: ((String) -> String)? = null
     var validator: (suspend (String) -> ValidationState)? = null
-    private val debounce by attrs.int(defaultValue = defaultDebounce)
+
+    private val debounce by attrs.int(
+        resId = R.styleable.ValidationInputView_validDebounce,
+        defaultValue = defaultDebounce
+    )
+
     private val timeDebounce: TimeUnit
         get() = Millis(debounce)
 
-    private val inputWidth by attrs.dimensionPixelSizeOrNull()
-    private val inputHeight by attrs.dimensionPixelSizeOrNull()
+    private val inputWidth by attrs.dimensionPixelSizeOrNull(resId = R.styleable.ValidationInputView_validInputWidth)
+    private val inputHeight by attrs.dimensionPixelSizeOrNull(resId = R.styleable.ValidationInputView_validInputHeight)
 
-    private val forceState by attrs.bool()
-    private val hintText by attrs.string(defaultValue = "")
-    private val iconMode by attrs.int(defaultValue = 0)
-    private val inputType by attrs.int(defaultValue = 1)
-    private val maxLength by attrs.int(defaultValue = 0)
+    private val forceState by attrs.bool(resId = R.styleable.ValidationInputView_validForceState)
+    private val hintText by attrs.string(resId = R.styleable.ValidationInputView_validHintText, defaultValue = "")
+    private val iconMode by attrs.int(resId = R.styleable.ValidationInputView_validIconMode, defaultValue = 0)
+    private val inputType by attrs.int(resId = R.styleable.ValidationInputView_validInputType, defaultValue = 1)
+    private val maxLength by attrs.int(resId = R.styleable.ValidationInputView_validMaxLength, defaultValue = 0)
 
-    private val textDefault by attrs.string(defaultValue = "")
-    private var textSuccess by attrs.string(defaultValue = "")
-    private var textError by attrs.string(defaultValue = "")
+    private val textDefault by attrs.string(resId = R.styleable.ValidationInputView_validTextDefault, defaultValue = "")
+    private var textSuccess by attrs.string(resId = R.styleable.ValidationInputView_validTextSuccess, defaultValue = "")
+    private var textError by attrs.string(resId = R.styleable.ValidationInputView_validTextError, defaultValue = "")
 
-    private val needFillingStateOnInit by attrs.bool(false)
+    private val needFillingStateOnInit by attrs.bool(resId = R.styleable.ValidationInputView_validNeedFillingStateOnInit, false)
 
     protected open val strokeColor by attrs.color(
-        defaultValue = requireResourceFromAttr(R.attr.colorOnSurface)
+        resId = R.styleable.ValidationInputView_validStrokeColor,
+        defaultValue = requireResourceFromAttr(MaterialStyle.attr.colorOnSurface)
     )
 
     protected open val successStrokeColor by attrs.color(
-        defaultValue = requireResourceFromAttr(R.attr.colorAccent)
+        resId = R.styleable.ValidationInputView_validSuccessStrokeColor,
+        defaultValue = requireResourceFromAttr(MaterialStyle.attr.colorAccent)
     )
 
     protected open val errorStrokeColor by attrs.color(
-        defaultValue = requireResourceFromAttr(R.attr.colorError)
+        resId = R.styleable.ValidationInputView_validErrorStrokeColor,
+        defaultValue = requireResourceFromAttr(MaterialStyle.attr.colorError)
     )
 
     protected open val hintColor by attrs.color(
-        defaultValue = requireResourceFromAttr(R.attr.colorOnSurface)
+        resId = R.styleable.ValidationInputView_validHintColor,
+        defaultValue = requireResourceFromAttr(MaterialStyle.attr.colorOnSurface)
     )
 
     protected open val successHintColor by attrs.color(
-        defaultValue = requireResourceFromAttr(R.attr.colorAccent)
+        resId = R.styleable.ValidationInputView_validSuccessHintColor,
+        defaultValue = requireResourceFromAttr(MaterialStyle.attr.colorAccent)
     )
 
     protected open val errorHintColor by attrs.color(
-        defaultValue = requireResourceFromAttr(R.attr.colorError)
+        resId = R.styleable.ValidationInputView_validErrorHintColor,
+        defaultValue = requireResourceFromAttr(MaterialStyle.attr.colorError)
     )
 
     protected open val messageColor by attrs.color(
-        defaultValue = requireResourceFromAttr(R.attr.textColor)
+        resId = R.styleable.ValidationInputView_validMessageColor,
+        defaultValue = requireResourceFromAttr(android.R.attr.textColor)
     )
 
     protected open val successMessageColor by attrs.color(
-        defaultValue = requireResourceFromAttr(R.attr.colorAccent)
+        resId = R.styleable.ValidationInputView_validSuccessMessageColor,
+        defaultValue = requireResourceFromAttr(MaterialStyle.attr.colorAccent)
     )
 
     protected open val errorMessageColor by attrs.color(
-        defaultValue = requireResourceFromAttr(R.attr.colorError)
+        resId = R.styleable.ValidationInputView_validErrorMessageColor,
+        defaultValue = requireResourceFromAttr(MaterialStyle.attr.colorError)
     )
 
-    protected open val defaultIcon by attrs.drawableOrNull(resName = "icon")
-    protected open val successIcon by attrs.drawableOrNull()
-    protected open val errorIcon by attrs.drawableOrNull()
+    protected open val defaultIcon by attrs.drawableOrNull(
+        resId = R.styleable.ValidationInputView_validIcon
+    )
+    protected open val successIcon by attrs.drawableOrNull(
+        resId = R.styleable.ValidationInputView_validSuccessIcon
+    )
+    protected open val errorIcon by attrs.drawableOrNull(
+        resId = R.styleable.ValidationInputView_validErrorIcon
+    )
 
     var text: String
         get() = editText.text.toString()

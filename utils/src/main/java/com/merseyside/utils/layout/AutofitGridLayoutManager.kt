@@ -1,84 +1,77 @@
 package com.merseyside.utils.layout
 
 import android.content.Context
-import android.util.TypedValue
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
+import android.util.AttributeSet
+import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import kotlin.math.max
-import kotlin.math.min
+import com.merseyside.utils.math.ceilInt
 
-
+/**
+ * Uses when we need to make all items visible inside recycler view without scrolling by
+ * set them all equal sizes. Should be used only if we sure all items are the same size.
+ *
+ * The second goal
+ */
 class AutofitGridLayoutManager : GridLayoutManager {
-    private var columnWidth = 0
-    private var isColumnWidthChanged = true
-    private var lastWidth = 0
-    private var lastHeight = 0
-    private var maxColumnRowCount = 0
 
-    constructor(context: Context, columnWidth: Int) : super(context, 1) {
-        /* Initially set spanCount to 1, will be changed automatically later. */
-        setColumnWidth(checkedColumnWidth(context, columnWidth))
-    }
+    var childMeasuredWidth = 0
+    var childMeasuredHeight = 0
 
     constructor(
         context: Context,
-        columnWidth: Int,
+        spanCount: Int,
         orientation: Int,
-        reverseLayout: Boolean,
-        maxColumnRowCount: Int = 0
-    ) : super(context, 1, orientation, reverseLayout) {
+        reverseLayout: Boolean = false
+    ): super(context, spanCount, orientation, reverseLayout)
+    constructor(
+        context: Context,
+        attrs: AttributeSet?,
+        defStyleAttr: Int,
+        defStyleRes: Int
+    ) : super(context, attrs, defStyleAttr, defStyleRes)
 
-        this.maxColumnRowCount = maxColumnRowCount
-        /* Initially set spanCount to 1, will be changed automatically later. */
-        setColumnWidth(checkedColumnWidth(context, columnWidth))
-    }
+    constructor(
+        context: Context,
+        spanCount: Int
+    ) : super(context, spanCount)
 
-    private fun checkedColumnWidth(context: Context, columnWidth: Int): Int {
-        var mutColumnWidth = columnWidth
-        if (mutColumnWidth <= 0) {
-            /* Set default columnWidth value (48dp here). It is better to move this constant
-            to static constant on top, but we need context to convert it to dp, so can't really
-            do so. */
-            mutColumnWidth = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, 48F,
-                context.resources.displayMetrics
-            ).toInt()
-        }
-        return mutColumnWidth
-    }
+    override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
 
-    fun setColumnWidth(newColumnWidth: Int) {
-        if (newColumnWidth > 0 && newColumnWidth != columnWidth) {
-            columnWidth = newColumnWidth
-            isColumnWidthChanged = true
-        }
-    }
+        val heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(height, heightMode)
+        //logMeasureSpec(heightMeasureSpec, "height")
 
-    override fun onLayoutChildren(
-        recycler: RecyclerView.Recycler,
-        state: RecyclerView.State
-    ) {
-        val width = width
-        val height = height
-        if (columnWidth > 0 && width > 0 && height > 0 && (isColumnWidthChanged || lastWidth != width || lastHeight != height)) {
-            val totalSpace: Int = if (orientation == LinearLayoutManager.VERTICAL) {
-                width - paddingRight - paddingLeft
+        val itemsCount = state.itemCount
+        if (itemsCount != 0) {
+
+            val itemsInRow = itemsCount / spanCount
+
+            val desiredSizes = IntArray(2)
+            //recycler.measureDesiredScrapChild(0, desiredSizes) // ask child for desired sizes
+
+            if (orientation == VERTICAL) {
+
+                if (heightMode == View.MeasureSpec.EXACTLY || heightMode == View.MeasureSpec.AT_MOST) {
+                    val maxItemSize = ceilInt(height / itemsInRow.toFloat())
+
+                    childMeasuredHeight = maxItemSize
+                }
+
             } else {
-                height - paddingTop - paddingBottom
-            }
+                if (widthMode == View.MeasureSpec.EXACTLY || widthMode == View.MeasureSpec.AT_MOST) {
+                    val maxItemSize = ceilInt(width / itemsInRow.toFloat())
+                    if (desiredSizes[0] > maxItemSize) childMeasuredWidth = maxItemSize
+                }
 
-            val spanCount = if (maxColumnRowCount == 0) {
-                max(1, totalSpace / columnWidth)
-            } else {
-                min(maxColumnRowCount, totalSpace / columnWidth)
             }
-
-            setSpanCount(spanCount)
-            isColumnWidthChanged = false
         }
-        lastWidth = width
-        lastHeight = height
+
         super.onLayoutChildren(recycler, state)
+    }
+
+    override fun checkLayoutParams(lp: RecyclerView.LayoutParams): Boolean {
+        if (childMeasuredWidth != 0) lp.width = childMeasuredWidth
+        if (childMeasuredHeight != 0) lp.height = childMeasuredHeight
+
+        return true
     }
 }

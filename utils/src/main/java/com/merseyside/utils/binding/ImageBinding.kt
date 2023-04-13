@@ -80,8 +80,10 @@ fun ImageView.loadVectorDrawable(@DrawableRes resId: Int?) {
     "cropStrokeWidth",
     "cropImageSize",
     "cropBackgroundColor",
+    "allowHardware",
     requireAll = false
 )
+
 fun setImageWithCoil(
     imageView: ImageView,
     drawable: Drawable?,
@@ -100,7 +102,8 @@ fun setImageWithCoil(
     @ColorInt cropStrokeColor: Int? = null,
     cropStrokeWidth: Float? = null,
     cropImageSize: Float? = null,
-    @ColorInt cropBackgroundColor: Int? = null
+    @ColorInt cropBackgroundColor: Int? = null,
+    allowHardware: Boolean = true
 ) {
     val builder = build(
         isCrossfade,
@@ -114,7 +117,8 @@ fun setImageWithCoil(
         cropStrokeWidth,
         cropStrokeColor,
         cropImageSize,
-        cropBackgroundColor
+        cropBackgroundColor,
+        allowHardware
     )
 
     with(imageView) {
@@ -153,10 +157,12 @@ private fun build(
     strokeWidth: Float?,
     @ColorInt strokeColor: Int?,
     cropImageSize: Float?,
-    @ColorInt cropBackgroundColor: Int?
+    @ColorInt cropBackgroundColor: Int?,
+    allowHardware: Boolean
 ): ImageRequest.Builder.() -> Unit {
     return {
         this.crossfade(crossfade)
+        allowHardware(allowHardware)
         if (cropCircle) {
             val stroke = safeLet(strokeWidth, strokeColor) { width, color ->
                 CircleCropStroke(width, color)
