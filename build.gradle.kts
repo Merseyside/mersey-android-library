@@ -1,15 +1,7 @@
-buildscript {
-    repositories {
-        mavenCentral()
-        google()
-        gradlePluginPortal()
-    }
-}
-
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(common.plugins.versionChecker)
-    `nexus-config`
+    //`nexus-config`
 }
 
 allprojects {

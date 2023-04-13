@@ -16,5 +16,6 @@ dependencies {
         implementation(kotlin.serialization)
         implementation(nexusPublish)
         implementation(mersey.gradlePlugins)
+        implementation(maven.publish.plugin)
     }
 }
