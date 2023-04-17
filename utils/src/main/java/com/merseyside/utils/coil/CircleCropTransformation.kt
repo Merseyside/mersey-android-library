@@ -24,7 +24,7 @@ class CircleCropTransformation(
     @ColorInt private val background: Int? = null
 ) : Transformation {
 
-    override val cacheKey: String = javaClass.name
+    override val cacheKey: String = "${javaClass.name}_${strokeConfig ?: "NO_STROKE"}"
 
     override suspend fun transform(input: Bitmap, size: Size): Bitmap {
         val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG).apply {
@@ -70,4 +70,8 @@ class CircleCropTransformation(
     override fun hashCode() = javaClass.hashCode()
 }
 
-data class CircleCropStroke(val widthPx: Float, val color: Int)
+data class CircleCropStroke(val widthPx: Float, val color: Int) {
+    override fun toString(): String {
+        return "${widthPx}_$color"
+    }
+}

@@ -167,7 +167,14 @@ private fun build(
             val stroke = safeLet(strokeWidth, strokeColor) { width, color ->
                 CircleCropStroke(width, color)
             }
-            transformations(CircleCropTransformation(stroke, cropImageSize, cropBackgroundColor))
+
+            transformations(
+                CircleCropTransformation(
+                    stroke,
+                    cropImageSize,
+                    cropBackgroundColor
+                )
+            )
         } else if (roundedCorners) {
             transformations(RoundedCornersTransformation(radius = radiusCorners))
         } else if (bottomLeftRadius.isNotZero() ||
