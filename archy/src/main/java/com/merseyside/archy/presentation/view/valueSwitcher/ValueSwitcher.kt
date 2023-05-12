@@ -20,7 +20,6 @@ import com.merseyside.utils.delegate.viewBinding
 import com.merseyside.utils.ext.setImageColor
 import com.merseyside.utils.view.ext.onClick
 
-
 class ValueSwitcher(context: Context, attributeSet: AttributeSet?, defStyleAttr: Int) :
     LinearLayout(context, attributeSet, defStyleAttr) {
 
@@ -37,8 +36,13 @@ class ValueSwitcher(context: Context, attributeSet: AttributeSet?, defStyleAttr:
     private val title: String by attrs.string(R.styleable.ValueSwitcher_switchTitle)
     private val entryValues: List<String> by attrs.textArray(R.styleable.ValueSwitcher_switchEntryValues)
     private val entries: List<String> by attrs.textArray(R.styleable.ValueSwitcher_switchEntries)
-    private val type: Type by attrs.enum(R.styleable.ValueSwitcher_switchType) { id -> Type.fromId(id) }
-    private val buttons: Buttons by attrs.enum(R.styleable.ValueSwitcher_switchButtons) { id -> Buttons.fromId(id) }
+    private val type: Type by attrs.enum(R.styleable.ValueSwitcher_switchType) { id ->
+        Type.fromId(id)
+    }
+    private val buttons: Buttons by attrs.enum(
+        R.styleable.ValueSwitcher_switchButtons,
+        Buttons.ARROWS
+    ) { id -> Buttons.fromId(id) }
 
     private val textColor: Int? by attrs.colorOrNull(R.styleable.ValueSwitcher_switchTextColor)
     private val buttonColor: Int by attrs.color(R.styleable.ValueSwitcher_switchButtonColor)
@@ -55,6 +59,7 @@ class ValueSwitcher(context: Context, attributeSet: AttributeSet?, defStyleAttr:
             when (view.id) {
                 R.id.prev -> if (entryValueIndex == 0) entryValueIndex =
                     entryValues.size - 1 else entryValueIndex--
+
                 R.id.next -> if (entryValueIndex == entryValues.size - 1) entryValueIndex =
                     0 else entryValueIndex++
             }
