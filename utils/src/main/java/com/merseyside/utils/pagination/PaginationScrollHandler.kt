@@ -2,6 +2,7 @@ package com.merseyside.utils.pagination
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import com.merseyside.merseyLib.kotlin.logger.Logger
 import com.merseyside.merseyLib.kotlin.logger.log
 import com.merseyside.merseyLib.kotlin.utils.safeLet
 
@@ -72,6 +73,7 @@ abstract class PaginationScrollHandler(
         return try {
             requireRecycler(block)
         } catch (_: NullPointerException) {
+            Logger.logErr("Can not start paging because recycler didn't set!")
             null
         }
     }
