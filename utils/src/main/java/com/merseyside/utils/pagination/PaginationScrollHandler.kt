@@ -3,8 +3,10 @@ package com.merseyside.utils.pagination
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.merseyLib.kotlin.logger.Logger
-import com.merseyside.merseyLib.kotlin.logger.log
+import com.merseyside.merseyLib.kotlin.utils.ifFalse
+import com.merseyside.merseyLib.kotlin.utils.ifTrue
 import com.merseyside.merseyLib.kotlin.utils.safeLet
+import com.merseyside.utils.layoutManager.findLastVisibleItemPosition
 
 abstract class PaginationScrollHandler(
     protected val loadItemsCountDownOffset: Int,
@@ -19,36 +21,22 @@ abstract class PaginationScrollHandler(
     private val childStateListener: RecyclerView.OnChildAttachStateChangeListener =
         object : RecyclerView.OnChildAttachStateChangeListener {
             override fun onChildViewAttachedToWindow(view: View) {
-                if (needToLoadDownNextPage(view)) onLoadNextPage()
-                if (needToLoadUpNextPage(view)) onLoadPrevPage()
+                requireRecycler {
+                    val position = getChildAdapterPosition(view)
+                    loadNextPageIfNeed(position)
+                    loadPrevPageIfNeed(position)
+                }
             }
 
             override fun onChildViewDetachedFromWindow(view: View) {}
-
-            private fun needToLoadDownNextPage(view: View): Boolean {
-                return requireRecycler {
-                    val lastPosition = getChildAdapterPosition(view)
-                    val itemCount = adapter?.itemCount
-                    safeLet(itemCount) { counts ->
-                        (counts - lastPosition) <= loadItemsCountDownOffset
-                    } ?: false
-                }
-            }
-
-            private fun needToLoadUpNextPage(view: View): Boolean {
-                return requireRecycler {
-                    val lastPosition = getChildAdapterPosition(view)
-                    lastPosition == loadItemsCountUpOffset
-                }
-            }
         }
 
     private val hasItems: Boolean
         get() = requireRecycler { childCount != 0 }
 
     abstract val onLoadFirstPage: (onComplete: () -> Unit) -> Unit
-    abstract val onLoadNextPage: () -> Unit
-    abstract val onLoadPrevPage: () -> Unit
+    abstract val onLoadNextPage: (onComplete: () -> Unit) -> Unit
+    abstract val onLoadPrevPage: (onComplete: () -> Unit) -> Unit
 
     fun setRecyclerView(recyclerView: RecyclerView?) {
         val prev = this.recyclerView
@@ -62,9 +50,7 @@ abstract class PaginationScrollHandler(
 
     fun startPaging() {
         ifRecyclerNotNull {
-            onLoadFirstPage {
-                addOnChildAttachStateChangeListener(childStateListener)
-            }
+            loadFirstPage()
         }
         isPaging = true
     }
@@ -92,5 +78,58 @@ abstract class PaginationScrollHandler(
     fun reset() {
         isPaging = false
         recyclerView?.removeOnChildAttachStateChangeListener(childStateListener)
+    }
+
+    private fun loadFirstPage() = startLoading { complete ->
+        onLoadFirstPage {
+            layoutManager?.let { manager ->
+                loadNextPageIfNeed(manager.findLastVisibleItemPosition()).ifFalse(complete)
+            }
+        }
+    }
+
+    private fun loadNextPage() = startLoading { complete ->
+        onLoadNextPage {
+            layoutManager?.let { manager ->
+                loadNextPageIfNeed(manager.findLastVisibleItemPosition()).ifFalse(complete)
+            }
+        }
+    }
+
+    private fun loadPrevPage() = startLoading { complete ->
+        onLoadPrevPage {
+            layoutManager?.let { manager ->
+                loadPrevPageIfNeed(manager.findLastVisibleItemPosition()).ifFalse(complete)
+            }
+        }
+    }
+
+    private fun startLoading(block: RecyclerView.(completeLoading: () -> Unit) -> Unit) = requireRecycler {
+        removeOnChildAttachStateChangeListener(childStateListener)
+        val completeLoading = { addOnChildAttachStateChangeListener(childStateListener) }
+        block(completeLoading)
+    }
+
+    private fun needToLoadNextPage(lastPosition: Int): Boolean = requireRecycler {
+        val itemCount = adapter?.itemCount
+        safeLet(itemCount) { counts ->
+            (counts - lastPosition) <= loadItemsCountDownOffset
+        } ?: false
+    }
+
+    private fun needToLoadPrevPage(firstPosition: Int): Boolean {
+        return firstPosition == loadItemsCountUpOffset
+    }
+
+    private fun loadNextPageIfNeed(position: Int): Boolean {
+        return needToLoadNextPage(position).ifTrue {
+            loadNextPage()
+        }
+    }
+
+    private fun loadPrevPageIfNeed(position: Int): Boolean {
+        return needToLoadPrevPage(position).ifTrue {
+            loadPrevPage()
+        }
     }
 }

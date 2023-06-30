@@ -176,6 +176,10 @@ fun Context.getDimensionPixelSize(@DimenRes res: Int): Int {
     return resources.getDimensionPixelSize(res)
 }
 
+fun Context.getDrawableNotNull(@DrawableRes res: Int): Drawable {
+    return getDrawable(res) ?: throw NullPointerException("Non nullable drawable required!")
+}
+
 fun Context.getDrawableByName(name: String): Drawable? {
     return ContextCompat.getDrawable(this, getDrawableResourceIdByName(name))
 }

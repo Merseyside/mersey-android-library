@@ -15,7 +15,9 @@ interface IActivityView : IView {
 
     fun getLanguage(): String?
 
-    fun setFragmentToolbar(toolbar: Toolbar?, isVisible: Boolean)
+    fun setFragmentToolbar(fragmentToolbar: Toolbar?)
+
+    fun setBarVisibility(isVisible: Boolean)
 
     fun setFragmentResult(fragmentResult: BaseFragment.FragmentResult)
 }

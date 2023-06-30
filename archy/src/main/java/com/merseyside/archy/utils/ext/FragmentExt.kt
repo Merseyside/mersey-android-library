@@ -11,11 +11,11 @@ fun Fragment.navigate(navDirections: NavDirections) {
     findNavController().navigate(navDirections)
 }
 
-fun Fragment.navigate(@IdRes fragmentId: Int, vararg params: Pair<String, Any>) {
+fun Fragment.navigate(@IdRes resId: Int, vararg params: Pair<String, Any>) {
     val bundle = Bundle().apply {
         params.forEach { (key, value) -> put(key, value) }
     }
-    findNavController().navigate(fragmentId, bundle)
+    findNavController().navigate(resId, bundle)
 }
 
 fun Fragment.navigateUp() {
