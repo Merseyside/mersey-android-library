@@ -1,8 +1,8 @@
 package com.merseyside.utils.layoutManager
 
-import androidx.recyclerview.widget.RecyclerView.LayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
-fun LayoutManager.findLastVisibleItemPosition(): Int {
+fun RecyclerView.LayoutManager.findLastVisibleItemPosition(): Int {
     return when(this) {
         is LinearLayoutManager -> findLastVisibleItemPosition()
         is GridLayoutManager -> findLastVisibleItemPosition()
@@ -10,7 +10,7 @@ fun LayoutManager.findLastVisibleItemPosition(): Int {
     }
 }
 
-fun LayoutManager.findFirstVisibleItemPosition(): Int {
+fun RecyclerView.LayoutManager.findFirstVisibleItemPosition(): Int {
     return when(this) {
         is LinearLayoutManager -> findFirstVisibleItemPosition()
         is GridLayoutManager -> findFirstVisibleItemPosition()
