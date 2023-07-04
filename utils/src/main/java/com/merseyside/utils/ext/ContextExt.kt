@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
@@ -23,7 +24,23 @@ import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.DimenRes
 import androidx.annotation.DrawableRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+
+@Throws(IllegalStateException::class)
+fun Context.getActivity(): AppCompatActivity {
+    if (this is AppCompatActivity) return this
+
+    var context: Context = this
+    while (context is ContextWrapper) {
+        if (context is AppCompatActivity) {
+            return context
+        }
+        context = context.baseContext
+    }
+
+    throw IllegalStateException("View hasn't been bind to activity!")
+}
 
 fun Context.getResourceFromAttr(
     attr: Int,
@@ -32,7 +49,10 @@ fun Context.getResourceFromAttr(
 ): Int? {
     theme.resolveAttribute(attr, typedValue, resolveRefs)
     val id = typedValue.resourceId
-    return if (id == 0) null
+    return if (id == 0) {
+        val activityContext = getActivity()
+        activityContext.getResourceFromAttr(attr, typedValue, resolveRefs)
+    }
     else id
 }
 
@@ -51,7 +71,8 @@ fun Context.getColorFromAttr(
     typedValue: TypedValue = TypedValue(),
     resolveRefs: Boolean = true
 ): Int {
-    theme.resolveAttribute(attrColor, typedValue, resolveRefs)
+    val activityContext = getActivity()
+    activityContext.theme.resolveAttribute(attrColor, typedValue, resolveRefs)
     return typedValue.data
 }
 
@@ -153,6 +174,10 @@ fun Context.getDimension(@DimenRes res: Int): Float {
 
 fun Context.getDimensionPixelSize(@DimenRes res: Int): Int {
     return resources.getDimensionPixelSize(res)
+}
+
+fun Context.getDrawableNotNull(@DrawableRes res: Int): Drawable {
+    return getDrawable(res) ?: throw NullPointerException("Non nullable drawable required!")
 }
 
 fun Context.getDrawableByName(name: String): Drawable? {

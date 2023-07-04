@@ -15,13 +15,12 @@ import com.merseyside.archy.BaseApplication
 import com.merseyside.archy.presentation.dialog.MaterialAlertDialog
 import com.merseyside.archy.presentation.ext.getActualString
 import com.merseyside.archy.presentation.fragment.BaseFragment
-import com.merseyside.archy.presentation.view.OnBackPressedListener
 import com.merseyside.archy.presentation.view.OnKeyboardStateListener
 import com.merseyside.archy.presentation.view.OrientationHandler
 import com.merseyside.archy.presentation.view.localeViews.ILocaleManager
 import com.merseyside.archy.utils.SnackbarManager
 import com.merseyside.merseyLib.kotlin.logger.Logger
-import com.merseyside.merseyLib.kotlin.utils.safeLet
+import com.merseyside.merseyLib.kotlin.logger.log
 import com.merseyside.utils.LocaleManager
 import com.merseyside.utils.ext.getLocalizedContext
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
@@ -65,7 +64,7 @@ abstract class BaseActivity : AppCompatActivity(),
         setOrientation(resources, savedInstanceState)
         performInjection(savedInstanceState)
         setView()
-        getToolbar()?.let { setSupportActionBar(it) }
+        setSupportActionBar(activityToolbar)
 
         snackbarManager = SnackbarManager(this)
     }
@@ -147,11 +146,11 @@ abstract class BaseActivity : AppCompatActivity(),
 
     override fun handleError(throwable: Throwable): Boolean = false
 
-    override fun onSupportNavigateUp(): Boolean {
-        return safeLet(navController) { nav ->
-            nav.navigateUp()
-        } ?: super.onSupportNavigateUp()
-    }
+//    override fun onSupportNavigateUp(): Boolean {
+//        return safeLet(navController) { nav ->
+//            nav.navigateUp()
+//        } ?: super.onSupportNavigateUp()
+//    }
 
     @IdRes
     abstract fun getFragmentContainer(): Int?
@@ -224,20 +223,30 @@ abstract class BaseActivity : AppCompatActivity(),
         )
     }
 
-    abstract fun getToolbar(): Toolbar?
-
-    override fun setFragmentToolbar(toolbar: Toolbar?, isVisible: Boolean) {
-        (toolbar ?: getToolbar())?.let {
-            setSupportActionBar(it)
-        }
-
-        val isFragmentBar = toolbar != null
-        getToolbar()?.isGone = isFragmentBar
-
-        setToolbarVisibility(isVisible)
+    val activityToolbar: Toolbar? by lazy {
+        getMainToolbar()
     }
 
-    private fun setToolbarVisibility(isVisible: Boolean) {
+    protected abstract fun getMainToolbar(): Toolbar?
+
+    private var toolbar: Toolbar? = null
+
+    fun getToolbar(): Toolbar? {
+        return toolbar ?: getMainToolbar()
+    }
+
+    override fun setFragmentToolbar(fragmentToolbar: Toolbar?) {
+        val possibleToolbar = fragmentToolbar ?: activityToolbar
+        if (possibleToolbar != toolbar) {
+            toolbar = possibleToolbar
+            setSupportActionBar(possibleToolbar)
+
+            val isFragmentBar = fragmentToolbar != null
+            getMainToolbar()?.isGone = isFragmentBar
+        }
+    }
+
+    override fun setBarVisibility(isVisible: Boolean) {
         supportActionBar?.apply {
             if (isVisible) show()
             else hide()

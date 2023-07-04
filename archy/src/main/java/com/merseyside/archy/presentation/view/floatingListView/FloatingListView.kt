@@ -16,8 +16,8 @@ import com.merseyside.archy.presentation.view.HORIZONTAL
 import com.merseyside.archy.presentation.view.VERTICAL
 import com.merseyside.utils.delegate.getValue
 import com.merseyside.utils.delegate.viewBinding
-import com.merseyside.utils.layout.GridLayoutManager
-import com.merseyside.utils.layout.LinearLayoutManager
+import com.merseyside.utils.layoutManager.GridLayoutManager
+import com.merseyside.utils.layoutManager.LinearLayoutManager
 
 /**
  * This class have to be extended from RelativeLayout

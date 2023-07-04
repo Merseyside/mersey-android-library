@@ -49,6 +49,16 @@ object BU {
     }
 
     @JvmStatic
+    fun less(first: Number, second: Number): Boolean {
+        return first.toFloat() < second.toFloat()
+    }
+
+    @JvmStatic
+    fun more(first: Number, second: Number): Boolean {
+        return first.toFloat() > second.toFloat()
+    }
+
+    @JvmStatic
     fun isNull(obj: Any?) = obj == null
 
     @JvmStatic

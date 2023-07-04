@@ -42,25 +42,27 @@ class RecyclerViewSwipeDetector(context: Context, attrsSet: AttributeSet, defSty
         }
 
         override fun onFling(
-            e1: MotionEvent,
+            e1: MotionEvent?,
             e2: MotionEvent,
             velocityX: Float,
             velocityY: Float
         ): Boolean {
-            try {
-                val diffY = e2.y - e1.y
-                val diffX = e2.x - e1.x
-                if (abs(diffX) > abs(diffY) && abs(diffX) > SWIPE_THRESHOLD && abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-                    if (diffX > 0) {
-                        onSwipeListener?.onSwipeLeft()
-                    } else {
-                        onSwipeListener?.onSwipeRight()
+            if (e1 != null) {
+                try {
+                    val diffY = e2.y - e1.y
+                    val diffX = e2.x - e1.x
+                    if (abs(diffX) > abs(diffY) && abs(diffX) > SWIPE_THRESHOLD && abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                        if (diffX > 0) {
+                            onSwipeListener?.onSwipeLeft()
+                        } else {
+                            onSwipeListener?.onSwipeRight()
+                        }
                     }
+                } catch (exception: Exception) {
+                    exception.printStackTrace()
                 }
-            } catch (exception: Exception) {
-                exception.printStackTrace()
-            }
-            return false
+                return false
+            } else return false
         }
     }
 

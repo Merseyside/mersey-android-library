@@ -5,6 +5,7 @@ import android.view.View
 import androidx.databinding.ViewDataBinding
 import com.merseyside.archy.presentation.fragment.BaseVMFragment
 import com.merseyside.archy.presentation.model.BaseViewModel
+import com.merseyside.archy.utils.ext.navigateUp
 import com.merseyside.merseyLib.application.SampleApplication
 import com.merseyside.utils.navigation.setupWithNavController
 
@@ -14,8 +15,10 @@ abstract class BaseSampleFragment<V: ViewDataBinding, M: BaseViewModel> : BaseVM
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getToolbar()?.let {
-            setupWithNavController(it)
+        baseActivity.getToolbar()?.let {
+            setupWithNavController(it) {
+                navigateUp()
+            }
         }
     }
 }

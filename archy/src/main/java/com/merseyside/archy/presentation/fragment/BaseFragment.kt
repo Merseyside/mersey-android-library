@@ -6,12 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.addCallback
 import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.ActionBar
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.MenuHost
 import androidx.fragment.app.Fragment
 import com.merseyside.archy.BaseApplication
@@ -22,13 +20,16 @@ import com.merseyside.archy.presentation.view.OnKeyboardStateListener
 import com.merseyside.archy.presentation.view.OrientationHandler
 import com.merseyside.archy.presentation.view.localeViews.ILocaleManager
 import com.merseyside.archy.utils.SnackbarManager
+import com.merseyside.archy.utils.toolbar.ToolbarManager
+import com.merseyside.archy.utils.toolbar.ToolbarProvider
 import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
+import com.merseyside.merseyLib.kotlin.logger.log
 
 abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleManager {
 
     final override var keyboardUnregistrar: Any? = null
 
-    protected lateinit var baseActivity: BaseActivity
+    lateinit var baseActivity: BaseActivity
         private set
 
     private var requestCode: Int = NO_REQUEST
@@ -51,7 +52,14 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         }
     }
 
-    open fun isBarVisible(): Boolean = true
+    open var isBarVisible: Boolean = true
+
+    fun setBarVisibility(isVisible: Boolean) {
+        if (isVisible != isBarVisible) {
+            isBarVisible = isVisible
+            baseActivity.setBarVisibility(isVisible)
+        }
+    }
 
     override fun getContext(): Context {
         return baseActivity.getContext()
@@ -143,12 +151,19 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         }
     }
 
-    private fun setupAppBar() {
-        notifyToolbarChanged()
-    }
+    /**
+     * Calls on view created.
+     */
+    open fun setupAppBar() {
+        if (this is ToolbarProvider) setupToolbar()
+        else {
+            baseActivity.setFragmentToolbar(null)
+            if (this is ToolbarManager) {
+                setupToolbar()
+            }
+        }
 
-    protected open fun notifyToolbarChanged() {
-        baseActivity.setFragmentToolbar(getToolbar(), isBarVisible())
+        baseActivity.setBarVisibility(isBarVisible)
     }
 
     override fun onStart() {
@@ -233,8 +248,6 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
     protected open fun getActionBar(): ActionBar? {
         return baseActivity.supportActionBar
     }
-
-    open fun getToolbar(): Toolbar? = null
 
     override fun showAlertDialog(
         title: String?,

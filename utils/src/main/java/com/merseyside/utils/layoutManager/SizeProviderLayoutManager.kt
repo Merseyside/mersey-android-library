@@ -1,4 +1,4 @@
-package com.merseyside.utils.layout
+package com.merseyside.utils.layoutManager
 
 interface SizeProviderLayoutManager {
 

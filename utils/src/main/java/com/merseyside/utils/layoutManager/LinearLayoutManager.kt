@@ -1,19 +1,12 @@
-package com.merseyside.utils.layout
+package com.merseyside.utils.layoutManager
 
 import android.content.Context
 import android.util.AttributeSet
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
+open class LinearLayoutManager : LinearLayoutManager {
 
-open class GridLayoutManager: GridLayoutManager {
-
-    constructor(
-        context: Context,
-        spanCount: Int,
-        orientation: Int,
-        reverseLayout: Boolean = false
-    ): super(context, spanCount, orientation, reverseLayout)
     constructor(
         context: Context,
         attrs: AttributeSet?,
@@ -23,8 +16,11 @@ open class GridLayoutManager: GridLayoutManager {
 
     constructor(
         context: Context,
-        spanCount: Int
-    ) : super(context, spanCount)
+        orientation: Int,
+        reverseLayout: Boolean = false
+    ) : super(context, orientation, reverseLayout)
+
+    constructor(context: Context) : this(context, null, 0, 0)
 
     override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
         try {
