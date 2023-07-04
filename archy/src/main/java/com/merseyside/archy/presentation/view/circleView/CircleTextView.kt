@@ -90,10 +90,10 @@ class CircleTextView(context: Context, attributeSet: AttributeSet) : View(contex
         rect.set(0, 0, size, size)
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        canvas?.let {
+        canvas.let {
             val point = (size / 2).toFloat()
             canvas.drawCircle(point, point, point, paint)
 

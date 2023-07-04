@@ -7,30 +7,32 @@ import kotlin.math.abs
 abstract class SwipeGestureListener: GestureDetector.SimpleOnGestureListener() {
 
     override fun onFling(
-        e1: MotionEvent,
+        e1: MotionEvent?,
         e2: MotionEvent,
         velocityX: Float,
         velocityY: Float
     ): Boolean {
-        var result = false
+        if (e1 != null) {
+            var result = false
 
-        try {
-            val diffY = e2.y - e1.y
-            val diffX = e2.x - e1.x
-            if (abs(diffX) > abs(diffY)) {
-                if (abs(diffX) > SWIPE_THRESHOLD && abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-                    if (diffX > 0) {
-                        onSwipeRight()
-                    } else {
-                        onSwipeLeft()
+            try {
+                val diffY = e2.y - e1.y
+                val diffX = e2.x - e1.x
+                if (abs(diffX) > abs(diffY)) {
+                    if (abs(diffX) > SWIPE_THRESHOLD && abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                        if (diffX > 0) {
+                            onSwipeRight()
+                        } else {
+                            onSwipeLeft()
+                        }
+                        result = true
                     }
-                    result = true
                 }
+            } catch (exception: Exception) {
+                exception.printStackTrace()
             }
-        } catch (exception: Exception) {
-            exception.printStackTrace()
-        }
-        return result
+            return result
+        } else return false
     }
 
     abstract fun onSwipeLeft()

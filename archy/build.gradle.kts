@@ -48,6 +48,22 @@ android {
         res.srcDir("$basePath/layouts/valueSwitcher")
         res.srcDir("$basePath/layouts/view")
     }
+
+    packaging {
+        resources.excludes.addAll(
+            listOf(
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/license.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt",
+                "META-INF/notice.txt",
+                "META-INF/ASL2.0",
+                "META-INF/*.kotlin_module"
+            )
+        )
+    }
 }
 
 kotlinExtension {
