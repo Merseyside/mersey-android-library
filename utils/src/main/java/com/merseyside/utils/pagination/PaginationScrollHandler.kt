@@ -6,11 +6,12 @@ import com.merseyside.merseyLib.kotlin.logger.Logger
 import com.merseyside.merseyLib.kotlin.utils.ifFalse
 import com.merseyside.merseyLib.kotlin.utils.ifTrue
 import com.merseyside.merseyLib.kotlin.utils.safeLet
+import com.merseyside.utils.layoutManager.findFirstVisibleItemPosition
 import com.merseyside.utils.layoutManager.findLastVisibleItemPosition
 
 abstract class PaginationScrollHandler(
-    protected val loadItemsCountDownOffset: Int,
-    protected val loadItemsCountUpOffset: Int
+    private val loadItemsCountNextOffset: Int,
+    private val loadItemsCountPrevOffset: Int
 ) {
 
     var isPaging: Boolean = false
@@ -30,9 +31,6 @@ abstract class PaginationScrollHandler(
 
             override fun onChildViewDetachedFromWindow(view: View) {}
         }
-
-    private val hasItems: Boolean
-        get() = requireRecycler { childCount != 0 }
 
     abstract val onLoadFirstPage: (onComplete: () -> Unit) -> Unit
     abstract val onLoadNextPage: (onComplete: () -> Unit) -> Unit
@@ -80,28 +78,23 @@ abstract class PaginationScrollHandler(
         recyclerView?.removeOnChildAttachStateChangeListener(childStateListener)
     }
 
-    private fun loadFirstPage() = startLoading { complete ->
-        onLoadFirstPage {
-            layoutManager?.let { manager ->
-                loadNextPageIfNeed(manager.findLastVisibleItemPosition()).ifFalse(complete)
-            }
+    private fun RecyclerView.loadMoreIfNeeds(complete: () -> Unit) {
+        layoutManager?.let { manager ->
+            loadNextPageIfNeed(manager.findLastVisibleItemPosition()).ifFalse(complete)
+            loadPrevPageIfNeed(manager.findFirstVisibleItemPosition()).ifFalse(complete)
         }
+    }
+
+    private fun loadFirstPage() = startLoading { complete ->
+        onLoadFirstPage { loadMoreIfNeeds(complete) }
     }
 
     private fun loadNextPage() = startLoading { complete ->
-        onLoadNextPage {
-            layoutManager?.let { manager ->
-                loadNextPageIfNeed(manager.findLastVisibleItemPosition()).ifFalse(complete)
-            }
-        }
+        onLoadNextPage { loadMoreIfNeeds(complete) }
     }
 
     private fun loadPrevPage() = startLoading { complete ->
-        onLoadPrevPage {
-            layoutManager?.let { manager ->
-                loadPrevPageIfNeed(manager.findLastVisibleItemPosition()).ifFalse(complete)
-            }
-        }
+        onLoadPrevPage { loadMoreIfNeeds(complete) }
     }
 
     private fun startLoading(block: RecyclerView.(completeLoading: () -> Unit) -> Unit) = requireRecycler {
@@ -113,12 +106,12 @@ abstract class PaginationScrollHandler(
     private fun needToLoadNextPage(lastPosition: Int): Boolean = requireRecycler {
         val itemCount = adapter?.itemCount
         safeLet(itemCount) { counts ->
-            (counts - lastPosition) <= loadItemsCountDownOffset
+            (counts - lastPosition) <= loadItemsCountNextOffset
         } ?: false
     }
 
     private fun needToLoadPrevPage(firstPosition: Int): Boolean {
-        return firstPosition == loadItemsCountUpOffset
+        return firstPosition == loadItemsCountPrevOffset
     }
 
     private fun loadNextPageIfNeed(position: Int): Boolean {
