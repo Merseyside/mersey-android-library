@@ -10,6 +10,7 @@ import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.ActionBar
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.MenuHost
 import androidx.fragment.app.Fragment
 import com.merseyside.archy.BaseApplication
@@ -20,10 +21,7 @@ import com.merseyside.archy.presentation.view.OnKeyboardStateListener
 import com.merseyside.archy.presentation.view.OrientationHandler
 import com.merseyside.archy.presentation.view.localeViews.ILocaleManager
 import com.merseyside.archy.utils.SnackbarManager
-import com.merseyside.archy.utils.toolbar.ToolbarManager
-import com.merseyside.archy.utils.toolbar.ToolbarProvider
 import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
-import com.merseyside.merseyLib.kotlin.logger.log
 
 abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleManager {
 
@@ -151,20 +149,31 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         }
     }
 
+    open fun getToolbar(): Toolbar? {
+        return null
+    }
+
     /**
      * Calls on view created.
+     * If you have an inner fragment or you don't want to make fragment change toolbar at all
+     * then override this method with empty implementation.
      */
     open fun setupAppBar() {
-        if (this is ToolbarProvider) setupToolbar()
-        else {
-            baseActivity.setFragmentToolbar(null)
-            if (this is ToolbarManager) {
-                setupToolbar()
+        baseActivity.setFragmentToolbar(getToolbar())
+
+        with(baseActivity) {
+            setBarVisibility(isBarVisible)
+            val isUpEnabled = isNavigateUpEnabled()
+            supportActionBar?.setDisplayHomeAsUpEnabled(isUpEnabled)
+            if (isUpEnabled) {
+                getToolbar()?.setNavigationOnClickListener { this@BaseFragment.onNavigateUp() }
             }
         }
-
-        baseActivity.setBarVisibility(isBarVisible)
     }
+
+    abstract fun isNavigateUpEnabled(): Boolean
+
+    abstract fun onNavigateUp()
 
     override fun onStart() {
         super.onStart()
