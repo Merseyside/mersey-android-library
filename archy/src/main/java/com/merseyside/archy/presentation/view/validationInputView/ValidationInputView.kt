@@ -3,6 +3,7 @@ package com.merseyside.archy.presentation.view.validationInputView
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import android.widget.LinearLayout
 import androidx.annotation.ColorInt
@@ -17,28 +18,26 @@ import com.merseyside.merseyLib.kotlin.utils.safeLet
 import com.merseyside.merseyLib.time.coroutines.delay
 import com.merseyside.merseyLib.time.units.Millis
 import com.merseyside.merseyLib.time.units.TimeUnit
-import com.merseyside.utils.attributes.AttributeHelper
+import com.merseyside.utils.attributes.*
 import com.merseyside.utils.colorStateList.colorToSimpleStateList
-import com.merseyside.utils.delegate.*
+import com.merseyside.utils.delegate.getValue
+import com.merseyside.utils.delegate.viewBinding
+import com.merseyside.utils.ext.setTextSizePx
 import com.merseyside.utils.textWatcher.ValidationTextWatcher
 import com.merseyside.utils.view.ext.requireResourceFromAttr
 import com.merseyside.utils.view.viewScope
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import com.merseyside.utils.attributes.bool
-import com.merseyside.utils.attributes.color
-import com.merseyside.utils.attributes.dimensionPixelSizeOrNull
-import com.merseyside.utils.attributes.drawableOrNull
-import com.merseyside.utils.attributes.int
-import com.merseyside.utils.attributes.string
 import com.google.android.material.R as MaterialStyle
+
 
 open class ValidationInputView(
     context: Context,
     attributeSet: AttributeSet,
     defStyleAttr: Int
 ) : LinearLayout(context, attributeSet, defStyleAttr), ILogger {
+    override val tag: String = "ValidationInputView"
 
     constructor(context: Context, attributeSet: AttributeSet)
             : this(context, attributeSet, R.attr.validationInputViewStyle)
@@ -71,17 +70,46 @@ open class ValidationInputView(
     private val inputWidth by attrs.dimensionPixelSizeOrNull(resId = R.styleable.ValidationInputView_validInputWidth)
     private val inputHeight by attrs.dimensionPixelSizeOrNull(resId = R.styleable.ValidationInputView_validInputHeight)
 
+    private val textSize by attrs.dimensionOrNull(resId = R.styleable.ValidationInputView_validTextSize)
+
     private val forceState by attrs.bool(resId = R.styleable.ValidationInputView_validForceState)
-    private val hintText by attrs.string(resId = R.styleable.ValidationInputView_validHintText, defaultValue = "")
-    private val iconMode by attrs.int(resId = R.styleable.ValidationInputView_validIconMode, defaultValue = 0)
-    private val inputType by attrs.int(resId = R.styleable.ValidationInputView_validInputType, defaultValue = 1)
-    private val maxLength by attrs.int(resId = R.styleable.ValidationInputView_validMaxLength, defaultValue = 0)
+    private val hintText by attrs.string(
+        resId = R.styleable.ValidationInputView_validHintText,
+        defaultValue = ""
+    )
+    private val iconMode by attrs.int(
+        resId = R.styleable.ValidationInputView_validIconMode,
+        defaultValue = 0
+    )
+    private val inputType by attrs.int(
+        resId = R.styleable.ValidationInputView_validInputType,
+        defaultValue = 1
+    )
+    private val maxLength by attrs.int(
+        resId = R.styleable.ValidationInputView_validMaxLength,
+        defaultValue = 0
+    )
 
-    private val textDefault by attrs.string(resId = R.styleable.ValidationInputView_validTextDefault, defaultValue = "")
-    private var textSuccess by attrs.string(resId = R.styleable.ValidationInputView_validTextSuccess, defaultValue = "")
-    private var textError by attrs.string(resId = R.styleable.ValidationInputView_validTextError, defaultValue = "")
+    private val multiline by attrs.bool(
+        resId = R.styleable.ValidationInputView_validMultiline)
 
-    private val needFillingStateOnInit by attrs.bool(resId = R.styleable.ValidationInputView_validNeedFillingStateOnInit, false)
+    private val textDefault by attrs.string(
+        resId = R.styleable.ValidationInputView_validTextDefault,
+        defaultValue = ""
+    )
+    private var textSuccess by attrs.string(
+        resId = R.styleable.ValidationInputView_validTextSuccess,
+        defaultValue = ""
+    )
+    private var textError by attrs.string(
+        resId = R.styleable.ValidationInputView_validTextError,
+        defaultValue = ""
+    )
+
+    private val needFillingStateOnInit by attrs.bool(
+        resId = R.styleable.ValidationInputView_validNeedFillingStateOnInit,
+        false
+    )
 
     protected open val strokeColor by attrs.color(
         resId = R.styleable.ValidationInputView_validStrokeColor,
@@ -156,8 +184,7 @@ open class ValidationInputView(
         if (textError != text) {
             textError = text
 
-            if (validationState == ERROR)
-                updateViewsWithState()
+            if (validationState == ERROR) updateViewsWithState()
         }
     }
 
@@ -178,21 +205,24 @@ open class ValidationInputView(
 
         setLayout()
 
-        setWithAttrs()
+        initInputLayout()
         setTextWatcher()
         setFocusListener()
+        setMultiline(multiline)
 
         if (needFillingStateOnInit) updateViewsWithState()
+        attrs.recycle()
     }
 
     private fun setLayout() {
+        safeLet(textSize) { setTextSize(it) }
         editText.updateLayoutParams {
             inputWidth?.let { width = it }
             inputHeight?.let { height = it }
         }
     }
 
-    private fun setWithAttrs() {
+    private fun initInputLayout() {
         with(inputLayout) {
             hint = hintText
             endIconMode = iconMode
@@ -206,6 +236,29 @@ open class ValidationInputView(
         with(editText) {
             inputType = this@ValidationInputView.inputType
         }
+    }
+
+    private fun setScrollable(scrollable: Boolean) {
+        if (scrollable) {
+            editText.setOnTouchListener { view, event ->
+                if (view.isFocused) {
+                    view.parent.requestDisallowInterceptTouchEvent(true)
+                    if ((event.action and MotionEvent.ACTION_MASK) == MotionEvent.ACTION_SCROLL) {
+                        view.parent.requestDisallowInterceptTouchEvent(false)
+                    }
+                }
+                return@setOnTouchListener false
+            }
+        }
+    }
+    
+    fun setTextSize(size: Float) {
+        editText.setTextSizePx(size)
+    }
+
+    fun setMultiline(enabled: Boolean) {
+        editText.isSingleLine = !enabled
+        setScrollable(enabled)
     }
 
     private fun setTextWatcher() {
@@ -351,8 +404,6 @@ open class ValidationInputView(
     companion object {
         private const val defaultDebounce = 300
     }
-
-    override val tag: String = "ValidationInputView"
 }
 
 enum class ValidationState { FILLING, OK, ERROR }

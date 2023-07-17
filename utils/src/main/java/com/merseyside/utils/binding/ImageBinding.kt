@@ -12,6 +12,7 @@ import androidx.databinding.BindingAdapter
 import coil.load
 import coil.request.ImageRequest
 import coil.transform.RoundedCornersTransformation
+import com.merseyside.merseyLib.kotlin.extensions.firstNotNull
 import com.merseyside.merseyLib.kotlin.extensions.isNotZero
 import com.merseyside.merseyLib.kotlin.utils.firstNotNull
 import com.merseyside.merseyLib.kotlin.utils.safeLet
@@ -19,6 +20,14 @@ import com.merseyside.utils.coil.CircleCropStroke
 import com.merseyside.utils.coil.CircleCropTransformation
 import com.merseyside.utils.ext.getDrawableResourceIdByName
 import java.nio.ByteBuffer
+
+object CoilUtils {
+
+    @JvmStatic
+    fun data(vararg data: Any?): List<Any?> {
+        return data.asList()
+    }
+}
 
 @BindingAdapter("srcCompat")
 fun setDrawableSrcCompat(view: ImageView, drawable: Drawable?) {
@@ -81,15 +90,16 @@ fun ImageView.loadVectorDrawable(@DrawableRes resId: Int?) {
     "cropImageSize",
     "cropBackgroundColor",
     "allowHardware",
+    "data",
     requireAll = false
 )
 
 fun setImageWithCoil(
     imageView: ImageView,
-    drawable: Drawable?,
-    imageUrl: String?,
-    imageUri: Uri?,
-    rawSvg: String?,
+    drawable: Drawable? = null,
+    imageUrl: String? = null,
+    imageUri: Uri? = null,
+    rawSvg: String? = null,
     placeholder: Any?,
     isCrossfade: Boolean = false,
     isRoundedCorners: Boolean = false,
@@ -103,7 +113,8 @@ fun setImageWithCoil(
     cropStrokeWidth: Float? = null,
     cropImageSize: Float? = null,
     @ColorInt cropBackgroundColor: Int? = null,
-    allowHardware: Boolean = true
+    allowHardware: Boolean = true,
+    datas: List<Any?>? = null
 ) {
     val builder = build(
         isCrossfade,
@@ -121,18 +132,25 @@ fun setImageWithCoil(
         allowHardware
     )
 
-    with(imageView) {
-        try {
-            val data = if (rawSvg != null) ByteBuffer.wrap(rawSvg.toByteArray())
+    try {
+
+        val data = if (datas != null) {
+            datas.firstNotNull()
+        } else {
+            if (rawSvg != null) ByteBuffer.wrap(rawSvg.toByteArray())
             else firstNotNull(drawable, imageUrl, imageUri)
+        }
+
+        with(imageView) {
+
             load(data) {
                 //listener { request, result -> result.log("CoilResult") }
                 builder()
                 placeholder?.let { placeholder(getValidPlaceholder(it)) }
             }
-        } catch (e: NullPointerException) {
-            loadPlaceholder(placeholder) { builder() }
         }
+    } catch (e: NullPointerException) {
+        imageView.loadPlaceholder(placeholder) { builder() }
     }
 }
 

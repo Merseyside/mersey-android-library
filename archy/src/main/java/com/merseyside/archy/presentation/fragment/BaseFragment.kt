@@ -241,7 +241,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         updateLocale(context = context)
     }
 
-    protected abstract fun getTitle(context: Context): String?
+    protected open fun getTitle(context: Context): String? = null
 
     fun setTitle(title: String? = null) {
         val context = (baseActivity.applicationContext as? BaseApplication)?.context ?: baseActivity

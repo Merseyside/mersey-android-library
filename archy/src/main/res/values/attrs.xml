@@ -96,6 +96,7 @@
         <attr name="validNeedFillingStateOnInit" format="boolean" />
         <attr name="validInputWidth" format="dimension" />
         <attr name="validInputHeight" format="dimension" />
+        <attr name="validTextSize" format="dimension" />
         <attr name="validForceState" format="boolean" />
         <attr name="validHintText" format="string" />
         <attr name="validTextEditText" format="string" />
@@ -105,6 +106,8 @@
         <attr name="validMaxLength" format="integer" />
         <attr name="validDebounce" format="integer" />
         <attr name="validCursorVisibility" format="boolean" />
+        <attr name="validMultiline" format="boolean" />
+
         <!-- взял с системных атрибутов -->
         <attr name="validInputType">
             <flag name="none" value="0x00000000" />

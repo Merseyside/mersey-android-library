@@ -1,5 +1,6 @@
 package com.merseyside.utils.binding
 
+import android.net.Uri
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
@@ -7,6 +8,7 @@ import androidx.core.view.isVisible
 import com.merseyside.merseyLib.kotlin.extensions.flatWithAnd
 import com.merseyside.merseyLib.kotlin.extensions.flatWithOr
 import com.merseyside.merseyLib.kotlin.logger.logMsg
+import com.merseyside.merseyLib.kotlin.utils.safeLet
 import com.merseyside.utils.view.ext.getActivity
 
 /**
@@ -80,8 +82,13 @@ object BU {
         logMsg(tag, msg)
     }
 
+    @JvmStatic
+    fun parseUri(uri: String?): Uri? {
+        return safeLet(uri) { Uri.parse(it) }
+    }
+
     private fun getViewById(view: View, id: Int): View {
-        val activityRootView = view.getActivity().findViewById<ViewGroup>(android.R.id.content)
-        return activityRootView.findViewById(id)
+        val hostView = view.getActivity().findViewById<ViewGroup>(android.R.id.content)
+        return hostView.findViewById(id)
     }
 }
