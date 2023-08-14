@@ -10,14 +10,14 @@ interface IView {
         msg: String,
         view: View? = null,
         actionMsg: String? = null,
-        onClick: () -> Unit = {}
+        onClick: (() -> Unit)? = null
     )
 
     fun showErrorMsg(
         msg: String,
         view: View? = null,
         actionMsg: String? = null,
-        onClick: () -> Unit = {}
+        onClick: (() -> Unit)? = null
     )
 
     fun dismissMsg()

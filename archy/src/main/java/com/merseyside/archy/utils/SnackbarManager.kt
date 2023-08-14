@@ -31,7 +31,7 @@ open class SnackbarManager(private val activity: Activity) {
         view: View?,
         message: String,
         actionMsg: String?,
-        onClick: () -> Unit
+        onClick: (() -> Unit)?
     ) {
         val backgroundColor = getMsgBackgroundColor()
         val textColor = getMsgTextColor()
@@ -44,7 +44,7 @@ open class SnackbarManager(private val activity: Activity) {
         view: View?,
         message: String,
         actionMsg: String?,
-        onClick: () -> Unit
+        onClick: (() -> Unit)?
     ) {
         val backgroundColor = getErrorMsgBackgroundColor()
         val textColor = getErrorMsgTextColor()
@@ -60,7 +60,7 @@ open class SnackbarManager(private val activity: Activity) {
         @ColorInt textColor: Int,
         @ColorInt actionColor: Int,
         actionMsg: String?,
-        onClick: () -> Unit
+        onClick: (() -> Unit)?
     ) {
         val length = if (!actionMsg.isNullOrEmpty()) {
             Snackbar.LENGTH_INDEFINITE
@@ -71,7 +71,7 @@ open class SnackbarManager(private val activity: Activity) {
         createSnackbar(view, message, length, backgroundColor, textColor).apply {
 
             if (!actionMsg.isNullOrEmpty()) {
-                val listener = View.OnClickListener { onClick.invoke() }
+                val listener = View.OnClickListener { onClick?.invoke() }
 
                 setAction(actionMsg, listener)
                 setActionTextColor(actionColor)

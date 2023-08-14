@@ -10,7 +10,7 @@ import androidx.lifecycle.Observer
 import com.merseyside.archy.presentation.model.BaseViewModel
 import javax.inject.Inject
 
-abstract class BaseVMDialog<B : ViewDataBinding, M : BaseViewModel> : BaseBindingDialog<B>() {
+abstract class BaseVMDialog<B : ViewDataBinding, M : BaseViewModel> : BindingDialog<B>() {
 
     @Inject
     protected lateinit var viewModel: M

@@ -114,3 +114,7 @@ fun TextView.setTextColorAttr(
 fun TextView.setTextSizePx(value: Number) {
     setTextSize(TypedValue.COMPLEX_UNIT_PX, value.toFloat())
 }
+
+fun TextView.setTextSizeSp(value: Float) {
+    setTextSize(TypedValue.COMPLEX_UNIT_SP, value)
+}

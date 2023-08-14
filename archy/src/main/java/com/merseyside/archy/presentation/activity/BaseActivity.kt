@@ -116,7 +116,7 @@ abstract class BaseActivity : AppCompatActivity(),
         msg: String,
         view: View?,
         actionMsg: String?,
-        onClick: () -> Unit
+        onClick: (() -> Unit)?
     ) {
         snackbarManager.apply {
             showSnackbar(
@@ -132,7 +132,7 @@ abstract class BaseActivity : AppCompatActivity(),
         msg: String,
         view: View?,
         actionMsg: String?,
-        onClick: () -> Unit
+        onClick: (() -> Unit)?
     ) {
         snackbarManager.apply {
             showErrorSnackbar(

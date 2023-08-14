@@ -208,7 +208,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         return baseActivity.handleError(throwable)
     }
 
-    override fun showMsg(msg: String, view: View?, actionMsg: String?, onClick: () -> Unit) {
+    override fun showMsg(msg: String, view: View?, actionMsg: String?, onClick: (() -> Unit)?) {
         snackbarManager?.apply {
             showSnackbar(
                 view = view,
@@ -219,7 +219,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         }
     }
 
-    override fun showErrorMsg(msg: String, view: View?, actionMsg: String?, onClick: () -> Unit) {
+    override fun showErrorMsg(msg: String, view: View?, actionMsg: String?, onClick: (() -> Unit)?) {
         snackbarManager?.apply {
             showErrorSnackbar(
                 view = view,

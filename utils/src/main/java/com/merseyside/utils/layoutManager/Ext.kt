@@ -17,3 +17,11 @@ fun RecyclerView.LayoutManager.findFirstVisibleItemPosition(): Int {
         else -> throw NotImplementedError("Not implemented.")
     }
 }
+
+fun RecyclerView.LayoutManager.getOrientation(): Int {
+    return when(this) {
+        is LinearLayoutManager -> orientation
+        is GridLayoutManager -> orientation
+        else -> throw NotImplementedError("Not implemented.")
+    }
+}

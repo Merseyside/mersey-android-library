@@ -2,14 +2,14 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 dependencyResolutionManagement {
     repositories {
-        mavenCentral()
         mavenLocal()
+        mavenCentral()
 
         google()
     }
 
     val group = "io.github.merseyside"
-    val catalogVersions = "1.7.5"
+    val catalogVersions = "1.7.6"
     versionCatalogs {
         val androidLibs by creating {
             from("$group:catalog-version-android:$catalogVersions")

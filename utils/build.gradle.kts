@@ -57,6 +57,7 @@ val androidLibz = listOf(
     common.serialization,
     common.reflect,
     androidLibs.coroutines,
+    androidLibs.navigation,
     androidLibs.appCompat,
     androidLibs.androidx.core,
     androidLibs.constraintLayout,
@@ -67,11 +68,29 @@ val androidLibz = listOf(
     androidLibs.oauth2,
     androidLibs.playCore,
     androidLibs.coil,
-    androidLibs.location,
-    androidLibs.navigation
+    androidLibs.location
 )
 
 dependencies {
+
+//    implementation("org.apache.httpcomponents:httpclient")
+//    constraints {
+//        implementation("org.apache.httpcomponents:httpclient:4.5.14") {
+//            because("previous versions have a bug impacting this application")
+//        }
+//    }
+//
+//    implementation("org.apache.httpcomponents:httpcore")
+//    constraints {
+//        implementation("org.apache.httpcomponents:httpcore:4.4.16") {
+//            because("previous versions have a bug impacting this application")
+//        }
+//    }
+
+//    implementation(androidLibs.publisher) {
+//        exclude("org.apache.httpcomponents", "httpclient")
+//        exclude("org.apache.httpcomponents", "httpcore")
+//    }
 
     api(common.bundles.mersey.time)
     api(common.mersey.kotlin.ext)
