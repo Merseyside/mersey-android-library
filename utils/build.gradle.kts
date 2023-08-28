@@ -55,7 +55,7 @@ kotlinExtension {
 
 val androidLibz = listOf(
     common.serialization,
-    common.reflect,
+    common.kotlin.reflect,
     androidLibs.coroutines,
     androidLibs.navigation,
     androidLibs.appCompat,
