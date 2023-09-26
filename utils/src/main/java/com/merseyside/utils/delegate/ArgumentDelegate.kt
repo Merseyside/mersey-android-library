@@ -9,6 +9,7 @@ import com.merseyside.utils.ext.getSerialize
 import com.merseyside.utils.ext.put
 import com.merseyside.utils.reflection.callMethodByName
 import kotlinx.serialization.DeserializationStrategy
+import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -71,6 +72,12 @@ abstract class ArgumentHelper(internal val requireExistence: Boolean) {
 
     fun contains(key: String): Boolean {
         return arguments?.containsKey(key) ?: false
+    }
+}
+
+fun Fragment.argumentHelper(requireExistence: Boolean = false): ReadOnlyProperty<Any, FragmentArgumentHelper> {
+    return ReadOnlyProperty<Any, FragmentArgumentHelper> { _, _ ->
+        FragmentArgumentHelper(this, requireExistence)
     }
 }
 
