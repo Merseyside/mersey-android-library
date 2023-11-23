@@ -86,7 +86,7 @@ dependencies {
 //            because("previous versions have a bug impacting this application")
 //        }
 //    }
-
+//
 //    implementation(androidLibs.publisher) {
 //        exclude("org.apache.httpcomponents", "httpclient")
 //        exclude("org.apache.httpcomponents", "httpcore")

@@ -100,7 +100,7 @@ fun setImageWithCoil(
     imageUrl: String? = null,
     imageUri: Uri? = null,
     rawSvg: String? = null,
-    placeholder: Any?,
+    placeholder: Any? = null,
     isCrossfade: Boolean = false,
     isRoundedCorners: Boolean = false,
     radiusCorners: Float = 0f,

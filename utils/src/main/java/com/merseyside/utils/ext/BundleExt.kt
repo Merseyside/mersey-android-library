@@ -13,6 +13,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 fun <T> Bundle.put(key: String, value: T) {
+    if (value == null) throw NullPointerException("Value is null!")
     when (value) {
         is Boolean -> putBoolean(key, value)
         is String -> putString(key, value)

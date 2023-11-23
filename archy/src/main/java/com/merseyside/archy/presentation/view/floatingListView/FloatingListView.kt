@@ -14,7 +14,7 @@ import com.merseyside.archy.R
 import com.merseyside.archy.databinding.ViewFloatingListBinding
 import com.merseyside.archy.presentation.view.HORIZONTAL
 import com.merseyside.archy.presentation.view.VERTICAL
-import com.merseyside.utils.delegate.getValue
+
 import com.merseyside.utils.delegate.viewBinding
 import com.merseyside.utils.layoutManager.GridLayoutManager
 import com.merseyside.utils.layoutManager.LinearLayoutManager

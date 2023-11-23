@@ -216,6 +216,7 @@ abstract class BaseDialogFragment : DialogFragment(), IView, OrientationHandler,
         super.onDestroyView()
         dismissMsg()
         unregisterKeyboardListener()
+        getToolbar()?.setNavigationOnClickListener {}
     }
 
     override fun handleError(throwable: Throwable): Boolean {

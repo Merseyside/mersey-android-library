@@ -15,7 +15,7 @@ import com.merseyside.utils.attributes.colorOrNull
 import com.merseyside.utils.attributes.enum
 import com.merseyside.utils.attributes.string
 import com.merseyside.utils.attributes.textArray
-import com.merseyside.utils.delegate.getValue
+
 import com.merseyside.utils.delegate.viewBinding
 import com.merseyside.utils.ext.setImageColor
 import com.merseyside.utils.view.ext.onClick

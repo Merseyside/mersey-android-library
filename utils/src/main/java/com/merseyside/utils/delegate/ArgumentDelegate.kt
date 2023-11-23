@@ -1,5 +1,6 @@
 package com.merseyside.utils.delegate
 
+import android.app.Activity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavArgs
@@ -72,6 +73,22 @@ abstract class ArgumentHelper(internal val requireExistence: Boolean) {
 
     fun contains(key: String): Boolean {
         return arguments?.containsKey(key) ?: false
+    }
+}
+
+class ActivityArgumentHelper(
+    internal val activity: Activity,
+    requireExistence: Boolean = false
+) : ArgumentHelper(requireExistence) {
+
+    override val arguments: Bundle?
+        get() = activity.intent.extras
+
+}
+
+fun Activity.argumentHelper(requireExistence: Boolean = false): ReadOnlyProperty<Any, ActivityArgumentHelper> {
+    return ReadOnlyProperty { _, _ ->
+        ActivityArgumentHelper(this, requireExistence)
     }
 }
 
@@ -333,7 +350,12 @@ inline fun <reified T> ArgumentHelper.deserializableOrNull(
     noinline key: (KProperty<*>) -> String = KProperty<*>::name
 ): ArgumentProperty<Any, T?> = object : ArgumentProperty<Any, T?>(this, key) {
     override fun getValue(thisRef: Any, property: KProperty<*>): T? {
-        return ifContains(key(property)) { key, args -> args.getSerialize(key, deserializationStrategy) }
+        return ifContains(key(property)) { key, args ->
+            args.getSerialize(
+                key,
+                deserializationStrategy
+            )
+        }
     }
 }
 

@@ -6,7 +6,7 @@ plugins {
 allprojects {
     plugins.withId("org.gradle.maven-publish") {
         group = "io.github.merseyside"
-        version = "2.0.7"
+        version = androidLibs.versions.mersey.android.get()
     }
 }
 
