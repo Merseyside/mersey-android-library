@@ -47,14 +47,14 @@ fun Bundle.bool(
         else defaultValue
     }
 
-fun <T> Bundle.deserializable(
+fun <T> Bundle.serializable(
     defaultValue: T? = null,
     key: (KProperty<*>) -> String = KProperty<*>::name,
     deserialize: (String) -> T
 ): ReadOnlyProperty<Any, T?> =
     ReadOnlyProperty { _, property -> getString(key(property))?.let(deserialize) ?: defaultValue }
 
-inline fun <reified T> Bundle.deserializable(
+inline fun <reified T> Bundle.serializable(
     crossinline key: (KProperty<*>) -> String = KProperty<*>::name
 ): ReadOnlyProperty<Any, T> =
     ReadOnlyProperty { _, property ->
