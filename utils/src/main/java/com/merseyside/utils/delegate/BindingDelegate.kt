@@ -6,87 +6,84 @@ import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import kotlin.reflect.KProperty
 
 /**
  * Delegate applicable for adding binding feature in custom views
  * Use it like 'binding by viewBinding(layoutId, attachToParent)
- *
- * Sometimes you have to import getValue explicitly by adding
- * import com.merseyside.utils.delegate.getValue
  */
 
-interface Binding<out T: ViewDataBinding> {
+private interface Binding<out T : ViewDataBinding> {
     val value: T
 }
 
-operator fun <B : ViewDataBinding> Binding<B>.getValue(view: ViewGroup, property: KProperty<*>): B = value
-
-fun <B: ViewDataBinding> ViewGroup.viewBinding(
+fun <B : ViewDataBinding> ViewGroup.viewBinding(
     @LayoutRes layoutRes: Int,
     attachToParent: Boolean = true,
     onBind: B.() -> Unit = {}
-): Binding<B> = LazyBindingImpl(layoutRes, this, attachToParent, onBind)
+) = lazy { createViewBinding(layoutRes, attachToParent, onBind) }
 
-fun <B: ViewDataBinding> ViewGroup.dataBinding(
+
+fun <B : ViewDataBinding> ViewGroup.createViewBinding(
+    @LayoutRes layoutRes: Int,
+    attachToParent: Boolean = true,
+    onBind: B.() -> Unit = {}
+): B = LazyBindingImpl(layoutRes, this, attachToParent, onBind).value
+
+/* Data Binding */
+fun <B : ViewDataBinding> ViewGroup.dataBinding(
     @LayoutRes layoutRes: Int,
     variableId: Int,
     data: Any,
     attachToParent: Boolean = true,
     onBind: B.() -> Unit = {}
-): Binding<B> = LazyDataBindingImpl(layoutRes, this, attachToParent, variableId, data, onBind)
+) = lazy { createDataBinding(layoutRes, variableId, data, attachToParent, onBind) }
+
+fun <B : ViewDataBinding> ViewGroup.createDataBinding(
+    @LayoutRes layoutRes: Int,
+    variableId: Int,
+    data: Any,
+    attachToParent: Boolean = true,
+    onBind: B.() -> Unit = {}
+): B = LazyDataBindingImpl(layoutRes, this, attachToParent, variableId, data, onBind).value
 
 
-private open class LazyBindingImpl<B: ViewDataBinding>(
+private open class LazyBindingImpl<B : ViewDataBinding>(
     @LayoutRes private val layoutRes: Int,
-    private val view: ViewGroup,
-    private val attachToParent: Boolean,
-    private val onBind: B.() -> Unit
-): Binding<B> {
+    view: ViewGroup,
+    attachToParent: Boolean,
+    onBind: B.() -> Unit
+) : Binding<B> {
 
     private var _value: B? = null
     override val value: B
-        get() {
-            return _value!!
-        }
+        get() = requireNotNull(_value)
 
     init {
-        initBinding()
-    }
-
-    protected fun initBinding(): B {
-        if (_value == null) {
-            return view.getBinding<B>(layoutRes, attachToParent).also {
-                _value = it
-                onBind(it)
-            }
-        } else {
-            throw IllegalStateException("Binding already initialized")
+        view.getBinding<B>(layoutRes, attachToParent).also { value ->
+            _value = value
+            onBind(value)
         }
     }
 }
 
-private class LazyDataBindingImpl<B: ViewDataBinding>(
+private class LazyDataBindingImpl<B : ViewDataBinding>(
     @LayoutRes layoutRes: Int,
     view: ViewGroup,
     attachToParent: Boolean,
-    private val variableId: Int,
-    private val data: Any,
-    private val onBind: B.() -> Unit
-): LazyBindingImpl<B>(layoutRes, view, attachToParent, onBind) {
+    variableId: Int,
+    data: Any,
+    onBind: B.() -> Unit
+) : LazyBindingImpl<B>(layoutRes, view, attachToParent, onBind) {
 
     init {
-        initDataBinding()
-    }
-
-    private fun initDataBinding(): B {
-        return value.apply {
-            setVariable(variableId, data)
-        }
+        value.setVariable(variableId, data)
     }
 }
 
-fun <B: ViewDataBinding> ViewGroup.getBinding(@LayoutRes layoutRes: Int, attachToParent: Boolean = true): B {
+fun <B : ViewDataBinding> ViewGroup.getBinding(
+    @LayoutRes layoutRes: Int,
+    attachToParent: Boolean = true
+): B {
     val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     return DataBindingUtil.inflate(inflater, layoutRes, this, attachToParent)
 }

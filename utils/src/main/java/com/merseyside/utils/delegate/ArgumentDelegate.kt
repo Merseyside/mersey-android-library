@@ -1,16 +1,47 @@
+@file:OptIn(InternalSerializationApi::class)
 package com.merseyside.utils.delegate
 
+import android.app.Activity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavArgs
 import androidx.navigation.NavArgsLazy
 import androidx.navigation.fragment.navArgs
+import com.merseyside.merseyLib.kotlin.serialization.serialize
 import com.merseyside.utils.ext.getSerialize
 import com.merseyside.utils.ext.put
 import com.merseyside.utils.reflection.callMethodByName
-import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.builtins.nullable
+import kotlinx.serialization.serializer
+import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
+
+abstract class ArgumentHelper(internal val requireExistence: Boolean) {
+    abstract val arguments: Bundle?
+
+    val requireArgs: Bundle
+        get() = arguments ?: throw NullPointerException()
+
+    fun <T> put(key: String, value: T) {
+        arguments?.put(key, value)
+            ?: throw NullPointerException("Can not put value because arguments are null!")
+    }
+
+    inline fun <reified T> get(key: String, defaultValue: T): T {
+        return (arguments?.get(key) as? T) ?: defaultValue
+    }
+
+    inline fun <reified T> getOrNull(key: String): T? {
+        return arguments?.get(key) as? T
+    }
+
+    fun contains(key: String): Boolean {
+        return arguments?.containsKey(key) ?: false
+    }
+}
 
 abstract class ArgumentProperty<T, V>(
     val helper: ArgumentHelper,
@@ -44,33 +75,25 @@ abstract class ArgumentProperty<T, V>(
     }
 }
 
-abstract class ArgumentHelper(internal val requireExistence: Boolean) {
-    abstract val arguments: Bundle?
+class ActivityArgumentHelper(
+    internal val activity: Activity,
+    requireExistence: Boolean = false
+) : ArgumentHelper(requireExistence) {
 
-    val requireArgs: Bundle
-        get() = arguments ?: throw NullPointerException()
+    override val arguments: Bundle?
+        get() = activity.intent.extras
 
-    fun <T> put(
-        key: String,
-        value: T
-    ) {
-        arguments?.put(key, value)
-            ?: throw NullPointerException("Can not put value because arguments are null!")
+}
+
+fun Activity.argumentHelper(requireExistence: Boolean = false): ReadOnlyProperty<Any, ActivityArgumentHelper> {
+    return ReadOnlyProperty { _, _ ->
+        ActivityArgumentHelper(this, requireExistence)
     }
+}
 
-    inline fun <reified T> get(
-        key: String,
-        defaultValue: T
-    ): T {
-        return (arguments?.get(key) as? T) ?: defaultValue
-    }
-
-    inline fun <reified T> getOrNull(key: String): T? {
-        return arguments?.get(key) as? T
-    }
-
-    fun contains(key: String): Boolean {
-        return arguments?.containsKey(key) ?: false
+fun Fragment.argumentHelper(requireExistence: Boolean = false): ReadOnlyProperty<Any, FragmentArgumentHelper> {
+    return ReadOnlyProperty<Any, FragmentArgumentHelper> { _, _ ->
+        FragmentArgumentHelper(this, requireExistence)
     }
 }
 
@@ -87,7 +110,6 @@ class FragmentArgumentHelper(
 
     override val arguments: Bundle?
         get() = fragment.arguments
-
 }
 
 class NavArgsHelper<Args : NavArgs>(
@@ -275,13 +297,28 @@ fun ArgumentHelper.long(
         }
     }
 
-inline fun <reified T> ArgumentHelper.deserializable(
+abstract class SerializableArgumentProperty<T, V>(
+    helper: ArgumentHelper,
+    key: (KProperty<*>) -> String = KProperty<*>::name,
+    requireExistence: Boolean = helper.requireExistence,
+    private val serializer: KSerializer<V>
+): ArgumentProperty<T, V>(helper, key, requireExistence) {
+
+    override fun setValue(thisRef: T, property: KProperty<*>, value: V) {
+        val serializedValue = value?.serialize(serializer)
+        if (serializedValue != null) {
+            helper.put(key(property), serializedValue)
+        }
+    }
+}
+
+@OptIn(InternalSerializationApi::class)
+inline fun <reified T : Any> ArgumentHelper.serializable(
     noinline key: (KProperty<*>) -> String = KProperty<*>::name
-): ArgumentProperty<Any, T> = object : ArgumentProperty<Any, T>(
-    this,
-    key,
-    requireExistence = true
+): SerializableArgumentProperty<Any, T> = object : SerializableArgumentProperty<Any, T>(
+    helper = this, key = key, requireExistence = true, serializer = T::class.serializer()
 ) {
+
     override fun getValue(thisRef: Any, property: KProperty<*>): T {
         return requireExistence(key(property)) { key, args ->
             args.getSerialize(key)!!
@@ -289,53 +326,61 @@ inline fun <reified T> ArgumentHelper.deserializable(
     }
 }
 
-inline fun <reified T> ArgumentHelper.deserializableOrNull(
+inline fun <reified T : Any> ArgumentHelper.serializableOrNull(
     noinline key: (KProperty<*>) -> String = KProperty<*>::name
-): ArgumentProperty<Any, T?> = object : ArgumentProperty<Any, T?>(this, key) {
+): SerializableArgumentProperty<Any, T?> = object : SerializableArgumentProperty<Any, T?>(
+    helper = this, key = key, requireExistence = true, serializer = T::class.serializer().nullable
+) {
     override fun getValue(thisRef: Any, property: KProperty<*>): T? {
         return ifContains(key(property)) { key, args -> args.getSerialize(key) }
     }
 }
 
-inline fun <reified T> ArgumentHelper.deserializable(
+inline fun <reified T : Any> ArgumentHelper.serializable(
     defaultValue: T,
     noinline key: (KProperty<*>) -> String = KProperty<*>::name
-): ArgumentProperty<Any, T> = object : ArgumentProperty<Any, T>(this, key) {
+): SerializableArgumentProperty<Any, T> = object : SerializableArgumentProperty<Any, T>(
+    helper = this, key = key, requireExistence = true, serializer = T::class.serializer()
+) {
     override fun getValue(thisRef: Any, property: KProperty<*>): T {
         return requireArgs.getSerialize(key(property)) ?: defaultValue
     }
 }
 
-inline fun <reified T> ArgumentHelper.deserializable(
-    deserializationStrategy: DeserializationStrategy<T>,
+inline fun <reified T : Any> ArgumentHelper.serializable(
+    serializer: KSerializer<T>,
     noinline key: (KProperty<*>) -> String = KProperty<*>::name
-): ArgumentProperty<Any, T> = object : ArgumentProperty<Any, T>(
-    this,
-    key,
-    requireExistence = true
+): SerializableArgumentProperty<Any, T> = object : SerializableArgumentProperty<Any, T>(
+    helper = this, key = key, requireExistence = true, serializer = T::class.serializer()
 ) {
     override fun getValue(thisRef: Any, property: KProperty<*>): T {
         return requireExistence(key(property)) { key, args ->
-            args.getSerialize(key, deserializationStrategy)!!
+            requireNotNull(args.getSerialize(key, serializer))
         }
     }
 }
 
-inline fun <reified T> ArgumentHelper.deserializableOrNull(
-    deserializationStrategy: DeserializationStrategy<T>,
+inline fun <reified T : Any> ArgumentHelper.serializableOrNull(
+    serializer: KSerializer<T>,
     noinline key: (KProperty<*>) -> String = KProperty<*>::name
-): ArgumentProperty<Any, T?> = object : ArgumentProperty<Any, T?>(this, key) {
+): SerializableArgumentProperty<Any, T?> = object : SerializableArgumentProperty<Any, T?>(
+    helper = this, key = key, requireExistence = true, serializer = T::class.serializer().nullable
+) {
     override fun getValue(thisRef: Any, property: KProperty<*>): T? {
-        return ifContains(key(property)) { key, args -> args.getSerialize(key, deserializationStrategy) }
+        return ifContains(key(property)) { key, args ->
+            args.getSerialize(key, serializer)
+        }
     }
 }
 
-inline fun <reified T> ArgumentHelper.deserializable(
+inline fun <reified T : Any> ArgumentHelper.serializable(
     defaultValue: T,
-    deserializationStrategy: DeserializationStrategy<T>,
+    serializer: KSerializer<T>,
     noinline key: (KProperty<*>) -> String = KProperty<*>::name
-): ArgumentProperty<Any, T> = object : ArgumentProperty<Any, T>(this, key) {
+): SerializableArgumentProperty<Any, T> = object : SerializableArgumentProperty<Any, T>(
+    helper = this, key = key, requireExistence = true, serializer = T::class.serializer()
+) {
     override fun getValue(thisRef: Any, property: KProperty<*>): T {
-        return requireArgs.getSerialize(key(property), deserializationStrategy) ?: defaultValue
+        return requireArgs.getSerialize(key(property), serializer) ?: defaultValue
     }
 }

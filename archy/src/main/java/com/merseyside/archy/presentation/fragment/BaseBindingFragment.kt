@@ -7,18 +7,22 @@ import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 
-abstract class BaseBindingFragment<B: ViewDataBinding> : BaseFragment() {
+abstract class BaseBindingFragment<B : ViewDataBinding> : BaseDialogFragment() {
 
     protected var binding: B? = null
         private set
 
     protected fun requireBinding(): B {
-        return binding ?: throw IllegalStateException("Binding is null. Do you call it after OnCreateView()?" +
-                " Current state is ${lifecycle.currentState}")
+        return binding ?: throw IllegalStateException(
+            "Binding is null. Do you call it after OnCreateView()?" +
+                    " Current state is ${lifecycle.currentState}"
+        )
     }
 
     protected val isBindingInit: Boolean
-        get() { return binding != null }
+        get() {
+            return binding != null
+        }
 
     override fun inflateView(
         inflater: LayoutInflater,

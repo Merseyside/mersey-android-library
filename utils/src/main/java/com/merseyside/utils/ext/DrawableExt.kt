@@ -41,8 +41,7 @@ fun Drawable.setColor(context: Context, @ColorRes color: Int) {
 fun Drawable.getColor(): Int? {
     return when(this) {
         is ColorDrawable -> color
-        else  ->
-            getColorFromColorFilter(this)
+        else -> getColorFromColorFilter(this)
     }
 
 }

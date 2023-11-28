@@ -2,6 +2,7 @@ package com.merseyside.utils.ext
 
 import android.os.Bundle
 import android.os.Parcelable
+import com.merseyside.merseyLib.kotlin.logger.logSimpleTag
 import com.merseyside.merseyLib.kotlin.serialization.JsonConfigurator
 import com.merseyside.merseyLib.kotlin.serialization.deserialize
 import com.merseyside.merseyLib.kotlin.serialization.serialize
@@ -12,6 +13,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 fun <T> Bundle.put(key: String, value: T) {
+    if (value == null) throw NullPointerException("Value is null!")
     when (value) {
         is Boolean -> putBoolean(key, value)
         is String -> putString(key, value)
@@ -26,7 +28,11 @@ fun <T> Bundle.put(key: String, value: T) {
         is Float -> putFloat(key, value)
         is Bundle -> putBundle(key, value)
         is Parcelable -> putParcelable(key, value)
-        else -> throw IllegalStateException("Type of property $key is not supported")
+        else -> {
+            value.logSimpleTag()
+            throw IllegalStateException("Type of property $key is not supported.")
+        }
+
     }
 }
 

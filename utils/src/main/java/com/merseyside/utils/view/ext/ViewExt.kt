@@ -9,12 +9,14 @@ import android.text.TextWatcher
 import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.TextView
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.DimenRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.updateLayoutParams
+import androidx.core.view.*
 import com.merseyside.merseyLib.kotlin.utils.safeLet
 import com.merseyside.merseyLib.time.units.TimeUnit
 import com.merseyside.utils.delayedThread
@@ -148,12 +150,63 @@ fun View.padding(
     setPadding(left, top, right, bottom)
 }
 
+fun View.paddingRes(
+    context: Context,
+    @DimenRes left: Int? = null,
+    @DimenRes top: Int? = null,
+    @DimenRes right: Int? = null,
+    @DimenRes bottom: Int? = null
+) {
+    setPadding(
+        left?.let { context.getDimensionPixelSize(it) } ?: paddingLeft,
+        top?.let { context.getDimensionPixelSize(it) } ?: paddingTop,
+        right?.let { context.getDimensionPixelSize(it) } ?: paddingRight,
+        bottom?.let { context.getDimensionPixelSize(it) } ?: paddingBottom,
+    )
+}
+
 fun View.setHorizontalPadding(size: Int) {
     padding(left = size, right = size)
 }
 
 fun View.setVerticalPadding(size: Int) {
     padding(top = size, bottom = size)
+}
+
+fun View.setMarginRes(
+    @DimenRes left: Int? = null,
+    @DimenRes top: Int? = null,
+    @DimenRes right: Int? = null,
+    @DimenRes bottom: Int? = null
+) {
+    setMargin(
+        if (left == null) null else resources.getDimensionPixelSize(left),
+        if (top == null) null else resources.getDimensionPixelSize(top),
+        if (right == null) null else resources.getDimensionPixelSize(right),
+        if (bottom == null) null else resources.getDimensionPixelSize(bottom),
+    )
+}
+
+fun View.setMargin(left: Int? = null, top: Int? = null, right: Int? = null, bottom: Int? = null) {
+    val params = (layoutParams as? ViewGroup.MarginLayoutParams)
+    params?.setMargins(
+        left ?: params.leftMargin,
+        top ?: params.topMargin,
+        right ?: params.rightMargin,
+        bottom ?: params.bottomMargin
+    )
+    layoutParams = params
+}
+
+fun View.setMargin(margin: Int? = null) {
+    val params = (layoutParams as? ViewGroup.MarginLayoutParams)
+    params?.setMargins(
+        margin ?: params.leftMargin,
+        margin ?: params.topMargin,
+        margin ?: params.rightMargin,
+        margin ?: params.bottomMargin
+    )
+    layoutParams = params
 }
 
 fun View.setSize(topLeft: Point, bottomRight: Point) {
@@ -214,17 +267,6 @@ fun View.isSizeChanged(
     size: Point
 ) = layoutParams.width != size.x || layoutParams.height != size.y
 
-fun View.setMarginsRes(
-    @DimenRes left: Int? = null,
-    @DimenRes top: Int? = null,
-    @DimenRes right: Int? = null,
-    @DimenRes bottom: Int? = null
-) {
-    updateLayoutParams {
-        setMargins(left, top, right, bottom)
-    }
-}
-
 fun View.getCurrentDrawableState(matchStates: IntArray): Int? {
     return matchStates.find { state ->
         drawableState.find { it == state } != null
@@ -238,4 +280,39 @@ fun View.getColorByCurrentState(colorStateList: ColorStateList, matchStates: Int
     return safeLet(currentState) {
         colorStateList.getColorForState(it)
     } ?: colorStateList.defaultColor
+}
+
+fun View.setOnViewMeasuredCallback(callback: (view: View) -> Unit): OnGlobalLayoutListener {
+    val listener = OnGlobalLayoutListener { callback(this) }
+    viewTreeObserver.addOnGlobalLayoutListener(listener)
+    return listener
+}
+
+fun View.isKeyboardAttached(): Boolean {
+    return WindowInsetsCompat
+        .toWindowInsetsCompat(rootWindowInsets)
+        .isVisible(WindowInsetsCompat.Type.ime())
+}
+
+fun View.hideKeyboard() {
+    context.hideKeyboard(this)
+}
+
+fun View.setOnKeyboardAttachCallback(callback: (isAttached: Boolean) -> Unit) {
+    doOnAttach {
+        var prevValue: Boolean = false
+        ViewCompat.setOnApplyWindowInsetsListener(this) { _, insets ->
+            val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+            val isAttached = imeInsets.bottom != 0
+            if (prevValue != isAttached) {
+                prevValue = isAttached
+                callback(isAttached)
+            }
+            insets
+        }
+
+        doOnDetach {
+            setOnApplyWindowInsetsListener(null)
+        }
+    }
 }

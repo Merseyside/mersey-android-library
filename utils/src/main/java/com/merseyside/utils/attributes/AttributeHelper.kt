@@ -162,51 +162,10 @@ class AttributeHelper(
         }
     }
 
+
     fun recycle() {
         ta.recycle()
     }
-
-//    @Throws(IllegalArgumentException::class)
-//    private fun getIdentifier(id: Int, dsn: String = declareStyleableName): Int {
-//
-//        fun tryAndroidNamespace(): Int {
-//            val fullName = StringBuilder().apply {
-//                append(dsn).append("_")
-//                append("android").append("_")
-//                append(name)
-//            }.toString()
-//
-//            return getStyleableId(fullName)
-//        }
-//
-//        val index = getStyleableId(buildFullName(name, dsn))
-//        return if (index < 0) {
-//            val id = tryAndroidNamespace()
-//            if (id < 0) {
-//                throw IllegalArgumentException(
-//                    "Resource with name $name not found in $defPackage." +
-//                            " Had look for ${buildFullName(name, dsn)}"
-//                )
-//            } else id
-//        } else index
-//    }
-
-
-//    private fun buildFullName(
-//        id: Int,
-//        dsn: String = declareStyleableName,
-//        prefix: String = styleableNamePrefix
-//    ): String {
-//        return StringBuilder().apply {
-//            append(dsn)
-//
-//            val nameWithPrefix = if (prefix.isNotEmpty()) {
-//                "${prefix}${name.capitalize()}"
-//            } else name
-//
-//            append("_").append(nameWithPrefix)
-//        }.toString()
-//    }
 
     private fun <T> convertNoValueToNull(id: Int, noValue: Any, block: (Int) -> T): T? {
         return try {
@@ -234,50 +193,9 @@ class AttributeHelper(
         } else value as T
     }
 
-//    private fun getStyleableId(id: Int): Int {
-//        for (f in fields) {
-//            if (f.name == name) {
-//                return f.get(null) as Int
-//            }
-//        }
-//
-//        return -1
-//    }
-
-//    private fun getIdentifierOrNull(id: Int, dsn: String = declareStyleableName): Int? {
-//        return try {
-//            getIdentifier(name, dsn)
-//        } catch (e: IllegalArgumentException) {
-//            null
-//        }
-//    }
-//
-//    private val fields: Array<Field> by lazy { getStyleableClass(packageName).fields }
-//
     companion object {
-//        private const val defPackage = "styleable"
-//
         internal const val NO_VALUE = Int.MIN_VALUE
         internal const val NO_VALUE_FLOAT = Float.MIN_VALUE
         internal const val NO_VALUE_STRING = "attribute_helper_no_value"
-//
-//        private fun getStyleableClass(packageid: Int): Class<*> {
-//            var mutPackage = packageName
-//            var index: Int
-//            do {
-//                try {
-//                    return Class.forName("$mutPackage.R\$styleable")
-//                } catch (ignored: ClassNotFoundException) {
-//                    Logger.logErr("Tried to get R class with $mutPackage package but failed!")
-//                    index = mutPackage.indexOfLast { it == '.' }
-//
-//                    if (index != -1) mutPackage = mutPackage.substring(0, index)
-//                }
-//            } while (index != -1)
-//
-//            throw ClassNotFoundException("Can not find R class with passed $packageName package name." +
-//                    "May happen if gradle.properties contains android.nonTransitiveRClass=true.")
-//        }
     }
-
 }

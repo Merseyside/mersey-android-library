@@ -1,17 +1,21 @@
 package com.merseyside.archy.presentation.fragment
 
+import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.ActionBar
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.MenuHost
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.DialogFragment
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.merseyside.archy.BaseApplication
 import com.merseyside.archy.presentation.activity.BaseActivity
 import com.merseyside.archy.presentation.activity.Orientation
@@ -20,20 +24,21 @@ import com.merseyside.archy.presentation.view.OnKeyboardStateListener
 import com.merseyside.archy.presentation.view.OrientationHandler
 import com.merseyside.archy.presentation.view.localeViews.ILocaleManager
 import com.merseyside.archy.utils.SnackbarManager
-import com.merseyside.archy.utils.toolbar.ToolbarManager
-import com.merseyside.archy.utils.toolbar.ToolbarProvider
 import com.merseyside.merseyLib.kotlin.extensions.isNotNullAndEmpty
-import com.merseyside.merseyLib.kotlin.logger.log
+import com.merseyside.utils.delegate.FragmentArgumentHelper
+import com.merseyside.utils.delegate.argumentHelper
+import com.merseyside.utils.delegate.bool
 
-abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleManager {
+abstract class BaseDialogFragment : DialogFragment(), IView, OrientationHandler, ILocaleManager {
+
+    val argsHelper: FragmentArgumentHelper by argumentHelper()
+    open var isBottomDialog: Boolean by argsHelper.bool(false)
+    open var isDialog: Boolean by argsHelper.bool(false)
 
     final override var keyboardUnregistrar: Any? = null
 
     lateinit var baseActivity: BaseActivity
         private set
-
-    private var requestCode: Int = NO_REQUEST
-    private var fragmentResult: FragmentResult? = null
 
     private var currentLanguage: String = ""
 
@@ -51,6 +56,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
             baseActivity = context
         }
     }
+
 
     open var isBarVisible: Boolean = true
 
@@ -86,6 +92,45 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
     override fun onCreate(savedInstanceState: Bundle?) {
         performInjection(savedInstanceState)
         super.onCreate(savedInstanceState)
+        showsDialog = isDialog
+    }
+
+    /**
+     * may be STYLE_NORMAL, STYLE_NO_TITLE, STYLE_NO_FRAME, or STYLE_NO_INPUT
+     */
+    open fun getDialogStyle(): Int {
+        return STYLE_NORMAL
+    }
+
+    open fun getDialogTheme(): Int {
+        return 0 // will be selected corresponding to app style
+    }
+
+    open fun setDialogSize(dialog: Dialog) {
+        throw NotImplementedError()
+    }
+
+    open fun isDialogCancellable(): Boolean = true
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog: Dialog = if (isBottomDialog) BottomSheetDialog(baseActivity, getDialogTheme())
+        else Dialog(baseActivity, getDialogTheme())
+
+        onDialogCreated(dialog, savedInstanceState)
+
+        return dialog
+    }
+
+    protected open fun onDialogCreated(dialog: Dialog, savedInstanceState: Bundle?) {
+        if (!isBottomDialog) setDialogSize(dialog)
+
+        isCancelable = isDialogCancellable()
+        val title = getTitle(context)
+
+        if (title.isNullOrEmpty()) dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        else dialog.setTitle(title)
+
+        dialog.setCanceledOnTouchOutside(isDialogCancellable())
     }
 
     @CallSuper
@@ -95,24 +140,6 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         savedInstanceState: Bundle?
     ): View? {
         if (savedInstanceState != null) {
-            with(savedInstanceState) {
-                if (savedInstanceState.containsKey(RESULT_CODE_KEY)) {
-
-                    val bundle = if (containsKey(RESULT_BUNDLE_KEY)) {
-                        getBundle(RESULT_BUNDLE_KEY)
-                    } else null
-
-                    setOnResultFragmentCodes(
-                        requestCode = getInt(REQUEST_CODE_KEY),
-                        resultCode = getInt(RESULT_CODE_KEY),
-                        bundle = bundle
-                    )
-
-                } else if (containsKey(REQUEST_CODE_KEY)) {
-                    requestCode = savedInstanceState.getInt(REQUEST_CODE_KEY)
-                }
-            }
-
             restoreLanguage(savedInstanceState)
         }
 
@@ -122,24 +149,9 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         return inflateView(inflater, container)
     }
 
-    protected fun setOnResultFragmentCodes(
-        requestCode: Int,
-        resultCode: Int,
-        bundle: Bundle? = null
-    ) {
-        requireActivity()
-        setRequestCode(requestCode)
-        this.fragmentResult = FragmentResult(resultCode, requestCode, bundle)
-    }
-
-    protected open fun inflateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        @LayoutRes layoutId: Int = getLayoutId()
-    ) = inflater.inflate(layoutId, container, false)
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (isBottomDialog) setDialogSize(dialog ?: throw NullPointerException("Dialog is null!"))
         menuHost = requireActivity()
         setupAppBar()
 
@@ -149,25 +161,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
             }
             currentLanguage = this
         }
-    }
 
-    /**
-     * Calls on view created.
-     */
-    open fun setupAppBar() {
-        if (this is ToolbarProvider) setupToolbar()
-        else {
-            baseActivity.setFragmentToolbar(null)
-            if (this is ToolbarManager) {
-                setupToolbar()
-            }
-        }
-
-        baseActivity.setBarVisibility(isBarVisible)
-    }
-
-    override fun onStart() {
-        super.onStart()
         setTitle()
 
         if (this is OnKeyboardStateListener) {
@@ -175,31 +169,61 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         }
     }
 
+    protected open fun inflateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        @LayoutRes layoutId: Int = getLayoutId()
+    ) = inflater.inflate(layoutId, container, false)
+
+    open fun getToolbar(): Toolbar? {
+        return null
+    }
+
+    /**
+     * Calls on view created.
+     * If you have an inner fragment or you don't want to make fragment change toolbar at all
+     * then override this method with empty implementation.
+     *
+     * Skip when showing as dialog.
+     */
+    open fun setupAppBar() {
+        if (isDialog) return
+
+        baseActivity.setFragmentToolbar(getToolbar())
+
+        with(baseActivity) {
+            setBarVisibility(isBarVisible)
+            val isUpEnabled = isNavigateUpEnabled()
+            supportActionBar?.setDisplayHomeAsUpEnabled(isUpEnabled)
+            if (isUpEnabled) {
+                getToolbar()?.setNavigationOnClickListener { this@BaseDialogFragment.onNavigateUp() }
+            }
+        }
+    }
+
+    abstract fun isNavigateUpEnabled(): Boolean
+
+    abstract fun onNavigateUp()
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        fragmentResult?.let { result ->
-            outState.putInt(RESULT_CODE_KEY, result.resultCode)
-            outState.putInt(REQUEST_CODE_KEY, result.requestCode)
-            if (result.bundle != null) {
-                outState.putBundle(RESULT_BUNDLE_KEY, result.bundle)
-            }
-        } ?: outState.putInt(REQUEST_CODE_KEY, requestCode)
 
         saveOrientation(outState)
         saveLanguage(outState)
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroyView() {
+        super.onDestroyView()
         dismissMsg()
         unregisterKeyboardListener()
+        getToolbar()?.setNavigationOnClickListener {}
     }
 
     override fun handleError(throwable: Throwable): Boolean {
         return baseActivity.handleError(throwable)
     }
 
-    override fun showMsg(msg: String, view: View?, actionMsg: String?, onClick: () -> Unit) {
+    override fun showMsg(msg: String, view: View?, actionMsg: String?, onClick: (() -> Unit)?) {
         snackbarManager?.apply {
             showSnackbar(
                 view = view,
@@ -210,7 +234,12 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         }
     }
 
-    override fun showErrorMsg(msg: String, view: View?, actionMsg: String?, onClick: () -> Unit) {
+    override fun showErrorMsg(
+        msg: String,
+        view: View?,
+        actionMsg: String?,
+        onClick: (() -> Unit)?
+    ) {
         snackbarManager?.apply {
             showErrorSnackbar(
                 view = view,
@@ -232,7 +261,7 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         updateLocale(context = context)
     }
 
-    protected abstract fun getTitle(context: Context): String?
+    protected open fun getTitle(context: Context): String? = null
 
     fun setTitle(title: String? = null) {
         val context = (baseActivity.applicationContext as? BaseApplication)?.context ?: baseActivity
@@ -297,33 +326,6 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         return baseActivity.getActualString(id, *args)
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        if (requestCode != NO_REQUEST) {
-            val result = if (fragmentResult == null) {
-                FragmentResult(RESULT_CANCELLED, requestCode)
-            } else {
-                fragmentResult!!
-            }
-
-            baseActivity.setFragmentResult(result)
-        }
-    }
-
-    protected fun setFragmentResult(resultCode: Int, bundle: Bundle? = null) {
-        if (requestCode != NO_REQUEST) {
-            this.fragmentResult = FragmentResult(resultCode, requestCode, bundle)
-        } else throw IllegalStateException("Firstly, set request code")
-    }
-
-    protected fun setRequestCode(requestCode: Int) {
-        this.requestCode = requestCode
-    }
-
-    protected fun isStartedForResult(): Boolean {
-        return requestCode != NO_REQUEST
-    }
-
     private fun saveLanguage(outState: Bundle) {
         outState.putString(LANGUAGE_KEY, currentLanguage)
     }
@@ -334,28 +336,20 @@ abstract class BaseFragment : Fragment(), IView, OrientationHandler, ILocaleMana
         }
     }
 
-    override fun getRootView(): View? {
-        return view
-    }
-
-    open fun onFragmentResult(resultCode: Int, requestCode: Int, bundle: Bundle? = null) {}
-
-    class FragmentResult(
-        val resultCode: Int,
-        val requestCode: Int,
-        val bundle: Bundle? = null
-    )
+    override fun getRootView(): View? = view
 
     companion object {
-        const val RESULT_OK = -1
-        const val RESULT_CANCELLED = 0
-
-        const val NO_REQUEST = -1
-
         private const val LANGUAGE_KEY = "language_mvvm_lib"
-
-        private const val REQUEST_CODE_KEY = "requestCode"
-        private const val RESULT_CODE_KEY = "resultCode"
-        private const val RESULT_BUNDLE_KEY = "resultBundle"
     }
+}
+
+fun <T : BaseDialogFragment> T.asDialog(): T {
+    isDialog = true
+    return this
+}
+
+fun <T : BaseDialogFragment> T.asBottomDialog(): T {
+    isDialog = true
+    isBottomDialog = true
+    return this
 }

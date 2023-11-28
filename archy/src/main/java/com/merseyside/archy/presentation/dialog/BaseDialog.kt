@@ -60,24 +60,23 @@ abstract class BaseDialog : DialogFragment(), IView, OrientationHandler, ILocale
 
     @CallSuper
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return Dialog(requireContext(), getStyle()).also { onDialogCreated(it, savedInstanceState) }
+    }
+
+    protected open fun onDialogCreated(dialog: Dialog, savedInstanceState: Bundle?) {
         isCancelable = getCancelable()
         snackbarManager = baseActivity.snackbarManager
 
         setOrientation(resources, savedInstanceState)
 
-        return object : Dialog(requireContext(), getStyle()) {
+        val title = getTitle(dialog.context)
 
-            init {
-                requireActivity()
-                val title = getTitle(context)
+        if (title.isNullOrEmpty()) dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        else dialog.setTitle(title)
 
-                if (title.isNullOrEmpty()) requestWindowFeature(Window.FEATURE_NO_TITLE)
-                else setTitle(title)
+        dialog.setCanceledOnTouchOutside(getCancelable())
 
-                setCanceledOnTouchOutside(getCancelable())
-                setView(this)
-            }
-        }
+        setView(dialog)
     }
 
     protected open fun setView(dialog: Dialog, @LayoutRes layoutId: Int = getLayoutId()) {
@@ -145,7 +144,7 @@ abstract class BaseDialog : DialogFragment(), IView, OrientationHandler, ILocale
         return baseActivity.getActualString(id, *args)
     }
 
-    override fun showMsg(msg: String, view: View?, actionMsg: String?, onClick: () -> Unit) {
+    override fun showMsg(msg: String, view: View?, actionMsg: String?, onClick: (() -> Unit)?) {
 
         snackbarManager?.apply {
             showSnackbar(
@@ -157,7 +156,7 @@ abstract class BaseDialog : DialogFragment(), IView, OrientationHandler, ILocale
         }
     }
 
-    override fun showErrorMsg(msg: String, view: View?, actionMsg: String?, onClick: () -> Unit) {
+    override fun showErrorMsg(msg: String, view: View?, actionMsg: String?, onClick: (() -> Unit)?) {
 
         snackbarManager?.apply {
             showErrorSnackbar(
@@ -189,8 +188,8 @@ abstract class BaseDialog : DialogFragment(), IView, OrientationHandler, ILocale
         baseActivity.setLanguage(lang)
     }
 
-    fun setLayoutSize(width: Int? = null, height: Int? = null) {
-        dialog?.window?.apply {
+    fun Dialog.setLayoutSize(width: Int? = null, height: Int? = null) {
+        window?.apply {
             attributes = attributes.apply {
                 if (width != null) this.width = width
                 if (height != null) this.height = height
@@ -198,7 +197,7 @@ abstract class BaseDialog : DialogFragment(), IView, OrientationHandler, ILocale
         } ?: throw IllegalStateException("Dialog is null!")
     }
 
-    fun setLayoutDimenSize(
+    fun Dialog.setLayoutDimenSize(
         @DimenRes widthId: Int? = null,
         @DimenRes heightId: Int? = null
     ) {

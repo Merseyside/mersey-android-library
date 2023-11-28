@@ -45,6 +45,10 @@ fun RecyclerView.smoothScrollToEnd() {
     }
 }
 
+fun RecyclerView.isScrolling(): Boolean {
+    return scrollState != RecyclerView.SCROLL_STATE_IDLE
+}
+
 inline fun <reified Adapter : RecyclerView.Adapter<VH>,
         VH : RecyclerView.ViewHolder> RecyclerView.getOrCreateAdapter(
     initBlock: RecyclerView.() -> Adapter

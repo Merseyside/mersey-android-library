@@ -11,7 +11,7 @@ import com.merseyside.archy.databinding.ViewProgressBarBinding
 import com.merseyside.utils.attributes.AttributeHelper
 import com.merseyside.utils.attributes.color
 import com.merseyside.utils.attributes.stringOrNull
-import com.merseyside.utils.delegate.getValue
+
 import com.merseyside.utils.delegate.viewBinding
 import com.merseyside.utils.view.ext.getResourceFromAttr
 import com.google.android.material.R as MaterialStyle

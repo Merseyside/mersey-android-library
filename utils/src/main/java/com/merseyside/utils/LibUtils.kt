@@ -2,6 +2,7 @@
 package com.merseyside.utils
 
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Color
 import android.os.Environment
 import androidx.annotation.ColorInt
@@ -42,6 +43,12 @@ suspend fun <Result> measureAndLogTimeSuspend(tag: String = "Measuring", block: 
     delta.log(tag, "elapsed time =")
     return result
 }
+
+val displayWidth: Int
+    get() = Resources.getSystem().displayMetrics.widthPixels
+
+val displayHeight: Int
+    get() = Resources.getSystem().displayMetrics.heightPixels
 
 inline fun <reified Clazz> Clazz.getClassName(): String {
     return this!!::class.simpleName ?: throw IllegalArgumentException("No class name")

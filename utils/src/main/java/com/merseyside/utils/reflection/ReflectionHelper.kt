@@ -37,7 +37,7 @@ interface ReflectionHelper {
         }
     }
 
-    fun getPropertyByName(name: String): KCallable<*>? {
+    private fun getPropertyByName(name: String): KCallable<*>? {
         return this::class.members.find { it.name == name }
     }
 

@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 
-abstract class BaseBindingDialog<B: ViewDataBinding> : BaseDialog() {
+abstract class BindingDialog<B: ViewDataBinding> : BaseDialog() {
 
     protected var binding: B? = null
         private set
@@ -25,7 +25,7 @@ abstract class BaseBindingDialog<B: ViewDataBinding> : BaseDialog() {
             null,
             false
         ).apply {
-            lifecycleOwner = this@BaseBindingDialog
+            lifecycleOwner = this@BindingDialog
         }.also {
             dialog.setContentView(it.root)
         }

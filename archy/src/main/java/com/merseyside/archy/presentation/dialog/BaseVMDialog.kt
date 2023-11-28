@@ -10,7 +10,7 @@ import androidx.lifecycle.Observer
 import com.merseyside.archy.presentation.model.BaseViewModel
 import javax.inject.Inject
 
-abstract class BaseVMDialog<B : ViewDataBinding, M : BaseViewModel> : BaseBindingDialog<B>() {
+abstract class BaseVMDialog<B : ViewDataBinding, M : BaseViewModel> : BindingDialog<B>() {
 
     @Inject
     protected lateinit var viewModel: M
@@ -29,13 +29,6 @@ abstract class BaseVMDialog<B : ViewDataBinding, M : BaseViewModel> : BaseBindin
     }
 
     abstract fun getBindingVariable(): Int
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        performInjection(savedInstanceState)
-        super.onCreate(savedInstanceState)
-
-        setHasOptionsMenu(false)
-    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)

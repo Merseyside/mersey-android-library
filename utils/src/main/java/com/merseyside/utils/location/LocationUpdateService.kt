@@ -8,7 +8,6 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.*
 
-
 class LocationUpdatesService : Service() {
 
     private val mBinder: IBinder = LocalBinder()
@@ -134,10 +133,9 @@ class LocationUpdatesService : Service() {
         }
     }
 
-    private fun onNewLocation(location: Location) {
+    private fun onNewLocation(location: Location?) {
         Log.i(TAG, "New location: $location")
         mLocation = location
-
 
         // Notify anyone listening for broadcasts about the new location.
         Intent(ACTION_BROADCAST).also {

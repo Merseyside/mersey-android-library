@@ -14,13 +14,12 @@ import androidx.navigation.fragment.NavHostFragment
 import com.merseyside.archy.BaseApplication
 import com.merseyside.archy.presentation.dialog.MaterialAlertDialog
 import com.merseyside.archy.presentation.ext.getActualString
-import com.merseyside.archy.presentation.fragment.BaseFragment
+import com.merseyside.archy.presentation.fragment.BaseDialogFragment
 import com.merseyside.archy.presentation.view.OnKeyboardStateListener
 import com.merseyside.archy.presentation.view.OrientationHandler
 import com.merseyside.archy.presentation.view.localeViews.ILocaleManager
 import com.merseyside.archy.utils.SnackbarManager
 import com.merseyside.merseyLib.kotlin.logger.Logger
-import com.merseyside.merseyLib.kotlin.logger.log
 import com.merseyside.utils.LocaleManager
 import com.merseyside.utils.ext.getLocalizedContext
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
@@ -116,7 +115,7 @@ abstract class BaseActivity : AppCompatActivity(),
         msg: String,
         view: View?,
         actionMsg: String?,
-        onClick: () -> Unit
+        onClick: (() -> Unit)?
     ) {
         snackbarManager.apply {
             showSnackbar(
@@ -132,7 +131,7 @@ abstract class BaseActivity : AppCompatActivity(),
         msg: String,
         view: View?,
         actionMsg: String?,
-        onClick: () -> Unit
+        onClick: (() -> Unit)?
     ) {
         snackbarManager.apply {
             showErrorSnackbar(
@@ -158,8 +157,8 @@ abstract class BaseActivity : AppCompatActivity(),
     fun getCurrentFragment(res: Int? = getFragmentContainer()) = res?.let {
         with(supportFragmentManager.findFragmentById(res)) {
             when (this) {
-                is BaseFragment -> this
-                is NavHostFragment -> this.getChildFragmentManager().fragments[0] as BaseFragment
+                is BaseDialogFragment -> this
+                is NavHostFragment -> this.getChildFragmentManager().fragments[0] as BaseDialogFragment
                 else -> null
             }
         }
@@ -255,12 +254,6 @@ abstract class BaseActivity : AppCompatActivity(),
 
     override fun getActualString(@StringRes id: Int?, vararg args: String): String? {
         return applicationContext.getActualString(id, *args)
-    }
-
-    override fun setFragmentResult(fragmentResult: BaseFragment.FragmentResult) {
-        fragmentResult.let {
-            getCurrentFragment()?.onFragmentResult(it.resultCode, it.requestCode, it.bundle)
-        }
     }
 
     override fun registerKeyboardListener(listener: OnKeyboardStateListener): Unregistrar {
